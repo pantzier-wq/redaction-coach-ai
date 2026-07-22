@@ -301,18 +301,48 @@ function Landing() {
         {result && <Resultado data={result} />}
       </section>
 
-      <section className="mx-auto max-w-4xl px-4 py-12">
-        <div className="grid gap-4 md:grid-cols-3">
+      <section className="mx-auto max-w-4xl px-4 py-16">
+        <div className="grid gap-6 md:grid-cols-3">
           {[
-            { n: "+12.400", l: "redações corrigidas" },
-            { n: "5 comp.", l: "matriz oficial INEP" },
-            { n: "30s", l: "tempo médio de correção" },
-          ].map((s) => (
-            <div key={s.l} className="rounded-2xl border border-border bg-card p-5 text-center">
-              <div className="text-3xl font-black text-primary">{s.n}</div>
-              <div className="mt-1 text-xs uppercase tracking-wider text-muted-foreground">
-                {s.l}
+            { 
+              n: "+12.400", 
+              l: "redações corrigidas", 
+              icon: "📊",
+              color: "from-primary/20 to-transparent"
+            },
+            { 
+              n: "5 comp.", 
+              l: "matriz oficial INEP", 
+              icon: "⚖️",
+              color: "from-secondary/20 to-transparent"
+            },
+            { 
+              n: "30s", 
+              l: "tempo médio de correção", 
+              icon: "⚡",
+              color: "from-accent/20 to-transparent"
+            },
+          ].map((s, i) => (
+            <div 
+              key={s.l} 
+              className="relative overflow-hidden rounded-3xl border border-border bg-card p-8 text-center transition-all hover:border-primary/50 hover:shadow-[0_0_30px_rgba(var(--primary-rgb),0.2)] group"
+              style={{ animationDelay: `${i * 150}ms` }}
+            >
+              <div className={`absolute inset-0 bg-gradient-to-b ${s.color} opacity-50`} />
+              <div className="relative z-10">
+                <div className="mb-4 text-4xl transform transition-transform group-hover:scale-110 duration-300">
+                  {s.icon}
+                </div>
+                <div className="text-4xl font-black tracking-tighter text-foreground group-hover:text-primary transition-colors">
+                  {s.n}
+                </div>
+                <div className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground transition-colors">
+                  {s.l}
+                </div>
               </div>
+              
+              {/* Decorative corner glow */}
+              <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-primary/10 blur-2xl group-hover:bg-primary/20 transition-all" />
             </div>
           ))}
         </div>

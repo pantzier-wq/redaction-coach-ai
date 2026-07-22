@@ -74,10 +74,14 @@ function Dashboard() {
                   Você tem <strong className="text-foreground">{profile?.credits || 0} créditos</strong> disponíveis para correções ultra-detalhadas.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <a href="/#corrigir" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-primary-foreground hover:scale-105 transition-transform">
+                  <Link 
+                    to="/"
+                    hash="corrigir"
+                    className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-primary-foreground hover:scale-105 transition-transform"
+                  >
                     <Zap className="w-4 h-4 fill-current" />
                     Nova Correção
-                  </a>
+                  </Link>
                   {!profile?.is_pro && (
                     <button className="inline-flex items-center gap-2 rounded-xl bg-secondary px-6 py-3 font-bold text-secondary-foreground hover:scale-105 transition-transform">
                       Seja PRO Ilimitado

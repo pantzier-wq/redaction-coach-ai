@@ -124,9 +124,13 @@ function Landing() {
       <header className="absolute top-0 right-0 p-6 z-50">
         <Link 
           to={session ? "/dashboard" : "/auth"}
-          className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors border border-border/50 bg-card/30 backdrop-blur-sm px-4 py-2 rounded-full"
+          className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors border border-border/50 bg-card/30 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2"
         >
-          {session ? "Dashboard" : "Entrar"}
+          {session ? (
+            <>Dashboard <ArrowRight className="w-4 h-4" /></>
+          ) : (
+            "Entrar"
+          )}
         </Link>
       </header>
 

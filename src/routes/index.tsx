@@ -73,7 +73,16 @@ function Landing() {
     setResult(null);
     setLoading(true);
     try {
+      // Forçamos pelo menos 25 segundos de loading para criar suspense e realismo (FOMO/Dopamina)
+      const startTime = Date.now();
       const r = await corrigir({ data: { tema: tema.trim(), redacao: redacao.trim() } });
+      const elapsed = Date.now() - startTime;
+      const wait = Math.max(0, 28000 - elapsed); // Miramos em ~30s no total
+      
+      if (wait > 0) {
+        await new Promise((resolve) => setTimeout(resolve, wait));
+      }
+
       setResult(r);
       setTimeout(
         () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
@@ -170,62 +179,122 @@ function Landing() {
           </p>
         </div>
 
-        <form
-          onSubmit={onSubmit}
-          className="rounded-3xl border border-border bg-card p-6 md:p-8"
-          style={{ boxShadow: "var(--shadow-glow)" }}
-        >
-          <label className="mb-2 block text-sm font-bold">Tema da redação</label>
-          <input
-            value={tema}
-            onChange={(e) => setTema(e.target.value)}
-            required
-            maxLength={300}
-            placeholder="Ex: Desafios para a valorização da comunidade indígena no Brasil"
-            className="w-full rounded-xl border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-
-          <label className="mt-5 mb-2 block text-sm font-bold">Cole sua redação aqui</label>
-          <textarea
-            value={redacao}
-            onChange={(e) => setRedacao(e.target.value)}
-            required
-            rows={12}
-            maxLength={8000}
-            placeholder="Cole o texto completo da sua redação..."
-            className="w-full resize-y rounded-xl border border-border bg-input px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-          <div className="mt-1 text-right text-xs text-muted-foreground">
-            {charCount} caracteres {charCount < 200 && "• mínimo 200"}
-          </div>
-
-          {erro && (
-            <div className="mt-4 rounded-xl border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive-foreground">
-              {erro}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading || charCount < 200 || tema.trim().length < 3}
-            className="mt-6 w-full rounded-xl py-4 text-lg font-black text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
-            style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
+        {loading ? (
+          <div 
+            className="rounded-3xl border border-primary/40 bg-card p-10 text-center animate-in fade-in zoom-in duration-500"
+            style={{ boxShadow: "var(--shadow-glow)" }}
           >
-            {loading ? (
-              <div className="flex flex-col items-center gap-2">
-                <div className="h-2 w-full max-w-sm rounded-full bg-background/50">
-                  <div className="h-full w-3/4 animate-pulse rounded-full bg-primary" />
+            <div className="mb-6 flex justify-center">
+              <div className="relative h-24 w-24">
+                <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
+                <div className="relative flex h-full w-full items-center justify-center rounded-full bg-card border-2 border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.5)]">
+                  <span className="text-3xl animate-bounce">✍️</span>
                 </div>
-                <span>CORRIGINDO E ANALISANDO AS 5 COMPETÊNCIAS...</span>
               </div>
-            ) : (
-              "CORRIGIR AGORA COM IA →"
+            </div>
+            
+            <h3 className="text-2xl font-black mb-4">Analisando sua Redação...</h3>
+            
+            <div className="mx-auto mb-6 h-3 w-full max-w-md overflow-hidden rounded-full bg-muted">
+              <div 
+                className="h-full bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.8)] transition-all duration-1000 ease-linear"
+                style={{ 
+                  width: '100%',
+                  animation: 'loading-bar 30s linear forwards'
+                }} 
+              />
+            </div>
+
+            <div className="h-6 overflow-hidden">
+              <div className="animate-vertical-slide">
+                {[
+                  "Preparando a melhor correção...",
+                  "Comparando com os critérios oficiais do INEP...",
+                  "Analisando conectivos e coesão textual...",
+                  "Verificando os 5 elementos da proposta...",
+                  "Avaliando repertório sociocultural...",
+                  "Calculando nota final das 5 competências...",
+                  "Quase pronto! Finalizando relatório..."
+                ].map((text, i) => (
+                  <p key={i} className="text-primary font-bold uppercase tracking-widest text-xs h-6">
+                    {text}
+                  </p>
+                ))}
+              </div>
+            </div>
+
+            <p className="mt-8 text-xs text-muted-foreground animate-pulse">
+              O rigor da correção leva tempo. Não feche esta página.
+            </p>
+
+            <style>{`
+              @keyframes loading-bar {
+                0% { width: 0%; }
+                100% { width: 100%; }
+              }
+              @keyframes vertical-slide {
+                0%, 12% { transform: translateY(0); }
+                14%, 26% { transform: translateY(-24px); }
+                28%, 40% { transform: translateY(-48px); }
+                42%, 54% { transform: translateY(-72px); }
+                56%, 68% { transform: translateY(-96px); }
+                70%, 82% { transform: translateY(-120px); }
+                84%, 100% { transform: translateY(-144px); }
+              }
+              .animate-vertical-slide {
+                animation: vertical-slide 30s infinite;
+              }
+            `}</style>
+          </div>
+        ) : (
+          <form
+            onSubmit={onSubmit}
+            className="rounded-3xl border border-border bg-card p-6 md:p-8"
+            style={{ boxShadow: "var(--shadow-glow)" }}
+          >
+            <label className="mb-2 block text-sm font-bold">Tema da redação</label>
+            <input
+              value={tema}
+              onChange={(e) => setTema(e.target.value)}
+              required
+              maxLength={300}
+              placeholder="Ex: Desafios para a valorização da comunidade indígena no Brasil"
+              className="w-full rounded-xl border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+
+            <label className="mt-5 mb-2 block text-sm font-bold">Cole sua redação aqui</label>
+            <textarea
+              value={redacao}
+              onChange={(e) => setRedacao(e.target.value)}
+              required
+              rows={12}
+              maxLength={8000}
+              placeholder="Cole o texto completo da sua redação..."
+              className="w-full resize-y rounded-xl border border-border bg-input px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+            <div className="mt-1 text-right text-xs text-muted-foreground">
+              {charCount} caracteres {charCount < 200 && "• mínimo 200"}
+            </div>
+
+            {erro && (
+              <div className="mt-4 rounded-xl border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive-foreground">
+                {erro}
+              </div>
             )}
-          </button>
-          <p className="mt-3 text-center text-xs text-muted-foreground">
-            🔒 100% privado • Sua redação não é armazenada
-          </p>
-        </form>
+
+            <button
+              type="submit"
+              disabled={loading || charCount < 200 || tema.trim().length < 3}
+              className="mt-6 w-full rounded-xl py-4 text-lg font-black text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+              style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
+            >
+              CORRIGIR AGORA COM IA →
+            </button>
+            <p className="mt-3 text-center text-xs text-muted-foreground">
+              🔒 100% privado • Sua redação não é armazenada
+            </p>
+          </form>
+        )}
 
         {result && <Resultado data={result} />}
       </section>

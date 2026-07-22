@@ -1,7 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
+import { supabase } from "@/integrations/supabase/client";
+import { Sparkles, Trophy, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({

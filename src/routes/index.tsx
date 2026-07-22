@@ -65,7 +65,18 @@ function Landing() {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [result, setResult] = useState<Correcao | null>(null);
+  const [session, setSession] = useState<any>(null);
   const corrigir = useServerFn(corrigirRedacao);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   const charCount = redacao.trim().length;
 

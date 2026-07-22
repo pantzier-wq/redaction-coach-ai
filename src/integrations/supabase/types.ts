@@ -14,7 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      essays: {
+        Row: {
+          created_at: string | null
+          id: string
+          redacao: string
+          resultado: Json
+          tema: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          redacao: string
+          resultado: Json
+          tema: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          redacao?: string
+          resultado?: Json
+          tema?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          credits: number | null
+          full_name: string | null
+          id: string
+          is_pro: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          credits?: number | null
+          full_name?: string | null
+          id: string
+          is_pro?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          credits?: number | null
+          full_name?: string | null
+          id?: string
+          is_pro?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

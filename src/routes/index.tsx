@@ -512,11 +512,11 @@ function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }
           Esta foi apenas sua correção gratuita. Membros <strong className="text-primary italic">VIP</strong> têm acesso a correções ilimitadas, guia de repertórios e análise profunda de cada erro.
         </p>
         <Link
-          to="/auth"
+          to={isLoggedIn ? "/dashboard" : "/auth"}
           className="inline-flex items-center gap-2 rounded-xl px-8 py-4 font-black text-primary-foreground transition-all hover:scale-105 active:scale-95"
           style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
         >
-          CRIAR MINHA CONTA VIP AGORA <ArrowRight className="w-5 h-5" />
+          {isLoggedIn ? "ACESSAR MEU DASHBOARD" : "CRIAR MINHA CONTA VIP AGORA"} <ArrowRight className="w-5 h-5" />
         </Link>
         <p className="mt-4 text-xs text-muted-foreground flex items-center justify-center gap-2">
           <Trophy className="w-3 h-3 text-secondary" /> Mais de 5.000 alunos já garantiram a vaga

@@ -454,7 +454,7 @@ function Landing() {
   );
 }
 
-function Resultado({ data }: { data: Correcao }) {
+function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }) {
   const pct = Math.round((data.nota_total / 1000) * 100);
   return (
     <div

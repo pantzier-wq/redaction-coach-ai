@@ -211,7 +211,16 @@ function Landing() {
             className="mt-6 w-full rounded-xl py-4 text-lg font-black text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
             style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
           >
-            {loading ? "CORRIGINDO SUA REDAÇÃO..." : "CORRIGIR AGORA COM IA →"}
+            {loading ? (
+              <div className="flex flex-col items-center gap-2">
+                <div className="h-2 w-full max-w-sm rounded-full bg-background/50">
+                  <div className="h-full w-3/4 animate-pulse rounded-full bg-primary" />
+                </div>
+                <span>CORRIGINDO E ANALISANDO AS 5 COMPETÊNCIAS...</span>
+              </div>
+            ) : (
+              "CORRIGIR AGORA COM IA →"
+            )}
           </button>
           <p className="mt-3 text-center text-xs text-muted-foreground">
             🔒 100% privado • Sua redação não é armazenada

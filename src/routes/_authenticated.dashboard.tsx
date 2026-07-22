@@ -84,7 +84,7 @@ function Dashboard() {
                   </Link>
                   {!profile?.is_pro && (
                     <button className="inline-flex items-center gap-2 rounded-xl bg-secondary px-6 py-3 font-bold text-secondary-foreground hover:scale-105 transition-transform">
-                      Seja PRO Ilimitado
+                      Ativar Vitalício — R$ 24,90
                     </button>
                   )}
                 </div>

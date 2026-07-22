@@ -322,7 +322,7 @@ function Landing() {
           </form>
         )}
 
-        {result && <Resultado data={result} />}
+        {result && <Resultado data={result} isLoggedIn={!!session} />}
       </section>
 
       <section className="mx-auto max-w-4xl px-4 py-16">

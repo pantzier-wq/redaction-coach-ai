@@ -205,7 +205,7 @@ function Landing() {
               />
             </div>
 
-            <div className="h-6 overflow-hidden">
+            <div className="relative h-10 w-full max-w-sm mx-auto overflow-hidden">
               <div className="animate-vertical-slide">
                 {[
                   "Preparando a melhor correção...",
@@ -216,9 +216,11 @@ function Landing() {
                   "Calculando nota final das 5 competências...",
                   "Quase pronto! Finalizando relatório..."
                 ].map((text, i) => (
-                  <p key={i} className="text-primary font-bold uppercase tracking-widest text-xs h-6">
-                    {text}
-                  </p>
+                  <div key={i} className="flex h-10 items-center justify-center">
+                    <p className="text-primary font-bold uppercase tracking-widest text-[10px] md:text-xs text-center leading-tight">
+                      {text}
+                    </p>
+                  </div>
                 ))}
               </div>
             </div>
@@ -234,15 +236,15 @@ function Landing() {
               }
               @keyframes vertical-slide {
                 0%, 12% { transform: translateY(0); }
-                14%, 26% { transform: translateY(-24px); }
-                28%, 40% { transform: translateY(-48px); }
-                42%, 54% { transform: translateY(-72px); }
-                56%, 68% { transform: translateY(-96px); }
-                70%, 82% { transform: translateY(-120px); }
-                84%, 100% { transform: translateY(-144px); }
+                14.28%, 26.28% { transform: translateY(-40px); }
+                28.57%, 40.57% { transform: translateY(-80px); }
+                42.85%, 54.85% { transform: translateY(-120px); }
+                57.14%, 69.14% { transform: translateY(-160px); }
+                71.42%, 83.42% { transform: translateY(-200px); }
+                85.71%, 100% { transform: translateY(-240px); }
               }
               .animate-vertical-slide {
-                animation: vertical-slide 30s infinite;
+                animation: vertical-slide 30s cubic-bezier(0.4, 0, 0.2, 1) infinite;
               }
             `}</style>
           </div>

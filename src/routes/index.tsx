@@ -522,7 +522,7 @@ function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }
         <Sparkles className="mx-auto mb-4 h-10 w-10 text-primary animate-pulse" />
         <h3 className="text-2xl font-black mb-2">Quer chegar nos 1000? 🚀</h3>
         <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-          Esta foi apenas sua correção gratuita. Membros <strong className="text-primary italic">VIP</strong> têm acesso a correções ilimitadas, guia de repertórios e análise profunda de cada erro.
+          Esta foi apenas sua correção gratuita. Membros <strong className="text-primary italic">VIP</strong> têm acesso ao histórico de redações corrigidas e podem adquirir o <strong className="text-secondary">Plano Vitalício (R$ 24,90)</strong> para correções ilimitadas e guias exclusivos.
         </p>
         <Link
           to={isLoggedIn ? "/dashboard" : "/auth"}

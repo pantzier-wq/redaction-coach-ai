@@ -121,6 +121,15 @@ function Landing() {
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">
+      <header className="absolute top-0 right-0 p-6 z-50">
+        <Link 
+          to={session ? "/dashboard" : "/auth"}
+          className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors border border-border/50 bg-card/30 backdrop-blur-sm px-4 py-2 rounded-full"
+        >
+          {session ? "Dashboard" : "Entrar"}
+        </Link>
+      </header>
+
       <section className="relative overflow-hidden">
         <div
           className="pointer-events-none absolute inset-0 opacity-40 blur-3xl"

@@ -1,7 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
+import { supabase } from "@/integrations/supabase/client";
+import { Sparkles, Trophy, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -63,7 +65,18 @@ function Landing() {
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [result, setResult] = useState<Correcao | null>(null);
+  const [session, setSession] = useState<any>(null);
   const corrigir = useServerFn(corrigirRedacao);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   const charCount = redacao.trim().length;
 
@@ -84,6 +97,17 @@ function Landing() {
       }
 
       setResult(r);
+      
+      // Se estiver logado, salva no histórico
+      if (session?.user) {
+        await supabase.from("essays").insert({
+          user_id: session.user.id,
+          tema: tema.trim(),
+          redacao: redacao.trim(),
+          resultado: r
+        });
+      }
+
       setTimeout(
         () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
         100,
@@ -97,6 +121,19 @@ function Landing() {
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">
+      <header className="absolute top-0 right-0 p-6 z-50">
+        <Link 
+          to={session ? "/dashboard" : "/auth"}
+          className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors border border-border/50 bg-card/30 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2"
+        >
+          {session ? (
+            <>Dashboard <ArrowRight className="w-4 h-4" /></>
+          ) : (
+            "Entrar"
+          )}
+        </Link>
+      </header>
+
       <section className="relative overflow-hidden">
         <div
           className="pointer-events-none absolute inset-0 opacity-40 blur-3xl"
@@ -298,7 +335,7 @@ function Landing() {
           </form>
         )}
 
-        {result && <Resultado data={result} />}
+        {result && <Resultado data={result} isLoggedIn={!!session} />}
       </section>
 
       <section className="mx-auto max-w-4xl px-4 py-16">
@@ -430,7 +467,7 @@ function Landing() {
   );
 }
 
-function Resultado({ data }: { data: Correcao }) {
+function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }) {
   const pct = Math.round((data.nota_total / 1000) * 100);
   return (
     <div
@@ -480,6 +517,23 @@ function Resultado({ data }: { data: Correcao }) {
         <Bloco titulo="✅ Pontos fortes" itens={data.pontos_fortes} cor="text-primary" />
         <Bloco titulo="⚠️ Pontos fracos" itens={data.pontos_fracos} cor="text-secondary" />
         <Bloco titulo="💡 Sugestões" itens={data.sugestoes} cor="text-accent" />
+      </div>
+      <div className="mt-10 rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center">
+        <Sparkles className="mx-auto mb-4 h-10 w-10 text-primary animate-pulse" />
+        <h3 className="text-2xl font-black mb-2">Quer chegar nos 1000? 🚀</h3>
+        <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+          Esta foi apenas sua correção gratuita. Membros <strong className="text-primary italic">VIP</strong> têm acesso a correções ilimitadas, guia de repertórios e análise profunda de cada erro.
+        </p>
+        <Link
+          to={isLoggedIn ? "/dashboard" : "/auth"}
+          className="inline-flex items-center gap-2 rounded-xl px-8 py-4 font-black text-primary-foreground transition-all hover:scale-105 active:scale-95"
+          style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
+        >
+          {isLoggedIn ? "ACESSAR MEU DASHBOARD" : "CRIAR MINHA CONTA VIP AGORA"} <ArrowRight className="w-5 h-5" />
+        </Link>
+        <p className="mt-4 text-xs text-muted-foreground flex items-center justify-center gap-2">
+          <Trophy className="w-3 h-3 text-secondary" /> Mais de 5.000 alunos já garantiram a vaga
+        </p>
       </div>
     </div>
   );

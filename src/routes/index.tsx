@@ -211,7 +211,16 @@ function Landing() {
             className="mt-6 w-full rounded-xl py-4 text-lg font-black text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
             style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
           >
-            {loading ? "CORRIGINDO SUA REDAÇÃO..." : "CORRIGIR AGORA COM IA →"}
+            {loading ? (
+              <div className="flex flex-col items-center gap-2">
+                <div className="h-2 w-full max-w-sm rounded-full bg-background/50">
+                  <div className="h-full w-3/4 animate-pulse rounded-full bg-primary" />
+                </div>
+                <span>CORRIGINDO E ANALISANDO AS 5 COMPETÊNCIAS...</span>
+              </div>
+            ) : (
+              "CORRIGIR AGORA COM IA →"
+            )}
           </button>
           <p className="mt-3 text-center text-xs text-muted-foreground">
             🔒 100% privado • Sua redação não é armazenada
@@ -234,6 +243,65 @@ function Landing() {
                 {s.l}
               </div>
             </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-4xl px-4 py-16">
+        <h2 className="mb-8 text-center text-3xl md:text-4xl font-black">Quem já usou, aprovou.</h2>
+        <div className="grid gap-6 md:grid-cols-2">
+          {[
+            {
+              name: "Lucas M.",
+              text: "Consegui subir de 720 para 960 em duas semanas. As correções detalhadas são o diferencial.",
+              note: "960 no Simulado",
+            },
+            {
+              name: "Ana Julia",
+              text: "O feedback da competência 5 me ajudou a entender o que faltava na minha proposta. Incrível!",
+              note: "Nota 920",
+            },
+          ].map((p, i) => (
+            <div key={i} className="rounded-2xl border border-border bg-card p-6">
+              <div className="mb-2 flex items-center gap-1 text-primary">
+                {"★".repeat(5)}
+              </div>
+              <p className="mb-4 text-sm italic text-card-foreground">"{p.text}"</p>
+              <div className="flex items-center justify-between border-t border-border pt-4">
+                <span className="text-sm font-bold">{p.name}</span>
+                <span className="text-xs font-semibold text-primary">{p.note}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-3xl px-4 py-16">
+        <h2 className="mb-8 text-center text-3xl md:text-4xl font-black">Dúvidas Frequentes</h2>
+        <div className="space-y-4">
+          {[
+            {
+              q: "A nota é igual à do ENEM?",
+              a: "Nossa IA foi treinada com a matriz oficial de 2024. A nota é uma estimativa ultra-precisa baseada nos mesmos critérios do INEP.",
+            },
+            {
+              q: "Posso corrigir quantas redações?",
+              a: "Nesta fase de reta final, estamos liberando correções gratuitas para ajudar o máximo de estudantes desesperados.",
+            },
+            {
+              q: "A IA entende qualquer tema?",
+              a: "Sim! Desde temas sociais clássicos até os mais complexos. Ela analisa a estrutura e o projeto de texto.",
+            },
+          ].map((f, i) => (
+            <details key={i} className="group rounded-xl border border-border bg-card">
+              <summary className="flex cursor-pointer list-none items-center justify-between p-4 font-bold text-foreground transition-colors hover:bg-muted/50">
+                {f.q}
+                <span className="text-primary transition-transform group-open:rotate-180">↓</span>
+              </summary>
+              <div className="p-4 pt-0 text-sm text-muted-foreground border-t border-border/50 mt-2">
+                {f.a}
+              </div>
+            </details>
           ))}
         </div>
       </section>

@@ -97,6 +97,17 @@ function Landing() {
       }
 
       setResult(r);
+      
+      // Se estiver logado, salva no histórico
+      if (session?.user) {
+        await supabase.from("essays").insert({
+          user_id: session.user.id,
+          tema: tema.trim(),
+          redacao: redacao.trim(),
+          resultado: r
+        });
+      }
+
       setTimeout(
         () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
         100,

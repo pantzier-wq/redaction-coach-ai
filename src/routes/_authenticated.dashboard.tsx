@@ -139,7 +139,7 @@ function Dashboard() {
                 15 citações e conceitos que cabem em 90% dos temas do ENEM.
               </p>
               <div className="flex items-center justify-between">
-                <span className="text-xl font-black text-secondary">R$ 19,90</span>
+                <span className="text-xl font-black text-secondary">R$ 12,90</span>
                 <button className="rounded-lg bg-secondary px-4 py-2 text-xs font-bold text-secondary-foreground hover:opacity-90">
                   Adicionar
                 </button>
@@ -154,7 +154,7 @@ function Dashboard() {
                 Domine a competência 4 e garanta os 200 pontos de coesão.
               </p>
               <div className="flex items-center justify-between">
-                <span className="text-xl font-black text-primary">R$ 27,00</span>
+                <span className="text-xl font-black text-primary">R$ 12,90</span>
                 <button className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:opacity-90">
                   Adicionar
                 </button>

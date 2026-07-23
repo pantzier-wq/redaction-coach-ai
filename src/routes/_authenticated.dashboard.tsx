@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { type Correcao } from "@/lib/correct-essay.functions";
+import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
 import { LogOut, BookOpen, Zap, History, Star, CreditCard } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -74,14 +75,15 @@ function Dashboard() {
                   Você tem <strong className="text-foreground">{profile?.credits || 0} créditos</strong> disponíveis para correções ultra-detalhadas.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <Link 
-                    to="/"
-                    hash="corrigir"
+                  <button 
+                    onClick={() => {
+                      document.getElementById("nova-correcao")?.scrollIntoView({ behavior: "smooth" });
+                    }}
                     className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-primary-foreground hover:scale-105 transition-transform"
                   >
                     <Zap className="w-4 h-4 fill-current" />
                     Nova Correção
-                  </Link>
+                  </button>
                   {!profile?.is_pro && (
                     <button className="inline-flex items-center gap-2 rounded-xl bg-secondary px-6 py-3 font-bold text-secondary-foreground hover:scale-105 transition-transform">
                       Ativar Vitalício — R$ 24,90
@@ -90,6 +92,25 @@ function Dashboard() {
                 </div>
               </div>
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl rounded-full" />
+            </div>
+
+            {/* New Essay Submission Area within Dashboard */}
+            <div id="nova-correcao" className="scroll-mt-20">
+              <h2 className="text-xl font-black mb-4 flex items-center gap-2">
+                <Zap className="w-5 h-5 text-primary" />
+                Área de Correção VIP
+              </h2>
+              <EssaySubmissionArea 
+                isLoggedIn={true} 
+                onSuccess={() => {
+                  // Re-fetch essays after a new correction
+                  const loadEssays = async () => {
+                    const { data } = await supabase.from("essays").select("*").order("created_at", { ascending: false });
+                    setEssays(data || []);
+                  };
+                  loadEssays();
+                }}
+              />
             </div>
 
             {/* Essay History */}

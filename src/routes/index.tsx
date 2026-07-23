@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
+
 import { useEffect, useState } from "react";
 import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
 import { Sparkles, Trophy, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -60,13 +61,7 @@ function Countdown() {
 }
 
 function Landing() {
-  const [tema, setTema] = useState("");
-  const [redacao, setRedacao] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [erro, setErro] = useState<string | null>(null);
-  const [result, setResult] = useState<Correcao | null>(null);
   const [session, setSession] = useState<any>(null);
-  const corrigir = useServerFn(corrigirRedacao);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -77,47 +72,6 @@ function Landing() {
     });
     return () => subscription.unsubscribe();
   }, []);
-
-  const charCount = redacao.trim().length;
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setErro(null);
-    setResult(null);
-    setLoading(true);
-    try {
-      // Forçamos pelo menos 25 segundos de loading para criar suspense e realismo (FOMO/Dopamina)
-      const startTime = Date.now();
-      const r = await corrigir({ data: { tema: tema.trim(), redacao: redacao.trim() } });
-      const elapsed = Date.now() - startTime;
-      const wait = Math.max(0, 28000 - elapsed); // Miramos em ~30s no total
-      
-      if (wait > 0) {
-        await new Promise((resolve) => setTimeout(resolve, wait));
-      }
-
-      setResult(r);
-      
-      // Se estiver logado, salva no histórico
-      if (session?.user) {
-        await supabase.from("essays").insert({
-          user_id: session.user.id,
-          tema: tema.trim(),
-          redacao: redacao.trim(),
-          resultado: r
-        });
-      }
-
-      setTimeout(
-        () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
-        100,
-      );
-    } catch (err) {
-      setErro(err instanceof Error ? err.message : "Erro inesperado");
-    } finally {
-      setLoading(false);
-    }
-  }
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">
@@ -216,126 +170,7 @@ function Landing() {
           </p>
         </div>
 
-        {loading ? (
-          <div 
-            className="rounded-3xl border border-primary/40 bg-card p-10 text-center animate-in fade-in zoom-in duration-500"
-            style={{ boxShadow: "var(--shadow-glow)" }}
-          >
-            <div className="mb-6 flex justify-center">
-              <div className="relative h-24 w-24">
-                <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
-                <div className="relative flex h-full w-full items-center justify-center rounded-full bg-card border-2 border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.5)]">
-                  <span className="text-3xl animate-bounce">✍️</span>
-                </div>
-              </div>
-            </div>
-            
-            <h3 className="text-2xl font-black mb-4">Analisando sua Redação...</h3>
-            
-            <div className="mx-auto mb-6 h-3 w-full max-w-md overflow-hidden rounded-full bg-muted">
-              <div 
-                className="h-full bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.8)] transition-all duration-1000 ease-linear"
-                style={{ 
-                  width: '100%',
-                  animation: 'loading-bar 30s linear forwards'
-                }} 
-              />
-            </div>
-
-            <div className="relative h-10 w-full max-w-sm mx-auto overflow-hidden">
-              <div className="animate-vertical-slide">
-                {[
-                  "Preparando a melhor correção...",
-                  "Comparando com os critérios oficiais do INEP...",
-                  "Analisando conectivos e coesão textual...",
-                  "Verificando os 5 elementos da proposta...",
-                  "Avaliando repertório sociocultural...",
-                  "Calculando nota final das 5 competências...",
-                  "Quase pronto! Finalizando relatório..."
-                ].map((text, i) => (
-                  <div key={i} className="flex h-10 items-center justify-center">
-                    <p className="text-primary font-bold uppercase tracking-widest text-[10px] md:text-xs text-center leading-tight">
-                      {text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <p className="mt-8 text-xs font-bold text-foreground animate-pulse">
-              O rigor da correção leva tempo. Não feche esta página.
-            </p>
-
-            <style>{`
-              @keyframes loading-bar {
-                0% { width: 0%; }
-                100% { width: 100%; }
-              }
-              @keyframes vertical-slide {
-                0%, 12% { transform: translateY(0); }
-                14.28%, 26.28% { transform: translateY(-40px); }
-                28.57%, 40.57% { transform: translateY(-80px); }
-                42.85%, 54.85% { transform: translateY(-120px); }
-                57.14%, 69.14% { transform: translateY(-160px); }
-                71.42%, 83.42% { transform: translateY(-200px); }
-                85.71%, 100% { transform: translateY(-240px); }
-              }
-              .animate-vertical-slide {
-                animation: vertical-slide 30s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-              }
-            `}</style>
-          </div>
-        ) : (
-          <form
-            onSubmit={onSubmit}
-            className="rounded-3xl border border-border bg-card p-6 md:p-8"
-            style={{ boxShadow: "var(--shadow-glow)" }}
-          >
-            <label className="mb-2 block text-sm font-bold">Tema da redação</label>
-            <input
-              value={tema}
-              onChange={(e) => setTema(e.target.value)}
-              required
-              maxLength={300}
-              placeholder="Ex: Desafios para a valorização da comunidade indígena no Brasil"
-              className="w-full rounded-xl border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-
-            <label className="mt-5 mb-2 block text-sm font-bold">Cole sua redação aqui</label>
-            <textarea
-              value={redacao}
-              onChange={(e) => setRedacao(e.target.value)}
-              required
-              rows={12}
-              maxLength={8000}
-              placeholder="Cole o texto completo da sua redação..."
-              className="w-full resize-y rounded-xl border border-border bg-input px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-            <div className="mt-1 text-right text-xs text-muted-foreground">
-              {charCount} caracteres {charCount < 200 && "• mínimo 200"}
-            </div>
-
-            {erro && (
-              <div className="mt-4 rounded-xl border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive-foreground">
-                {erro}
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading || charCount < 200 || tema.trim().length < 3}
-              className="mt-6 w-full rounded-xl py-4 text-lg font-black text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
-              style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
-            >
-              CORRIGIR AGORA COM IA →
-            </button>
-            <p className="mt-3 text-center text-xs font-bold text-foreground/70">
-              🔒 100% privado • Sua redação não é armazenada
-            </p>
-          </form>
-        )}
-
-        {result && <Resultado data={result} isLoggedIn={!!session} />}
+        <EssaySubmissionArea isLoggedIn={!!session} />
       </section>
 
       <section className="mx-auto max-w-4xl px-4 py-16">
@@ -467,89 +302,3 @@ function Landing() {
   );
 }
 
-function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }) {
-  const pct = Math.round((data.nota_total / 1000) * 100);
-  return (
-    <div
-      id="resultado"
-      className="mt-10 rounded-3xl border border-primary/40 bg-card p-6 md:p-8"
-      style={{ boxShadow: "var(--shadow-glow)" }}
-    >
-      <div className="text-center">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">
-          Sua nota estimada
-        </div>
-        <div
-          className="mt-2 text-6xl md:text-7xl font-black"
-          style={{
-            background: "var(--gradient-cta)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
-          {data.nota_total}
-        </div>
-        <div className="text-sm text-muted-foreground">
-          de 1000 pontos ({pct}%)
-        </div>
-      </div>
-
-      <p className="mt-6 text-center italic text-card-foreground">"{data.resumo}"</p>
-
-      <div className="mt-8 space-y-3">
-        {data.competencias.map((c) => (
-          <div key={c.numero} className="rounded-xl border border-border bg-input/50 p-4">
-            <div className="flex items-baseline justify-between gap-2">
-              <div className="font-bold">
-                C{c.numero} — {c.titulo}
-              </div>
-              <div className="text-xl font-black text-primary">
-                {c.nota}
-                <span className="text-xs text-muted-foreground">/200</span>
-              </div>
-            </div>
-            <p className="mt-1 text-sm text-muted-foreground">{c.analise}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-6 grid gap-4 md:grid-cols-3">
-        <Bloco titulo="✅ Pontos fortes" itens={data.pontos_fortes} cor="text-primary" />
-        <Bloco titulo="⚠️ Pontos fracos" itens={data.pontos_fracos} cor="text-secondary" />
-        <Bloco titulo="💡 Sugestões" itens={data.sugestoes} cor="text-accent" />
-      </div>
-      <div className="mt-10 rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center">
-        <Sparkles className="mx-auto mb-4 h-10 w-10 text-primary animate-pulse" />
-        <h3 className="text-2xl font-black mb-2">Quer chegar nos 1000? 🚀</h3>
-        <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-          Esta foi apenas sua correção gratuita. Membros <strong className="text-primary italic">VIP</strong> têm acesso ao histórico de redações corrigidas e podem adquirir o <strong className="text-secondary">Plano Vitalício (R$ 24,90)</strong> para correções ilimitadas e guias exclusivos.
-        </p>
-        <Link
-          to={isLoggedIn ? "/dashboard" : "/auth"}
-          className="inline-flex items-center gap-2 rounded-xl px-8 py-4 font-black text-primary-foreground transition-all hover:scale-105 active:scale-95"
-          style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
-        >
-          {isLoggedIn ? "ACESSAR MEU DASHBOARD" : "CRIAR MINHA CONTA VIP AGORA"} <ArrowRight className="w-5 h-5" />
-        </Link>
-        <p className="mt-4 text-xs text-muted-foreground flex items-center justify-center gap-2">
-          <Trophy className="w-3 h-3 text-secondary" /> Mais de 5.000 alunos já garantiram a vaga
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function Bloco({ titulo, itens, cor }: { titulo: string; itens: string[]; cor: string }) {
-  return (
-    <div className="rounded-xl border border-border bg-input/40 p-4">
-      <div className={`mb-2 text-sm font-bold ${cor}`}>{titulo}</div>
-      <ul className="space-y-1.5 text-sm text-card-foreground">
-        {itens.map((i, k) => (
-          <li key={k} className="leading-snug">
-            • {i}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}

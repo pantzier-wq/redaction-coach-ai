@@ -141,8 +141,8 @@ function Landing() {
           aria-hidden
         />
         <div className="relative mx-auto max-w-4xl px-4 pt-16 pb-10 text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-secondary/50 bg-secondary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-secondary">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-secondary" />
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-secondary bg-secondary/20 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-white shadow-[0_0_15px_rgba(var(--secondary-rgb),0.3)]">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-secondary shadow-[0_0_8px_#ff4d4d]" />
             ENEM está chegando — não dá mais pra enrolar
           </div>
 
@@ -373,7 +373,7 @@ function Landing() {
                 <div className="text-4xl font-black tracking-tighter text-foreground group-hover:text-primary transition-colors">
                   {s.n}
                 </div>
-                <div className="mt-2 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground transition-colors">
+                <div className="mt-2 text-xs font-black uppercase tracking-[0.2em] text-foreground/70 group-hover:text-foreground transition-colors">
                   {s.l}
                 </div>
               </div>

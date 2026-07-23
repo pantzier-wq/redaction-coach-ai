@@ -17,6 +17,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
   const [showPaywall, setShowPaywall] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [result, setResult] = useState<Correcao | null>(null);
+  const [isPro, setIsPro] = useState(false);
   const corrigir = useServerFn(corrigirRedacao);
 
   const charCount = redacao.trim().length;
@@ -37,20 +38,20 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
         await new Promise((resolve) => setTimeout(resolve, wait));
       }
 
-      // Check if user is PRO. If not, show paywall instead of results
-      let isPro = false;
+      // Check if user is PRO.
+      let currentIsPro = false;
       if (isLoggedIn) {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
           const { data: profile } = await supabase.from("profiles").select("is_pro").eq("id", user.id).single();
-          isPro = !!profile?.is_pro;
+          currentIsPro = !!profile?.is_pro;
+          setIsPro(currentIsPro);
         }
       }
 
-      if (isLoggedIn && !isPro) {
+      setResult(r);
+      if (isLoggedIn && !currentIsPro) {
         setShowPaywall(true);
-      } else {
-        setResult(r);
       }
       
       if (isLoggedIn) {
@@ -201,57 +202,57 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
         </form>
       )}
 
-      {showPaywall && <PaywallArea />}
-      {result && <Resultado data={result} isLoggedIn={isLoggedIn} />}
-    </div>
-  );
-}
+      {result && (
+        <div className="relative">
+          <div className={showPaywall ? "blur-md pointer-events-none select-none" : ""}>
+            <Resultado data={result} isLoggedIn={isLoggedIn} />
+          </div>
+          
+          {showPaywall && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center p-4">
+              <div 
+                className="w-full max-w-2xl rounded-3xl border border-secondary/40 bg-card/90 backdrop-blur-xl p-8 md:p-12 text-center shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in fade-in zoom-in duration-500"
+              >
+                <div className="mb-6 flex justify-center">
+                  <div className="p-4 rounded-full bg-secondary/20 text-secondary animate-bounce">
+                    <Trophy className="w-12 h-12" />
+                  </div>
+                </div>
+                
+                <h2 className="text-3xl md:text-4xl font-black mb-4 tracking-tight">Análise Pronta! 🎯</h2>
+                
+                <p className="text-lg text-foreground font-medium mb-8 leading-relaxed">
+                  Sua correção detalhada e nota oficial já foram geradas. Mantemos esta plataforma ativa com uma pequena taxa de manutenção para que você possa continuar corrigindo suas redações com o máximo de precisão até o ENEM.
+                </p>
 
-function PaywallArea() {
-  return (
-    <div 
-      className="mt-10 rounded-3xl border border-secondary/40 bg-card p-8 md:p-12 text-center animate-in fade-in slide-in-from-bottom-10 duration-700"
-      style={{ boxShadow: "var(--shadow-glow)" }}
-    >
-      <div className="mb-6 flex justify-center">
-        <div className="p-4 rounded-full bg-secondary/20 text-secondary">
-          <Trophy className="w-12 h-12" />
-        </div>
-      </div>
-      
-      <h2 className="text-3xl md:text-4xl font-black mb-4">Análise Concluída com Sucesso! 🎯</h2>
-      
-      <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-        Sua correção ultra-detalhada já está pronta e calculada pelo nosso motor de IA de alta precisão. 
-        <br/><br/>
-        Para acessar sua nota oficial (0-1000), o feedback detalhado por competência e as sugestões de melhoria, 
-        você precisa do <span className="text-secondary font-bold">Acesso Vitalício</span>.
-      </p>
+                <div className="flex flex-col items-center gap-4">
+                  <button
+                    className="w-full rounded-2xl px-10 py-5 text-xl font-black text-secondary-foreground transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(var(--secondary-rgb),0.3)]"
+                    style={{ background: "var(--gradient-secondary, linear-gradient(135deg, #f59e0b 0%, #d97706 100%))" }}
+                  >
+                    DESBLOQUEAR TUDO AGORA 🚀
+                  </button>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-sm font-bold text-foreground">Acesso Vitalício por apenas <span className="text-secondary text-xl">R$ 24,90</span></p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">Pagamento único • Sem mensalidade</p>
+                  </div>
+                </div>
 
-      <div className="flex flex-col items-center gap-4">
-        <button
-          className="w-full max-w-md rounded-2xl px-10 py-5 text-xl font-black text-secondary-foreground transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(var(--secondary-rgb),0.3)]"
-          style={{ background: "var(--gradient-secondary, linear-gradient(135deg, #f59e0b 0%, #d97706 100%))" }}
-        >
-          DESBLOQUEAR MINHA NOTA AGORA 🚀
-        </button>
-        <p className="text-sm font-bold text-foreground">Pagamento único de apenas <span className="text-secondary text-lg">R$ 24,90</span></p>
-      </div>
-
-      <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6 text-left border-t border-border pt-8">
-        <div className="flex gap-3">
-          <div className="h-2 w-2 mt-1.5 rounded-full bg-secondary shrink-0" />
-          <p className="text-sm">Correções <strong>ilimitadas</strong> para sempre</p>
+                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 text-left border-t border-border/50 pt-8">
+                  <div className="flex gap-3 items-center">
+                    <div className="h-2 w-2 rounded-full bg-secondary shrink-0" />
+                    <p className="text-xs font-bold">Correções <strong>ilimitadas</strong></p>
+                  </div>
+                  <div className="flex gap-3 items-center">
+                    <div className="h-2 w-2 rounded-full bg-secondary shrink-0" />
+                    <p className="text-xs font-bold">Histórico VIP permanente</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-        <div className="flex gap-3">
-          <div className="h-2 w-2 mt-1.5 rounded-full bg-secondary shrink-0" />
-          <p className="text-sm">Histórico completo de evolução na Área VIP</p>
-        </div>
-        <div className="flex gap-3">
-          <div className="h-2 w-2 mt-1.5 rounded-full bg-secondary shrink-0" />
-          <p className="text-sm">Acesso aos guias exclusivos de repertórios</p>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

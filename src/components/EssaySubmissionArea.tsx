@@ -204,12 +204,12 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
 
       {result && (
         <div className="relative overflow-hidden rounded-3xl">
-          <div className={showPaywall ? "blur-xl pointer-events-none select-none max-h-[400px] overflow-hidden opacity-40" : ""}>
+          <div className={showPaywall ? "blur-3xl pointer-events-none select-none max-h-[200px] overflow-hidden opacity-20" : ""}>
             <Resultado data={result} isLoggedIn={isLoggedIn} />
           </div>
           
           {showPaywall && (
-            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm p-4 text-center">
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-start pt-12 md:pt-20 bg-black/60 backdrop-blur-md p-4 text-center">
               <div 
                 className="w-full max-w-lg rounded-3xl border border-secondary/50 bg-card/95 p-8 md:p-10 shadow-[0_0_100px_rgba(var(--secondary-rgb),0.2)] animate-in fade-in zoom-in-95 duration-700"
               >

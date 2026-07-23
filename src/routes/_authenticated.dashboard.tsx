@@ -67,43 +67,21 @@ function Dashboard() {
         <div className="grid gap-8 md:grid-cols-3">
           {/* Main Column */}
           <div className="md:col-span-2 space-y-8">
-            {/* Welcome Card */}
-            <div className="rounded-3xl border border-border bg-card p-8 relative overflow-hidden shadow-[0_0_30px_rgba(var(--primary-rgb),0.05)]">
-              <div className="relative z-10">
-                <h1 className="text-3xl font-black mb-2">Bem-vindo, {profile?.full_name?.split(' ')[0] || 'Estudante'}! ✍️</h1>
-                <p className="text-muted-foreground">
-                  Você tem <strong className="text-foreground">{profile?.credits || 0} créditos</strong> disponíveis para correções ultra-detalhadas.
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <button 
-                    onClick={() => {
-                      document.getElementById("nova-correcao")?.scrollIntoView({ behavior: "smooth" });
-                    }}
-                    className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 font-bold text-primary-foreground hover:scale-105 transition-transform"
-                  >
-                    <Zap className="w-4 h-4 fill-current" />
-                    Nova Correção
-                  </button>
-                  {!profile?.is_pro && (
-                    <button className="inline-flex items-center gap-2 rounded-xl bg-secondary px-6 py-3 font-bold text-secondary-foreground hover:scale-105 transition-transform">
-                      Ativar Vitalício — R$ 24,90
-                    </button>
-                  )}
-                </div>
-              </div>
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl rounded-full" />
+            {/* Welcome Area */}
+            <div className="text-center mb-8">
+              <h1 className="text-4xl font-black mb-4 tracking-tight">
+                Bem-vindo, <span className="text-primary">{profile?.full_name?.split(' ')[0] || 'Estudante'}</span>! ✍️
+              </h1>
+              <p className="text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
+                Cole sua redação abaixo para receber uma análise profunda baseada nos critérios oficiais do INEP.
+              </p>
             </div>
 
-            {/* New Essay Submission Area within Dashboard */}
+            {/* Essay Submission Area */}
             <div id="nova-correcao" className="scroll-mt-20">
-              <h2 className="text-xl font-black mb-4 flex items-center gap-2">
-                <Zap className="w-5 h-5 text-primary" />
-                Área de Correção VIP
-              </h2>
               <EssaySubmissionArea 
                 isLoggedIn={true} 
                 onSuccess={() => {
-                  // Re-fetch essays after a new correction
                   const loadEssays = async () => {
                     const { data } = await supabase.from("essays").select("*").order("created_at", { ascending: false });
                     setEssays(data || []);

@@ -12,7 +12,8 @@ import {
   CreditCard, 
   Trophy, 
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  PenTool
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({

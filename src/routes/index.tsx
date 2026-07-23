@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useState } from "react";
 import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
 import { Sparkles, Trophy, ArrowRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({

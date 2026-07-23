@@ -209,46 +209,62 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
           </div>
           
           {showPaywall && (
-            <div className="absolute inset-0 z-20 flex items-start justify-center pt-10 px-4">
+            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm p-4 text-center">
               <div 
-                className="w-full max-w-2xl rounded-3xl border border-secondary/40 bg-card/95 backdrop-blur-2xl p-8 md:p-12 text-center shadow-[0_0_80px_rgba(0,0,0,0.8)] animate-in fade-in slide-in-from-bottom-10 duration-700"
+                className="w-full max-w-lg rounded-3xl border border-secondary/50 bg-card/95 p-8 md:p-10 shadow-[0_0_100px_rgba(var(--secondary-rgb),0.2)] animate-in fade-in zoom-in-95 duration-700"
               >
                 <div className="mb-6 flex justify-center">
-                  <div className="p-4 rounded-full bg-secondary/20 text-secondary animate-bounce">
-                    <Trophy className="w-12 h-12" />
+                  <div className="relative">
+                    <div className="absolute inset-0 animate-ping rounded-full bg-secondary/20" />
+                    <div className="relative p-5 rounded-full bg-secondary/20 text-secondary border-2 border-secondary/50 shadow-[0_0_20px_rgba(var(--secondary-rgb),0.4)]">
+                      <Trophy className="w-10 h-10" />
+                    </div>
                   </div>
                 </div>
                 
-                <h2 className="text-3xl md:text-4xl font-black mb-4 tracking-tight">Análise Pronta! 🎯</h2>
+                <h2 className="text-3xl md:text-4xl font-black mb-4 tracking-tighter uppercase italic">Análise Pronta! 🎯</h2>
                 
-                <p className="text-lg text-foreground font-medium mb-8 leading-relaxed">
-                  Sua correção detalhada e nota oficial já foram geradas. Mantemos esta plataforma ativa com uma pequena taxa de manutenção para que você possa continuar corrigindo suas redações com o máximo de precisão até o ENEM.
+                <p className="text-base text-foreground/90 font-semibold mb-8 leading-relaxed">
+                  Sua correção detalhada e nota oficial já foram geradas com precisão INEP. <br/>
+                  <span className="text-secondary">Desbloqueie agora</span> para ver seu resultado completo e garantir sua vaga na faculdade.
                 </p>
 
-                <div className="flex flex-col items-center gap-4">
+                <div className="space-y-6">
                   <button
-                    className="w-full rounded-2xl px-10 py-5 text-xl font-black text-secondary-foreground transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(var(--secondary-rgb),0.3)]"
+                    className="group relative w-full overflow-hidden rounded-2xl px-8 py-5 text-xl font-black text-secondary-foreground transition-all hover:scale-[1.03] active:scale-95 shadow-[0_10px_40px_rgba(var(--secondary-rgb),0.4)]"
                     style={{ background: "var(--gradient-secondary, linear-gradient(135deg, #f59e0b 0%, #d97706 100%))" }}
                   >
-                    DESBLOQUEAR TUDO AGORA 🚀
+                    <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
+                    <span className="relative flex items-center justify-center gap-3">
+                      LIBERAR MEU RESULTADO <ArrowRight className="w-6 h-6 animate-pulse" />
+                    </span>
                   </button>
-                  <div className="flex flex-col gap-1">
-                    <p className="text-sm font-bold text-foreground">Acesso Vitalício por apenas <span className="text-secondary text-xl">R$ 24,90</span></p>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">Pagamento único • Sem mensalidade</p>
+                  
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-center gap-3">
+                      <span className="text-sm font-bold text-muted-foreground line-through">R$ 97,00</span>
+                      <span className="rounded-full bg-secondary/10 px-3 py-1 text-[10px] font-black text-secondary uppercase tracking-widest border border-secondary/20">OFERTA ENEM</span>
+                    </div>
+                    <p className="text-sm font-bold text-foreground">Acesso Vitalício por apenas <span className="text-secondary text-2xl font-black">R$ 24,90</span></p>
+                    <p className="text-[9px] text-muted-foreground uppercase tracking-[0.2em] font-black">Pagamento único • Sem assinaturas</p>
                   </div>
                 </div>
 
-                <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 text-left border-t border-border/50 pt-8">
-                  <div className="flex gap-3 items-center">
-                    <div className="h-2 w-2 rounded-full bg-secondary shrink-0" />
-                    <p className="text-xs font-bold">Correções <strong>ilimitadas</strong></p>
+                <div className="mt-10 grid grid-cols-2 gap-4 text-left border-t border-border/50 pt-8">
+                  <div className="flex gap-2 items-start">
+                    <Sparkles className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
+                    <p className="text-[10px] font-bold leading-tight">Correções <br/><span className="text-secondary">ILIMITADAS</span></p>
                   </div>
-                  <div className="flex gap-3 items-center">
-                    <div className="h-2 w-2 rounded-full bg-secondary shrink-0" />
-                    <p className="text-xs font-bold">Histórico VIP permanente</p>
+                  <div className="flex gap-2 items-start">
+                    <Sparkles className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
+                    <p className="text-[10px] font-bold leading-tight">Histórico <br/><span className="text-secondary">VIP PERMANENTE</span></p>
                   </div>
                 </div>
               </div>
+              
+              <p className="mt-6 text-xs font-bold text-foreground/50 flex items-center gap-2">
+                🔒 Compra 100% segura e garantida
+              </p>
             </div>
           )}
         </div>

@@ -153,78 +153,72 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
           `}</style>
         </div>
       ) : (
-        <form
-          onSubmit={onSubmit}
-          className="rounded-3xl border border-border bg-card p-6 md:p-8"
-          style={{ boxShadow: "var(--shadow-glow)" }}
-        >
-          <label className="mb-2 block text-sm font-bold">Tema da redação</label>
-          <input
-            value={tema}
-            onChange={(e) => setTema(e.target.value)}
-            required
-            maxLength={300}
-            placeholder="Ex: Desafios para a valorização da comunidade indígena no Brasil"
-            className="w-full rounded-xl border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-
-          <label className="mt-5 mb-2 block text-sm font-bold">Cole sua redação aqui</label>
-          <textarea
-            value={redacao}
-            onChange={(e) => setRedacao(e.target.value)}
-            required
-            rows={12}
-            maxLength={8000}
-            placeholder="Cole o texto completo da sua redação..."
-            className="w-full resize-y rounded-xl border border-border bg-input px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-          />
-          <div className="mt-1 text-right text-xs text-muted-foreground">
-            {charCount} caracteres {charCount < 200 && "• mínimo 200"}
-          </div>
-
-          {erro && (
-            <div className="mt-4 rounded-xl border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive-foreground">
-              {erro}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading || charCount < 200 || tema.trim().length < 3}
-            className="mt-6 w-full rounded-xl py-4 text-lg font-black text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
-            style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
+        <div className="relative">
+          <form
+            onSubmit={onSubmit}
+            className={`rounded-3xl border border-border bg-card p-6 md:p-8 transition-all duration-500 ${result && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
+            style={{ boxShadow: "var(--shadow-glow)" }}
           >
-            CORRIGIR AGORA COM IA →
-          </button>
-          <p className="mt-3 text-center text-xs font-bold text-foreground/70">
-            🔒 100% privado • Sua redação {isLoggedIn ? "fica salva no seu histórico" : "não é armazenada"}
-          </p>
-        </form>
-      )}
+            <label className="mb-2 block text-sm font-bold">Tema da redação</label>
+            <input
+              value={tema}
+              onChange={(e) => setTema(e.target.value)}
+              required
+              maxLength={300}
+              placeholder="Ex: Desafios para a valorização da comunidade indígena no Brasil"
+              className="w-full rounded-xl border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
 
-      {result && (
-        <div className="relative overflow-hidden rounded-3xl">
-          <div className={showPaywall ? "blur-3xl pointer-events-none select-none max-h-[200px] overflow-hidden opacity-20" : ""}>
-            <Resultado data={result} isLoggedIn={isLoggedIn} />
-          </div>
-          
-          {showPaywall && (
-            <div className="absolute inset-0 z-20 flex flex-col items-center justify-start pt-12 md:pt-20 bg-black/60 backdrop-blur-md p-4 text-center">
+            <label className="mt-5 mb-2 block text-sm font-bold">Cole sua redação aqui</label>
+            <textarea
+              value={redacao}
+              onChange={(e) => setRedacao(e.target.value)}
+              required
+              rows={12}
+              maxLength={8000}
+              placeholder="Cole o texto completo da sua redação..."
+              className="w-full resize-y rounded-xl border border-border bg-input px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+            />
+            <div className="mt-1 text-right text-xs text-muted-foreground">
+              {charCount} caracteres {charCount < 200 && "• mínimo 200"}
+            </div>
+
+            {erro && (
+              <div className="mt-4 rounded-xl border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive-foreground">
+                {erro}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading || charCount < 200 || tema.trim().length < 3}
+              className="mt-6 w-full rounded-xl py-4 text-lg font-black text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+              style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
+            >
+              CORRIGIR AGORA COM IA →
+            </button>
+            <p className="mt-3 text-center text-xs font-bold text-foreground/70">
+              🔒 100% privado • Sua redação {isLoggedIn ? "fica salva no seu histórico" : "não é armazenada"}
+            </p>
+          </form>
+
+          {result && showPaywall && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center p-4 md:p-6 animate-in fade-in zoom-in duration-500">
               <div 
-                className="w-full max-w-lg rounded-3xl border border-secondary/50 bg-card/95 p-8 md:p-10 shadow-[0_0_100px_rgba(var(--secondary-rgb),0.2)] animate-in fade-in zoom-in-95 duration-700"
+                className="w-full max-w-lg rounded-3xl border border-secondary/50 bg-card/95 p-8 md:p-10 shadow-[0_0_100px_rgba(var(--secondary-rgb),0.4)] backdrop-blur-2xl relative"
               >
-                <div className="mb-6 flex justify-center">
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2">
                   <div className="relative">
                     <div className="absolute inset-0 animate-ping rounded-full bg-secondary/20" />
-                    <div className="relative p-5 rounded-full bg-secondary/20 text-secondary border-2 border-secondary/50 shadow-[0_0_20px_rgba(var(--secondary-rgb),0.4)]">
+                    <div className="relative p-5 rounded-full bg-card text-secondary border-4 border-secondary shadow-[0_0_30px_rgba(var(--secondary-rgb),0.6)]">
                       <Trophy className="w-10 h-10" />
                     </div>
                   </div>
                 </div>
                 
-                <h2 className="text-3xl md:text-4xl font-black mb-4 tracking-tighter uppercase italic">Análise Pronta! 🎯</h2>
+                <h2 className="text-3xl md:text-4xl font-black mb-4 tracking-tighter uppercase italic text-center">Análise Pronta! 🎯</h2>
                 
-                <p className="text-base text-foreground/90 font-semibold mb-8 leading-relaxed">
+                <p className="text-base text-foreground/90 font-semibold mb-8 leading-relaxed text-center">
                   Sua correção detalhada e nota oficial já foram geradas com precisão INEP. <br/>
                   <span className="text-secondary">Desbloqueie agora</span> para ver seu resultado completo e garantir sua vaga na faculdade.
                 </p>
@@ -240,7 +234,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                     </span>
                   </button>
                   
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-2 text-center">
                     <div className="flex items-center justify-center gap-3">
                       <span className="text-sm font-bold text-muted-foreground line-through">R$ 97,00</span>
                       <span className="rounded-full bg-secondary/10 px-3 py-1 text-[10px] font-black text-secondary uppercase tracking-widest border border-secondary/20">OFERTA ENEM</span>
@@ -260,11 +254,17 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                     <p className="text-[10px] font-bold leading-tight">Histórico <br/><span className="text-secondary">VIP PERMANENTE</span></p>
                   </div>
                 </div>
+                
+                <p className="mt-8 text-[10px] font-bold text-foreground/50 flex items-center justify-center gap-2">
+                  🔒 Compra 100% segura e garantida
+                </p>
               </div>
-              
-              <p className="mt-6 text-xs font-bold text-foreground/50 flex items-center gap-2">
-                🔒 Compra 100% segura e garantida
-              </p>
+            </div>
+          )}
+
+          {result && !showPaywall && (
+            <div className="mt-10 animate-in fade-in slide-in-from-bottom-10 duration-700">
+              <Resultado data={result} isLoggedIn={isLoggedIn} />
             </div>
           )}
         </div>

@@ -61,13 +61,7 @@ function Countdown() {
 }
 
 function Landing() {
-  const [tema, setTema] = useState("");
-  const [redacao, setRedacao] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [erro, setErro] = useState<string | null>(null);
-  const [result, setResult] = useState<Correcao | null>(null);
   const [session, setSession] = useState<any>(null);
-  const corrigir = useServerFn(corrigirRedacao);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -78,47 +72,6 @@ function Landing() {
     });
     return () => subscription.unsubscribe();
   }, []);
-
-  const charCount = redacao.trim().length;
-
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setErro(null);
-    setResult(null);
-    setLoading(true);
-    try {
-      // Forçamos pelo menos 25 segundos de loading para criar suspense e realismo (FOMO/Dopamina)
-      const startTime = Date.now();
-      const r = await corrigir({ data: { tema: tema.trim(), redacao: redacao.trim() } });
-      const elapsed = Date.now() - startTime;
-      const wait = Math.max(0, 28000 - elapsed); // Miramos em ~30s no total
-      
-      if (wait > 0) {
-        await new Promise((resolve) => setTimeout(resolve, wait));
-      }
-
-      setResult(r);
-      
-      // Se estiver logado, salva no histórico
-      if (session?.user) {
-        await supabase.from("essays").insert({
-          user_id: session.user.id,
-          tema: tema.trim(),
-          redacao: redacao.trim(),
-          resultado: r
-        });
-      }
-
-      setTimeout(
-        () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
-        100,
-      );
-    } catch (err) {
-      setErro(err instanceof Error ? err.message : "Erro inesperado");
-    } finally {
-      setLoading(false);
-    }
-  }
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">

@@ -153,11 +153,12 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
           `}</style>
         </div>
       ) : (
-        <form
-          onSubmit={onSubmit}
-          className="rounded-3xl border border-border bg-card p-6 md:p-8"
-          style={{ boxShadow: "var(--shadow-glow)" }}
-        >
+        <div className="relative">
+          <form
+            onSubmit={onSubmit}
+            className={`rounded-3xl border border-border bg-card p-6 md:p-8 transition-all duration-500 ${result && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
+            style={{ boxShadow: "var(--shadow-glow)" }}
+          >
           <label className="mb-2 block text-sm font-bold">Tema da redação</label>
           <input
             value={tema}
@@ -202,14 +203,19 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
         </form>
       )}
 
-      {result && (
-        <div className="relative overflow-hidden rounded-3xl">
-          <div className={showPaywall ? "blur-3xl pointer-events-none select-none max-h-[200px] overflow-hidden opacity-20" : ""}>
-            <Resultado data={result} isLoggedIn={isLoggedIn} />
-          </div>
-          
-          {showPaywall && (
-            <div className="absolute inset-0 z-20 flex flex-col items-center justify-start pt-12 md:pt-20 bg-black/60 backdrop-blur-md p-4 text-center">
+          {result && showPaywall && (
+            <div className="absolute inset-0 z-50 flex items-center justify-center p-4 md:p-6 animate-in fade-in zoom-in duration-500">
+              <div 
+                className="w-full max-w-lg rounded-3xl border border-secondary/50 bg-card/95 p-8 md:p-10 shadow-[0_0_100px_rgba(var(--secondary-rgb),0.3)] backdrop-blur-xl relative"
+              >
+                <div className="absolute -top-12 left-1/2 -translate-x-1/2">
+                  <div className="relative">
+                    <div className="absolute inset-0 animate-ping rounded-full bg-secondary/20" />
+                    <div className="relative p-5 rounded-full bg-secondary bg-card text-secondary border-4 border-secondary shadow-[0_0_30px_rgba(var(--secondary-rgb),0.6)]">
+                      <Trophy className="w-10 h-10" />
+                    </div>
+                  </div>
+                </div>
               <div 
                 className="w-full max-w-lg rounded-3xl border border-secondary/50 bg-card/95 p-8 md:p-10 shadow-[0_0_100px_rgba(var(--secondary-rgb),0.2)] animate-in fade-in zoom-in-95 duration-700"
               >
@@ -265,6 +271,12 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
               <p className="mt-6 text-xs font-bold text-foreground/50 flex items-center gap-2">
                 🔒 Compra 100% segura e garantida
               </p>
+            </div>
+          )}
+
+          {result && !showPaywall && (
+            <div className="mt-10 animate-in fade-in slide-in-from-bottom-10 duration-700">
+              <Resultado data={result} isLoggedIn={isLoggedIn} />
             </div>
           )}
         </div>

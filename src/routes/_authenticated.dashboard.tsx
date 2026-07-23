@@ -1,9 +1,19 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { type Correcao } from "@/lib/correct-essay.functions";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
-import { LogOut, BookOpen, Zap, History, Star, CreditCard } from "lucide-react";
+import { Sidebar } from "@/components/Sidebar";
+import { 
+  History, 
+  Star, 
+  BookOpen, 
+  Zap, 
+  CreditCard, 
+  Trophy, 
+  Sparkles,
+  ArrowRight
+} from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,

@@ -203,15 +203,15 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
       )}
 
       {result && (
-        <div className="relative">
-          <div className={showPaywall ? "blur-md pointer-events-none select-none" : ""}>
+        <div className="relative overflow-hidden rounded-3xl">
+          <div className={showPaywall ? "blur-xl pointer-events-none select-none max-h-[400px] overflow-hidden opacity-40" : ""}>
             <Resultado data={result} isLoggedIn={isLoggedIn} />
           </div>
           
           {showPaywall && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center p-4">
+            <div className="absolute inset-0 z-20 flex items-start justify-center pt-10 px-4">
               <div 
-                className="w-full max-w-2xl rounded-3xl border border-secondary/40 bg-card/90 backdrop-blur-xl p-8 md:p-12 text-center shadow-[0_0_50px_rgba(0,0,0,0.5)] animate-in fade-in zoom-in duration-500"
+                className="w-full max-w-2xl rounded-3xl border border-secondary/40 bg-card/95 backdrop-blur-2xl p-8 md:p-12 text-center shadow-[0_0_80px_rgba(0,0,0,0.8)] animate-in fade-in slide-in-from-bottom-10 duration-700"
               >
                 <div className="mb-6 flex justify-center">
                   <div className="p-4 rounded-full bg-secondary/20 text-secondary animate-bounce">

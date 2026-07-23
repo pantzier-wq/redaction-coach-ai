@@ -168,7 +168,7 @@ function Landing() {
 
           <div className="mt-8 mb-4">
             <Countdown />
-            <p className="mt-2 text-xs text-muted-foreground">⏳ Tempo até o próximo ENEM</p>
+            <p className="mt-2 text-xs font-bold text-foreground">⏳ Tempo até o próximo ENEM</p>
           </div>
 
           <a
@@ -178,7 +178,7 @@ function Landing() {
           >
             CORRIGIR MINHA REDAÇÃO AGORA →
           </a>
-          <p className="mt-3 text-xs text-muted-foreground">
+          <p className="mt-3 text-xs font-bold text-foreground/80">
             Grátis • Sem cadastro • Resultado em segundos
           </p>
         </div>
@@ -262,7 +262,7 @@ function Landing() {
               </div>
             </div>
 
-            <p className="mt-8 text-xs text-muted-foreground animate-pulse">
+            <p className="mt-8 text-xs font-bold text-foreground animate-pulse">
               O rigor da correção leva tempo. Não feche esta página.
             </p>
 
@@ -329,7 +329,7 @@ function Landing() {
             >
               CORRIGIR AGORA COM IA →
             </button>
-            <p className="mt-3 text-center text-xs text-muted-foreground">
+            <p className="mt-3 text-center text-xs font-bold text-foreground/70">
               🔒 100% privado • Sua redação não é armazenada
             </p>
           </form>

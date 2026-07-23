@@ -203,8 +203,8 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
       )}
 
       {result && (
-        <div className="relative">
-          <div className={showPaywall ? "blur-md pointer-events-none select-none" : ""}>
+        <div className="relative overflow-hidden rounded-3xl">
+          <div className={showPaywall ? "blur-xl pointer-events-none select-none max-h-[400px] overflow-hidden opacity-40" : ""}>
             <Resultado data={result} isLoggedIn={isLoggedIn} />
           </div>
           

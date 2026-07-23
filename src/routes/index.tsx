@@ -172,7 +172,6 @@ function Landing() {
 
         <EssaySubmissionArea isLoggedIn={!!session} />
       </section>
-      </section>
 
       <section className="mx-auto max-w-4xl px-4 py-16">
         <div className="grid gap-6 md:grid-cols-3">

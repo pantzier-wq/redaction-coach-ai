@@ -38,6 +38,18 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
         await new Promise((resolve) => setTimeout(resolve, wait));
       }
 
+      setResult(r);
+
+      // Persistência local para usuários não logados (Primeira correção gratuita)
+      if (!isLoggedIn) {
+        localStorage.setItem("pending_essay_correction", JSON.stringify({
+          tema: tema.trim(),
+          redacao: redacao.trim(),
+          resultado: r,
+          timestamp: Date.now()
+        }));
+      }
+
       // Check if user is PRO.
       let currentIsPro = false;
       if (isLoggedIn) {
@@ -46,17 +58,8 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
           const { data: profile } = await supabase.from("profiles").select("is_pro").eq("id", user.id).single();
           currentIsPro = !!profile?.is_pro;
           setIsPro(currentIsPro);
-        }
-      }
-
-      setResult(r);
-      if (isLoggedIn && !currentIsPro) {
-        setShowPaywall(true);
-      }
-      
-      if (isLoggedIn) {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
+          
+          // Se logado, salvar no banco
           await supabase.from("essays").insert({
             user_id: user.id,
             tema: tema.trim(),
@@ -66,6 +69,10 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
         }
       }
 
+      if (isLoggedIn && !currentIsPro) {
+        setShowPaywall(true);
+      }
+      
       if (onSuccess) {
         onSuccess(r);
       }

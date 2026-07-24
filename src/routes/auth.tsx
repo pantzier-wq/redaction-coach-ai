@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   component: AuthPage,
@@ -16,8 +17,27 @@ function AuthPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
+        // Sync pending essay if exists
+        const pending = localStorage.getItem("pending_essay_correction");
+        if (pending) {
+          try {
+            const data = JSON.parse(pending);
+            const { error } = await supabase.from("essays").insert({
+              user_id: session.user.id,
+              tema: data.tema,
+              redacao: data.redacao,
+              resultado: data.resultado
+            });
+            if (!error) {
+              localStorage.removeItem("pending_essay_correction");
+              toast.success("Sua redação gratuita foi salva na sua conta!");
+            }
+          } catch (e) {
+            console.error("Erro ao sincronizar redação pendente", e);
+          }
+        }
         navigate({ to: "/dashboard" });
       }
     });

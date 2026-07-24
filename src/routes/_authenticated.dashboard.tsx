@@ -77,7 +77,7 @@ function Dashboard() {
         onLogout={handleLogout}
       />
 
-      <main className="flex-1 md:ml-64 min-h-screen">
+      <main className="flex-1 md:ml-64 min-h-screen pt-20 md:pt-0">
         <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
           {activeSection === "dashboard" && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">

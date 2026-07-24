@@ -159,17 +159,17 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
             className={`rounded-3xl border border-border bg-card p-6 md:p-8 transition-all duration-500 ${result && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
             style={{ boxShadow: "var(--shadow-glow)" }}
           >
-            <label className="mb-2 block text-sm font-bold">Tema da redação</label>
+            <label className="mb-2 block text-sm font-bold text-[#22c55e]">Tema da redação</label>
             <input
               value={tema}
               onChange={(e) => setTema(e.target.value)}
               required
               maxLength={300}
               placeholder="Ex: Desafios para a valorização da comunidade indígena no Brasil"
-              className="w-full rounded-xl border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full rounded-xl border border-border bg-input px-4 py-3 text-[#22c55e] placeholder:text-[#22c55e]/50 focus:outline-none focus:ring-2 focus:ring-[#22c55e]"
             />
 
-            <label className="mt-5 mb-2 block text-sm font-bold">Cole sua redação aqui</label>
+            <label className="mt-5 mb-2 block text-sm font-bold text-[#22c55e]">Cole sua redação aqui</label>
             <textarea
               value={redacao}
               onChange={(e) => setRedacao(e.target.value)}
@@ -177,9 +177,9 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
               rows={12}
               maxLength={8000}
               placeholder="Cole o texto completo da sua redação..."
-              className="w-full resize-y rounded-xl border border-border bg-input px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+              className="w-full resize-y rounded-xl border border-border bg-input px-4 py-3 font-mono text-sm text-[#22c55e] placeholder:text-[#22c55e]/50 focus:outline-none focus:ring-2 focus:ring-[#22c55e]"
             />
-            <div className="mt-1 text-right text-xs text-muted-foreground">
+            <div className="mt-1 text-right text-xs text-[#22c55e]/70">
               {charCount} caracteres {charCount < 200 && "• mínimo 200"}
             </div>
 
@@ -192,12 +192,12 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
             <button
               type="submit"
               disabled={loading || charCount < 200 || tema.trim().length < 3}
-              className="mt-6 w-full rounded-xl py-4 text-lg font-black text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
-              style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
+              className="mt-6 w-full rounded-xl py-4 text-lg font-black text-white transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+              style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)", boxShadow: "0 0 20px rgba(34, 197, 94, 0.4)" }}
             >
               CORRIGIR AGORA COM IA →
             </button>
-            <p className="mt-3 text-center text-xs font-bold text-foreground/70">
+            <p className="mt-3 text-center text-xs font-bold text-[#22c55e]/80">
               🔒 100% privado • Sua redação {isLoggedIn ? "fica salva no seu histórico" : "não é armazenada"}
             </p>
           </form>
@@ -205,22 +205,22 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
           {result && showPaywall && (
             <div className="absolute inset-0 z-50 flex items-center justify-center p-4 md:p-6 animate-in fade-in zoom-in duration-500">
               <div 
-                className="w-full max-w-lg rounded-3xl border border-secondary/50 bg-card/95 p-8 md:p-10 shadow-[0_0_100px_rgba(var(--secondary-rgb),0.4)] backdrop-blur-2xl relative"
+                className="w-full max-w-lg rounded-3xl border border-[#22c55e]/50 bg-card/95 p-8 md:p-10 shadow-[0_0_100px_rgba(34,197,94,0.4)] backdrop-blur-2xl relative"
               >
                 <div className="absolute -top-12 left-1/2 -translate-x-1/2">
                   <div className="relative">
-                    <div className="absolute inset-0 animate-ping rounded-full bg-secondary/20" />
-                    <div className="relative p-5 rounded-full bg-card text-secondary border-4 border-secondary shadow-[0_0_30px_rgba(var(--secondary-rgb),0.6)]">
+                    <div className="absolute inset-0 animate-ping rounded-full bg-[#22c55e]/20" />
+                    <div className="relative p-5 rounded-full bg-card text-[#22c55e] border-4 border-[#22c55e] shadow-[0_0_30px_rgba(34,197,94,0.6)]">
                       <Trophy className="w-10 h-10" />
                     </div>
                   </div>
                 </div>
                 
-                <h2 className="text-3xl md:text-4xl font-black mb-4 tracking-tighter uppercase italic text-center">Análise Pronta! 🎯</h2>
+                <h2 className="text-3xl md:text-4xl font-black mb-4 tracking-tighter uppercase italic text-center text-white">Análise Pronta! 🎯</h2>
                 
-                <p className="text-base text-foreground/90 font-semibold mb-8 leading-relaxed text-center">
+                <p className="text-base text-white/90 font-semibold mb-8 leading-relaxed text-center">
                   Sua correção detalhada e nota oficial já foram geradas com precisão INEP. <br/>
-                  <span className="text-secondary">Desbloqueie agora</span> para ver seu resultado completo e garantir sua vaga na faculdade.
+                  <span className="text-[#22c55e]">Desbloqueie agora</span> para ver seu resultado completo e garantir sua vaga na faculdade.
                 </p>
 
                 <div className="space-y-6">

@@ -70,7 +70,7 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
       {/* Mobile Toggle */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-[60] md:hidden p-2 bg-card border border-border rounded-lg shadow-lg"
+        className="fixed top-4 left-4 z-[60] md:hidden p-2 bg-card border border-border rounded-lg shadow-lg hover:bg-muted transition-colors"
       >
         {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>

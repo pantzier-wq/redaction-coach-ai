@@ -180,10 +180,12 @@ function Dashboard() {
                         // Ao clicar, podemos abrir uma visualização ou mudar a seção
                         // Por enquanto, vamos injetar o resultado no EssaySubmissionArea se estivermos na seção correcao
                         // Mas o ideal é ter uma seção de visualização de resultado
-                        setActiveSection("correcao");
-                        // Precisamos passar o estado para o EssaySubmissionArea. 
-                        // Vamos adicionar uma prop de 'initialResult' ao EssaySubmissionArea
-                        localStorage.setItem("viewing_essay", JSON.stringify(essay));
+                        if (!profile?.is_pro) {
+                          setActiveSection("upgrade");
+                        } else {
+                          setActiveSection("correcao");
+                          localStorage.setItem("viewing_essay", JSON.stringify(essay));
+                        }
                       }}
                       className="rounded-2xl border border-border bg-card p-6 hover:border-primary/50 transition-all hover:scale-[1.01] cursor-pointer group"
                     >

@@ -171,15 +171,12 @@ function Dashboard() {
                 </h2>
                 <p className="text-muted-foreground mt-2">Acompanhe sua evolução através das correções anteriores.</p>
               </div>
-              <div className="grid gap-4">
+              <div className="grid gap-4 overflow-x-hidden">
                 {essays.length > 0 ? (
                   essays.map((essay) => (
                     <div 
                       key={essay.id} 
                       onClick={() => {
-                        // Ao clicar, podemos abrir uma visualização ou mudar a seção
-                        // Por enquanto, vamos injetar o resultado no EssaySubmissionArea se estivermos na seção correcao
-                        // Mas o ideal é ter uma seção de visualização de resultado
                         if (!profile?.is_pro) {
                           setActiveSection("upgrade");
                         } else {
@@ -187,21 +184,21 @@ function Dashboard() {
                           localStorage.setItem("viewing_essay", JSON.stringify(essay));
                         }
                       }}
-                      className="rounded-2xl border border-border bg-card p-6 hover:border-primary/50 transition-all hover:scale-[1.01] cursor-pointer group"
+                      className="rounded-2xl border border-border bg-card p-4 md:p-6 hover:border-primary/50 transition-all hover:scale-[1.01] cursor-pointer group w-full"
                     >
-                      <div className="flex justify-between items-center mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black">
+                      <div className="flex justify-between items-center gap-4">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="h-10 w-10 shrink-0 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black">
                             {new Date(essay.created_at).getDate()}
                           </div>
-                          <div>
-                            <h3 className="font-bold line-clamp-1 group-hover:text-primary transition-colors">{essay.tema}</h3>
-                            <p className="text-xs text-muted-foreground">
+                          <div className="min-w-0">
+                            <h3 className="font-bold truncate group-hover:text-primary transition-colors pr-2">{essay.tema}</h3>
+                            <p className="text-[10px] md:text-xs text-muted-foreground">
                               {new Date(essay.created_at).toLocaleDateString('pt-BR')} • {essay.redacao.length} caracteres
                             </p>
                           </div>
                         </div>
-                        <div className="text-3xl font-black text-primary">
+                        <div className="text-2xl md:text-3xl font-black text-primary shrink-0">
                           {(essay.resultado as Correcao).nota_total}
                         </div>
                       </div>

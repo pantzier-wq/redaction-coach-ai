@@ -33,11 +33,23 @@ function Dashboard() {
 
       const [profRes, essayRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", user.id).single(),
+        // Usando uma query RPC ou garantindo unicidade no app?
+        // Vamos apenas garantir que pegamos os dados e o frontend lida com exibição.
+        // Se houver duplicatas por inserções rápidas, podemos filtrar aqui.
         supabase.from("essays").select("*").order("created_at", { ascending: false })
       ]);
 
+      const uniqueEssays = (essayRes.data || []).reduce((acc: any[], current: any) => {
+        const x = acc.find(item => item.tema === current.tema && item.redacao === current.redacao);
+        if (!x) {
+          return acc.concat([current]);
+        } else {
+          return acc;
+        }
+      }, []);
+
       setProfile(profRes.data);
-      setEssays(essayRes.data || []);
+      setEssays(uniqueEssays);
       setLoading(false);
     }
     loadData();
@@ -162,7 +174,19 @@ function Dashboard() {
               <div className="grid gap-4">
                 {essays.length > 0 ? (
                   essays.map((essay) => (
-                    <div key={essay.id} className="rounded-2xl border border-border bg-card p-6 hover:border-primary/50 transition-all hover:scale-[1.01] cursor-pointer group">
+                    <div 
+                      key={essay.id} 
+                      onClick={() => {
+                        // Ao clicar, podemos abrir uma visualização ou mudar a seção
+                        // Por enquanto, vamos injetar o resultado no EssaySubmissionArea se estivermos na seção correcao
+                        // Mas o ideal é ter uma seção de visualização de resultado
+                        setActiveSection("correcao");
+                        // Precisamos passar o estado para o EssaySubmissionArea. 
+                        // Vamos adicionar uma prop de 'initialResult' ao EssaySubmissionArea
+                        localStorage.setItem("viewing_essay", JSON.stringify(essay));
+                      }}
+                      className="rounded-2xl border border-border bg-card p-6 hover:border-primary/50 transition-all hover:scale-[1.01] cursor-pointer group"
+                    >
                       <div className="flex justify-between items-center mb-4">
                         <div className="flex items-center gap-3">
                           <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black">

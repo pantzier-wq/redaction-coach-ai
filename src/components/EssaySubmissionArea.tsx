@@ -19,6 +19,23 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
   const [result, setResult] = useState<Correcao | null>(null);
   const [isPro, setIsPro] = useState(false);
   const corrigir = useServerFn(corrigirRedacao);
+  
+  // Efeito para carregar redação do histórico se houver no localStorage
+  useState(() => {
+    const saved = localStorage.getItem("viewing_essay");
+    if (saved) {
+      try {
+        const essay = JSON.parse(saved);
+        setTema(essay.tema);
+        setRedacao(essay.redacao);
+        setResult(essay.resultado);
+        // Limpar após carregar
+        localStorage.removeItem("viewing_essay");
+      } catch (e) {
+        console.error("Erro ao carregar redação salva", e);
+      }
+    }
+  });
 
   const charCount = redacao.trim().length;
 

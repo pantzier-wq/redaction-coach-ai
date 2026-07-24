@@ -246,16 +246,16 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
 
                 <div className="mt-10 grid grid-cols-2 gap-4 text-left border-t border-border/50 pt-8">
                   <div className="flex gap-2 items-start">
-                    <Sparkles className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
-                    <p className="text-[10px] font-bold leading-tight">Correções <br/><span className="text-secondary">ILIMITADAS</span></p>
+                    <Sparkles className="w-4 h-4 text-[#22c55e] shrink-0 mt-0.5" />
+                    <p className="text-[10px] font-bold leading-tight text-white">Correções <br/><span className="text-[#22c55e]">ILIMITADAS</span></p>
                   </div>
                   <div className="flex gap-2 items-start">
-                    <Sparkles className="w-4 h-4 text-secondary shrink-0 mt-0.5" />
-                    <p className="text-[10px] font-bold leading-tight">Histórico <br/><span className="text-secondary">VIP PERMANENTE</span></p>
+                    <Sparkles className="w-4 h-4 text-[#22c55e] shrink-0 mt-0.5" />
+                    <p className="text-[10px] font-bold leading-tight text-white">Histórico <br/><span className="text-[#22c55e]">VIP PERMANENTE</span></p>
                   </div>
                 </div>
                 
-                <p className="mt-8 text-[10px] font-bold text-foreground/50 flex items-center justify-center gap-2">
+                <p className="mt-8 text-[10px] font-bold text-white/50 flex items-center justify-center gap-2">
                   🔒 Compra 100% segura e garantida
                 </p>
               </div>

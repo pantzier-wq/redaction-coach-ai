@@ -114,7 +114,11 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
             <button
               key={item.id}
               onClick={() => {
-                setActiveSection(item.id);
+                if (item.id === "historico" && !profile?.is_pro) {
+                  setActiveSection("upgrade");
+                } else {
+                  setActiveSection(item.id);
+                }
                 closeSidebar();
               }}
               className={cn(

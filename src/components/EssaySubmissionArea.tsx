@@ -203,9 +203,9 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
           </form>
 
           {result && showPaywall && (
-            <div className="absolute inset-0 z-50 flex items-center justify-center p-4 md:p-6 animate-in fade-in zoom-in duration-500">
+            <div className="absolute inset-x-0 -top-6 bottom-0 z-50 flex items-start justify-center p-4 md:p-6 overflow-y-auto">
               <div 
-                className="w-full max-w-lg rounded-3xl border border-[#22c55e]/50 bg-card/95 p-8 md:p-10 shadow-[0_0_100px_rgba(34,197,94,0.4)] backdrop-blur-2xl relative"
+                className="w-full max-w-lg rounded-3xl border border-[#22c55e]/50 bg-card/95 p-6 md:p-10 shadow-[0_0_100px_rgba(34,197,94,0.4)] backdrop-blur-2xl relative my-8 animate-in fade-in zoom-in duration-500"
               >
                 <div className="absolute -top-12 left-1/2 -translate-x-1/2">
                   <div className="relative">
@@ -218,14 +218,14 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                 
                 <h2 className="text-3xl md:text-4xl font-black mb-4 tracking-tighter uppercase italic text-center text-white">Análise Pronta! 🎯</h2>
                 
-                <p className="text-base text-white/90 font-semibold mb-8 leading-relaxed text-center">
-                  Sua correção detalhada e nota oficial já foram geradas com precisão INEP. <br/>
+                <p className="text-sm md:text-base text-white/90 font-semibold mb-6 md:mb-8 leading-relaxed text-center">
+                  Sua correção detalhada e nota oficial já foram geradas com precisão INEP. <br className="hidden md:block"/>
                   <span className="text-[#22c55e]">Desbloqueie agora</span> para ver seu resultado completo e garantir sua vaga na faculdade.
                 </p>
 
                 <div className="space-y-6">
                   <button
-                    className="group relative w-full overflow-hidden rounded-2xl px-8 py-5 text-xl font-black text-white transition-all hover:scale-[1.03] active:scale-95 shadow-[0_10px_40px_rgba(34,197,94,0.4)]"
+                    className="group relative w-full overflow-hidden rounded-2xl px-6 py-4 md:py-5 text-lg md:text-xl font-black text-white transition-all hover:scale-[1.03] active:scale-95 shadow-[0_10px_40px_rgba(34,197,94,0.4)]"
                     style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)" }}
                   >
                     <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
@@ -239,19 +239,24 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                       <span className="text-sm font-bold text-white/50 line-through">R$ 97,00</span>
                       <span className="rounded-full bg-[#22c55e]/10 px-3 py-1 text-[10px] font-black text-[#22c55e] uppercase tracking-widest border border-[#22c55e]/20">OFERTA ENEM</span>
                     </div>
-                    <p className="text-sm font-bold text-white">Acesso Vitalício por apenas <span className="text-[#22c55e] text-2xl font-black">R$ 24,90</span></p>
+                    <p className="text-sm font-bold text-white leading-snug">
+                      Acesso Vitalício por apenas <span className="text-[#22c55e] text-2xl font-black block md:inline">R$ 24,90</span>
+                    </p>
+                    <p className="text-[10px] text-white font-black uppercase tracking-widest bg-white/5 py-1 rounded-lg">
+                      Uso ILIMITADO • Sem mensalidades
+                    </p>
                     <p className="text-[9px] text-white/60 uppercase tracking-[0.2em] font-black">Pagamento único • Sem assinaturas</p>
                   </div>
                 </div>
 
-                <div className="mt-10 grid grid-cols-2 gap-4 text-left border-t border-border/50 pt-8">
+                <div className="mt-8 md:mt-10 grid grid-cols-2 gap-4 text-left border-t border-border/50 pt-6 md:pt-8">
                   <div className="flex gap-2 items-start">
                     <Sparkles className="w-4 h-4 text-[#22c55e] shrink-0 mt-0.5" />
-                    <p className="text-[10px] font-bold leading-tight text-white">Correções <br/><span className="text-[#22c55e]">ILIMITADAS</span></p>
+                    <p className="text-[10px] font-bold leading-tight text-white">Correções <br/><span className="text-[#22c55e]">ILIMITADAS PARA SEMPRE</span></p>
                   </div>
                   <div className="flex gap-2 items-start">
                     <Sparkles className="w-4 h-4 text-[#22c55e] shrink-0 mt-0.5" />
-                    <p className="text-[10px] font-bold leading-tight text-white">Histórico <br/><span className="text-[#22c55e]">VIP PERMANENTE</span></p>
+                    <p className="text-[10px] font-bold leading-tight text-white">Acesso <br/><span className="text-[#22c55e]">VIP VITALÍCIO</span></p>
                   </div>
                 </div>
                 

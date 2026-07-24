@@ -225,8 +225,8 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
 
                 <div className="space-y-6">
                   <button
-                    className="group relative w-full overflow-hidden rounded-2xl px-8 py-5 text-xl font-black text-secondary-foreground transition-all hover:scale-[1.03] active:scale-95 shadow-[0_10px_40px_rgba(var(--secondary-rgb),0.4)]"
-                    style={{ background: "var(--gradient-secondary, linear-gradient(135deg, #f59e0b 0%, #d97706 100%))" }}
+                    className="group relative w-full overflow-hidden rounded-2xl px-8 py-5 text-xl font-black text-white transition-all hover:scale-[1.03] active:scale-95 shadow-[0_10px_40px_rgba(34,197,94,0.4)]"
+                    style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)" }}
                   >
                     <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
                     <span className="relative flex items-center justify-center gap-3">
@@ -236,11 +236,11 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                   
                   <div className="flex flex-col gap-2 text-center">
                     <div className="flex items-center justify-center gap-3">
-                      <span className="text-sm font-bold text-muted-foreground line-through">R$ 97,00</span>
-                      <span className="rounded-full bg-secondary/10 px-3 py-1 text-[10px] font-black text-secondary uppercase tracking-widest border border-secondary/20">OFERTA ENEM</span>
+                      <span className="text-sm font-bold text-white/50 line-through">R$ 97,00</span>
+                      <span className="rounded-full bg-[#22c55e]/10 px-3 py-1 text-[10px] font-black text-[#22c55e] uppercase tracking-widest border border-[#22c55e]/20">OFERTA ENEM</span>
                     </div>
-                    <p className="text-sm font-bold text-foreground">Acesso Vitalício por apenas <span className="text-secondary text-2xl font-black">R$ 24,90</span></p>
-                    <p className="text-[9px] text-muted-foreground uppercase tracking-[0.2em] font-black">Pagamento único • Sem assinaturas</p>
+                    <p className="text-sm font-bold text-white">Acesso Vitalício por apenas <span className="text-[#22c55e] text-2xl font-black">R$ 24,90</span></p>
+                    <p className="text-[9px] text-white/60 uppercase tracking-[0.2em] font-black">Pagamento único • Sem assinaturas</p>
                   </div>
                 </div>
 

@@ -159,17 +159,17 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
             className={`rounded-3xl border border-border bg-card p-6 md:p-8 transition-all duration-500 ${result && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
             style={{ boxShadow: "var(--shadow-glow)" }}
           >
-            <label className="mb-2 block text-sm font-bold text-[#22c55e]">Tema da redação</label>
+            <label className="mb-2 block text-sm font-bold text-primary">Tema da redação</label>
             <input
               value={tema}
               onChange={(e) => setTema(e.target.value)}
               required
               maxLength={300}
               placeholder="Ex: Desafios para a valorização da comunidade indígena no Brasil"
-              className="w-full rounded-xl border border-border bg-input px-4 py-3 text-[#22c55e] placeholder:text-[#22c55e]/50 focus:outline-none focus:ring-2 focus:ring-[#22c55e]"
+              className="w-full rounded-xl border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
 
-            <label className="mt-5 mb-2 block text-sm font-bold text-[#22c55e]">Cole sua redação aqui</label>
+            <label className="mt-5 mb-2 block text-sm font-bold text-primary">Cole sua redação aqui</label>
             <textarea
               value={redacao}
               onChange={(e) => setRedacao(e.target.value)}
@@ -177,9 +177,9 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
               rows={12}
               maxLength={8000}
               placeholder="Cole o texto completo da sua redação..."
-              className="w-full resize-y rounded-xl border border-border bg-input px-4 py-3 font-mono text-sm text-[#22c55e] placeholder:text-[#22c55e]/50 focus:outline-none focus:ring-2 focus:ring-[#22c55e]"
+              className="w-full resize-y rounded-xl border border-border bg-input px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
-            <div className="mt-1 text-right text-xs text-[#22c55e]/70">
+            <div className="mt-1 text-right text-xs text-muted-foreground">
               {charCount} caracteres {charCount < 200 && "• mínimo 200"}
             </div>
 
@@ -197,7 +197,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
             >
               CORRIGIR AGORA COM IA →
             </button>
-            <p className="mt-3 text-center text-xs font-bold text-[#22c55e]/80">
+            <p className="mt-3 text-center text-xs font-bold text-muted-foreground">
               🔒 100% privado • Sua redação {isLoggedIn ? "fica salva no seu histórico" : "não é armazenada"}
             </p>
           </form>

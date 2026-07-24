@@ -74,8 +74,6 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
       >
         {isOpen ? <X className="w-6 h-6 text-primary" /> : <Menu className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />}
       </button>
-        {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-      </button>
 
       {/* Overlay for mobile */}
       {isOpen && (

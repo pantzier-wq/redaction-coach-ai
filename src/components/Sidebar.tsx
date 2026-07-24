@@ -70,9 +70,9 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
       {/* Mobile Toggle */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-4 left-4 z-[60] md:hidden p-2 bg-card border border-border rounded-lg shadow-lg hover:bg-muted transition-colors"
+        className="fixed top-6 left-6 z-[60] md:hidden p-3 bg-card/90 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl hover:bg-muted transition-all active:scale-95 group"
       >
-        {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        {isOpen ? <X className="w-6 h-6 text-primary" /> : <Menu className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />}
       </button>
 
       {/* Overlay for mobile */}

@@ -228,11 +228,13 @@ function Landing() {
               name: "Lucas Martins",
               text: "Consegui subir de 720 para 960 em duas semanas. As correções detalhadas são o diferencial.",
               note: "960 no Simulado",
+              image: "https://i.imgur.com/5anryL8.png",
             },
             {
               name: "Ana Julia",
               text: "O feedback da competência 5 me ajudou a entender o que faltava na minha proposta. Incrível!",
               note: "Nota 920",
+              image: "https://i.imgur.com/5BdwE3A.png",
             },
             {
               name: "Matheus Oliveira",
@@ -243,14 +245,18 @@ function Landing() {
               name: "Beatriz Santos",
               text: "Melhor que muito corretor humano que demora uma semana pra entregar. O feedback é instantâneo e certeiro.",
               note: "100% Satisfeita",
+              image: "https://i.imgur.com/FBKCxCS.png",
             },
           ].map((p, i) => (
             <div key={i} className="rounded-2xl border border-border bg-card p-6 flex flex-col items-center text-center md:items-start md:text-left">
               <div className="mb-4 h-16 w-16 overflow-hidden rounded-full bg-muted border-2 border-primary/20">
-                {/* Placeholder para foto do usuário */}
-                <div className="flex h-full w-full items-center justify-center text-2xl text-muted-foreground/40 font-bold uppercase">
-                  {p.name.charAt(0)}
-                </div>
+                {p.image ? (
+                  <img src={p.image} alt={p.name} className="h-full w-full object-cover" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-2xl text-muted-foreground/40 font-bold uppercase">
+                    {p.name.charAt(0)}
+                  </div>
+                )}
               </div>
               <div className="mb-2 flex items-center gap-1 text-primary">
                 {"★".repeat(5)}

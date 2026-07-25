@@ -381,11 +381,11 @@ function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }
   );
 }
 
-function Bloco({ titulo, itens, cor }: { titulo: string; itens: string[]; cor: string }) {
+function Bloco({ titulo, itens, cor, extraItemClass = "" }: { titulo: string; itens: string[]; cor: string; extraItemClass?: string }) {
   return (
     <div className="rounded-xl border border-border bg-input/40 p-4">
       <div className={`mb-2 text-sm font-bold ${cor}`}>{titulo}</div>
-      <ul className="space-y-1.5 text-sm text-card-foreground">
+      <ul className={`space-y-1.5 text-sm ${extraItemClass || "text-card-foreground"}`}>
         {itens.map((i, k) => (
           <li key={k} className="leading-snug">
             • {i}

@@ -224,72 +224,67 @@ function Dashboard() {
                 
                 <div className="bg-card border-2 border-primary rounded-3xl p-8 mb-8 relative overflow-hidden group">
                   <div className="absolute top-0 right-0 px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-bl-2xl animate-pulse">
-                    OFERTA COMBO ATIVA 🎁
+                    MELHOR ESCOLHA 🎁
                   </div>
                   <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 text-center md:text-left">
                     <div className="flex-1">
                       <h3 className="text-2xl font-black mb-1 text-white">Combo Nota 1000 🔥</h3>
-                      <p className="text-muted-foreground text-sm font-medium">Leve o Acesso Vitalício + Todos os 4 Materiais Digitais por um preço único e promocional.</p>
+                      <p className="text-muted-foreground text-sm font-medium">Vitalício + Todos os 4 Materiais Digitais por um preço único.</p>
                     </div>
                     <div className="text-center md:text-right shrink-0">
                       <span className="text-muted-foreground line-through text-xs font-bold block mb-1">R$ 73,50 individual</span>
                       <div className="text-5xl font-black text-primary tracking-tighter">R$ 42,00</div>
                     </div>
                   </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-left">
+                    <div className="flex items-center gap-3">
+                      <div className="h-6 w-6 rounded bg-primary/20 flex items-center justify-center shrink-0">
+                        <Zap className="w-3 h-3 text-primary" />
+                      </div>
+                      <p className="text-[10px] font-bold text-white/80">Correções Ilimitadas (Vitalício)</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="h-6 w-6 rounded bg-primary/20 flex items-center justify-center shrink-0">
+                        <Zap className="w-3 h-3 text-primary" />
+                      </div>
+                      <p className="text-[10px] font-bold text-white/80">70+ Repertórios Coringa</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="h-6 w-6 rounded bg-primary/20 flex items-center justify-center shrink-0">
+                        <Zap className="w-3 h-3 text-primary" />
+                      </div>
+                      <p className="text-[10px] font-bold text-white/80">Flashcards de Conectivos</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="h-6 w-6 rounded bg-primary/20 flex items-center justify-center shrink-0">
+                        <Zap className="w-3 h-3 text-primary" />
+                      </div>
+                      <p className="text-[10px] font-bold text-white/80">Manual Proposta & Checklist</p>
+                    </div>
+                  </div>
+
                   <button className="w-full py-5 rounded-2xl bg-primary text-white font-black text-xl hover:scale-[1.02] transition-transform shadow-[0_10px_40px_rgba(var(--primary-rgb),0.4)] relative overflow-hidden group">
                     <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
-                    <span className="relative">GARANTIR TUDO POR R$ 42,00</span>
+                    <span className="relative">GARANTIR COMBO POR R$ 42,00</span>
                   </button>
-                  <p className="mt-4 text-[10px] text-muted-foreground uppercase tracking-widest font-black flex items-center justify-center gap-2">
-                    <Zap className="w-3 h-3 text-primary" /> Liberação Imediata • Acesso Vitalício
-                  </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                   <div className="p-4 rounded-xl border border-border bg-card/50 relative overflow-hidden group">
-                    <div className="absolute top-2 right-2 px-2 py-0.5 rounded text-[8px] font-black bg-secondary/20 text-secondary uppercase tracking-tighter">POPULAR</div>
+                    <div className="absolute top-2 right-2 px-2 py-0.5 rounded text-[8px] font-black bg-secondary/20 text-secondary uppercase tracking-tighter">BÁSICO</div>
                     <h4 className="font-black text-[10px] text-secondary mb-1">ACESSO PRO VITALÍCIO</h4>
                     <p className="text-sm font-bold leading-tight">Correções Ilimitadas p/ Sempre</p>
-                    <p className="text-[10px] text-muted-foreground mt-1 leading-tight">Elimine as travas de correção e treine quantas vezes quiser até o ENEM.</p>
                     <div className="flex items-center gap-2 mt-3">
                       <span className="text-xl font-black text-white">R$ 24,90</span>
-                      <button className="ml-auto p-2 rounded-lg bg-secondary text-secondary-foreground hover:scale-110 transition-transform">
-                        <Zap className="w-4 h-4" />
+                      <button className="ml-auto px-4 py-2 rounded-lg bg-secondary text-secondary-foreground text-[10px] font-black hover:scale-105 transition-transform">
+                        ADQUIRIR
                       </button>
                     </div>
                   </div>
-                  <div className="p-4 rounded-xl border border-border bg-card/50 relative overflow-hidden group">
-                    <h4 className="font-black text-[10px] text-primary mb-1">BOOSTER #02</h4>
-                    <p className="text-sm font-bold leading-tight">Flashcards de Conectivos (200 Pts C4)</p>
-                    <p className="text-[10px] text-muted-foreground mt-1 leading-tight">As pontes lógicas perfeitas para garantir a nota máxima em coesão e coerência textual.</p>
-                    <div className="flex items-center gap-2 mt-3">
-                      <span className="text-xl font-black">R$ 12,90</span>
-                      <button className="ml-auto p-2 rounded-lg bg-primary text-primary-foreground hover:scale-110 transition-transform">
-                        <Zap className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-xl border border-border bg-card/50 relative overflow-hidden group">
-                    <h4 className="font-black text-[10px] text-orange-500 mb-1">BOOSTER #03</h4>
-                    <p className="text-sm font-bold leading-tight">Checklist: 10 Passos p/ Introdução Perfeita</p>
-                    <p className="text-[10px] text-muted-foreground mt-1 leading-tight">A estrutura exata para começar sua redação sem travamentos e impressionar de cara.</p>
-                    <div className="flex items-center gap-2 mt-3">
-                      <span className="text-xl font-black text-orange-500">R$ 9,90</span>
-                      <button className="ml-auto p-2 rounded-lg bg-orange-500 text-white hover:scale-110 transition-transform">
-                        <Zap className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="p-4 rounded-xl border border-border bg-card/50 relative overflow-hidden group">
-                    <h4 className="font-black text-[10px] text-blue-500 mb-1">BOOSTER #04</h4>
-                    <p className="text-sm font-bold leading-tight">Manual da Proposta de Intervenção Nota 200</p>
-                    <p className="text-[10px] text-muted-foreground mt-1 leading-tight">Não esqueça nenhum dos 5 elementos obrigatórios e garanta os 200 pontos da C5.</p>
-                    <div className="flex items-center gap-2 mt-3">
-                      <span className="text-xl font-black text-blue-500">R$ 12,90</span>
-                      <button className="ml-auto p-2 rounded-lg bg-blue-500 text-white hover:scale-110 transition-transform">
-                        <Zap className="w-4 h-4" />
-                      </button>
-                    </div>
+                  
+                  <div className="p-4 rounded-xl border border-border bg-card/50 flex flex-col justify-center text-center opacity-60">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Outros materiais inclusos no combo</p>
                   </div>
                 </div>
               </div>

@@ -90,14 +90,18 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
         setShowPaywall(true);
       }
       
+      // Automatic scroll to results for free tier on first correction
+      if (!isLoggedIn) {
+        setTimeout(
+          () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
+          100,
+        );
+      }
+      
       if (onSuccess) {
         onSuccess(r);
       }
 
-      setTimeout(
-        () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
-        100,
-      );
     } catch (err) {
       setErro(err instanceof Error ? err.message : "Erro inesperado");
     } finally {

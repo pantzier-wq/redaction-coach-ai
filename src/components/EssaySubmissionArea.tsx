@@ -277,17 +277,36 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                   </div>
                 </div>
 
-                <div className="mt-8 md:mt-10 space-y-3 border-t border-border/50 pt-6 md:pt-8">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-[#22c55e]/60 mb-2">Aumente suas chances de 900+ (Oferta Especial):</p>
+                <div className="mt-8 md:mt-10 space-y-4 border-t border-border/50 pt-6 md:pt-8">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-[#22c55e]/60">Aumente suas chances de 900+:</p>
+                    <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[8px] font-black animate-pulse">OFERTA LIMITADA</span>
+                  </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {/* BUNDLE OPTION - HIGHLIGHTED */}
+                  <button className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-primary bg-primary/5 text-left hover:bg-primary/10 transition-all hover:scale-[1.02] relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 px-3 py-1 bg-primary text-white text-[9px] font-black uppercase tracking-tighter rounded-bl-xl">MAIS VANTAJOSO</div>
+                    <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]">
+                      <Sparkles className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-black leading-tight text-white group-hover:text-primary transition-colors">COMBO NOTA 1000 (Tudo Incluso)</p>
+                      <p className="text-[9px] font-medium text-white/70 mt-1">Acesso Vitalício + Todos os 4 Materiais Digitais</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] font-bold text-white/50 line-through">R$ 73,50</span>
+                        <span className="text-lg font-black text-primary">R$ 35,00</span>
+                      </div>
+                    </div>
+                  </button>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 opacity-80">
                     <button className="flex items-center gap-3 p-3 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 text-left hover:bg-[#22c55e]/10 transition-colors group">
                       <div className="h-8 w-8 rounded-lg bg-[#22c55e]/20 flex items-center justify-center shrink-0">
                         <Zap className="w-4 h-4 text-[#22c55e]" />
                       </div>
                       <div className="min-w-0">
                         <p className="text-[10px] font-black leading-tight text-white group-hover:text-[#22c55e] transition-colors">Guia de Repertórios Coringa</p>
-                        <p className="text-[8px] font-medium text-white/70 mt-0.5">+ 70 repertórios que cabem em qualquer tema</p>
+                        <p className="text-[8px] font-medium text-white/70 mt-0.5">+ 70 repertórios universais (Todos os temas)</p>
                         <p className="text-[9px] font-bold text-[#22c55e]">+ R$ 12,90</p>
                       </div>
                     </button>
@@ -298,7 +317,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                       </div>
                       <div className="min-w-0">
                         <p className="text-[10px] font-black leading-tight text-white/70 group-hover:text-white transition-colors">Flashcards de Conectivos</p>
-                        <p className="text-[8px] font-medium text-white/50 mt-0.5">Domine a C4 e garanta 200 pontos automáticos</p>
+                        <p className="text-[8px] font-medium text-white/50 mt-0.5">Domine a C4 (Pontes lógicas e coesão)</p>
                         <p className="text-[9px] font-bold text-white/50">+ R$ 12,90</p>
                       </div>
                     </button>
@@ -309,7 +328,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                       </div>
                       <div className="min-w-0">
                         <p className="text-[10px] font-black leading-tight text-white/70 group-hover:text-white transition-colors">Manual Proposta Nota 200</p>
-                        <p className="text-[8px] font-medium text-white/50 mt-0.5">Os 5 elementos que o corretor busca na sua PI</p>
+                        <p className="text-[8px] font-medium text-white/50 mt-0.5">Checklist dos 5 elementos obrigatórios (C5)</p>
                         <p className="text-[9px] font-bold text-white/50">+ R$ 12,90</p>
                       </div>
                     </button>
@@ -320,7 +339,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                       </div>
                       <div className="min-w-0">
                         <p className="text-[10px] font-black leading-tight text-white/70 group-hover:text-white transition-colors">Checklist Introdução 10/10</p>
-                        <p className="text-[8px] font-medium text-white/50 mt-0.5">Comece com impacto e prenda a atenção do corretor</p>
+                        <p className="text-[8px] font-medium text-white/50 mt-0.5">Estrutura de impacto p/ começar sem travar</p>
                         <p className="text-[9px] font-bold text-white/50">+ R$ 9,90</p>
                       </div>
                     </button>

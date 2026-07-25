@@ -348,26 +348,10 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                     </p>
                     <p className="text-[9px] text-white/40 uppercase tracking-[0.2em] font-black italic">Sem mensalidades • Sem letras miúdas</p>
                   </div>
+                  <p className="mt-8 text-[10px] font-bold text-white/50 flex items-center justify-center gap-2">
+                    🔒 Compra 100% segura e garantida
+                  </p>
                 </div>
-                        <p className="text-[8px] font-medium text-white/50 mt-0.5">Checklist dos 5 elementos obrigatórios (C5)</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 text-left group">
-                      <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
-                        <Zap className="w-4 h-4 text-white/50" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-black leading-tight text-white/70 transition-colors">Checklist Introdução Nota 1000</p>
-                        <p className="text-[8px] font-medium text-white/50 mt-0.5">A estrutura exata para começar sem travar</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <p className="mt-8 text-[10px] font-bold text-white/50 flex items-center justify-center gap-2">
-                  🔒 Compra 100% segura e garantida
-                </p>
               </div>
             </div>
           )}

@@ -354,8 +354,8 @@ function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }
 
       <div className="mt-6 grid gap-4 md:grid-cols-3">
         <Bloco titulo="✅ Pontos fortes" itens={data.pontos_fortes} cor="text-primary" />
-        <Bloco titulo="⚠️ Pontos fracos" itens={data.pontos_fracos} cor="text-white font-bold" />
-        <Bloco titulo="💡 Sugestões" itens={data.sugestoes} cor="text-white font-bold" />
+        <Bloco titulo="⚠️ Pontos fracos" itens={data.pontos_fracos} cor="text-white font-bold" extraItemClass="text-white font-bold" />
+        <Bloco titulo="💡 Sugestões" itens={data.sugestoes} cor="text-white font-bold" extraItemClass="text-white font-bold" />
       </div>
       
       {!isLoggedIn && (

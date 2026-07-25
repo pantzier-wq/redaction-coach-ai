@@ -259,7 +259,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                     >
                       <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
                       <span className="relative flex items-center justify-center gap-3 text-sm md:text-base">
-                        LIBERAR RESULTADO (VITALÍCIO) • R$ 24,90 <ArrowRight className="w-5 h-5 animate-pulse" />
+                        LIBERAR ACESSO VITALÍCIO • R$ 24,90 <ArrowRight className="w-5 h-5 animate-pulse" />
                       </span>
                     </button>
 

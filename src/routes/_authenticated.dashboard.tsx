@@ -222,69 +222,91 @@ function Dashboard() {
                   {activeSection === "upgrade" && "Garanta correções ilimitadas e acesso vitalício a todas as ferramentas do CorrigeAI."}
                 </p>
                 
-                <div className="bg-card border-2 border-primary rounded-3xl p-8 mb-8 relative overflow-hidden group">
-                  <div className="absolute top-0 right-0 px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-bl-2xl animate-pulse">
-                    MELHOR ESCOLHA 🎁
-                  </div>
-                  <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 text-center md:text-left">
-                    <div className="flex-1">
-                      <h3 className="text-2xl font-black mb-1 text-white">Combo Nota 1000 🔥</h3>
-                      <p className="text-muted-foreground text-sm font-medium">Vitalício + Todos os 4 Materiais Digitais por um preço único.</p>
-                    </div>
-                    <div className="text-center md:text-right shrink-0">
-                      <span className="text-muted-foreground line-through text-xs font-bold block mb-1">R$ 73,50 individual</span>
-                      <div className="text-5xl font-black text-primary tracking-tighter">R$ 42,00</div>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-left">
-                    <div className="flex items-center gap-3">
-                      <div className="h-6 w-6 rounded bg-primary/20 flex items-center justify-center shrink-0">
-                        <Zap className="w-3 h-3 text-primary" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-12">
+                  {/* PLANO VITALÍCIO */}
+                  <div className="flex flex-col rounded-3xl border-2 border-[#22c55e]/30 bg-[#22c55e]/5 p-8 relative overflow-hidden group">
+                    <div className="mb-6 flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-[#22c55e] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(34,197,94,0.4)]">
+                        <Zap className="w-6 h-6 text-white" />
                       </div>
-                      <p className="text-[10px] font-bold text-white/80">Correções Ilimitadas (Vitalício)</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="h-6 w-6 rounded bg-primary/20 flex items-center justify-center shrink-0">
-                        <Zap className="w-3 h-3 text-primary" />
+                      <div>
+                        <h3 className="text-xl font-black text-white leading-tight uppercase tracking-tight">Acesso Vitalício</h3>
+                        <p className="text-xs font-bold text-[#22c55e] leading-tight">Pagamento Único</p>
                       </div>
-                      <p className="text-[10px] font-bold text-white/80">70+ Repertórios Coringa</p>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <div className="h-6 w-6 rounded bg-primary/20 flex items-center justify-center shrink-0">
-                        <Zap className="w-3 h-3 text-primary" />
-                      </div>
-                      <p className="text-[10px] font-bold text-white/80">Flashcards de Conectivos</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <div className="h-6 w-6 rounded bg-primary/20 flex items-center justify-center shrink-0">
-                        <Zap className="w-3 h-3 text-primary" />
-                      </div>
-                      <p className="text-[10px] font-bold text-white/80">Manual Proposta & Checklist</p>
-                    </div>
-                  </div>
 
-                  <button className="w-full py-5 rounded-2xl bg-primary text-white font-black text-xl hover:scale-[1.02] transition-transform shadow-[0_10px_40px_rgba(var(--primary-rgb),0.4)] relative overflow-hidden group">
-                    <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
-                    <span className="relative">GARANTIR COMBO POR R$ 42,00</span>
-                  </button>
-                </div>
+                    <ul className="space-y-3 mb-8 flex-1">
+                      <li className="flex items-start gap-3 text-sm font-bold text-white/90">
+                        <span className="text-[#22c55e] shrink-0">✓</span>
+                        <span>Correções de redação ilimitadas</span>
+                      </li>
+                      <li className="flex items-start gap-3 text-sm font-bold text-white/90">
+                        <span className="text-[#22c55e] shrink-0">✓</span>
+                        <span>Histórico completo de evolução</span>
+                      </li>
+                      <li className="flex items-start gap-3 text-sm font-bold text-white/90">
+                        <span className="text-[#22c55e] shrink-0">✓</span>
+                        <span>Análise de todas as 5 competências</span>
+                      </li>
+                    </ul>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-                  <div className="p-4 rounded-xl border border-border bg-card/50 relative overflow-hidden group">
-                    <div className="absolute top-2 right-2 px-2 py-0.5 rounded text-[8px] font-black bg-secondary/20 text-secondary uppercase tracking-tighter">BÁSICO</div>
-                    <h4 className="font-black text-[10px] text-secondary mb-1">ACESSO PRO VITALÍCIO</h4>
-                    <p className="text-sm font-bold leading-tight">Correções Ilimitadas p/ Sempre</p>
-                    <div className="flex items-center gap-2 mt-3">
-                      <span className="text-xl font-black text-white">R$ 24,90</span>
-                      <button className="ml-auto px-4 py-2 rounded-lg bg-secondary text-secondary-foreground text-[10px] font-black hover:scale-105 transition-transform">
-                        ADQUIRIR
+                    <div className="mt-auto">
+                      <div className="text-3xl font-black text-white mb-4">R$ 24,90</div>
+                      <button
+                        className="w-full py-4 rounded-xl bg-[#22c55e] text-white font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-[0_10px_30px_rgba(34,197,94,0.3)]"
+                      >
+                        LIBERAR AGORA
                       </button>
                     </div>
                   </div>
-                  
-                  <div className="p-4 rounded-xl border border-border bg-card/50 flex flex-col justify-center text-center opacity-60">
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Outros materiais inclusos no combo</p>
+
+                  {/* COMBO NOTA 1000 */}
+                  <div className="flex flex-col rounded-3xl border-2 border-primary bg-primary/10 p-8 relative overflow-hidden group shadow-[0_0_50px_rgba(var(--primary-rgb),0.2)]">
+                    <div className="absolute top-0 right-0 px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-bl-2xl animate-pulse">
+                      MELHOR ESCOLHA 🎁
+                    </div>
+                    
+                    <div className="mb-6 flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-primary flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(var(--primary-rgb),0.5)]">
+                        <Sparkles className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-black text-white leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
+                        <p className="text-xs font-bold text-primary leading-tight">Vitalício + Bônus</p>
+                      </div>
+                    </div>
+
+                    <ul className="space-y-3 mb-8 flex-1">
+                      <li className="flex items-start gap-3 text-sm font-bold text-white/90">
+                        <span className="text-primary shrink-0">✓</span>
+                        <span>Tudo do plano Vitalício</span>
+                      </li>
+                      <li className="flex items-start gap-3 text-sm font-bold text-white/90">
+                        <span className="text-primary shrink-0">✓</span>
+                        <span>70+ Repertórios Universais</span>
+                      </li>
+                      <li className="flex items-start gap-3 text-sm font-bold text-white/90">
+                        <span className="text-primary shrink-0">✓</span>
+                        <span>Flashcards de Conectivos (C4)</span>
+                      </li>
+                      <li className="flex items-start gap-3 text-sm font-bold text-white/90">
+                        <span className="text-primary shrink-0">✓</span>
+                        <span>Manual Proposta Nota 200 (C5)</span>
+                      </li>
+                    </ul>
+
+                    <div className="mt-auto">
+                      <div className="flex items-center gap-3 mb-4">
+                        <span className="text-sm font-bold text-white/40 line-through">R$ 73,50</span>
+                        <span className="text-4xl font-black text-primary">R$ 42,00</span>
+                      </div>
+                      <button
+                        className="w-full py-4 rounded-xl bg-primary text-white font-black text-sm uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] relative overflow-hidden"
+                      >
+                        <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
+                        GARANTIR COMBO
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

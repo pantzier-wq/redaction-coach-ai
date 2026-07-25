@@ -252,119 +252,106 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                 </p>
 
                 <div className="space-y-6">
-                  <div className="space-y-4">
-                    <button
-                      className="group relative w-full overflow-hidden rounded-2xl px-6 py-4 md:py-5 text-lg md:text-xl font-black text-white transition-all hover:scale-[1.03] active:scale-95 shadow-[0_10px_40px_rgba(34,197,94,0.4)]"
-                      style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)" }}
-                    >
-                      <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
-                      <span className="relative flex items-center justify-center gap-3 text-sm md:text-base">
-                        LIBERAR ACESSO VITALÍCIO • R$ 24,90 <ArrowRight className="w-5 h-5 animate-pulse" />
-                      </span>
-                    </button>
-
-                    <button
-                      className="group relative w-full overflow-hidden rounded-2xl px-6 py-4 md:py-5 text-lg md:text-xl font-black text-white transition-all hover:scale-[1.03] active:scale-95 shadow-[0_10px_40px_rgba(var(--primary-rgb),0.4)] border-2 border-primary"
-                      style={{ background: "rgba(var(--primary-rgb), 0.1)" }}
-                    >
-                      <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-primary/20 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
-                      <span className="relative flex flex-col items-center justify-center gap-0 text-primary">
-                        <span className="text-xs uppercase tracking-tighter opacity-80">🔥 Combo Nota 1000 (Tudo Incluso) 🔥</span>
-                        <span className="flex items-center gap-2">
-                          GARANTIR TUDO POR R$ 42,00 <Sparkles className="w-5 h-5" />
-                        </span>
-                      </span>
-                    </button>
-                    
-                    <div className="flex flex-col gap-2 text-center pt-2">
-                      <p className="text-[10px] text-white font-black uppercase tracking-widest bg-white/5 py-1 rounded-lg">
-                        Liberação Imediata • Pagamento Único
-                      </p>
-                      <p className="text-[9px] text-white/60 uppercase tracking-[0.2em] font-black">Sem mensalidades • Sem letras miúdas</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-8 md:mt-10 space-y-4 border-t border-border/50 pt-6 md:pt-8">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-[#22c55e]/60">Compare os Planos:</p>
-                    <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[8px] font-black animate-pulse">MELHOR ESCOLHA</span>
-                  </div>
-                  
-                  {/* BUNDLE OPTION - HIGHLIGHTED */}
-                  <div className="space-y-3">
-                    <div className="p-4 rounded-2xl border border-white/10 bg-white/5">
-                      <p className="text-xs font-black text-white flex items-center gap-2">
-                        <Zap className="w-3 h-3 text-[#22c55e]" /> ACESSO VITALÍCIO (R$ 24,90)
-                      </p>
-                      <ul className="mt-2 space-y-1">
-                        <li className="text-[10px] text-white/70 flex items-center gap-2">✓ Correções de redação ilimitadas</li>
-                        <li className="text-[10px] text-white/70 flex items-center gap-2">✓ Histórico completo salvo</li>
-                      </ul>
-                    </div>
-
-                    <button className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-primary bg-primary/5 text-left hover:bg-primary/10 transition-all hover:scale-[1.02] relative overflow-hidden group">
-                      <div className="absolute top-0 right-0 px-3 py-1 bg-primary text-white text-[9px] font-black uppercase tracking-tighter rounded-bl-xl">MAIS COMPLETO</div>
-                      <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]">
-                        <Sparkles className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-black leading-tight text-white group-hover:text-primary transition-colors">COMBO NOTA 1000</p>
-                        <p className="text-[9px] font-medium text-white/70 mt-1">Vitalício + Todos os 4 Materiais Digitais</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[10px] font-bold text-white/50 line-through">R$ 73,50</span>
-                          <span className="text-lg font-black text-primary">R$ 42,00</span>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* PLAN VITALÍCIO */}
+                    <div className="flex flex-col rounded-2xl border-2 border-[#22c55e]/30 bg-[#22c55e]/5 p-5 relative overflow-hidden group">
+                      <div className="mb-4 flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-xl bg-[#22c55e] flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(34,197,94,0.4)]">
+                          <Zap className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-black text-white leading-tight uppercase tracking-tight">Acesso Vitalício</h3>
+                          <p className="text-[10px] font-bold text-[#22c55e] leading-tight">Pagamento Único</p>
                         </div>
                       </div>
-                    </button>
+
+                      <ul className="space-y-2 mb-6 flex-1">
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
+                          <span className="text-[#22c55e] shrink-0">✓</span>
+                          <span>Correções de redação ilimitadas</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
+                          <span className="text-[#22c55e] shrink-0">✓</span>
+                          <span>Histórico completo de evolução</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
+                          <span className="text-[#22c55e] shrink-0">✓</span>
+                          <span>Análise de todas as 5 competências</span>
+                        </li>
+                      </ul>
+
+                      <div className="mt-auto">
+                        <div className="flex items-baseline gap-1 mb-3">
+                          <span className="text-2xl font-black text-white">R$ 24,90</span>
+                        </div>
+                        <button
+                          className="w-full py-3 rounded-xl bg-[#22c55e] text-white font-black text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-[0_5px_15px_rgba(34,197,94,0.3)]"
+                        >
+                          LIBERAR AGORA
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* COMBO NOTA 1000 */}
+                    <div className="flex flex-col rounded-2xl border-2 border-primary bg-primary/10 p-5 relative overflow-hidden group shadow-[0_0_30px_rgba(var(--primary-rgb),0.2)]">
+                      <div className="absolute top-0 right-0 px-2 py-0.5 bg-primary text-white text-[8px] font-black uppercase tracking-tighter rounded-bl-lg animate-pulse">
+                        MAIS COMPLETO
+                      </div>
+                      
+                      <div className="mb-4 flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]">
+                          <Sparkles className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-black text-white leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
+                          <p className="text-[10px] font-bold text-primary leading-tight">Vitalício + Bônus</p>
+                        </div>
+                      </div>
+
+                      <ul className="space-y-2 mb-6 flex-1">
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
+                          <span className="text-primary shrink-0">✓</span>
+                          <span>Tudo do plano Vitalício</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
+                          <span className="text-primary shrink-0">✓</span>
+                          <span>70+ Repertórios Universais</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
+                          <span className="text-primary shrink-0">✓</span>
+                          <span>Flashcards de Conectivos (C4)</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
+                          <span className="text-primary shrink-0">✓</span>
+                          <span>Manual Proposta Nota 200 (C5)</span>
+                        </li>
+                      </ul>
+
+                      <div className="mt-auto">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="text-[10px] font-bold text-white/40 line-through">R$ 73,50</span>
+                          <span className="text-2xl font-black text-primary">R$ 42,00</span>
+                        </div>
+                        <button
+                          className="w-full py-3 rounded-xl bg-primary text-white font-black text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-[0_5px_15px_rgba(var(--primary-rgb),0.3)] relative overflow-hidden"
+                        >
+                          <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
+                          GARANTIR COMBO
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 opacity-80">
-                    <div className="flex items-center gap-3 p-3 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 text-left group">
-                      <div className="h-8 w-8 rounded-lg bg-[#22c55e]/20 flex items-center justify-center shrink-0">
-                        <Zap className="w-4 h-4 text-[#22c55e]" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-black leading-tight text-white transition-colors">Guia de Repertórios Coringa</p>
-                        <p className="text-[8px] font-medium text-white/70 mt-0.5">+ 70 repertórios universais (Todos os temas)</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 text-left group">
-                      <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
-                        <Zap className="w-4 h-4 text-white/50" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-black leading-tight text-white/70 transition-colors">Flashcards de Conectivos</p>
-                        <p className="text-[8px] font-medium text-white/50 mt-0.5">Domine a C4 (Pontes lógicas e coesão)</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 text-left group">
-                      <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
-                        <Zap className="w-4 h-4 text-white/50" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-black leading-tight text-white/70 transition-colors">Manual Proposta Nota 200</p>
-                        <p className="text-[8px] font-medium text-white/50 mt-0.5">Checklist dos 5 elementos obrigatórios (C5)</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 text-left group">
-                      <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
-                        <Zap className="w-4 h-4 text-white/50" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-black leading-tight text-white/70 transition-colors">Checklist Introdução Nota 1000</p>
-                        <p className="text-[8px] font-medium text-white/50 mt-0.5">A estrutura exata para começar sem travar</p>
-                      </div>
-                    </div>
+                  <div className="flex flex-col gap-2 text-center pt-2">
+                    <p className="text-[10px] text-white font-black uppercase tracking-widest bg-white/5 py-1.5 rounded-lg border border-white/10">
+                      ⚡ Liberação Imediata • Pagamento Único
+                    </p>
+                    <p className="text-[9px] text-white/40 uppercase tracking-[0.2em] font-black italic">Sem mensalidades • Sem letras miúdas</p>
                   </div>
+                  <p className="mt-8 text-[10px] font-bold text-white/50 flex items-center justify-center gap-2">
+                    🔒 Compra 100% segura e garantida
+                  </p>
                 </div>
-                
-                <p className="mt-8 text-[10px] font-bold text-white/50 flex items-center justify-center gap-2">
-                  🔒 Compra 100% segura e garantida
-                </p>
               </div>
             </div>
           )}

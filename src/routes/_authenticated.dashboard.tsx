@@ -222,30 +222,37 @@ function Dashboard() {
                   {activeSection === "upgrade" && "Garanta correções ilimitadas e acesso vitalício a todas as ferramentas do CorrigeAI."}
                 </p>
                 
-                <div className="bg-card border border-border rounded-3xl p-8 mb-8">
-                  <div className="flex items-center justify-between mb-6">
-                    <span className="text-lg font-bold">Plano Vitalício</span>
-                    <div className="text-right">
-                      <span className="text-muted-foreground line-through text-sm">R$ 97,00</span>
-                      <div className="text-3xl font-black text-secondary">R$ 24,90</div>
+                <div className="bg-card border-2 border-primary rounded-3xl p-8 mb-8 relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 px-4 py-1.5 bg-primary text-white text-[10px] font-black uppercase tracking-widest rounded-bl-2xl animate-pulse">
+                    OFERTA COMBO ATIVA 🎁
+                  </div>
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 text-center md:text-left">
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-black mb-1 text-white">Combo Nota 1000 🔥</h3>
+                      <p className="text-muted-foreground text-sm font-medium">Leve o Acesso Vitalício + Todos os 4 Materiais Digitais por um preço único e promocional.</p>
+                    </div>
+                    <div className="text-center md:text-right shrink-0">
+                      <span className="text-muted-foreground line-through text-xs font-bold block mb-1">R$ 73,50 individual</span>
+                      <div className="text-5xl font-black text-primary tracking-tighter">R$ 35,00</div>
                     </div>
                   </div>
-                  <button className="w-full py-5 rounded-2xl bg-secondary text-secondary-foreground font-black text-xl hover:scale-105 transition-transform shadow-[0_0_30px_rgba(var(--secondary-rgb),0.3)]">
-                    DESBLOQUEAR TUDO AGORA
+                  <button className="w-full py-5 rounded-2xl bg-primary text-white font-black text-xl hover:scale-[1.02] transition-transform shadow-[0_10px_40px_rgba(var(--primary-rgb),0.4)] relative overflow-hidden group">
+                    <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
+                    <span className="relative">GARANTIR TUDO POR R$ 35,00</span>
                   </button>
-                  <p className="mt-4 text-xs text-muted-foreground uppercase tracking-widest font-black">
-                    <CreditCard className="w-3 h-3 inline mr-1" /> Pagamento único • Acesso para sempre
+                  <p className="mt-4 text-[10px] text-muted-foreground uppercase tracking-widest font-black flex items-center justify-center gap-2">
+                    <Zap className="w-3 h-3 text-primary" /> Liberação Imediata • Acesso Vitalício
                   </p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                   <div className="p-4 rounded-xl border border-border bg-card/50 relative overflow-hidden group">
                     <div className="absolute top-2 right-2 px-2 py-0.5 rounded text-[8px] font-black bg-secondary/20 text-secondary uppercase tracking-tighter">POPULAR</div>
-                    <h4 className="font-black text-[10px] text-secondary mb-1">BOOSTER #01</h4>
-                    <p className="text-sm font-bold leading-tight">Guia de Repertórios Coringa (70+ Temas)</p>
-                    <p className="text-[10px] text-muted-foreground mt-1 leading-tight">Citações e argumentos universais que se encaixam em qualquer proposta de intervenção.</p>
+                    <h4 className="font-black text-[10px] text-secondary mb-1">ACESSO PRO VITALÍCIO</h4>
+                    <p className="text-sm font-bold leading-tight">Correções Ilimitadas p/ Sempre</p>
+                    <p className="text-[10px] text-muted-foreground mt-1 leading-tight">Elimine as travas de correção e treine quantas vezes quiser até o ENEM.</p>
                     <div className="flex items-center gap-2 mt-3">
-                      <span className="text-xl font-black">R$ 12,90</span>
+                      <span className="text-xl font-black text-white">R$ 24,90</span>
                       <button className="ml-auto p-2 rounded-lg bg-secondary text-secondary-foreground hover:scale-110 transition-transform">
                         <Zap className="w-4 h-4" />
                       </button>

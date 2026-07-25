@@ -90,14 +90,18 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
         setShowPaywall(true);
       }
       
+      // Automatic scroll to results for free tier on first correction
+      if (!isLoggedIn) {
+        setTimeout(
+          () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
+          100,
+        );
+      }
+      
       if (onSuccess) {
         onSuccess(r);
       }
 
-      setTimeout(
-        () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
-        100,
-      );
     } catch (err) {
       setErro(err instanceof Error ? err.message : "Erro inesperado");
     } finally {
@@ -357,19 +361,19 @@ function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }
       {!isLoggedIn && (
         <div className="mt-10 rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center">
           <Sparkles className="mx-auto mb-4 h-10 w-10 text-primary animate-pulse" />
-          <h3 className="text-2xl font-black mb-2">Quer chegar nos 1000? 🚀</h3>
+          <h3 className="text-2xl font-black mb-2">Gostou da correção? 🚀</h3>
           <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            Esta foi apenas sua correção gratuita. Membros <strong className="text-primary italic">VIP</strong> têm acesso ao histórico de redações corrigidas e podem adquirir o <strong className="text-secondary">Plano Vitalício (R$ 24,90)</strong> para correções ilimitadas e guias exclusivos.
+            Salve esse resultado e continue treinando para alcançar a <strong className="text-primary italic">Nota 1000</strong>. Crie sua conta gratuita agora para salvar seu progresso e ter acesso a ferramentas exclusivas de estudo.
           </p>
           <Link
             to="/auth"
             className="inline-flex items-center gap-2 rounded-xl px-8 py-4 font-black text-primary-foreground transition-all hover:scale-105 active:scale-95"
             style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
           >
-            CRIAR MINHA CONTA VIP AGORA <ArrowRight className="w-5 h-5" />
+            CRIAR MINHA CONTA AGORA <ArrowRight className="w-5 h-5" />
           </Link>
           <p className="mt-4 text-xs text-muted-foreground flex items-center justify-center gap-2">
-            <Trophy className="w-3 h-3 text-secondary" /> Mais de 5.000 alunos já garantiram a vaga
+            <Trophy className="w-3 h-3 text-secondary" /> Mais de 5.000 alunos já estão treinando conosco
           </p>
         </div>
       )}

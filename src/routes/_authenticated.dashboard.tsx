@@ -88,51 +88,40 @@ function Dashboard() {
                 <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
                   Olá, <span className="text-primary">{profile?.full_name?.split(' ')[0] || 'Estudante'}</span>! ✍️
                 </h1>
-                <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-                  Você tem <span className="text-foreground font-bold">{essays.length}</span> redações no seu histórico. 
-                  Pronto para a nota 1000 hoje?
+                <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-8">
+                  Pronto para a nota 1000 hoje? Cole seu texto abaixo para começar a correção.
                 </p>
+
+                <div className="max-w-3xl mx-auto">
+                  <EssaySubmissionArea 
+                    isLoggedIn={true} 
+                    onSuccess={() => {
+                      const loadEssays = async () => {
+                        const { data } = await supabase.from("essays").select("*").order("created_at", { ascending: false });
+                        setEssays(data || []);
+                      };
+                      loadEssays();
+                    }}
+                  />
+                </div>
               </div>
 
-              <div className="grid gap-6 md:grid-cols-3">
-                <StatCard 
-                  icon={PenTool} 
-                  label="Nova Redação" 
-                  value="Começar" 
-                  onClick={() => setActiveSection("correcao")}
-                  color="bg-primary"
-                />
-                <StatCard 
-                  icon={History} 
-                  label="Histórico" 
-                  value={essays.length.toString()} 
-                  onClick={() => setActiveSection("historico")}
-                  color="bg-secondary"
-                />
-                <StatCard 
-                  icon={Sparkles} 
-                  label="Status" 
-                  value={profile?.is_pro ? "PRO" : "VIP"} 
-                  onClick={() => setActiveSection("upgrade")}
-                  color="bg-accent"
-                />
-              </div>
 
               {!profile?.is_pro && (
-                <div className="rounded-3xl border-2 border-secondary/40 bg-secondary/5 p-8 relative overflow-hidden">
+                <div className="rounded-3xl border-2 border-secondary/40 bg-secondary/5 p-8 relative overflow-hidden mt-12">
                   <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
                     <div className="p-4 rounded-2xl bg-secondary/20 text-secondary">
                       <Sparkles className="w-12 h-12" />
                     </div>
                     <div className="flex-1 text-center md:text-left">
-                      <h3 className="text-2xl font-black mb-2">Desbloqueie o Acesso Vitalício</h3>
-                      <p className="text-muted-foreground">Correções ilimitadas e todas as ferramentas PRO por apenas R$ 24,90.</p>
+                      <h3 className="text-2xl font-black mb-2">Treino Ilimitado e VIP</h3>
+                      <p className="text-muted-foreground">Desbloqueie correções ilimitadas e todas as ferramentas PRO por apenas R$ 24,90.</p>
                     </div>
                     <button 
                       onClick={() => setActiveSection("upgrade")}
                       className="px-8 py-4 rounded-xl bg-secondary text-secondary-foreground font-black hover:scale-105 transition-transform"
                     >
-                      QUERO SER PRO
+                      ATIVAR PRO AGORA
                     </button>
                   </div>
                 </div>

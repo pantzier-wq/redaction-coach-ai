@@ -320,49 +320,45 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 opacity-80">
-                    <button className="flex items-center gap-3 p-3 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 text-left hover:bg-[#22c55e]/10 transition-colors group">
+                    <div className="flex items-center gap-3 p-3 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 text-left group">
                       <div className="h-8 w-8 rounded-lg bg-[#22c55e]/20 flex items-center justify-center shrink-0">
                         <Zap className="w-4 h-4 text-[#22c55e]" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] font-black leading-tight text-white group-hover:text-[#22c55e] transition-colors">Guia de Repertórios Coringa</p>
+                        <p className="text-[10px] font-black leading-tight text-white transition-colors">Guia de Repertórios Coringa</p>
                         <p className="text-[8px] font-medium text-white/70 mt-0.5">+ 70 repertórios universais (Todos os temas)</p>
-                        <p className="text-[9px] font-bold text-[#22c55e]">+ R$ 12,90</p>
                       </div>
-                    </button>
+                    </div>
 
-                    <button className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 text-left hover:bg-white/10 transition-colors group">
+                    <div className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 text-left group">
                       <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
                         <Zap className="w-4 h-4 text-white/50" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] font-black leading-tight text-white/70 group-hover:text-white transition-colors">Flashcards de Conectivos</p>
+                        <p className="text-[10px] font-black leading-tight text-white/70 transition-colors">Flashcards de Conectivos</p>
                         <p className="text-[8px] font-medium text-white/50 mt-0.5">Domine a C4 (Pontes lógicas e coesão)</p>
-                        <p className="text-[9px] font-bold text-white/50">+ R$ 12,90</p>
                       </div>
-                    </button>
+                    </div>
 
-                    <button className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 text-left hover:bg-white/10 transition-colors group">
+                    <div className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 text-left group">
                       <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
                         <Zap className="w-4 h-4 text-white/50" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] font-black leading-tight text-white/70 group-hover:text-white transition-colors">Manual Proposta Nota 200</p>
+                        <p className="text-[10px] font-black leading-tight text-white/70 transition-colors">Manual Proposta Nota 200</p>
                         <p className="text-[8px] font-medium text-white/50 mt-0.5">Checklist dos 5 elementos obrigatórios (C5)</p>
-                        <p className="text-[9px] font-bold text-white/50">+ R$ 12,90</p>
                       </div>
-                    </button>
+                    </div>
 
-                    <button className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 text-left hover:bg-white/10 transition-colors group">
+                    <div className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 text-left group">
                       <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
                         <Zap className="w-4 h-4 text-white/50" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-[10px] font-black leading-tight text-white/70 group-hover:text-white transition-colors">Checklist Introdução 10/10</p>
-                        <p className="text-[8px] font-medium text-white/50 mt-0.5">Estrutura de impacto p/ começar sem travar</p>
-                        <p className="text-[9px] font-bold text-white/50">+ R$ 9,90</p>
+                        <p className="text-[10px] font-black leading-tight text-white/70 transition-colors">Checklist Introdução Nota 1000</p>
+                        <p className="text-[8px] font-medium text-white/50 mt-0.5">A estrutura exata para começar sem travar</p>
                       </div>
-                    </button>
+                    </div>
                   </div>
                 </div>
                 

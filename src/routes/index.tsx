@@ -234,13 +234,29 @@ function Landing() {
               text: "O feedback da competência 5 me ajudou a entender o que faltava na minha proposta. Incrível!",
               note: "Nota 920",
             },
+            {
+              name: "Matheus Oliveira",
+              text: "Tava desesperado faltando 1 mês. A IA me mostrou que eu tava errando a estrutura da introdução. Salvou demais!",
+              note: "Evolução Real",
+            },
+            {
+              name: "Beatriz Santos",
+              text: "Melhor que muito corretor humano que demora uma semana pra entregar. O feedback é instantâneo e certeiro.",
+              note: "100% Satisfeita",
+            },
           ].map((p, i) => (
-            <div key={i} className="rounded-2xl border border-border bg-card p-6">
+            <div key={i} className="rounded-2xl border border-border bg-card p-6 flex flex-col items-center text-center md:items-start md:text-left">
+              <div className="mb-4 h-16 w-16 overflow-hidden rounded-full bg-muted border-2 border-primary/20">
+                {/* Placeholder para foto do usuário */}
+                <div className="flex h-full w-full items-center justify-center text-2xl text-muted-foreground/40 font-bold uppercase">
+                  {p.name.charAt(0)}
+                </div>
+              </div>
               <div className="mb-2 flex items-center gap-1 text-primary">
                 {"★".repeat(5)}
               </div>
               <p className="mb-4 text-sm italic text-card-foreground">"{p.text}"</p>
-              <div className="flex items-center justify-between border-t border-border pt-4">
+              <div className="flex w-full items-center justify-between border-t border-border pt-4">
                 <span className="text-sm font-bold">{p.name}</span>
                 <span className="text-xs font-semibold text-primary">{p.note}</span>
               </div>

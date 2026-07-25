@@ -287,25 +287,37 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
 
                 <div className="mt-8 md:mt-10 space-y-4 border-t border-border/50 pt-6 md:pt-8">
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-[#22c55e]/60">Aumente suas chances de 900+:</p>
-                    <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[8px] font-black animate-pulse">OFERTA LIMITADA</span>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-[#22c55e]/60">Compare os Planos:</p>
+                    <span className="px-2 py-0.5 rounded bg-primary/10 text-primary text-[8px] font-black animate-pulse">MELHOR ESCOLHA</span>
                   </div>
                   
                   {/* BUNDLE OPTION - HIGHLIGHTED */}
-                  <button className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-primary bg-primary/5 text-left hover:bg-primary/10 transition-all hover:scale-[1.02] relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 px-3 py-1 bg-primary text-white text-[9px] font-black uppercase tracking-tighter rounded-bl-xl">MAIS VANTAJOSO</div>
-                    <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]">
-                      <Sparkles className="w-6 h-6 text-white" />
+                  <div className="space-y-3">
+                    <div className="p-4 rounded-2xl border border-white/10 bg-white/5">
+                      <p className="text-xs font-black text-white flex items-center gap-2">
+                        <Zap className="w-3 h-3 text-[#22c55e]" /> ACESSO VITALÍCIO (R$ 24,90)
+                      </p>
+                      <ul className="mt-2 space-y-1">
+                        <li className="text-[10px] text-white/70 flex items-center gap-2">✓ Correções de redação ilimitadas</li>
+                        <li className="text-[10px] text-white/70 flex items-center gap-2">✓ Histórico completo salvo</li>
+                      </ul>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-black leading-tight text-white group-hover:text-primary transition-colors">COMBO NOTA 1000 (Tudo Incluso)</p>
-                      <p className="text-[9px] font-medium text-white/70 mt-1">Acesso Vitalício + Todos os 4 Materiais Digitais</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[10px] font-bold text-white/50 line-through">R$ 73,50</span>
-                        <span className="text-lg font-black text-primary">R$ 42,00</span>
+
+                    <button className="w-full flex items-center gap-4 p-4 rounded-2xl border-2 border-primary bg-primary/5 text-left hover:bg-primary/10 transition-all hover:scale-[1.02] relative overflow-hidden group">
+                      <div className="absolute top-0 right-0 px-3 py-1 bg-primary text-white text-[9px] font-black uppercase tracking-tighter rounded-bl-xl">MAIS COMPLETO</div>
+                      <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]">
+                        <Sparkles className="w-6 h-6 text-white" />
                       </div>
-                    </div>
-                  </button>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-black leading-tight text-white group-hover:text-primary transition-colors">COMBO NOTA 1000</p>
+                        <p className="text-[9px] font-medium text-white/70 mt-1">Vitalício + Todos os 4 Materiais Digitais</p>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[10px] font-bold text-white/50 line-through">R$ 73,50</span>
+                          <span className="text-lg font-black text-primary">R$ 42,00</span>
+                        </div>
+                      </div>
+                    </button>
+                  </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 opacity-80">
                     <button className="flex items-center gap-3 p-3 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 text-left hover:bg-[#22c55e]/10 transition-colors group">

@@ -238,16 +238,47 @@ function Dashboard() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 text-left">
-                  <div className="p-4 rounded-xl border border-border bg-card/50">
-                    <h4 className="font-black text-xs text-secondary mb-1">PRODUTO VIP 01</h4>
-                    <p className="text-sm font-bold">Guia de Repertórios</p>
-                    <p className="text-xl font-black mt-2">R$ 12,90</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                  <div className="p-4 rounded-xl border border-border bg-card/50 relative overflow-hidden group">
+                    <div className="absolute top-2 right-2 px-2 py-0.5 rounded text-[8px] font-black bg-secondary/20 text-secondary uppercase tracking-tighter">POPULAR</div>
+                    <h4 className="font-black text-[10px] text-secondary mb-1">BOOSTER #01</h4>
+                    <p className="text-sm font-bold leading-tight">Guia de Repertórios Coringa (70+ Temas)</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-xl font-black">R$ 12,90</span>
+                      <button className="ml-auto p-2 rounded-lg bg-secondary text-secondary-foreground hover:scale-110 transition-transform">
+                        <Zap className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
-                  <div className="p-4 rounded-xl border border-border bg-card/50">
-                    <h4 className="font-black text-xs text-primary mb-1">PRODUTO VIP 02</h4>
-                    <p className="text-sm font-bold">Flashcards Conectivos</p>
-                    <p className="text-xl font-black mt-2">R$ 12,90</p>
+                  <div className="p-4 rounded-xl border border-border bg-card/50 relative overflow-hidden group">
+                    <h4 className="font-black text-[10px] text-primary mb-1">BOOSTER #02</h4>
+                    <p className="text-sm font-bold leading-tight">Flashcards de Conectivos (200 Pts C4)</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-xl font-black">R$ 12,90</span>
+                      <button className="ml-auto p-2 rounded-lg bg-primary text-primary-foreground hover:scale-110 transition-transform">
+                        <Zap className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-xl border border-border bg-card/50 relative overflow-hidden group">
+                    <h4 className="font-black text-[10px] text-orange-500 mb-1">BOOSTER #03</h4>
+                    <p className="text-sm font-bold leading-tight">Checklist: 10 Passos p/ Introdução Perfeita</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-xl font-black text-orange-500">R$ 9,90</span>
+                      <button className="ml-auto p-2 rounded-lg bg-orange-500 text-white hover:scale-110 transition-transform">
+                        <Zap className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-xl border border-border bg-card/50 relative overflow-hidden group">
+                    <h4 className="font-black text-[10px] text-blue-500 mb-1">BOOSTER #04</h4>
+                    <p className="text-sm font-bold leading-tight">Manual da Proposta de Intervenção Nota 200</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <span className="text-xl font-black text-blue-500">R$ 12,90</span>
+                      <button className="ml-auto p-2 rounded-lg bg-blue-500 text-white hover:scale-110 transition-transform">
+                        <Zap className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

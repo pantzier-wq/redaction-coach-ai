@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, ArrowRight, Trophy } from "lucide-react";
+import { Sparkles, ArrowRight, Trophy, Zap } from "lucide-react";
 
 interface EssaySubmissionAreaProps {
   isLoggedIn: boolean;
@@ -277,14 +277,49 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                   </div>
                 </div>
 
-                <div className="mt-8 md:mt-10 grid grid-cols-2 gap-4 text-left border-t border-border/50 pt-6 md:pt-8">
-                  <div className="flex gap-2 items-start">
-                    <Sparkles className="w-4 h-4 text-[#22c55e] shrink-0 mt-0.5" />
-                    <p className="text-[10px] font-bold leading-tight text-white">Correções <br/><span className="text-[#22c55e]">ILIMITADAS PARA SEMPRE</span></p>
-                  </div>
-                  <div className="flex gap-2 items-start">
-                    <Sparkles className="w-4 h-4 text-[#22c55e] shrink-0 mt-0.5" />
-                    <p className="text-[10px] font-bold leading-tight text-white">Acesso <br/><span className="text-[#22c55e]">VIP VITALÍCIO</span></p>
+                <div className="mt-8 md:mt-10 space-y-3 border-t border-border/50 pt-6 md:pt-8">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#22c55e]/60 mb-2">Adicionar à sua ordem (Oferta Especial):</p>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <button className="flex items-center gap-3 p-3 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 text-left hover:bg-[#22c55e]/10 transition-colors group">
+                      <div className="h-8 w-8 rounded-lg bg-[#22c55e]/20 flex items-center justify-center shrink-0">
+                        <Zap className="w-4 h-4 text-[#22c55e]" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-black leading-tight text-white group-hover:text-[#22c55e] transition-colors">Guia de Repertórios Coringa</p>
+                        <p className="text-[9px] font-bold text-[#22c55e]">+ R$ 12,90</p>
+                      </div>
+                    </button>
+
+                    <button className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 text-left hover:bg-white/10 transition-colors group">
+                      <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                        <Zap className="w-4 h-4 text-white/50" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-black leading-tight text-white/70 group-hover:text-white transition-colors">Flashcards de Conectivos</p>
+                        <p className="text-[9px] font-bold text-white/50">+ R$ 12,90</p>
+                      </div>
+                    </button>
+
+                    <button className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 text-left hover:bg-white/10 transition-colors group">
+                      <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                        <Zap className="w-4 h-4 text-white/50" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-black leading-tight text-white/70 group-hover:text-white transition-colors">Manual Proposta Nota 200</p>
+                        <p className="text-[9px] font-bold text-white/50">+ R$ 12,90</p>
+                      </div>
+                    </button>
+
+                    <button className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/5 text-left hover:bg-white/10 transition-colors group">
+                      <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center shrink-0">
+                        <Zap className="w-4 h-4 text-white/50" />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-black leading-tight text-white/70 group-hover:text-white transition-colors">Checklist Introdução 10/10</p>
+                        <p className="text-[9px] font-bold text-white/50">+ R$ 9,90</p>
+                      </div>
+                    </button>
                   </div>
                 </div>
                 

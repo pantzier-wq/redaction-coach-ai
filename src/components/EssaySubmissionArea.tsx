@@ -278,7 +278,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                 </div>
 
                 <div className="mt-8 md:mt-10 space-y-3 border-t border-border/50 pt-6 md:pt-8">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-[#22c55e]/60 mb-2">Adicionar à sua ordem (Oferta Especial):</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#22c55e]/60 mb-2">Aumente suas chances de 900+ (Oferta Especial):</p>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <button className="flex items-center gap-3 p-3 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 text-left hover:bg-[#22c55e]/10 transition-colors group">
@@ -287,6 +287,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                       </div>
                       <div className="min-w-0">
                         <p className="text-[10px] font-black leading-tight text-white group-hover:text-[#22c55e] transition-colors">Guia de Repertórios Coringa</p>
+                        <p className="text-[8px] font-medium text-white/70 mt-0.5">+ 70 repertórios que cabem em qualquer tema</p>
                         <p className="text-[9px] font-bold text-[#22c55e]">+ R$ 12,90</p>
                       </div>
                     </button>
@@ -297,6 +298,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                       </div>
                       <div className="min-w-0">
                         <p className="text-[10px] font-black leading-tight text-white/70 group-hover:text-white transition-colors">Flashcards de Conectivos</p>
+                        <p className="text-[8px] font-medium text-white/50 mt-0.5">Domine a C4 e garanta 200 pontos automáticos</p>
                         <p className="text-[9px] font-bold text-white/50">+ R$ 12,90</p>
                       </div>
                     </button>
@@ -307,6 +309,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                       </div>
                       <div className="min-w-0">
                         <p className="text-[10px] font-black leading-tight text-white/70 group-hover:text-white transition-colors">Manual Proposta Nota 200</p>
+                        <p className="text-[8px] font-medium text-white/50 mt-0.5">Os 5 elementos que o corretor busca na sua PI</p>
                         <p className="text-[9px] font-bold text-white/50">+ R$ 12,90</p>
                       </div>
                     </button>
@@ -317,6 +320,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                       </div>
                       <div className="min-w-0">
                         <p className="text-[10px] font-black leading-tight text-white/70 group-hover:text-white transition-colors">Checklist Introdução 10/10</p>
+                        <p className="text-[8px] font-medium text-white/50 mt-0.5">Comece com impacto e prenda a atenção do corretor</p>
                         <p className="text-[9px] font-bold text-white/50">+ R$ 9,90</p>
                       </div>
                     </button>

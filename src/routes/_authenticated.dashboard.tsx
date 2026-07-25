@@ -88,35 +88,24 @@ function Dashboard() {
                 <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
                   Olá, <span className="text-primary">{profile?.full_name?.split(' ')[0] || 'Estudante'}</span>! ✍️
                 </h1>
-                <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-                  Você tem <span className="text-foreground font-bold">{essays.length}</span> redações no seu histórico. 
-                  Pronto para a nota 1000 hoje?
+                <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-8">
+                  Pronto para a nota 1000 hoje? Cole seu texto abaixo para começar a correção.
                 </p>
+
+                <div className="max-w-3xl mx-auto">
+                  <EssaySubmissionArea 
+                    isLoggedIn={true} 
+                    onSuccess={() => {
+                      const loadEssays = async () => {
+                        const { data } = await supabase.from("essays").select("*").order("created_at", { ascending: false });
+                        setEssays(data || []);
+                      };
+                      loadEssays();
+                    }}
+                  />
+                </div>
               </div>
 
-              <div className="grid gap-6 md:grid-cols-3">
-                <StatCard 
-                  icon={PenTool} 
-                  label="Nova Redação" 
-                  value="Começar" 
-                  onClick={() => setActiveSection("correcao")}
-                  color="bg-primary"
-                />
-                <StatCard 
-                  icon={History} 
-                  label="Histórico" 
-                  value={essays.length.toString()} 
-                  onClick={() => setActiveSection("historico")}
-                  color="bg-secondary"
-                />
-                <StatCard 
-                  icon={Sparkles} 
-                  label="Status" 
-                  value={profile?.is_pro ? "PRO" : "VIP"} 
-                  onClick={() => setActiveSection("upgrade")}
-                  color="bg-accent"
-                />
-              </div>
 
               {!profile?.is_pro && (
                 <div className="rounded-3xl border-2 border-secondary/40 bg-secondary/5 p-8 relative overflow-hidden">

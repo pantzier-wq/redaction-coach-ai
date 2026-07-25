@@ -240,6 +240,7 @@ function Landing() {
               name: "Matheus Oliveira",
               text: "Tava desesperado ano passado quando faltava 1 mês. A IA me mostrou que eu tava errando a estrutura da introdução. Salvou demais!",
               note: "Evolução Real",
+              image: "https://i.imgur.com/KxS631q.png",
             },
             {
               name: "Beatriz Santos",

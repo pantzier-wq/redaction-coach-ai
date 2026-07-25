@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, ArrowRight, Trophy } from "lucide-react";
+import { Sparkles, ArrowRight, Trophy, Zap } from "lucide-react";
 
 interface EssaySubmissionAreaProps {
   isLoggedIn: boolean;

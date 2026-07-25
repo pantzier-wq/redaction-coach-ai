@@ -294,7 +294,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                       <p className="text-[9px] font-medium text-white/70 mt-1">Acesso Vitalício + Todos os 4 Materiais Digitais</p>
                       <div className="flex items-center gap-2 mt-1">
                         <span className="text-[10px] font-bold text-white/50 line-through">R$ 73,50</span>
-                        <span className="text-lg font-black text-primary">R$ 35,00</span>
+                        <span className="text-lg font-black text-primary">R$ 42,00</span>
                       </div>
                     </div>
                   </button>

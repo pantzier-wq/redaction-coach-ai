@@ -233,12 +233,12 @@ function Dashboard() {
                     </div>
                     <div className="text-center md:text-right shrink-0">
                       <span className="text-muted-foreground line-through text-xs font-bold block mb-1">R$ 73,50 individual</span>
-                      <div className="text-5xl font-black text-primary tracking-tighter">R$ 35,00</div>
+                      <div className="text-5xl font-black text-primary tracking-tighter">R$ 42,00</div>
                     </div>
                   </div>
                   <button className="w-full py-5 rounded-2xl bg-primary text-white font-black text-xl hover:scale-[1.02] transition-transform shadow-[0_10px_40px_rgba(var(--primary-rgb),0.4)] relative overflow-hidden group">
                     <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
-                    <span className="relative">GARANTIR TUDO POR R$ 35,00</span>
+                    <span className="relative">GARANTIR TUDO POR R$ 42,00</span>
                   </button>
                   <p className="mt-4 text-[10px] text-muted-foreground uppercase tracking-widest font-black flex items-center justify-center gap-2">
                     <Zap className="w-3 h-3 text-primary" /> Liberação Imediata • Acesso Vitalício

@@ -225,7 +225,7 @@ function Landing() {
         <div className="grid gap-6 md:grid-cols-2">
           {[
             {
-              name: "Lucas M.",
+              name: "Lucas Martins",
               text: "Consegui subir de 720 para 960 em duas semanas. As correções detalhadas são o diferencial.",
               note: "960 no Simulado",
             },
@@ -236,7 +236,7 @@ function Landing() {
             },
             {
               name: "Matheus Oliveira",
-              text: "Tava desesperado faltando 1 mês. A IA me mostrou que eu tava errando a estrutura da introdução. Salvou demais!",
+              text: "Tava desesperado ano passado quando faltava 1 mês. A IA me mostrou que eu tava errando a estrutura da introdução. Salvou demais!",
               note: "Evolução Real",
             },
             {

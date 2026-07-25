@@ -252,28 +252,36 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                 </p>
 
                 <div className="space-y-6">
-                  <button
-                    className="group relative w-full overflow-hidden rounded-2xl px-6 py-4 md:py-5 text-lg md:text-xl font-black text-white transition-all hover:scale-[1.03] active:scale-95 shadow-[0_10px_40px_rgba(34,197,94,0.4)]"
-                    style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)" }}
-                  >
-                    <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
-                    <span className="relative flex items-center justify-center gap-3">
-                      LIBERAR MEU RESULTADO <ArrowRight className="w-6 h-6 animate-pulse" />
-                    </span>
-                  </button>
-                  
-                  <div className="flex flex-col gap-2 text-center">
-                    <div className="flex items-center justify-center gap-3">
-                      <span className="text-sm font-bold text-white/50 line-through">R$ 97,00</span>
-                      <span className="rounded-full bg-[#22c55e]/10 px-3 py-1 text-[10px] font-black text-[#22c55e] uppercase tracking-widest border border-[#22c55e]/20">OFERTA ENEM</span>
+                  <div className="space-y-4">
+                    <button
+                      className="group relative w-full overflow-hidden rounded-2xl px-6 py-4 md:py-5 text-lg md:text-xl font-black text-white transition-all hover:scale-[1.03] active:scale-95 shadow-[0_10px_40px_rgba(34,197,94,0.4)]"
+                      style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)" }}
+                    >
+                      <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
+                      <span className="relative flex items-center justify-center gap-3 text-sm md:text-base">
+                        LIBERAR RESULTADO (VITALÍCIO) • R$ 24,90 <ArrowRight className="w-5 h-5 animate-pulse" />
+                      </span>
+                    </button>
+
+                    <button
+                      className="group relative w-full overflow-hidden rounded-2xl px-6 py-4 md:py-5 text-lg md:text-xl font-black text-white transition-all hover:scale-[1.03] active:scale-95 shadow-[0_10px_40px_rgba(var(--primary-rgb),0.4)] border-2 border-primary"
+                      style={{ background: "rgba(var(--primary-rgb), 0.1)" }}
+                    >
+                      <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-primary/20 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
+                      <span className="relative flex flex-col items-center justify-center gap-0 text-primary">
+                        <span className="text-xs uppercase tracking-tighter opacity-80">🔥 Combo Nota 1000 (Tudo Incluso) 🔥</span>
+                        <span className="flex items-center gap-2">
+                          GARANTIR TUDO POR R$ 42,00 <Sparkles className="w-5 h-5" />
+                        </span>
+                      </span>
+                    </button>
+                    
+                    <div className="flex flex-col gap-2 text-center pt-2">
+                      <p className="text-[10px] text-white font-black uppercase tracking-widest bg-white/5 py-1 rounded-lg">
+                        Liberação Imediata • Pagamento Único
+                      </p>
+                      <p className="text-[9px] text-white/60 uppercase tracking-[0.2em] font-black">Sem mensalidades • Sem letras miúdas</p>
                     </div>
-                    <p className="text-sm font-bold text-white leading-snug">
-                      Acesso Vitalício por apenas <span className="text-[#22c55e] text-2xl font-black block md:inline">R$ 24,90</span>
-                    </p>
-                    <p className="text-[10px] text-white font-black uppercase tracking-widest bg-white/5 py-1 rounded-lg">
-                      Uso ILIMITADO • Sem mensalidades
-                    </p>
-                    <p className="text-[9px] text-white/60 uppercase tracking-[0.2em] font-black">Pagamento único • Sem assinaturas</p>
                   </div>
                 </div>
 

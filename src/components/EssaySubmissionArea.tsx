@@ -109,6 +109,23 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
     }
   }
 
+  async function handleTestPurchase() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { error } = await supabase.from("profiles").update({ is_pro: true }).eq("id", user.id);
+      if (error) {
+        console.error("Erro ao ativar PRO:", error);
+        return;
+      }
+      setIsPro(true);
+      setShowPaywall(false);
+      window.location.reload();
+    } else {
+      localStorage.setItem("should_upgrade_after_auth", "true");
+      window.location.href = "/auth";
+    }
+  }
+
   return (
     <div className="w-full">
       {loading ? (

@@ -266,12 +266,12 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                       </div>
 
                       <ul className="space-y-2 mb-6 flex-1">
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
-                          <span className="text-[#22c55e] shrink-0">✓</span>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-[#22c55e]">
+                          <span className="shrink-0">✓</span>
                           <span>Correções de redação ilimitadas</span>
                         </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
-                          <span className="text-[#22c55e] shrink-0">✓</span>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-[#22c55e]">
+                          <span className="shrink-0">✓</span>
                           <span>Histórico completo de evolução</span>
                         </li>
                         <li className="flex items-start gap-2 text-[11px] font-bold text-white/40">
@@ -329,7 +329,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">70+ Repertórios Coringas</span>
-                            <span className="text-[9px] text-white/80 font-medium leading-tight">Modelos universais prontos para qualquer tema do ENEM.</span>
+                            <span className="text-[9px] text-white font-bold leading-tight">Modelos universais prontos para qualquer tema do ENEM.</span>
                           </div>
                         </li>
                         <li className="flex items-start gap-2 text-[11px] font-bold text-white">
@@ -338,7 +338,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Domine a C4 (Conectivos)</span>
-                            <span className="text-[9px] text-white/80 font-medium leading-tight">Flashcards para nunca mais repetir palavras na redação.</span>
+                            <span className="text-[9px] text-white font-bold leading-tight">Flashcards para nunca mais repetir palavras na redação.</span>
                           </div>
                         </li>
                         <li className="flex items-start gap-2 text-[11px] font-bold text-white">

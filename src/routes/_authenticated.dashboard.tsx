@@ -13,7 +13,16 @@ import {
   Trophy, 
   Sparkles,
   ArrowRight,
-  PenTool
+  PenTool,
+  Search,
+  Copy,
+  Check,
+  X as CloseIcon,
+  AlertTriangle,
+  Lightbulb,
+  ChevronRight,
+  HelpCircle,
+  Play
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({

@@ -293,6 +293,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                            <span className="text-2xl font-black text-[#22c55e]">R$ 24,90</span>
                         </div>
                         <button
+                          onClick={() => window.location.href = "https://pay.hotmart.com/mock-basico"}
                           className="w-full py-3 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-xs uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20"
                         >
                           LIBERAR BÁSICO

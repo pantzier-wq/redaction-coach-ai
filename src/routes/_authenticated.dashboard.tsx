@@ -261,6 +261,7 @@ function Dashboard() {
                     <div className="mt-auto">
                       <div className="text-3xl font-black text-[#22c55e] mb-6">R$ 24,90</div>
                       <button
+                        onClick={() => window.location.href = "https://pay.hotmart.com/mock-basico"}
                         className="w-full py-4 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-sm uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20"
                       >
                         LIBERAR BÁSICO

@@ -414,32 +414,36 @@ function Dashboard() {
           )}
 
           {activeSection === "conectivos" && (profile as any)?.has_full_access && (
-
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="mb-8">
-                <h2 className="text-3xl font-black flex items-center gap-3">
-                  <Zap className="w-8 h-8 text-primary" />
-                  Domine a C4 (Conectivos)
-                </h2>
-                <p className="text-muted-foreground mt-2">Flashcards e guias para nunca mais repetir palavras.</p>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[
-                  { t: "Introdução", l: ["Em primeira análise", "Nesse contexto", "Sob essa ótica"] },
-                  { t: "Desenvolvimento", l: ["Ademais", "Outrossim", "Em contrapartida"] },
-                  { t: "Conclusão", l: ["Portanto", "Em suma", "Dessa forma"] },
-                  { t: "Causa e Efeito", l: ["Por conseguinte", "Visto que", "Devido a"] }
-                ].map((item, i) => (
-                  <div key={i} className="p-6 rounded-2xl border border-border bg-card">
-                    <h3 className="text-xl font-bold mb-4 text-primary">{item.t}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {item.l.map(c => (
-                        <span key={c} className="px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-bold border border-primary/20">{c}</span>
-                      ))}
+              {/* Header */}
+              <div className="mb-12">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest mb-4">
+                  <Zap className="w-3 h-3" /> Material Exclusivo Order Bump
+                </div>
+                <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
+                  Pare de repetir os mesmos conectivos na redação
+                </h1>
+                <p className="text-xl text-muted-foreground max-w-2xl leading-relaxed">
+                  Encontre conectivos para introduzir argumentos, acrescentar ideias, explicar causas, apresentar consequências, fazer oposições e concluir sua redação.
+                </p>
+                <div className="mt-8 p-6 rounded-2xl bg-card border border-border flex flex-col md:flex-row gap-6 items-center">
+                  <div className="p-4 rounded-xl bg-primary/5 text-primary shrink-0">
+                    <MessageSquare className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <p className="text-foreground font-medium italic">
+                      “Conectivos são palavras e expressões que ajudam a ligar as partes do texto. Porém, não basta colocá-los aleatoriamente: cada conectivo deve representar corretamente a relação entre as ideias.”
+                    </p>
+                    <div className="mt-4 flex items-center gap-2 text-amber-500 text-sm font-bold">
+                      <AlertTriangle className="w-4 h-4" />
+                      <span>Importante: utilizar muitos conectivos não garante uma nota alta. O mais importante é escolher o conectivo adequado para cada situação.</span>
                     </div>
                   </div>
-                ))}
+                </div>
               </div>
+
+              {/* Biblioteca de Conectivos Section */}
+              <ConectivosLibrary />
             </div>
           )}
         </div>

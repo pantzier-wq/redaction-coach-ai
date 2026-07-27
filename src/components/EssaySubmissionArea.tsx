@@ -363,7 +363,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
 
                       <div className="mt-auto">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-[10px] font-bold text-[#22c55e]/60 line-through italic uppercase tracking-tighter">Oferta Especial</span>
+                          <span className="text-[10px] font-bold text-[#22c55e]/60 line-through italic uppercase tracking-tighter">R$ 89,60</span>
                           <span className="text-2xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 42,00</span>
                         </div>
                         <button

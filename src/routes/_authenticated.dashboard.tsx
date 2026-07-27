@@ -227,11 +227,11 @@ function Dashboard() {
                   <div className="flex flex-col rounded-3xl border-2 border-white/10 bg-white/5 p-8 relative overflow-hidden group opacity-80 hover:opacity-100 transition-opacity">
                     <div className="mb-6 flex items-center gap-4">
                       <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
-                        <Zap className="w-6 h-6 text-white/50" />
+                        <Zap className="w-6 h-6 text-[#22c55e]" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-black text-white leading-tight uppercase tracking-tight">Acesso Vitalício</h3>
-                        <p className="text-xs font-bold text-white/40 leading-tight">Plano Básico</p>
+                        <h3 className="text-xl font-black text-[#22c55e] leading-tight uppercase tracking-tight">Acesso Vitalício</h3>
+                        <p className="text-xs font-bold text-[#22c55e]/60 leading-tight">Plano Básico</p>
                       </div>
                     </div>
 
@@ -259,9 +259,9 @@ function Dashboard() {
                     </ul>
 
                     <div className="mt-auto">
-                      <div className="text-3xl font-black text-white/60 mb-6">R$ 24,90</div>
+                      <div className="text-3xl font-black text-[#22c55e] mb-6">R$ 24,90</div>
                       <button
-                        className="w-full py-4 rounded-xl bg-white/10 text-white/60 font-black text-sm uppercase tracking-widest hover:bg-white/20 transition-all border border-white/5"
+                        className="w-full py-4 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-sm uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20"
                       >
                         LIBERAR BÁSICO
                       </button>

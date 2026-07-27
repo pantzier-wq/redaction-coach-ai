@@ -453,6 +453,17 @@ function Dashboard() {
   );
 }
 
+function ConectivosLibrary() {
+  return (
+    <div className="grid gap-6">
+      <div className="p-8 rounded-3xl border border-border bg-card">
+        <h3 className="text-xl font-black mb-6">Categorias de Conectivos</h3>
+        <p className="text-muted-foreground italic mb-6">Em breve: a lista completa será organizada aqui.</p>
+      </div>
+    </div>
+  );
+}
+
 function StatCard({ icon: Icon, label, value, onClick, color }: any) {
   return (
     <button 

@@ -286,45 +286,45 @@ function Dashboard() {
 
                     <ul className="space-y-4 mb-8 flex-1">
                       <li className="flex items-start gap-3 text-sm font-bold text-white">
-                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                          <span className="text-primary">✓</span>
+                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]">
+                          <span className="text-primary font-black">✓</span>
                         </div>
-                        <span>Tudo do Plano Vitalício</span>
+                        <span className="text-[#22c55e] uppercase tracking-tight">Tudo do Plano Vitalício</span>
                       </li>
                       <li className="flex items-start gap-3 text-sm font-bold text-white">
-                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                          <span className="text-primary">✓</span>
+                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]">
+                          <span className="text-primary font-black">✓</span>
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-primary font-black uppercase text-[10px]">70+ Repertórios Coringas</span>
-                          <p className="text-[11px] text-white/60 font-medium leading-tight">Modelos universais prontos para qualquer tema do ENEM.</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-white">
-                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                          <span className="text-primary">✓</span>
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-primary font-black uppercase text-[10px]">Domine a C4 (Conectivos)</span>
-                          <p className="text-[11px] text-white/60 font-medium leading-tight">Flashcards para nunca mais repetir palavras na redação.</p>
+                          <span className="text-[#22c55e] font-black uppercase text-[11px] tracking-wide">70+ Repertórios Coringas</span>
+                          <p className="text-[12px] text-white/80 font-medium leading-tight">Modelos universais prontos para qualquer tema do ENEM.</p>
                         </div>
                       </li>
                       <li className="flex items-start gap-3 text-sm font-bold text-white">
-                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                          <span className="text-primary">✓</span>
+                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]">
+                          <span className="text-primary font-black">✓</span>
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-primary font-black uppercase text-[10px]">Segredo da C5 (Nota 200)</span>
-                          <p className="text-[11px] text-white/60 font-medium leading-tight">Manual prático para fechar a proposta de intervenção.</p>
+                          <span className="text-[#22c55e] font-black uppercase text-[11px] tracking-wide">Domine a C4 (Conectivos)</span>
+                          <p className="text-[12px] text-white/80 font-medium leading-tight">Flashcards para nunca mais repetir palavras na redação.</p>
                         </div>
                       </li>
                       <li className="flex items-start gap-3 text-sm font-bold text-white">
-                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                          <span className="text-primary">✓</span>
+                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]">
+                          <span className="text-primary font-black">✓</span>
                         </div>
                         <div className="flex flex-col">
-                          <span className="text-primary font-black uppercase text-[10px]">Suporte Prioritário VIP</span>
-                          <p className="text-[11px] text-white/60 font-medium leading-tight">Tire dúvidas direto com nossa equipe de especialistas.</p>
+                          <span className="text-[#22c55e] font-black uppercase text-[11px] tracking-wide">Segredo da C5 (Nota 200)</span>
+                          <p className="text-[12px] text-white/80 font-medium leading-tight">Manual prático para fechar a proposta de intervenção.</p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3 text-sm font-bold text-white">
+                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]">
+                          <span className="text-primary font-black">✓</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[#22c55e] font-black uppercase text-[11px] tracking-wide">Suporte Prioritário VIP</span>
+                          <p className="text-[12px] text-white/80 font-medium leading-tight">Tire dúvidas direto com nossa equipe de especialistas.</p>
                         </div>
                       </li>
                     </ul>

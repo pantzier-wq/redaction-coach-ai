@@ -318,45 +318,45 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
 
                       <ul className="space-y-2.5 mb-6 flex-1">
                         <li className="flex items-start gap-2 text-[11px] font-bold text-white">
-                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                            <span className="text-primary text-[10px]">✓</span>
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
+                            <span className="text-primary text-[10px] font-black">✓</span>
                           </div>
-                          <span>Correções Ilimitadas (VITALÍCIO)</span>
+                          <span className="text-[#22c55e] uppercase tracking-tight">Correções Ilimitadas (VITALÍCIO)</span>
                         </li>
                         <li className="flex items-start gap-2 text-[11px] font-bold text-white">
-                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                            <span className="text-primary text-[10px]">✓</span>
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
+                            <span className="text-primary text-[10px] font-black">✓</span>
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-primary-foreground font-black uppercase text-[10px]">70+ Repertórios Coringas</span>
-                            <span className="text-[9px] text-white/60 font-medium leading-tight">Modelos universais prontos para qualquer tema do ENEM.</span>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
-                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                            <span className="text-primary text-[10px]">✓</span>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-white font-black uppercase text-[10px]">Domine a C4 (Conectivos)</span>
-                            <span className="text-[9px] text-white/60 font-medium leading-tight">Flashcards para nunca mais repetir palavras na redação.</span>
+                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">70+ Repertórios Coringas</span>
+                            <span className="text-[9px] text-white/80 font-medium leading-tight">Modelos universais prontos para qualquer tema do ENEM.</span>
                           </div>
                         </li>
                         <li className="flex items-start gap-2 text-[11px] font-bold text-white">
-                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                            <span className="text-primary text-[10px]">✓</span>
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
+                            <span className="text-primary text-[10px] font-black">✓</span>
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-white font-black uppercase text-[10px]">Segredo da C5 (Nota 200)</span>
-                            <span className="text-[9px] text-white/60 font-medium leading-tight">Manual prático para fechar a proposta de intervenção.</span>
+                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Domine a C4 (Conectivos)</span>
+                            <span className="text-[9px] text-white/80 font-medium leading-tight">Flashcards para nunca mais repetir palavras na redação.</span>
                           </div>
                         </li>
                         <li className="flex items-start gap-2 text-[11px] font-bold text-white">
-                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
-                            <span className="text-primary text-[10px]">✓</span>
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
+                            <span className="text-primary text-[10px] font-black">✓</span>
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-white font-black uppercase text-[10px]">Suporte Prioritário VIP</span>
-                            <span className="text-[9px] text-white/60 font-medium leading-tight">Tire dúvidas direto com nossa equipe de especialistas.</span>
+                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Segredo da C5 (Nota 200)</span>
+                            <span className="text-[9px] text-white/80 font-medium leading-tight">Manual prático para fechar a proposta de intervenção.</span>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
+                            <span className="text-primary text-[10px] font-black">✓</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Suporte Prioritário VIP</span>
+                            <span className="text-[9px] text-white/80 font-medium leading-tight">Tire dúvidas direto com nossa equipe de especialistas.</span>
                           </div>
                         </li>
                       </ul>

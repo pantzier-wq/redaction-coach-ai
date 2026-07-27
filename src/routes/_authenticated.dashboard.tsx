@@ -60,17 +60,22 @@ function Dashboard() {
     window.location.href = "/";
   };
 
-  const handleTestPurchase = async () => {
+  const handleTestPurchase = async (type: 'pro' | 'full' = 'pro') => {
     if (profile?.id) {
-      const { error } = await supabase.from("profiles").update({ is_pro: true }).eq("id", profile.id);
+      const updates = type === 'full' 
+        ? { is_pro: true, has_full_access: true }
+        : { is_pro: true };
+        
+      const { error } = await supabase.from("profiles").update(updates).eq("id", profile.id);
       if (error) {
-        console.error("Erro ao ativar PRO:", error);
+        console.error("Erro ao ativar acesso:", error);
         return;
       }
-      setProfile({ ...profile, is_pro: true });
+      setProfile({ ...profile, ...updates });
       window.location.reload();
     }
   };
+
 
   if (loading) {
     return (
@@ -273,7 +278,8 @@ function Dashboard() {
                     <div className="mt-auto">
                       <div className="text-3xl font-black text-[#22c55e] mb-6">R$ 24,90</div>
                       <button
-                        onClick={handleTestPurchase}
+                        onClick={() => handleTestPurchase('pro')}
+
                         className="w-full py-4 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-sm uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20"
                       >
                         LIBERAR BÁSICO
@@ -339,7 +345,8 @@ function Dashboard() {
                         <span className="text-4xl font-black text-[#22c55e] drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">R$ 42,00</span>
                       </div>
                       <button
-                        onClick={handleTestPurchase}
+                        onClick={() => handleTestPurchase('full')}
+
                         className="w-full py-4 rounded-xl bg-[#22c55e] text-white font-black text-sm uppercase tracking-[0.2em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_12px_40px_rgba(34,197,94,0.4)] relative overflow-hidden"
                       >
                         <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
@@ -351,7 +358,7 @@ function Dashboard() {
               </div>
             </div>
           )}
-          {activeSection === "repertorios" && profile?.is_pro && (
+          {activeSection === "repertorios" && profile?.has_full_access && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="mb-8">
                 <h2 className="text-3xl font-black flex items-center gap-3">
@@ -377,7 +384,8 @@ function Dashboard() {
             </div>
           )}
 
-          {activeSection === "conectivos" && profile?.is_pro && (
+          {activeSection === "conectivos" && profile?.has_full_access && (
+
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="mb-8">
                 <h2 className="text-3xl font-black flex items-center gap-3">

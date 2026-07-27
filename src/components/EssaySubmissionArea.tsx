@@ -347,7 +347,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Segredo da C5 (Nota 200)</span>
-                            <span className="text-[9px] text-white/80 font-medium leading-tight">Manual prático para fechar a proposta de intervenção.</span>
+                            <span className="text-[9px] text-white font-bold leading-tight">Manual prático para fechar a proposta de intervenção.</span>
                           </div>
                         </li>
                         <li className="flex items-start gap-2 text-[11px] font-bold text-white">
@@ -356,7 +356,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Suporte Prioritário VIP</span>
-                            <span className="text-[9px] text-white/80 font-medium leading-tight">Tire dúvidas direto com nossa equipe de especialistas.</span>
+                            <span className="text-[9px] text-white font-bold leading-tight">Tire dúvidas direto com nossa equipe de especialistas.</span>
                           </div>
                         </li>
                       </ul>

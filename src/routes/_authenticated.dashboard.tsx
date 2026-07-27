@@ -315,7 +315,7 @@ function Dashboard() {
                         </div>
                         <div className="flex flex-col">
                           <span className="text-[#22c55e] font-black uppercase text-[11px] tracking-wide">Segredo da C5 (Nota 200)</span>
-                          <p className="text-[12px] text-white/80 font-medium leading-tight">Manual prático para fechar a proposta de intervenção.</p>
+                          <p className="text-[12px] text-white font-bold leading-tight">Manual prático para fechar a proposta de intervenção.</p>
                         </div>
                       </li>
                       <li className="flex items-start gap-3 text-sm font-bold text-white">
@@ -324,7 +324,7 @@ function Dashboard() {
                         </div>
                         <div className="flex flex-col">
                           <span className="text-[#22c55e] font-black uppercase text-[11px] tracking-wide">Suporte Prioritário VIP</span>
-                          <p className="text-[12px] text-white/80 font-medium leading-tight">Tire dúvidas direto com nossa equipe de especialistas.</p>
+                          <p className="text-[12px] text-white font-bold leading-tight">Tire dúvidas direto com nossa equipe de especialistas.</p>
                         </div>
                       </li>
                     </ul>

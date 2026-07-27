@@ -257,11 +257,11 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                     <div className="flex flex-col rounded-2xl border-2 border-white/10 bg-white/5 p-5 relative overflow-hidden group opacity-80 hover:opacity-100 transition-opacity">
                       <div className="mb-4 flex items-center gap-3">
                         <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                          <Zap className="w-5 h-5 text-white/50" />
+                          <Zap className="w-5 h-5 text-[#22c55e]" />
                         </div>
                         <div>
-                          <h3 className="text-sm font-black text-white leading-tight uppercase tracking-tight">Acesso Vitalício</h3>
-                          <p className="text-[10px] font-bold text-white/40 leading-tight">Plano Básico</p>
+                          <h3 className="text-sm font-black text-[#22c55e] leading-tight uppercase tracking-tight">Acesso Vitalício</h3>
+                          <p className="text-[10px] font-bold text-[#22c55e]/60 leading-tight">Plano Básico</p>
                         </div>
                       </div>
 
@@ -290,10 +290,10 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
 
                       <div className="mt-auto">
                         <div className="flex items-baseline gap-1 mb-3">
-                          <span className="text-2xl font-black text-white/60">R$ 24,90</span>
+                           <span className="text-2xl font-black text-[#22c55e]">R$ 24,90</span>
                         </div>
                         <button
-                          className="w-full py-3 rounded-xl bg-white/10 text-white/60 font-black text-xs uppercase tracking-widest hover:bg-white/20 transition-all border border-white/5"
+                          className="w-full py-3 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-xs uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20"
                         >
                           LIBERAR BÁSICO
                         </button>

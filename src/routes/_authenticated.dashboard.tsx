@@ -22,7 +22,8 @@ import {
   Lightbulb,
   ChevronRight,
   HelpCircle,
-  Play
+  Play,
+  MessageSquare
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({

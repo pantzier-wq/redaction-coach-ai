@@ -360,6 +360,60 @@ function Dashboard() {
               </div>
             </div>
           )}
+          {activeSection === "repertorios" && profile?.is_pro && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="mb-8">
+                <h2 className="text-3xl font-black flex items-center gap-3">
+                  <BookOpen className="w-8 h-8 text-primary" />
+                  70+ Repertórios Coringas
+                </h2>
+                <p className="text-muted-foreground mt-2">Modelos universais prontos para qualquer tema do ENEM.</p>
+              </div>
+              <div className="grid gap-6">
+                {[
+                  { t: "Eixos Sociais", d: "Repertórios que cabem em qualquer tema sobre sociedade e cidadania." },
+                  { t: "Eixos Ambientais", d: "Citações e fatos históricos para temas de sustentabilidade." },
+                  { t: "Eixos Educacionais", d: "Pensadores e dados sobre o sistema de ensino brasileiro." },
+                  { t: "Eixos Tecnológicos", d: "Impactos da era digital e inteligência artificial." }
+                ].map((item, i) => (
+                  <div key={i} className="p-6 rounded-2xl border border-border bg-card hover:border-primary/50 transition-colors">
+                    <h3 className="text-xl font-bold mb-2 text-primary">{item.t}</h3>
+                    <p className="text-muted-foreground mb-4">{item.d}</p>
+                    <button className="text-sm font-black text-primary hover:underline uppercase tracking-wider">Acessar Material →</button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {activeSection === "conectivos" && profile?.is_pro && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="mb-8">
+                <h2 className="text-3xl font-black flex items-center gap-3">
+                  <Zap className="w-8 h-8 text-primary" />
+                  Domine a C4 (Conectivos)
+                </h2>
+                <p className="text-muted-foreground mt-2">Flashcards e guias para nunca mais repetir palavras.</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {[
+                  { t: "Introdução", l: ["Em primeira análise", "Nesse contexto", "Sob essa ótica"] },
+                  { t: "Desenvolvimento", l: ["Ademais", "Outrossim", "Em contrapartida"] },
+                  { t: "Conclusão", l: ["Portanto", "Em suma", "Dessa forma"] },
+                  { t: "Causa e Efeito", l: ["Por conseguinte", "Visto que", "Devido a"] }
+                ].map((item, i) => (
+                  <div key={i} className="p-6 rounded-2xl border border-border bg-card">
+                    <h3 className="text-xl font-bold mb-4 text-primary">{item.t}</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {item.l.map(c => (
+                        <span key={c} className="px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-bold border border-primary/20">{c}</span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>

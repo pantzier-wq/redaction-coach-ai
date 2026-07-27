@@ -46,6 +46,7 @@ export type Database = {
           avatar_url: string | null
           credits: number | null
           full_name: string | null
+          has_full_access: boolean | null
           id: string
           is_pro: boolean | null
           updated_at: string | null
@@ -54,6 +55,7 @@ export type Database = {
           avatar_url?: string | null
           credits?: number | null
           full_name?: string | null
+          has_full_access?: boolean | null
           id: string
           is_pro?: boolean | null
           updated_at?: string | null
@@ -62,6 +64,7 @@ export type Database = {
           avatar_url?: string | null
           credits?: number | null
           full_name?: string | null
+          has_full_access?: boolean | null
           id?: string
           is_pro?: boolean | null
           updated_at?: string | null

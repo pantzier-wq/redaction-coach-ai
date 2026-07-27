@@ -454,11 +454,228 @@ function Dashboard() {
 }
 
 function ConectivosLibrary() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeCategory, setActiveCategory] = useState("todos");
+
+  const categories = [
+    { id: "todos", label: "Todos" },
+    { id: "introducao", label: "Introdução" },
+    { id: "adicao", label: "Adição" },
+    { id: "oposicao", label: "Oposição" },
+    { id: "conclusao", label: "Conclusão" },
+    { id: "causa", label: "Causa/Efeito" }
+  ];
+
+  const conectivos = [
+    { 
+      cat: "introducao", 
+      termo: "Em primeira análise", 
+      ex: "Em primeira análise, é fundamental destacar que a negligência governamental...", 
+      uso: "Iniciar o primeiro parágrafo de desenvolvimento.",
+      dica: "Evita começar com 'Atualmente'."
+    },
+    { 
+      cat: "introducao", 
+      termo: "Mormente", 
+      ex: "Mormente, cabe pontuar o descaso com a infraestrutura escolar.", 
+      uso: "Dar ênfase a um ponto inicial.",
+      dica: "Palavra de alto valor léxico."
+    },
+    { 
+      cat: "adicao", 
+      termo: "Ademais", 
+      ex: "Ademais, a ausência de leis rígidas agrava o cenário.", 
+      uso: "Acrescentar um novo argumento no mesmo parágrafo ou iniciar o segundo desenvolvimento.",
+      dica: "Substitui o simples 'Além disso'."
+    },
+    { 
+      cat: "adicao", 
+      termo: "Outrossim", 
+      ex: "Outrossim, a influência das redes sociais é inegável.", 
+      uso: "Somar uma ideia análoga à anterior.",
+      dica: "Excelente para coesão entre parágrafos."
+    },
+    { 
+      cat: " oposicao", 
+      termo: "Contudo", 
+      ex: "A lei existe; contudo, sua aplicação é ineficaz.", 
+      uso: "Expressar contraste ou adversidade.",
+      dica: "Cuidado: sempre use vírgula antes ou depois, dependendo da posição."
+    },
+    { 
+      cat: " oposicao", 
+      termo: "Entretanto", 
+      ex: "Entretanto, a solução não depende apenas do Estado.", 
+      uso: "Opor-se a uma ideia citada anteriormente.",
+      dica: "Variante forte para 'mas' ou 'porém'."
+    },
+    { 
+      cat: "conclusao", 
+      termo: "Portanto", 
+      ex: "Portanto, medidas são necessárias para reverter o quadro.", 
+      uso: "Iniciar a proposta de intervenção.",
+      dica: "O clássico infalível para a C5."
+    },
+    { 
+      cat: "conclusao", 
+      termo: "Em suma", 
+      ex: "Em suma, a educação é o único caminho para a mudança.", 
+      uso: "Sintetizar o que foi discutido.",
+      dica: "Ótimo para fechar a frase final da redação."
+    },
+    { 
+      cat: "causa", 
+      termo: "Haja vista", 
+      ex: "A evasão escolar aumenta, haja vista a falta de incentivos.", 
+      uso: "Indicar a razão de um problema.",
+      dica: "Não use 'haja visto', o correto é 'vista'."
+    },
+    { 
+      cat: "causa", 
+      termo: "Em virtude de", 
+      ex: "Em virtude da desigualdade, muitos jovens abandonam os estudos.", 
+      uso: "Explicar a origem de um fenômeno.",
+      dica: "Conectivo de causa muito elegante."
+    },
+    {
+      cat: "introducao",
+      termo: "Sob essa ótica",
+      ex: "Sob essa ótica, é perceptível que a passividade social corrobora o problema.",
+      uso: "Conectar a tese aos argumentos.",
+      dica: "Ajuda a manter a fluidez entre a introdução e o D1."
+    },
+    {
+      cat: "causa",
+      termo: "Por conseguinte",
+      ex: "A desinformação impera; por conseguinte, o preconceito se alastra.",
+      uso: "Mostrar a consequência direta de um fato.",
+      dica: "Excelente para fechar parágrafos de desenvolvimento."
+    }
+  ];
+
+  const filtered = conectivos.filter(c => {
+    const matchesSearch = c.termo.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          c.ex.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesCat = activeCategory === "todos" || c.cat === activeCategory;
+    return matchesSearch && matchesCat;
+  });
+
   return (
-    <div className="grid gap-6">
-      <div className="p-8 rounded-3xl border border-border bg-card">
-        <h3 className="text-xl font-black mb-6">Categorias de Conectivos</h3>
-        <p className="text-muted-foreground italic mb-6">Em breve: a lista completa será organizada aqui.</p>
+    <div className="space-y-8 pb-20">
+      {/* Search and Filters */}
+      <div className="sticky top-2 z-30 flex flex-col gap-4 p-4 rounded-3xl bg-card/80 backdrop-blur-md border border-border shadow-xl">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <input 
+            type="text" 
+            placeholder="Pesquisar conectivo ou exemplo..."
+            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => setActiveCategory(cat.id)}
+              className={cn(
+                "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all",
+                activeCategory === cat.id 
+                  ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]" 
+                  : "bg-muted text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Main List */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {filtered.map((c, i) => (
+          <div 
+            key={i} 
+            className="group p-6 rounded-3xl border border-border bg-card hover:border-primary/40 transition-all hover:scale-[1.02] flex flex-col"
+          >
+            <div className="flex justify-between items-start mb-4">
+              <h4 className="text-xl font-black text-primary tracking-tight">{c.termo}</h4>
+              <span className="text-[10px] font-black uppercase px-2 py-1 rounded-md bg-primary/10 text-primary border border-primary/20">
+                {c.cat}
+              </span>
+            </div>
+            
+            <div className="space-y-4 flex-1">
+              <div className="p-4 rounded-2xl bg-muted/30 border border-border/50">
+                <p className="text-sm font-medium italic text-foreground leading-relaxed">
+                  "{c.ex}"
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 gap-3">
+                <div className="flex items-start gap-2">
+                  <div className="mt-1 shrink-0"><Check className="w-3 h-3 text-[#22c55e]" /></div>
+                  <p className="text-xs text-muted-foreground font-bold"><span className="text-foreground">Uso:</span> {c.uso}</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="mt-1 shrink-0"><Lightbulb className="w-3 h-3 text-amber-500" /></div>
+                  <p className="text-xs text-muted-foreground font-bold"><span className="text-foreground">Dica:</span> {c.dica}</p>
+                </div>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => {
+                navigator.clipboard.writeText(c.termo);
+                // Simple feedback would be nice here
+              }}
+              className="mt-6 w-full py-3 rounded-xl bg-muted hover:bg-primary/10 hover:text-primary text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+            >
+              <Copy className="w-3 h-3" /> Copiar Termo
+            </button>
+          </div>
+        ))}
+      </div>
+
+      {/* Bonus Content */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+        <div className="p-8 rounded-[2rem] border-2 border-destructive/20 bg-destructive/5">
+          <h3 className="text-xl font-black text-destructive mb-6 flex items-center gap-2">
+            <X className="w-6 h-6" /> Erros Comuns
+          </h3>
+          <ul className="space-y-4">
+            <li className="flex gap-3 items-start">
+              <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center shrink-0 mt-0.5 text-destructive font-black text-xs">1</div>
+              <p className="text-sm font-bold text-muted-foreground">
+                <strong className="text-foreground">Usar "mesmo" como pronome:</strong> "O aluno entregou a redação e o mesmo saiu." (Errado). Prefira: "ele".
+              </p>
+            </li>
+            <li className="flex gap-3 items-start">
+              <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center shrink-0 mt-0.5 text-destructive font-black text-xs">2</div>
+              <p className="text-sm font-bold text-muted-foreground">
+                <strong className="text-foreground">Onde vs Aonde:</strong> "Onde" indica lugar fixo. "Aonde" indica movimento. Não use "onde" para substituir "no qual" em ideias abstratas.
+              </p>
+            </li>
+          </ul>
+        </div>
+
+        <div className="p-8 rounded-[2rem] border-2 border-[#22c55e]/20 bg-[#22c55e]/5">
+          <h3 className="text-xl font-black text-[#22c55e] mb-6 flex items-center gap-2">
+            <Check className="w-6 h-6" /> Exercício Rápido
+          </h3>
+          <p className="text-sm font-bold text-muted-foreground mb-6">
+            Qual conectivo melhor preenche a lacuna? <br/>
+            "O governo deve investir em educação, __________ a sociedade possa evoluir."
+          </p>
+          <div className="grid gap-2">
+            {["Mas", "Portanto", "A fim de que", "Entretanto"].map(opt => (
+              <button key={opt} className="w-full p-3 rounded-xl border border-border bg-card hover:border-[#22c55e] transition-all text-left text-xs font-bold">
+                {opt}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

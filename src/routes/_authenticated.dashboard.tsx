@@ -295,27 +295,36 @@ function Dashboard() {
                         <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                           <span className="text-primary">✓</span>
                         </div>
-                        <div>
-                          <span className="text-primary font-black">70+ Repertórios Coringas</span>
-                          <p className="text-[10px] text-white/60 font-medium">Repertórios universais para qualquer tema do ENEM.</p>
+                        <div className="flex flex-col">
+                          <span className="text-primary font-black uppercase text-[10px]">70+ Repertórios Coringas</span>
+                          <p className="text-[11px] text-white/60 font-medium leading-tight">Modelos universais prontos para qualquer tema do ENEM.</p>
                         </div>
                       </li>
                       <li className="flex items-start gap-3 text-sm font-bold text-white">
                         <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                           <span className="text-primary">✓</span>
                         </div>
-                        <div>
-                          <span className="text-primary font-black">Manual de Conectivos (C4)</span>
-                          <p className="text-[10px] text-white/60 font-medium">Flashcards e guia prático para garantir os 200 pontos.</p>
+                        <div className="flex flex-col">
+                          <span className="text-primary font-black uppercase text-[10px]">Domine a C4 (Conectivos)</span>
+                          <p className="text-[11px] text-white/60 font-medium leading-tight">Flashcards para nunca mais repetir palavras na redação.</p>
                         </div>
                       </li>
                       <li className="flex items-start gap-3 text-sm font-bold text-white">
                         <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                           <span className="text-primary">✓</span>
                         </div>
-                        <div>
-                          <span className="text-primary font-black">Segredo da C5 (Nota 200)</span>
-                          <p className="text-[10px] text-white/60 font-medium">Os 5 elementos obrigatórios que todo corretor procura.</p>
+                        <div className="flex flex-col">
+                          <span className="text-primary font-black uppercase text-[10px]">Segredo da C5 (Nota 200)</span>
+                          <p className="text-[11px] text-white/60 font-medium leading-tight">Manual prático para fechar a proposta de intervenção.</p>
+                        </div>
+                      </li>
+                      <li className="flex items-start gap-3 text-sm font-bold text-white">
+                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                          <span className="text-primary">✓</span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-primary font-black uppercase text-[10px]">Suporte Prioritário VIP</span>
+                          <p className="text-[11px] text-white/60 font-medium leading-tight">Tire dúvidas direto com nossa equipe de especialistas.</p>
                         </div>
                       </li>
                     </ul>

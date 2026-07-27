@@ -327,26 +327,37 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                           <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                             <span className="text-primary text-[10px]">✓</span>
                           </div>
-                          <span className="text-primary-foreground font-black">70+ Repertórios Coringas</span>
-                          <span className="text-[8px] bg-primary/20 px-1 rounded text-primary ml-1 uppercase">Essencial</span>
+                          <div className="flex flex-col">
+                            <span className="text-primary-foreground font-black uppercase text-[10px]">70+ Repertórios Coringas</span>
+                            <span className="text-[9px] text-white/60 font-medium leading-tight">Modelos universais prontos para qualquer tema do ENEM.</span>
+                          </div>
                         </li>
                         <li className="flex items-start gap-2 text-[11px] font-bold text-white">
                           <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                             <span className="text-primary text-[10px]">✓</span>
                           </div>
-                          <span>Domine a C4 (Conectivos)</span>
+                          <div className="flex flex-col">
+                            <span className="text-white font-black uppercase text-[10px]">Domine a C4 (Conectivos)</span>
+                            <span className="text-[9px] text-white/60 font-medium leading-tight">Flashcards para nunca mais repetir palavras na redação.</span>
+                          </div>
                         </li>
                         <li className="flex items-start gap-2 text-[11px] font-bold text-white">
                           <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                             <span className="text-primary text-[10px]">✓</span>
                           </div>
-                          <span>Segredo da C5 (Nota 200)</span>
+                          <div className="flex flex-col">
+                            <span className="text-white font-black uppercase text-[10px]">Segredo da C5 (Nota 200)</span>
+                            <span className="text-[9px] text-white/60 font-medium leading-tight">Manual prático para fechar a proposta de intervenção.</span>
+                          </div>
                         </li>
                         <li className="flex items-start gap-2 text-[11px] font-bold text-white">
                           <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
                             <span className="text-primary text-[10px]">✓</span>
                           </div>
-                          <span className="italic text-primary">Suporte Prioritário VIP</span>
+                          <div className="flex flex-col">
+                            <span className="text-white font-black uppercase text-[10px]">Suporte Prioritário VIP</span>
+                            <span className="text-[9px] text-white/60 font-medium leading-tight">Tire dúvidas direto com nossa equipe de especialistas.</span>
+                          </div>
                         </li>
                       </ul>
 

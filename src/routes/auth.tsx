@@ -38,6 +38,17 @@ function AuthPage() {
             console.error("Erro ao sincronizar redação pendente", e);
           }
         }
+
+        // Handle testing "mock purchase" redirect
+        const shouldUpgrade = localStorage.getItem("should_upgrade_after_auth");
+        if (shouldUpgrade) {
+          localStorage.removeItem("should_upgrade_after_auth");
+          const { error } = await supabase.from("profiles").update({ is_pro: true }).eq("id", session.user.id);
+          if (!error) {
+            toast.success("Acesso PRO liberado para testes!");
+          }
+        }
+
         navigate({ to: "/dashboard" });
       }
     });

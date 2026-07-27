@@ -1,10 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-
 import { useEffect, useState } from "react";
-import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
-import { supabase } from "@/integrations/supabase/client";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
-import { Sparkles, Trophy, ArrowRight } from "lucide-react";
+import { 
+  Trophy, 
+  Target, 
+  Zap, 
+  Star, 
+  Clock, 
+  CheckCircle2, 
+  ChevronDown, 
+  ChevronUp,
+  Flame,
+  Users,
+  MessageSquare,
+  Sparkles,
+  ArrowRight
+} from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({

@@ -331,11 +331,11 @@ function Dashboard() {
 
                     <div className="mt-auto">
                       <div className="flex items-center gap-3 mb-4">
-                        <span className="text-sm font-bold text-white/40 line-through italic">De R$ 73,50</span>
-                        <span className="text-4xl font-black text-primary drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]">R$ 42,00</span>
+                        <span className="text-sm font-bold text-[#22c55e]/60 line-through italic uppercase tracking-widest">Oferta Especial</span>
+                        <span className="text-4xl font-black text-[#22c55e] drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">R$ 42,00</span>
                       </div>
                       <button
-                        className="w-full py-4 rounded-xl bg-primary text-white font-black text-sm uppercase tracking-[0.2em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_12px_40px_rgba(var(--primary-rgb),0.4)] relative overflow-hidden"
+                        className="w-full py-4 rounded-xl bg-[#22c55e] text-white font-black text-sm uppercase tracking-[0.2em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_12px_40px_rgba(34,197,94,0.4)] relative overflow-hidden"
                       >
                         <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
                         GARANTIR COMBO COMPLETO →

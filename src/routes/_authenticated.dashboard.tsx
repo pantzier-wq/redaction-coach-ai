@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { type Correcao } from "@/lib/correct-essay.functions";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
 import { Sidebar } from "@/components/Sidebar";
+import { cn } from "@/lib/utils";
 import { 
   History, 
   Star, 
@@ -17,7 +18,7 @@ import {
   Search,
   Copy,
   Check,
-  X as CloseIcon,
+  X,
   AlertTriangle,
   Lightbulb,
   ChevronRight,

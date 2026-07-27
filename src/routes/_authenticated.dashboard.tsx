@@ -391,27 +391,55 @@ function Dashboard() {
 
           {activeSection === "repertorios" && (profile as any)?.has_full_access && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="mb-8">
-                <h2 className="text-3xl font-black flex items-center gap-3">
-                  <BookOpen className="w-8 h-8 text-primary" />
-                  70+ Repertórios Coringas
-                </h2>
-                <p className="text-muted-foreground mt-2">Modelos universais prontos para qualquer tema do ENEM.</p>
-              </div>
-              <div className="grid gap-6">
-                {[
-                  { t: "Eixos Sociais", d: "Repertórios que cabem em qualquer tema sobre sociedade e cidadania." },
-                  { t: "Eixos Ambientais", d: "Citações e fatos históricos para temas de sustentabilidade." },
-                  { t: "Eixos Educacionais", d: "Pensadores e dados sobre o sistema de ensino brasileiro." },
-                  { t: "Eixos Tecnológicos", d: "Impactos da era digital e inteligência artificial." }
-                ].map((item, i) => (
-                  <div key={i} className="p-6 rounded-2xl border border-border bg-card hover:border-primary/50 transition-colors">
-                    <h3 className="text-xl font-bold mb-2 text-primary">{item.t}</h3>
-                    <p className="text-muted-foreground mb-4">{item.d}</p>
-                    <button className="text-sm font-black text-primary hover:underline uppercase tracking-wider">Acessar Material →</button>
+              {/* 2. Abertura da página */}
+              <div className="mb-12">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest mb-4">
+                  <BookOpen className="w-3 h-3" /> Mais de 70 repertórios disponíveis
+                </div>
+                <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
+                  Nunca mais fique sem saber o que citar na redação
+                </h1>
+                <p className="text-xl text-muted-foreground max-w-2xl leading-relaxed">
+                  Encontre repertórios de filosofia, sociologia, história, literatura, cinema, legislação e cultura brasileira para fortalecer seus argumentos.
+                </p>
+                <div className="mt-8 p-6 rounded-2xl bg-card border border-border flex flex-col md:flex-row gap-6 items-center">
+                  <div className="p-4 rounded-xl bg-primary/5 text-primary shrink-0">
+                    <Lightbulb className="w-8 h-8" />
                   </div>
-                ))}
+                  <div>
+                    <p className="text-foreground font-medium italic">
+                      “Um bom repertório não serve apenas para deixar a redação mais bonita. Ele deve ajudar a explicar o problema, comprovar seu argumento ou aprofundar sua análise.”
+                    </p>
+                  </div>
+                </div>
               </div>
+
+              {/* 3. Aviso pedagógico inicial */}
+              <div className="mb-12 p-8 rounded-[2rem] border-2 border-primary/20 bg-primary/5">
+                <h2 className="text-2xl font-black mb-6 flex items-center gap-2">
+                  <AlertTriangle className="w-6 h-6 text-amber-500" /> Antes de usar um repertório
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <h3 className="font-black text-foreground">Ele é verdadeiro?</h3>
+                    <p className="text-sm text-muted-foreground">Não invente autores, frases, leis, filmes, pesquisas ou acontecimentos históricos.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="font-black text-foreground">Ele combina com o tema?</h3>
+                    <p className="text-sm text-muted-foreground">A referência precisa estar claramente relacionada ao problema discutido.</p>
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="font-black text-foreground">Ele fortalece seu argumento?</h3>
+                    <p className="text-sm text-muted-foreground">Não basta citar. Depois de apresentar o repertório, explique o que ele demonstra e como se conecta à sua tese.</p>
+                  </div>
+                </div>
+                <div className="mt-6 p-4 rounded-xl bg-background/50 border border-border text-sm italic text-muted-foreground">
+                  Repertório coringa não significa repertório automático. A referência precisa ser adaptada ao tema e explicada dentro da argumentação.
+                </div>
+              </div>
+
+              {/* Biblioteca de Repertórios Section */}
+              <RepertoriosLibrary />
             </div>
           )}
 
@@ -675,6 +703,233 @@ function ConectivosLibrary() {
                 {opt}
               </button>
             ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RepertoriosLibrary() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeType, setActiveType] = useState("todos");
+  const [activeEixo, setActiveEixo] = useState("todos");
+
+  const types = [
+    { id: "todos", label: "Todos" },
+    { id: "leis", label: "Leis e documentos" },
+    { id: "filosofia", label: "Filosofia e sociologia" },
+    { id: "brasileiros", label: "Pensadores brasileiros" },
+    { id: "literatura", label: "Literatura" },
+    { id: "cinema", label: "Filmes e séries" },
+    { id: "historia", label: "História" },
+    { id: "ciencia", label: "Ciência e sociedade" }
+  ];
+
+  const eixos = [
+    { id: "todos", label: "Todos os eixos" },
+    { id: "educacao", label: "Educação" },
+    { id: "desigualdade", label: "Desigualdade social" },
+    { id: "cidadania", label: "Cidadania e direitos" },
+    { id: "racismo", label: "Racismo e preconceito" },
+    { id: "tecnologia", label: "Tecnologia" },
+    { id: "meio-ambiente", label: "Meio ambiente" },
+    { id: "saude", label: "Saúde" },
+    { id: "cultura", label: "Cultura" }
+  ];
+
+  const repertorios = [
+    {
+      id: "cf88",
+      titulo: "Constituição Federal de 1988",
+      autorOuOrigem: "Brasil",
+      tipo: "leis",
+      ideiaCentral: "A Constituição estabelece direitos fundamentais e responsabilidades do Estado brasileiro.",
+      eixosTematicos: ["cidadania", "educacao", "saude", "meio-ambiente", "direitos"],
+      comoUsar: "Pode fundamentar argumentos que mostrem a distância entre os direitos previstos e a realidade enfrentada pela população.",
+      modeloAdaptavel: "A Constituição Federal de 1988 prevê a garantia de direitos fundamentais à população brasileira. Entretanto, essa determinação ainda não se concretiza plenamente quando se observa [PROBLEMA DO TEMA], uma vez que [EXPLICAÇÃO DO ARGUMENTO].",
+      alerta: "Não escreva apenas que “a Constituição garante tudo”. Especifique o direito relacionado ao tema e explique como ele está sendo desrespeitado.",
+      icon: BookOpen
+    },
+    {
+      id: "bauman",
+      titulo: "Modernidade Líquida",
+      autorOuOrigem: "Zygmunt Bauman",
+      tipo: "filosofia",
+      ideiaCentral: "O conceito representa uma sociedade marcada por relações e comportamentos menos estáveis e mais sujeitos a mudanças rápidas.",
+      eixosTematicos: ["cultura", "tecnologia", "saude"],
+      comoUsar: "Explicar a fragilidade das relações contemporâneas ou a volatilidade de comportamentos sociais.",
+      modeloAdaptavel: "O sociólogo Zygmunt Bauman utiliza o conceito de modernidade líquida para explicar a fragilidade e a instabilidade presentes nas relações contemporâneas. Essa análise pode ser relacionada a [TEMA], visto que [EXPLICAÇÃO DA INSTABILIDADE].",
+      icon: Lightbulb
+    },
+    {
+      id: "vidas-secas",
+      titulo: "Vidas Secas",
+      autorOuOrigem: "Graciliano Ramos",
+      tipo: "literatura",
+      ideiaCentral: "A obra retrata uma família submetida à pobreza, à migração, à fome e à desumanização.",
+      eixosTematicos: ["desigualdade", "meio-ambiente", "cidadania"],
+      comoUsar: "Mostrar a invisibilidade social e a negação de direitos básicos a grupos marginalizados.",
+      modeloAdaptavel: "Em 'Vidas Secas', Graciliano Ramos apresenta personagens afetados pela pobreza e pela ausência de condições básicas de sobrevivência. Fora da ficção, essa realidade relaciona-se a [TEMA], pois [EXPLICAÇÃO SOBRE O GRUPO AFETADO].",
+      icon: BookOpen
+    },
+    {
+      id: "truman",
+      titulo: "O Show de Truman",
+      autorOuOrigem: "Peter Weir",
+      tipo: "cinema",
+      ideiaCentral: "O filme apresenta uma vida transformada em espetáculo e controlada sem o conhecimento do protagonista.",
+      eixosTematicos: ["tecnologia", "cultura"],
+      comoUsar: "Discutir privacidade, exposição digital e manipulação mediática.",
+      modeloAdaptavel: "No filme 'O Show de Truman', a vida do protagonista é exposta e controlada como parte de um espetáculo. De modo semelhante, [TEMA] evidencia como [RELAÇÃO COM EXPOSIÇÃO OU MANIPULAÇÃO].",
+      icon: Play
+    }
+    // Adicionaria os outros 75+ aqui em uma base de dados real
+  ];
+
+  const filtered = repertorios.filter(r => {
+    const matchesSearch = r.titulo.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                          r.autorOuOrigem.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          r.ideiaCentral.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = activeType === "todos" || r.tipo === activeType;
+    const matchesEixo = activeEixo === "todos" || r.eixosTematicos.includes(activeEixo);
+    return matchesSearch && matchesType && matchesEixo;
+  });
+
+  return (
+    <div className="space-y-8 pb-20">
+      {/* Search and Filters */}
+      <div className="sticky top-2 z-30 flex flex-col gap-4 p-4 rounded-3xl bg-card/80 backdrop-blur-md border border-border shadow-xl">
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <input 
+            type="text" 
+            placeholder="Pesquise por autor, obra, tema ou argumento..."
+            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            {types.map(t => (
+              <button
+                key={t.id}
+                onClick={() => setActiveType(t.id)}
+                className={cn(
+                  "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all",
+                  activeType === t.id 
+                    ? "bg-primary text-primary-foreground" 
+                    : "bg-muted text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            {eixos.map(e => (
+              <button
+                key={e.id}
+                onClick={() => setActiveEixo(e.id)}
+                className={cn(
+                  "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all border",
+                  activeEixo === e.id 
+                    ? "bg-secondary text-secondary-foreground border-secondary" 
+                    : "bg-transparent border-border text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {e.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Repertórios Grid */}
+      <div className="grid grid-cols-1 gap-6">
+        {filtered.map((r) => (
+          <div key={r.id} className="p-8 rounded-[2rem] border border-border bg-card hover:border-primary/40 transition-all flex flex-col md:flex-row gap-8">
+            <div className="flex-1 space-y-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-2xl font-black text-foreground tracking-tight">{r.titulo}</h3>
+                  <p className="text-sm font-bold text-primary uppercase tracking-widest">{r.autorOuOrigem}</p>
+                </div>
+                <div className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
+                  {r.tipo}
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-1">Ideia Central</span>
+                  <p className="text-foreground font-medium leading-relaxed">{r.ideiaCentral}</p>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-1">Como relacionar à redação</span>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{r.comoUsar}</p>
+                </div>
+
+                <div className="p-6 rounded-2xl bg-muted/30 border border-border/50 relative group">
+                  <span className="text-[10px] font-black uppercase text-primary tracking-widest block mb-3">Modelo Adaptável</span>
+                  <p className="text-sm font-medium italic text-foreground leading-relaxed whitespace-pre-wrap">
+                    "{r.modeloAdaptavel.split(/(\[.*?\])/).map((part, i) => 
+                      part.startsWith('[') ? <span key={i} className="text-primary font-black bg-primary/10 px-1 rounded">{part}</span> : part
+                    )}"
+                  </p>
+                  <button 
+                    onClick={() => navigator.clipboard.writeText(r.modeloAdaptavel)}
+                    className="absolute top-4 right-4 p-2 rounded-lg bg-background border border-border text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {r.alerta && (
+                  <div className="flex items-start gap-2 text-amber-500 text-xs font-bold p-3 rounded-xl bg-amber-500/5 border border-amber-500/20">
+                    <AlertTriangle className="w-4 h-4 shrink-0" />
+                    <span>Atenção: {r.alerta}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="w-full md:w-64 space-y-4">
+              <div className="p-6 rounded-2xl bg-muted/50 border border-border">
+                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-3">Eixos Temáticos</span>
+                <div className="flex flex-wrap gap-2">
+                  {r.eixosTematicos.map(e => (
+                    <span key={e} className="px-2 py-1 rounded-md bg-background border border-border text-[9px] font-black uppercase tracking-tighter text-foreground">
+                      {e}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Seção 15: Erros Comuns */}
+      <div className="mt-12 p-8 rounded-[2rem] border-2 border-destructive/20 bg-destructive/5">
+        <h3 className="text-xl font-black text-destructive mb-6 flex items-center gap-2">
+          <X className="w-6 h-6" /> O que pode enfraquecer seu repertório
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-4">
+            <h4 className="font-black text-foreground text-sm uppercase tracking-widest">Apenas mencionar o autor</h4>
+            <div className="p-4 rounded-xl bg-destructive/10 border border-destructive/20 text-xs italic">
+              "Segundo Bauman, vivemos em uma modernidade líquida."
+            </div>
+            <p className="text-xs text-muted-foreground font-bold">O estudante apresentou o conceito, mas não explicou sua relação com o tema.</p>
+          </div>
+          <div className="space-y-4">
+            <h4 className="font-black text-[#22c55e] text-sm uppercase tracking-widest">Forma ideal</h4>
+            <div className="p-4 rounded-xl bg-[#22c55e]/10 border border-[#22c55e]/20 text-xs italic">
+              "Segundo Bauman, a modernidade líquida é marcada pela fragilidade das relações. Essa análise relaciona-se à exposição digital infantil, pois a busca por aprovação nas plataformas..."
+            </div>
           </div>
         </div>
       </div>

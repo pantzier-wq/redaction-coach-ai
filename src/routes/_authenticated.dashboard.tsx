@@ -62,7 +62,8 @@ function Dashboard() {
 
   const handleTestPurchase = async (type: 'pro' | 'full' = 'pro') => {
     if (profile?.id) {
-      const updates = type === 'full' 
+      // Cast to any to bypass temporary TS errors until types regenerate
+      const updates: any = type === 'full' 
         ? { is_pro: true, has_full_access: true }
         : { is_pro: true };
         
@@ -75,6 +76,7 @@ function Dashboard() {
       window.location.reload();
     }
   };
+
 
 
   if (loading) {
@@ -358,7 +360,7 @@ function Dashboard() {
               </div>
             </div>
           )}
-          {activeSection === "repertorios" && profile?.has_full_access && (
+          {activeSection === "repertorios" && (profile as any)?.has_full_access && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="mb-8">
                 <h2 className="text-3xl font-black flex items-center gap-3">
@@ -384,7 +386,7 @@ function Dashboard() {
             </div>
           )}
 
-          {activeSection === "conectivos" && profile?.has_full_access && (
+          {activeSection === "conectivos" && (profile as any)?.has_full_access && (
 
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="mb-8">

@@ -302,12 +302,12 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
 
                     {/* COMBO NOTA 1000 - O "Prêmio" irresistível */}
                     <div className="flex flex-col rounded-2xl border-2 border-primary bg-primary/10 p-5 relative overflow-hidden group shadow-[0_0_40px_rgba(var(--primary-rgb),0.3)] scale-[1.02]">
-                      <div className="absolute top-0 right-0 px-2 py-0.5 bg-primary text-white text-[8px] font-black uppercase tracking-tighter rounded-bl-lg animate-pulse z-20">
+                      <div className="absolute top-0 right-0 px-2 py-0.5 bg-[#22c55e] text-white text-[8px] font-black uppercase tracking-tighter rounded-bl-lg animate-pulse z-20">
                         OFERTA RECOMENDADA 🔥
                       </div>
                       
                       <div className="mb-4 flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(var(--primary-rgb),0.6)]">
+                        <div className="h-10 w-10 rounded-xl bg-[#22c55e] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(34,197,94,0.6)]">
                           <Sparkles className="w-5 h-5 text-white animate-pulse" />
                         </div>
                         <div>
@@ -363,11 +363,11 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
 
                       <div className="mt-auto">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-[10px] font-bold text-white/40 line-through italic">De R$ 73,50</span>
-                          <span className="text-2xl font-black text-primary drop-shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]">R$ 42,00</span>
+                          <span className="text-[10px] font-bold text-[#22c55e]/60 line-through italic uppercase tracking-tighter">Oferta Especial</span>
+                          <span className="text-2xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 42,00</span>
                         </div>
                         <button
-                          className="w-full py-3.5 rounded-xl bg-primary text-white font-black text-xs uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(var(--primary-rgb),0.5)] relative overflow-hidden"
+                          className="w-full py-3.5 rounded-xl bg-[#22c55e] text-white font-black text-xs uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(34,197,94,0.5)] relative overflow-hidden"
                         >
                           <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
                           QUERO O COMBO COMPLETO →

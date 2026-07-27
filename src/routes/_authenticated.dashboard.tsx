@@ -327,6 +327,7 @@ function Dashboard() {
                           <p className="text-[11px] text-white/60 font-medium leading-tight">Tire dúvidas direto com nossa equipe de especialistas.</p>
                         </div>
                       </li>
+                    </ul>
 
                     <div className="mt-auto">
                       <div className="flex items-center gap-3 mb-4">

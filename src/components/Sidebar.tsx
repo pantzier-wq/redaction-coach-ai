@@ -45,13 +45,13 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
     },
     { 
       id: "repertorios", 
-      label: "Repertórios", 
+      label: "Biblioteca de Repertórios", 
       icon: BookOpen,
       color: "text-secondary"
     },
     { 
       id: "conectivos", 
-      label: "Conectivos", 
+      label: "Biblioteca de Conectivos", 
       icon: Zap,
       color: "text-primary"
     },
@@ -102,7 +102,7 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
             <div className="min-w-0">
               <p className="text-xs font-black truncate">{profile?.full_name?.split(' ')[0] || 'Estudante'}</p>
               <p className="text-[10px] text-primary font-black uppercase tracking-tighter">
-                {profile?.is_pro ? "PRO ACCOUNT" : "VIP FREE"}
+                {profile?.has_full_access ? "PRO COMPLETO" : profile?.is_pro ? "PRO BÁSICO" : "VIP FREE"}
               </p>
             </div>
           </div>
@@ -114,7 +114,10 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
             <button
               key={item.id}
               onClick={() => {
-                if (item.id === "historico" && !profile?.is_pro) {
+                // Bloqueio de acesso para quem não tem acesso total
+                if ((item.id === "repertorios" || item.id === "conectivos") && !profile?.has_full_access) {
+                  setActiveSection("upgrade");
+                } else if (item.id === "historico" && !profile?.is_pro) {
                   setActiveSection("upgrade");
                 } else {
                   setActiveSection(item.id);

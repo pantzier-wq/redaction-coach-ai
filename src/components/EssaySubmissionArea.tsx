@@ -310,7 +310,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                            <span className="text-2xl font-black text-[#22c55e]">R$ 24,90</span>
                         </div>
                         <button
-                          onClick={() => window.location.href = "https://pay.hotmart.com/mock-basico"}
+                          onClick={handleTestPurchase}
                           className="w-full py-3 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-xs uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20"
                         >
                           LIBERAR BÁSICO
@@ -385,7 +385,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                           <span className="text-2xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 42,00</span>
                         </div>
                         <button
-                          onClick={() => window.location.href = "https://pay.hotmart.com/mock-combo"}
+                          onClick={handleTestPurchase}
                           className="w-full py-3.5 rounded-xl bg-[#22c55e] text-white font-black text-xs uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(34,197,94,0.5)] relative overflow-hidden"
                         >
                           <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />

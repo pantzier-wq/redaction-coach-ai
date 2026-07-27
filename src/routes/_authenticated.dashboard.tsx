@@ -60,6 +60,18 @@ function Dashboard() {
     window.location.href = "/";
   };
 
+  const handleTestPurchase = async () => {
+    if (profile?.id) {
+      const { error } = await supabase.from("profiles").update({ is_pro: true }).eq("id", profile.id);
+      if (error) {
+        console.error("Erro ao ativar PRO:", error);
+        return;
+      }
+      setProfile({ ...profile, is_pro: true });
+      window.location.reload();
+    }
+  };
+
   if (loading) {
     return (
       <div className="dark min-h-screen bg-background text-foreground flex items-center justify-center">

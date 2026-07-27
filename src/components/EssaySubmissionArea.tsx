@@ -254,7 +254,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* PLAN VITALÍCIO - O "Básico" desvantajoso */}
-                    <div className="flex flex-col rounded-2xl border-2 border-white/10 bg-white/5 p-5 relative overflow-hidden group opacity-80 hover:opacity-100 transition-opacity">
+                    <div className="flex flex-col rounded-2xl border-2 border-white/20 bg-white/10 p-5 relative overflow-hidden group hover:opacity-100 transition-opacity">
                       <div className="mb-4 flex items-center gap-3">
                         <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
                           <Zap className="w-5 h-5 text-[#22c55e]" />

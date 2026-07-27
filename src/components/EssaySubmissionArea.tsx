@@ -253,15 +253,15 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
 
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* PLAN VITALÍCIO */}
-                    <div className="flex flex-col rounded-2xl border-2 border-[#22c55e]/30 bg-[#22c55e]/5 p-5 relative overflow-hidden group">
+                    {/* PLAN VITALÍCIO - O "Básico" desvantajoso */}
+                    <div className="flex flex-col rounded-2xl border-2 border-white/10 bg-white/5 p-5 relative overflow-hidden group opacity-80 hover:opacity-100 transition-opacity">
                       <div className="mb-4 flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-xl bg-[#22c55e] flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(34,197,94,0.4)]">
-                          <Zap className="w-5 h-5 text-white" />
+                        <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                          <Zap className="w-5 h-5 text-white/50" />
                         </div>
                         <div>
                           <h3 className="text-sm font-black text-white leading-tight uppercase tracking-tight">Acesso Vitalício</h3>
-                          <p className="text-[10px] font-bold text-[#22c55e] leading-tight">Pagamento Único</p>
+                          <p className="text-[10px] font-bold text-white/40 leading-tight">Plano Básico</p>
                         </div>
                       </div>
 
@@ -274,69 +274,92 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                           <span className="text-[#22c55e] shrink-0">✓</span>
                           <span>Histórico completo de evolução</span>
                         </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
-                          <span className="text-[#22c55e] shrink-0">✓</span>
-                          <span>Análise de todas as 5 competências</span>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/40">
+                          <span className="text-destructive shrink-0">✕</span>
+                          <span className="line-through">70+ Repertórios Universais</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/40">
+                          <span className="text-destructive shrink-0">✕</span>
+                          <span className="line-through">Flashcards de Conectivos</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/40">
+                          <span className="text-destructive shrink-0">✕</span>
+                          <span className="line-through">Manual Proposta Nota 200</span>
                         </li>
                       </ul>
 
                       <div className="mt-auto">
                         <div className="flex items-baseline gap-1 mb-3">
-                          <span className="text-2xl font-black text-white">R$ 24,90</span>
+                          <span className="text-2xl font-black text-white/60">R$ 24,90</span>
                         </div>
                         <button
-                          className="w-full py-3 rounded-xl bg-[#22c55e] text-white font-black text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-[0_5px_15px_rgba(34,197,94,0.3)]"
+                          className="w-full py-3 rounded-xl bg-white/10 text-white/60 font-black text-xs uppercase tracking-widest hover:bg-white/20 transition-all border border-white/5"
                         >
-                          LIBERAR AGORA
+                          LIBERAR BÁSICO
                         </button>
                       </div>
                     </div>
 
-                    {/* COMBO NOTA 1000 */}
-                    <div className="flex flex-col rounded-2xl border-2 border-primary bg-primary/10 p-5 relative overflow-hidden group shadow-[0_0_30px_rgba(var(--primary-rgb),0.2)]">
-                      <div className="absolute top-0 right-0 px-2 py-0.5 bg-primary text-white text-[8px] font-black uppercase tracking-tighter rounded-bl-lg animate-pulse">
-                        MAIS COMPLETO
+                    {/* COMBO NOTA 1000 - O "Prêmio" irresistível */}
+                    <div className="flex flex-col rounded-2xl border-2 border-primary bg-primary/10 p-5 relative overflow-hidden group shadow-[0_0_40px_rgba(var(--primary-rgb),0.3)] scale-[1.02]">
+                      <div className="absolute top-0 right-0 px-2 py-0.5 bg-primary text-white text-[8px] font-black uppercase tracking-tighter rounded-bl-lg animate-pulse z-20">
+                        OFERTA RECOMENDADA 🔥
                       </div>
                       
                       <div className="mb-4 flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(var(--primary-rgb),0.5)]">
-                          <Sparkles className="w-5 h-5 text-white" />
+                        <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(var(--primary-rgb),0.6)]">
+                          <Sparkles className="w-5 h-5 text-white animate-pulse" />
                         </div>
                         <div>
                           <h3 className="text-sm font-black text-white leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
-                          <p className="text-[10px] font-bold text-primary leading-tight">Vitalício + Bônus</p>
+                          <p className="text-[10px] font-bold text-primary leading-tight">Acesso Total + Bônus</p>
                         </div>
                       </div>
 
-                      <ul className="space-y-2 mb-6 flex-1">
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
-                          <span className="text-primary shrink-0">✓</span>
-                          <span>Tudo do plano Vitalício</span>
+                      <ul className="space-y-2.5 mb-6 flex-1">
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                            <span className="text-primary text-[10px]">✓</span>
+                          </div>
+                          <span>Correções Ilimitadas (VITALÍCIO)</span>
                         </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
-                          <span className="text-primary shrink-0">✓</span>
-                          <span>70+ Repertórios Universais</span>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                            <span className="text-primary text-[10px]">✓</span>
+                          </div>
+                          <span className="text-primary-foreground font-black">70+ Repertórios Coringas</span>
+                          <span className="text-[8px] bg-primary/20 px-1 rounded text-primary ml-1 uppercase">Essencial</span>
                         </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
-                          <span className="text-primary shrink-0">✓</span>
-                          <span>Flashcards de Conectivos (C4)</span>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                            <span className="text-primary text-[10px]">✓</span>
+                          </div>
+                          <span>Domine a C4 (Conectivos)</span>
                         </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/90">
-                          <span className="text-primary shrink-0">✓</span>
-                          <span>Manual Proposta Nota 200 (C5)</span>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                            <span className="text-primary text-[10px]">✓</span>
+                          </div>
+                          <span>Segredo da C5 (Nota 200)</span>
+                        </li>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+                            <span className="text-primary text-[10px]">✓</span>
+                          </div>
+                          <span className="italic text-primary">Suporte Prioritário VIP</span>
                         </li>
                       </ul>
 
                       <div className="mt-auto">
                         <div className="flex items-center gap-2 mb-2">
-                          <span className="text-[10px] font-bold text-white/40 line-through">R$ 73,50</span>
-                          <span className="text-2xl font-black text-primary">R$ 42,00</span>
+                          <span className="text-[10px] font-bold text-white/40 line-through italic">De R$ 73,50</span>
+                          <span className="text-2xl font-black text-primary drop-shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]">R$ 42,00</span>
                         </div>
                         <button
-                          className="w-full py-3 rounded-xl bg-primary text-white font-black text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-[0_5px_15px_rgba(var(--primary-rgb),0.3)] relative overflow-hidden"
+                          className="w-full py-3.5 rounded-xl bg-primary text-white font-black text-xs uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(var(--primary-rgb),0.5)] relative overflow-hidden"
                         >
-                          <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-[100%]" />
-                          GARANTIR COMBO
+                          <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+                          QUERO O COMBO COMPLETO →
                         </button>
                       </div>
                     </div>

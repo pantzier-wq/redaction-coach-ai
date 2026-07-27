@@ -60,17 +60,24 @@ function Dashboard() {
     window.location.href = "/";
   };
 
-  const handleTestPurchase = async () => {
+  const handleTestPurchase = async (type: 'pro' | 'full' = 'pro') => {
     if (profile?.id) {
-      const { error } = await supabase.from("profiles").update({ is_pro: true }).eq("id", profile.id);
+      // Cast to any to bypass temporary TS errors until types regenerate
+      const updates: any = type === 'full' 
+        ? { is_pro: true, has_full_access: true }
+        : { is_pro: true };
+        
+      const { error } = await supabase.from("profiles").update(updates).eq("id", profile.id);
       if (error) {
-        console.error("Erro ao ativar PRO:", error);
+        console.error("Erro ao ativar acesso:", error);
         return;
       }
-      setProfile({ ...profile, is_pro: true });
+      setProfile({ ...profile, ...updates });
       window.location.reload();
     }
   };
+
+
 
   if (loading) {
     return (
@@ -221,17 +228,15 @@ function Dashboard() {
             </div>
           )}
 
-          {(activeSection === "repertorios" || activeSection === "conectivos" || activeSection === "upgrade") && (
+          {activeSection === "upgrade" && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="max-w-2xl mx-auto text-center py-12">
                 <div className="p-6 rounded-3xl bg-secondary/10 border-2 border-secondary/20 mb-8 inline-block">
                   <Sparkles className="w-16 h-16 text-secondary animate-pulse" />
                 </div>
-                <h2 className="text-4xl font-black mb-4 tracking-tight">Recurso Exclusivo PRO 🚀</h2>
+                <h2 className="text-4xl font-black mb-4 tracking-tight">Garanta seu Futuro 🚀</h2>
                 <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                  {activeSection === "repertorios" && "Tenha acesso ao nosso banco de dados com os melhores repertórios coringa para qualquer tema."}
-                  {activeSection === "conectivos" && "Aprenda a conectar suas ideias perfeitamente para garantir 200 pontos na Competência 4."}
-                  {activeSection === "upgrade" && "Garanta correções ilimitadas e acesso vitalício a todas as ferramentas do CorrigeAI."}
+                  Garanta correções ilimitadas e acesso vitalício a todas as ferramentas do CorrigeAI.
                 </p>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-12">
@@ -273,7 +278,7 @@ function Dashboard() {
                     <div className="mt-auto">
                       <div className="text-3xl font-black text-[#22c55e] mb-6">R$ 24,90</div>
                       <button
-                        onClick={handleTestPurchase}
+                        onClick={() => handleTestPurchase('pro')}
                         className="w-full py-4 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-sm uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20"
                       >
                         LIBERAR BÁSICO
@@ -310,7 +315,7 @@ function Dashboard() {
                         </div>
                         <div className="flex flex-col">
                           <span className="text-[#22c55e] font-black uppercase text-[11px] tracking-wide">70+ Repertórios Coringas</span>
-                          <p className="text-[12px] text-white font-bold leading-tight">Modelos universais prontos para qualquer tema do ENEM.</p>
+                          <p className="text-[12px] text-white font-bold leading-tight">Modelos universais prontos for qualquer tema do ENEM.</p>
                         </div>
                       </li>
                       <li className="flex items-start gap-3 text-sm font-bold text-white">
@@ -339,7 +344,7 @@ function Dashboard() {
                         <span className="text-4xl font-black text-[#22c55e] drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">R$ 42,00</span>
                       </div>
                       <button
-                        onClick={handleTestPurchase}
+                        onClick={() => handleTestPurchase('full')}
                         className="w-full py-4 rounded-xl bg-[#22c55e] text-white font-black text-sm uppercase tracking-[0.2em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_12px_40px_rgba(34,197,94,0.4)] relative overflow-hidden"
                       >
                         <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
@@ -351,7 +356,29 @@ function Dashboard() {
               </div>
             </div>
           )}
-          {activeSection === "repertorios" && profile?.is_pro && (
+
+          {(activeSection === "repertorios" || activeSection === "conectivos") && !(profile as any)?.has_full_access && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="max-w-2xl mx-auto text-center py-12">
+                <div className="p-6 rounded-3xl bg-primary/10 border-2 border-primary/20 mb-8 inline-block">
+                  <Sparkles className="w-16 h-16 text-primary animate-pulse" />
+                </div>
+                <h2 className="text-4xl font-black mb-4 tracking-tight">Área Exclusiva Pro 👑</h2>
+                <p className="text-xl text-muted-foreground mb-12 leading-relaxed">
+                  Ah, se você quer adquirir melhores materiais e acessar esta área exclusiva, basta acessar a aba <strong>Plano PRO</strong> para garantir o Combo Nota 1000.
+                </p>
+                
+                <button 
+                  onClick={() => setActiveSection("upgrade")}
+                  className="px-8 py-4 rounded-xl bg-primary text-primary-foreground font-black text-lg hover:scale-105 transition-transform shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)]"
+                >
+                  VER PLANOS DISPONÍVEIS
+                </button>
+              </div>
+            </div>
+          )}
+
+          {activeSection === "repertorios" && (profile as any)?.has_full_access && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="mb-8">
                 <h2 className="text-3xl font-black flex items-center gap-3">
@@ -377,7 +404,8 @@ function Dashboard() {
             </div>
           )}
 
-          {activeSection === "conectivos" && profile?.is_pro && (
+          {activeSection === "conectivos" && (profile as any)?.has_full_access && (
+
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="mb-8">
                 <h2 className="text-3xl font-black flex items-center gap-3">

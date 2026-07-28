@@ -267,7 +267,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
               </p>
             </form>
 
-            {((result && showPaywall) || (isLoggedIn && !isPro && showPaywall)) && (
+            {isLoggedIn && ((result && showPaywall) || (!isPro && showPaywall)) && (
               <div className="absolute inset-0 z-50 flex items-start justify-center p-4 md:p-6 pt-16 md:pt-20">
                 <div 
                   className="w-full max-w-lg rounded-3xl border border-[#22c55e]/50 bg-card/95 p-6 md:p-10 shadow-[0_0_100px_rgba(34,197,94,0.4)] backdrop-blur-2xl relative my-8 animate-in fade-in zoom-in duration-500"

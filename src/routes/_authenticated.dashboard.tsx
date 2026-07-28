@@ -1117,6 +1117,8 @@ function RepertoriosLibrary() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeType, setActiveType] = useState("todos");
   const [activeEixo, setActiveEixo] = useState("todos");
+  const [showGenerator, setShowGenerator] = useState(false);
+
 
   const types = [
     { id: "todos", label: "Todos" },
@@ -1201,7 +1203,25 @@ function RepertoriosLibrary() {
 
   return (
     <div className="space-y-8 pb-20">
+      {/* Header com Botão do Gerador */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-card p-8 rounded-[2rem] border border-border">
+        <div>
+          <h2 className="text-3xl font-black text-foreground">Biblioteca de Repertórios</h2>
+          <p className="text-muted-foreground mt-2 font-medium">Use modelos prontos ou crie um exclusivo com nossa IA.</p>
+        </div>
+        <button 
+          onClick={() => setShowGenerator(true)}
+          className="flex items-center gap-2 px-6 py-4 rounded-xl bg-primary text-primary-foreground font-black hover:scale-105 transition-all shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]"
+        >
+          <Sparkles className="w-5 h-5" />
+          CRIAR COM IA
+        </button>
+      </div>
+
+      {showGenerator && <RepertorioIA onClose={() => setShowGenerator(false)} />}
+
       {/* Search and Filters */}
+
       <div className="flex flex-col gap-6 p-4 md:p-8 rounded-[2rem] bg-card border border-border">
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
@@ -1348,7 +1368,204 @@ function RepertoriosLibrary() {
   );
 }
 
+function RepertorioIA({ onClose }: { onClose: () => void }) {
+  const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [tema, setTema] = useState("");
+  const [genero, setGenero] = useState("");
+  const [detalhes, setDetalhes] = useState("");
+  const [historico, setHistorico] = useState<{role: "user" | "assistant", content: string}[]>([]);
+  const [currentResponse, setCurrentResponse] = useState<RespostaRepertorio | null>(null);
+  const criarRep = useServerFn(criarRepertorio);
+
+  const handleGenerate = async (extraDetails?: string) => {
+    setLoading(true);
+    try {
+      const res = await criarRep({ 
+        tema, 
+        genero, 
+        detalhes: extraDetails || detalhes,
+        historico: historico
+      });
+      setCurrentResponse(res);
+      setHistorico(prev => [...prev, 
+        { role: "user", content: extraDetails || `Tema: ${tema}, Gênero: ${genero}` },
+        { role: "assistant", content: res.message }
+      ]);
+      if (res.repertorio) {
+        setStep(3); // Resultado final
+      } else if (res.proximaPergunta) {
+        setStep(2); // Continua funilando
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const reset = () => {
+    setStep(1);
+    setTema("");
+    setGenero("");
+    setDetalhes("");
+    setHistorico([]);
+    setCurrentResponse(null);
+  };
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-xl flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl bg-card border-2 border-primary/20 rounded-[2.5rem] shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]">
+        <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-xl bg-muted/50 hover:bg-muted transition-colors z-10">
+          <X className="w-6 h-6" />
+        </button>
+
+        <div className="p-8 md:p-12 overflow-y-auto">
+          {step === 1 && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <Sparkles className="w-8 h-8 text-primary" />
+                </div>
+                <h3 className="text-3xl font-black mb-2">Gerador de Repertório IA</h3>
+                <p className="text-muted-foreground font-medium">Vamos criar o repertório perfeito para o seu texto.</p>
+              </div>
+
+              <div className="space-y-6">
+                <div>
+                  <label className="text-[10px] font-black uppercase text-primary tracking-widest block mb-2 ml-1">Sobre o que é seu texto? (Tema)</label>
+                  <input 
+                    value={tema}
+                    onChange={e => setTema(e.target.value)}
+                    placeholder="Ex: O impacto das redes sociais na saúde mental dos jovens"
+                    className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-border focus:border-primary outline-none transition-all font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-black uppercase text-primary tracking-widest block mb-2 ml-1">Alguma preferência de gênero?</label>
+                  <select 
+                    value={genero}
+                    onChange={e => setGenero(e.target.value)}
+                    className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-border focus:border-primary outline-none transition-all font-black uppercase text-xs tracking-widest"
+                  >
+                    <option value="">Nenhuma (IA escolhe)</option>
+                    <option value="filosofia">Filosofia/Sociologia</option>
+                    <option value="literatura">Literatura</option>
+                    <option value="cinema">Cinema/Séries</option>
+                    <option value="historia">História</option>
+                    <option value="atualidades">Fatos e Notícias</option>
+                  </select>
+                </div>
+                <button 
+                  disabled={!tema || loading}
+                  onClick={() => handleGenerate()}
+                  className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-black text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
+                >
+                  {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" /> : <><Zap className="w-5 h-5" /> COMEÇAR FUNIL</>}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {step === 2 && currentResponse && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
+              <div className="flex items-start gap-4 p-6 rounded-3xl bg-primary/5 border border-primary/20">
+                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shrink-0">
+                  <MessageSquare className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-foreground leading-relaxed">
+                    {currentResponse.message}
+                  </p>
+                </div>
+              </div>
+
+              {currentResponse.proximaPergunta && (
+                <div className="space-y-4">
+                  <textarea 
+                    value={detalhes}
+                    onChange={e => setDetalhes(e.target.value)}
+                    placeholder="Sua resposta aqui..."
+                    className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-border focus:border-primary outline-none transition-all font-bold min-h-[120px] resize-none"
+                  />
+                  <button 
+                    disabled={!detalhes || loading}
+                    onClick={() => handleGenerate()}
+                    className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-black hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
+                  >
+                    {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" /> : "CONTINUAR ANÁLISE"}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {step === 3 && currentResponse?.repertorio && (
+            <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-[#22c55e]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Check className="w-8 h-8 text-[#22c55e]" />
+                </div>
+                <h3 className="text-2xl font-black">Repertório Finalizado!</h3>
+                <p className="text-muted-foreground font-medium italic">"{currentResponse.message}"</p>
+              </div>
+
+              <div className="space-y-6">
+                <div className="p-8 rounded-[2rem] bg-muted/30 border-2 border-primary/20 relative group">
+                  <div className="flex justify-between items-start mb-6">
+                    <div>
+                      <h4 className="text-2xl font-black text-primary tracking-tight">{currentResponse.repertorio.titulo}</h4>
+                      <p className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">{currentResponse.repertorio.autor}</p>
+                    </div>
+                    <button 
+                      onClick={() => navigator.clipboard.writeText(`${currentResponse.repertorio!.titulo} - ${currentResponse.repertorio!.autor}\n\n${currentResponse.repertorio!.exemplo}`)}
+                      className="p-3 rounded-xl bg-background border border-border text-muted-foreground hover:text-primary transition-all"
+                    >
+                      <Copy className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-primary tracking-widest block mb-1">Conceito Chave</span>
+                      <p className="text-sm font-bold text-foreground leading-relaxed">{currentResponse.repertorio.ideia}</p>
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-black uppercase text-primary tracking-widest block mb-1">Uso Produtivo</span>
+                      <p className="text-sm font-bold text-foreground leading-relaxed">{currentResponse.repertorio.relacao}</p>
+                    </div>
+                    <div className="p-5 rounded-2xl bg-primary/5 border border-primary/10">
+                      <span className="text-[10px] font-black uppercase text-primary tracking-widest block mb-2">Exemplo no Texto</span>
+                      <p className="text-sm font-medium italic text-foreground/90 leading-relaxed">"{currentResponse.repertorio.exemplo}"</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <button 
+                    onClick={reset}
+                    className="flex-1 py-4 rounded-xl bg-muted font-black text-xs uppercase tracking-widest hover:bg-muted/80 transition-all"
+                  >
+                    CRIAR OUTRO
+                  </button>
+                  <button 
+                    onClick={onClose}
+                    className="flex-1 py-4 rounded-xl bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest hover:scale-105 transition-all"
+                  >
+                    FECHAR
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function StatCard({ icon: Icon, label, value, onClick, color }: any) {
+
   return (
     <button 
       onClick={onClick}

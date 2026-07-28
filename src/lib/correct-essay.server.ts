@@ -162,26 +162,51 @@ export async function createRepertoryWithAi(lovableApiKey: string, input: z.infe
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
   const messages = [
-    { role: "system" as const, content: `${REPERTORY_SYSTEM_PROMPT}\n\nRetorne sempre um JSON válido no formato: {"message": "texto da conversa", "repertorio": {"titulo": "...", "autor": "...", "ideia": "...", "relacao": "...", "exemplo": "..."}, "proximaPergunta": "..."}. O campo repertorio e proximaPergunta são opcionais.` },
+    { 
+      role: "system" as const, 
+      content: `${REPERTORY_SYSTEM_PROMPT}
+
+IMPORTANTE: Você deve responder APENAS com um objeto JSON válido. Não inclua explicações fora do JSON.
+Formato esperado:
+{
+  "message": "Sua mensagem para o aluno",
+  "repertorio": {
+    "titulo": "Título da Obra",
+    "autor": "Nome do Autor",
+    "ideia": "Conceito Central",
+    "relacao": "Como usar",
+    "exemplo": "Exemplo prático"
+  },
+  "proximaPergunta": "Pergunta se precisar de mais detalhes"
+}
+O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obrigatório.` 
+    },
     ...(input.historico || []).map(h => ({ role: h.role as "user" | "assistant", content: h.content })),
     { role: "user" as const, content: `Tema: ${input.tema}. ${input.genero ? `Gênero: ${input.genero}.` : ""} ${input.detalhes ? `Mais detalhes: ${input.detalhes}` : ""}` }
   ];
 
   console.log("Enviando solicitação de repertório para a IA:", JSON.stringify(messages));
 
-  const { text, finishReason } = await generateText({
-    model: gateway("openai/gpt-4o-mini"),
-    messages: messages,
-  });
-
-  console.log("Resposta bruta da IA para repertório:", text, "Reason:", finishReason);
-
   try {
-    const parsed = parseJsonFromText(text);
+    const { text, finishReason } = await generateText({
+      model: gateway("openai/gpt-4o-mini"),
+      messages: messages,
+      temperature: 0.7,
+    });
+
+    console.log("Resposta bruta da IA para repertório:", text, "Reason:", finishReason);
+
+    const parsed = extractJsonObject(text);
+    if (!parsed) {
+      console.error("Falha ao extrair JSON da resposta:", text);
+      return {
+        message: text.length > 10 ? text : "Não consegui gerar uma resposta estruturada. Por favor, tente reformular sua ideia.",
+      };
+    }
+
     return RepertoryAiResponseSchema.parse(parsed);
-  } catch (e) {
-    return {
-      message: text.length > 20 ? text : "Não consegui processar sua solicitação. Pode detalhar melhor o tema?",
-    };
+  } catch (e: any) {
+    console.error("Erro na chamada generateText (Repertório):", e);
+    throw new Error(`Falha na comunicação com a IA: ${e.message || 'Erro desconhecido'}`);
   }
 }

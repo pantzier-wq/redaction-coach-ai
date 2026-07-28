@@ -1,5 +1,5 @@
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
-import { generateText, NoObjectGeneratedError, Output } from "ai";
+import { generateText } from "ai";
 import { z } from "zod";
 
 export const essayInputSchema = z.object({
@@ -74,57 +74,50 @@ function normalizeConnectivesStatus(status: string) {
   return "regular";
 }
 
+function parseJsonFromText(text: string) {
+  const parsed = extractJsonObject(text);
+  if (!parsed) throw new Error("A IA retornou uma resposta fora do formato esperado.");
+  return parsed;
+}
+
+function normalizeConnectivesAnalysis(value: unknown): AnaliseConectivos {
+  const record = z
+    .object({
+      analise: z.string().optional(),
+      explicacao: z.string().optional(),
+      status: z.string().optional(),
+      sugestao: z.string().optional(),
+    })
+    .parse(value);
+
+  return {
+    analise: record.analise || record.explicacao || "O conectivo foi analisado, mas a IA não detalhou a avaliação.",
+    status: normalizeConnectivesStatus(record.status || "regular"),
+    sugestao: record.sugestao || "",
+  };
+}
+
 export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<typeof essayInputSchema>) {
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
-  try {
-    const { output } = await generateText({
-      model: gateway("google/gemini-3.6-flash"),
-      system: ENEM_GRADER_SYSTEM_PROMPT,
-      output: Output.object({ schema: CorrectionSchema }),
-      prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija com rigor de corretor ENEM real. Retorne apenas os campos solicitados.`,
-    });
+  const { text } = await generateText({
+    model: gateway("google/gemini-3.6-flash"),
+    system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, sem comentários e sem texto fora do JSON.`,
+    prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija com rigor de corretor ENEM real no formato: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
+  });
 
-    return output;
-  } catch (error) {
-    if (NoObjectGeneratedError.isInstance(error) && error.text) {
-      const parsed = extractJsonObject(error.text);
-      const fallback = CorrectionSchema.safeParse(parsed);
-      if (fallback.success) return fallback.data;
-    }
-
-    throw error;
-  }
+  return CorrectionSchema.parse(parseJsonFromText(text));
 }
 
 export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: string): Promise<AnaliseConectivos> {
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
-  try {
-    const { output } = await generateText({
-      model: gateway("google/gemini-3.6-flash"),
-      system: CONNECTIVES_SYSTEM_PROMPT,
-      output: Output.object({ schema: ConnectivesAnalysisSchema }),
-      prompt: `Frase para análise: ${frase}`,
-    });
+  const { text } = await generateText({
+    model: gateway("google/gemini-3.6-flash"),
+    system: `${CONNECTIVES_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, no formato: {"analise":"...","status":"bom|regular|ruim","sugestao":"..."}. Não use outros nomes de campos.`,
+    prompt: `Frase para análise: ${frase}`,
+  });
 
-    return {
-      analise: output.analise,
-      status: normalizeConnectivesStatus(output.status),
-      sugestao: output.sugestao,
-    };
-  } catch (error) {
-    if (NoObjectGeneratedError.isInstance(error) && error.text) {
-      const parsed = ConnectivesAnalysisSchema.safeParse(extractJsonObject(error.text));
-      if (parsed.success) {
-        return {
-          analise: parsed.data.analise,
-          status: normalizeConnectivesStatus(parsed.data.status),
-          sugestao: parsed.data.sugestao,
-        };
-      }
-    }
-
-    throw error;
-  }
+  const parsed = normalizeConnectivesAnalysis(parseJsonFromText(text));
+  return ConnectivesAnalysisSchema.parse(parsed);
 }

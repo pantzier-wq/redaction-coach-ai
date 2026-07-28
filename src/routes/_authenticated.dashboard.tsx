@@ -129,6 +129,7 @@ function Dashboard() {
                   <EssaySubmissionArea 
                     isLoggedIn={true} 
                     isPro={!!profile?.is_pro}
+                    onSuccess={() => {
                       const loadEssays = async () => {
                         const { data } = await supabase.from("essays").select("*").order("created_at", { ascending: false });
                         const currentEssays = data || [];
@@ -184,6 +185,7 @@ function Dashboard() {
               <EssaySubmissionArea 
                 isLoggedIn={true} 
                 isPro={!!profile?.is_pro}
+                onSuccess={() => {
                   const loadEssays = async () => {
                     const { data } = await supabase.from("essays").select("*").order("created_at", { ascending: false });
                     const currentEssays = data || [];

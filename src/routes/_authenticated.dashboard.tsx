@@ -1382,6 +1382,7 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
     console.log("Iniciando handleGenerate com:", { tema, genero, extraDetails });
     setLoading(true);
     try {
+      console.log("Chamando criarRep RPC...");
       const res = await criarRep({ 
         data: {
           tema, 
@@ -1407,9 +1408,11 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
         console.warn("IA não enviou nem repertório nem pergunta, permanecendo no step 2");
         setStep(2);
       }
-    } catch (e) {
-      console.error("Erro no handleGenerate:", e);
-      alert("Houve um erro ao gerar o repertório. Por favor, tente novamente.");
+    } catch (e: any) {
+      console.error("Erro detalhado no handleGenerate:", e);
+      // Extrair mensagem de erro se disponível
+      const errorMsg = e.message || "Houve um erro ao gerar o repertório.";
+      alert(`Erro: ${errorMsg}\n\nPor favor, tente novamente em alguns segundos.`);
     } finally {
       setLoading(false);
     }

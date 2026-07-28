@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
@@ -21,21 +21,21 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
   const corrigir = useServerFn(corrigirRedacao);
   
   // Efeito para carregar redação do histórico se houver no localStorage
-  useState(() => {
-    const saved = localStorage.getItem("viewing_essay");
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const saved = window.localStorage.getItem("viewing_essay");
     if (saved) {
       try {
         const essay = JSON.parse(saved);
         setTema(essay.tema);
         setRedacao(essay.redacao);
         setResult(essay.resultado);
-        // Limpar após carregar
-        localStorage.removeItem("viewing_essay");
+        window.localStorage.removeItem("viewing_essay");
       } catch (e) {
         console.error("Erro ao carregar redação salva", e);
       }
     }
-  });
+  }, []);
 
   const charCount = redacao.trim().length;
 

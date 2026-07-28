@@ -93,7 +93,7 @@ export const analisarConectivos = createServerFn({ method: "POST" })
           Authorization: `Bearer ${key}`,
         },
         body: JSON.stringify({
-          model: "google/gemini-2.0-flash",
+          model: "google/gemini-2.0-flash-exp",
           messages: [
             { 
               role: "system", 

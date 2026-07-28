@@ -1504,7 +1504,10 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
                   />
                   <button 
                     disabled={!detalhes || loading}
-                    onClick={() => handleGenerate()}
+                    onClick={() => {
+                      console.log("Clique detectado no CONTINUAR ANÁLISE");
+                      handleGenerate();
+                    }}
                     className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-black hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
                   >
                     {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" /> : "CONTINUAR ANÁLISE"}

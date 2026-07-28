@@ -85,18 +85,19 @@ export const analisarConectivos = createServerFn({ method: "POST" })
     const key = process.env.LOVABLE_API_KEY;
     if (!key) throw new Error("LOVABLE_API_KEY não configurada");
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${key}`,
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.0-flash",
-        messages: [
-          { 
-            role: "system", 
-            content: `Você é um especialista em gramática e coesão textual para redações do ENEM (Competência 4).
+    try {
+      const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${key}`,
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.0-flash",
+          messages: [
+            { 
+              role: "system", 
+              content: `Você é um especialista em gramática e coesão textual para redações do ENEM (Competência 4).
 Analise a frase do aluno focando nos conectivos usados.
 Forneça um feedback curto e direto:
 1. O conectivo usado é adequado para o contexto?
@@ -109,16 +110,31 @@ Retorne um JSON:
   "status": "bom" | "regular" | "ruim",
   "sugestao": "string (opcional: sugestão de conectivo melhor)"
 }`
-          },
-          {
-            role: "user",
-            content: `Frase para análise: "${data.frase}"`
-          },
-        ],
-        response_format: { type: "json_object" },
-      }),
-    });
+            },
+            {
+              role: "user",
+              content: `Frase para análise: "${data.frase}"`
+            },
+          ],
+          response_format: { type: "json_object" },
+        }),
+      });
 
-    const json = await res.json();
-    return JSON.parse(json.choices[0].message.content);
+      if (!res.ok) {
+        console.error(`Erro na API Gateway: ${res.status} ${res.statusText}`);
+        throw new Error(`Erro na análise (${res.status})`);
+      }
+
+      const json = await res.json();
+      const content = json.choices?.[0]?.message?.content;
+      
+      if (!content) {
+        throw new Error("Resposta da IA vazia");
+      }
+
+      return JSON.parse(content);
+    } catch (error) {
+      console.error("Erro em analisarConectivos:", error);
+      throw error instanceof Error ? error : new Error("Falha na análise");
+    }
   });

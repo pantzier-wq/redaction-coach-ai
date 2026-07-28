@@ -513,10 +513,13 @@ function ConectivosIA() {
     setIsAnalyzing(true);
     setAnalise(null);
     try {
+      console.log("Iniciando análise da frase:", frase);
       const result = await analyzeFn({ data: { frase } });
+      console.log("Resultado da análise recebido:", result);
       setAnalise(result);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error("Erro capturado no frontend:", error);
+      alert(`Erro na análise: ${error.message || "Tente novamente"}`);
     } finally {
       setIsAnalyzing(false);
     }
@@ -532,13 +535,18 @@ function ConectivosIA() {
           className="w-full min-h-[100px] p-5 rounded-2xl bg-background border-2 border-border focus:border-primary outline-none transition-all font-bold text-sm"
         />
         <button
-          onClick={handleAnalyze}
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            console.log("Botão clicado!");
+            handleAnalyze();
+          }}
           disabled={isAnalyzing || frase.length < 10}
           className={cn(
-            "absolute bottom-4 right-4 px-6 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all",
+            "absolute bottom-4 right-4 px-6 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all z-20",
             isAnalyzing || frase.length < 10 
               ? "bg-muted text-muted-foreground cursor-not-allowed" 
-              : "bg-primary text-primary-foreground hover:scale-105 shadow-lg"
+              : "bg-primary text-primary-foreground hover:scale-105 shadow-lg active:scale-95"
           )}
         >
           {isAnalyzing ? "Analisando..." : "Analisar Frase"}

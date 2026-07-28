@@ -612,8 +612,9 @@ function ConectivosIA() {
               </div>
               <button 
                 onClick={handleReset}
-                className="text-xs font-black text-primary hover:underline uppercase tracking-widest"
+                className="px-4 py-2 rounded-lg text-xs font-black text-primary hover:bg-primary/10 border-2 border-primary/20 hover:border-primary/40 transition-all uppercase tracking-widest flex items-center gap-2"
               >
+                <PenTool className="w-3 h-3" />
                 Analisar outra frase
               </button>
             </div>

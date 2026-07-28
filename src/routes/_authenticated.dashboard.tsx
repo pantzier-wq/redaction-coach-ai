@@ -513,10 +513,13 @@ function ConectivosIA() {
     setIsAnalyzing(true);
     setAnalise(null);
     try {
+      console.log("Iniciando análise da frase:", frase);
       const result = await analyzeFn({ data: { frase } });
+      console.log("Resultado da análise recebido:", result);
       setAnalise(result);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error("Erro capturado no frontend:", error);
+      alert(`Erro na análise: ${error.message || "Tente novamente"}`);
     } finally {
       setIsAnalyzing(false);
     }

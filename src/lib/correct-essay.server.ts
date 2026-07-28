@@ -30,7 +30,15 @@ Regras de correção:
 - Se fugir ao tema ou ao tipo textual, zere conforme regra do ENEM.`;
 
 const CONNECTIVES_SYSTEM_PROMPT = `Você é um especialista em gramática e coesão textual para redações do ENEM, com foco na Competência 4.
-...
+
+Analise apenas o conectivo usado na frase do aluno.
+Responda em português do Brasil, com linguagem simples, objetiva e útil para um estudante que precisa melhorar rápido.
+
+Critérios:
+- Diga se o conectivo está adequado ao contexto.
+- Se estiver fraco, repetitivo, informal ou mal aplicado, indique uma substituição melhor.
+- Explique o motivo em poucas palavras, sem texto longo.
+- Se não houver sugestão necessária, retorne sugestao como string vazia.
 - O campo status deve ser exatamente: bom, regular ou ruim.`;
 
 const REPERTORY_SYSTEM_PROMPT = `Você é um especialista em repertório sociocultural para o ENEM.
@@ -138,7 +146,14 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
 }
 
 export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: string): Promise<AnaliseConectivos> {
-...
+  const gateway = createLovableAiGatewayProvider(lovableApiKey);
+
+  const { text } = await generateText({
+    model: gateway("google/gemini-3.6-flash"),
+    system: `${CONNECTIVES_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, no formato: {"analise":"...","status":"bom|regular|ruim","sugestao":"..."}. Não use outros nomes de campos.`,
+    prompt: `Frase para análise: ${frase}`,
+  });
+
   const parsed = normalizeConnectivesAnalysis(parseJsonFromText(text));
   return ConnectivesAnalysisSchema.parse(parsed);
 }

@@ -425,10 +425,10 @@ function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }
       {!isLoggedIn && (
         <div className="mt-10 rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center">
           <Sparkles className="mx-auto mb-4 h-10 w-10 text-primary animate-pulse" />
-          <h3 className="text-2xl font-black mb-2">Correção Pronta! 🚀</h3>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto font-bold text-white">
-            Sua análise está pronta e 100% gratuita! 🚀 <br />
-            Para salvar seu progresso, treinar com mais temas e garantir que você não vai ficar para trás na corrida pela vaga, <span className="text-primary">crie sua conta gratuita</span> agora e continue evoluindo rumo à nota 1000.
+          <h3 className="text-2xl font-black mb-2 tracking-tight">Análise Pronta! 🚀</h3>
+          <p className="text-muted-foreground mb-6 max-w-md mx-auto font-medium text-white/90 leading-relaxed">
+            Sua correção detalhada e nota oficial já foram geradas! <br />
+            Para garantir sua vaga na faculdade, você precisa de <span className="text-primary font-bold">constância e prática diária</span>. Crie sua conta agora para salvar esse resultado, acessar novos temas e treinar até alcançar o curso dos seus sonhos.
           </p>
           <Link
             to="/auth"

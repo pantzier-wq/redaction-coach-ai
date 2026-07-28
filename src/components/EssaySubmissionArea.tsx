@@ -304,54 +304,57 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                 )}
 
                 <div className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* PLAN VITALÍCIO - O "Básico" desvantajoso */}
-                    <div className="flex flex-col rounded-2xl border-2 border-white/20 bg-white/10 p-5 relative overflow-hidden group hover:opacity-100 transition-opacity">
-                      <div className="mb-4 flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                          <Zap className="w-5 h-5 text-[#22c55e]" />
+                  {/* Ocultamos os planos se o usuário não estiver logado, mostrando apenas a CTA de cadastro */}
+                  {isLoggedIn && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {/* PLAN VITALÍCIO - O "Básico" desvantajoso */}
+                      <div className="flex flex-col rounded-2xl border-2 border-white/20 bg-white/10 p-5 relative overflow-hidden group hover:opacity-100 transition-opacity">
+                        <div className="mb-4 flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                            <Zap className="w-5 h-5 text-[#22c55e]" />
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-black text-[#22c55e] leading-tight uppercase tracking-tight">Acesso Vitalício</h3>
+                            <p className="text-[10px] font-bold text-[#22c55e]/60 leading-tight">Plano Básico</p>
+                          </div>
                         </div>
-                        <div>
-                          <h3 className="text-sm font-black text-[#22c55e] leading-tight uppercase tracking-tight">Acesso Vitalício</h3>
-                          <p className="text-[10px] font-bold text-[#22c55e]/60 leading-tight">Plano Básico</p>
+
+                        <ul className="space-y-2 mb-6 flex-1">
+                          <li className="flex items-start gap-2 text-[11px] font-bold text-[#22c55e]">
+                            <span className="shrink-0">✓</span>
+                            <span>Correções de redação ilimitadas</span>
+                          </li>
+                          <li className="flex items-start gap-2 text-[11px] font-bold text-[#22c55e]">
+                            <span className="shrink-0">✓</span>
+                            <span>Histórico completo de evolução</span>
+                          </li>
+                          <li className="flex items-start gap-2 text-[11px] font-bold text-white/40">
+                            <span className="text-destructive shrink-0">✕</span>
+                            <span className="line-through">70+ Repertórios Universais</span>
+                          </li>
+                          <li className="flex items-start gap-2 text-[11px] font-bold text-white/40">
+                            <span className="text-destructive shrink-0">✕</span>
+                            <span className="line-through">Flashcards de Conectivos</span>
+                          </li>
+                          <li className="flex items-start gap-2 text-[11px] font-bold text-white/40">
+                            <span className="text-destructive shrink-0">✕</span>
+                            <span className="line-through">Manual Proposta Nota 200</span>
+                          </li>
+                        </ul>
+
+                        <div className="mt-auto">
+                          <div className="flex items-baseline gap-1 mb-3">
+                             <span className="text-2xl font-black text-[#22c55e]">R$ 24,90</span>
+                          </div>
+                          <button
+                            onClick={handleTestPurchase}
+                            className="w-full py-3 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-xs uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20"
+                          >
+                            LIBERAR BÁSICO
+                          </button>
                         </div>
                       </div>
 
-                      <ul className="space-y-2 mb-6 flex-1">
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-[#22c55e]">
-                          <span className="shrink-0">✓</span>
-                          <span>Correções de redação ilimitadas</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-[#22c55e]">
-                          <span className="shrink-0">✓</span>
-                          <span>Histórico completo de evolução</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/40">
-                          <span className="text-destructive shrink-0">✕</span>
-                          <span className="line-through">70+ Repertórios Universais</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/40">
-                          <span className="text-destructive shrink-0">✕</span>
-                          <span className="line-through">Flashcards de Conectivos</span>
-                        </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white/40">
-                          <span className="text-destructive shrink-0">✕</span>
-                          <span className="line-through">Manual Proposta Nota 200</span>
-                        </li>
-                      </ul>
-
-                      <div className="mt-auto">
-                        <div className="flex items-baseline gap-1 mb-3">
-                           <span className="text-2xl font-black text-[#22c55e]">R$ 24,90</span>
-                        </div>
-                        <button
-                          onClick={handleTestPurchase}
-                          className="w-full py-3 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-xs uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20"
-                        >
-                          LIBERAR BÁSICO
-                        </button>
-                      </div>
-                    </div>
 
                     {/* COMBO NOTA 1000 - O "Prêmio" irresistível */}
                     <div className="flex flex-col rounded-2xl border-2 border-primary bg-primary/10 p-5 relative overflow-hidden group shadow-[0_0_40px_rgba(var(--primary-rgb),0.3)] scale-[1.02]">
@@ -440,8 +443,10 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                           QUERO O COMBO COMPLETO →
                         </button>
                       </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
+
 
                   <div className="flex flex-col gap-2 text-center pt-2">
                     <p className="text-[10px] text-white font-black uppercase tracking-widest bg-white/5 py-1.5 rounded-lg border border-white/10">

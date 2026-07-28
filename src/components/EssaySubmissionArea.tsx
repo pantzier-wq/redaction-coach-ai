@@ -300,7 +300,8 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                       Sua correção detalhada e nota oficial já foram geradas com precisão INEP. <br className="hidden md:block"/>
                       <span className="text-[#22c55e]">Desbloqueie agora</span> para ver seu resultado completo e garantir sua vaga na faculdade.
                     </p>
-                  <>
+                  </>
+                )}
 
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

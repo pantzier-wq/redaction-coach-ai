@@ -266,7 +266,8 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                     <h2 className="text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-white">Correção Pronta! 🚀</h2>
                     
                     <p className="text-sm md:text-base text-white/90 font-semibold mb-8 leading-relaxed text-center">
-                      o usuario ja vai ter acesso no começo, porque ja vai aparecer a corrreção pra ele, porem abaixo da correçãp vai ter o botao pra ele criar a conta dele e ter acesso a plataforma
+                      Sua análise está pronta e 100% gratuita! 🚀 <br className="hidden md:block"/>
+                      Para salvar seu progresso, treinar com mais temas e garantir que você não vai ficar para trás na corrida pela vaga, <span className="text-[#22c55e]">crie sua conta gratuita</span> agora e continue evoluindo rumo à nota 1000.
                     </p>
 
                     <div className="space-y-4">

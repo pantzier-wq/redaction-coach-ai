@@ -167,10 +167,14 @@ export async function createRepertoryWithAi(lovableApiKey: string, input: z.infe
     { role: "user" as const, content: `Tema: ${input.tema}. ${input.genero ? `Gênero: ${input.genero}.` : ""} ${input.detalhes ? `Mais detalhes: ${input.detalhes}` : ""}` }
   ];
 
+  console.log("Enviando solicitação de repertório para a IA:", JSON.stringify(messages));
+
   const { text } = await generateText({
-    model: gateway("google/gemini-3.6-flash"),
+    model: gateway("openai/gpt-4o-mini"),
     messages: messages,
   });
+
+  console.log("Resposta bruta da IA para repertório:", text);
 
   try {
     const parsed = parseJsonFromText(text);

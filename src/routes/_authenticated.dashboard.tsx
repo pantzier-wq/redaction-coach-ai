@@ -107,8 +107,8 @@ function Dashboard() {
         onLogout={handleLogout}
       />
 
-      <main className="flex-1 md:ml-64 min-h-screen pt-20 md:pt-0">
-        <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
+      <main className="flex-1 md:ml-64 min-h-screen pt-20 md:pt-0 overflow-x-hidden">
+        <div className="max-w-5xl mx-auto px-4 py-8 md:py-12 overflow-x-hidden">
           {activeSection === "dashboard" && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center">
@@ -799,49 +799,57 @@ function RepertoriosLibrary() {
   return (
     <div className="space-y-8 pb-20">
       {/* Search and Filters */}
-      <div className="sticky top-2 z-30 flex flex-col gap-4 p-4 rounded-3xl bg-card/80 backdrop-blur-md border border-border shadow-xl">
+      <div className="flex flex-col gap-6 p-4 md:p-8 rounded-[2rem] bg-card border border-border">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
           <input 
             type="text" 
             placeholder="Pesquise por autor, obra, tema ou argumento..."
-            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold"
+            className="w-full pl-14 pr-4 py-5 rounded-2xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold text-lg"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <div className="space-y-2">
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {types.map(t => (
-              <button
-                key={t.id}
-                onClick={() => setActiveType(t.id)}
-                className={cn(
-                  "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all",
-                  activeType === t.id 
-                    ? "bg-primary text-primary-foreground" 
-                    : "bg-muted text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {t.label}
-              </button>
-            ))}
+        
+        <div className="space-y-4">
+          <div>
+            <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] block mb-3 ml-1">Filtrar por Tipo</span>
+            <div className="flex flex-wrap gap-2">
+              {types.map(t => (
+                <button
+                  key={t.id}
+                  onClick={() => setActiveType(t.id)}
+                  className={cn(
+                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                    activeType === t.id 
+                      ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]" 
+                      : "bg-muted text-muted-foreground hover:text-foreground border border-transparent"
+                  )}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-            {eixos.map(e => (
-              <button
-                key={e.id}
-                onClick={() => setActiveEixo(e.id)}
-                className={cn(
-                  "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest whitespace-nowrap transition-all border",
-                  activeEixo === e.id 
-                    ? "bg-secondary text-secondary-foreground border-secondary" 
-                    : "bg-transparent border-border text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {e.label}
-              </button>
-            ))}
+
+          <div>
+            <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] block mb-3 ml-1">Filtrar por Eixo Temático</span>
+            <div className="flex flex-wrap gap-2">
+              {eixos.map(e => (
+                <button
+                  key={e.id}
+                  onClick={() => setActiveEixo(e.id)}
+                  className={cn(
+                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border",
+                    activeEixo === e.id 
+                      ? "bg-secondary text-secondary-foreground border-secondary shadow-[0_0_15px_rgba(var(--secondary-rgb),0.4)]" 
+                      : "bg-transparent border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground"
+                  )}
+                >
+                  {e.label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>

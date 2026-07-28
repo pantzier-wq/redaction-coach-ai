@@ -192,6 +192,7 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
       model: gateway("openai/gpt-4o-mini"),
       messages: messages,
       temperature: 0.7,
+      maxTokens: 1000,
     });
 
     console.log("Resposta bruta da IA para repertório:", text, "Reason:", finishReason);

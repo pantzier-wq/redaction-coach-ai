@@ -110,8 +110,8 @@ function Dashboard() {
         onLogout={handleLogout}
       />
 
-      <main className="flex-1 md:ml-64 min-h-screen pt-20 md:pt-0 w-full overflow-x-hidden flex flex-col items-stretch box-border relative">
-        <div className="max-w-5xl mx-auto px-4 py-8 md:py-12 w-full overflow-x-hidden flex-1 box-border relative">
+      <main className="flex-1 md:ml-64 min-h-screen pt-20 md:pt-0 w-full overflow-hidden flex flex-col items-stretch box-border relative">
+        <div className="max-w-5xl mx-auto px-4 py-8 md:py-12 w-full overflow-hidden flex-1 box-border relative">
           {activeSection === "dashboard" && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center">

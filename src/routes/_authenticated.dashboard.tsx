@@ -1461,7 +1461,10 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
                 </div>
                 <button 
                   disabled={!tema || loading}
-                  onClick={() => handleGenerate()}
+                  onClick={(e) => {
+                    console.log("Clique detectado no COMEÇAR FUNIL");
+                    handleGenerate();
+                  }}
                   className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-black text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
                 >
                   {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" /> : <><Zap className="w-5 h-5" /> COMEÇAR FUNIL</>}

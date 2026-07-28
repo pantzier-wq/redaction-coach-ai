@@ -288,7 +288,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                   <p className="text-sm md:text-base text-white/90 font-semibold mb-6 md:mb-8 leading-relaxed text-center">
                     {result 
                       ? "Sua correção detalhada e nota oficial já foram geradas com precisão INEP."
-                      : "Para mantermos a IA funcionando e ajudando milhares de estudantes a alcançarem a nota 1000, solicitamos uma contribuição mínima."} 
+                      : "Você está a um passo de desbloquear seu potencial máximo e conquistar sua vaga no curso dos sonhos."} 
+
                     <br className="hidden md:block"/>
                     <span className="text-[#22c55e]"> Garanta seu acesso vitalício</span> para treinar sem limites e conquistar sua vaga.
                   </p>

@@ -15,13 +15,16 @@ export const corrigirRedacao = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => essayInputSchema.parse(data))
   .handler(async ({ data }): Promise<Correcao> => {
     const key = process.env.LOVABLE_API_KEY;
-    if (!key) throw new Error("LOVABLE_API_KEY não configurada");
+    if (!key) {
+      console.error("LOVABLE_API_KEY não encontrada no ambiente");
+      throw new Error("Erro de configuração no servidor (API Key)");
+    }
 
     try {
       return await correctEssayWithAi(key, data);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro em corrigirRedacao:", error);
-      throw new Error("Não foi possível concluir a correção agora. Tente novamente em instantes.");
+      throw new Error(error.message || "Erro na correção");
     }
   });
 

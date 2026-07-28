@@ -506,76 +506,139 @@ function ConectivosIA() {
   const [frase, setFrase] = useState("");
   const [analise, setAnalise] = useState<any>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [progress, setProgress] = useState(0);
   const analyzeFn = useServerFn(analisarConectivos);
+  const progressInterval = useRef<any>(null);
 
   const handleAnalyze = async () => {
     if (!frase.trim() || frase.length < 10) return;
     setIsAnalyzing(true);
     setAnalise(null);
+    setProgress(0);
+    
+    // Inicia a barra de progresso (aproximadamente 10 segundos)
+    progressInterval.current = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 95) return prev;
+        return prev + 1;
+      });
+    }, 100);
+
     try {
-      console.log("Iniciando análise da frase:", frase);
       const result = await analyzeFn({ data: { frase } });
-      console.log("Resultado da análise recebido:", result);
-      setAnalise(result);
+      
+      // Garante que a barra chegue no final antes de mostrar
+      setProgress(100);
+      setTimeout(() => {
+        setAnalise(result);
+        setIsAnalyzing(false);
+        if (progressInterval.current) clearInterval(progressInterval.current);
+      }, 500);
     } catch (error: any) {
       console.error("Erro capturado no frontend:", error);
       alert(`Erro na análise: ${error.message || "Tente novamente"}`);
-    } finally {
       setIsAnalyzing(false);
+      if (progressInterval.current) clearInterval(progressInterval.current);
     }
+  };
+
+  const handleReset = () => {
+    setFrase("");
+    setAnalise(null);
+    setProgress(0);
   };
 
   return (
     <div className="space-y-4">
-      <div className="relative">
-        <textarea
-          value={frase}
-          onChange={(e) => setFrase(e.target.value)}
-          placeholder="Ex: No entanto, é necessário que o governo invista em educação..."
-          className="w-full min-h-[100px] p-5 rounded-2xl bg-background border-2 border-border focus:border-primary outline-none transition-all font-bold text-sm"
-        />
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault();
-            console.log("Botão clicado!");
-            handleAnalyze();
-          }}
-          disabled={isAnalyzing || frase.length < 10}
-          className={cn(
-            "absolute bottom-4 right-4 px-6 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all z-20",
-            isAnalyzing || frase.length < 10 
-              ? "bg-muted text-muted-foreground cursor-not-allowed" 
-              : "bg-primary text-primary-foreground hover:scale-105 shadow-lg active:scale-95"
-          )}
-        >
-          {isAnalyzing ? "Analisando..." : "Analisar Frase"}
-        </button>
-      </div>
+      {!analise && !isAnalyzing && (
+        <div className="relative">
+          <textarea
+            value={frase}
+            onChange={(e) => setFrase(e.target.value)}
+            placeholder="Ex: No entanto, é necessário que o governo invista em educação..."
+            className="w-full min-h-[120px] p-5 rounded-2xl bg-background border-2 border-border focus:border-primary outline-none transition-all font-bold text-sm"
+          />
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              handleAnalyze();
+            }}
+            disabled={isAnalyzing || frase.length < 10}
+            className={cn(
+              "absolute bottom-4 right-4 px-6 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all z-20",
+              isAnalyzing || frase.length < 10 
+                ? "bg-muted text-muted-foreground cursor-not-allowed" 
+                : "bg-primary text-primary-foreground hover:scale-105 shadow-lg active:scale-95"
+            )}
+          >
+            Analisar Frase
+          </button>
+        </div>
+      )}
+
+      {isAnalyzing && (
+        <div className="py-12 flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-500">
+          <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+          <div className="w-full max-w-md space-y-2">
+            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-primary">
+              <span>IA Processando</span>
+              <span>{progress}%</span>
+            </div>
+            <div className="h-2 w-full bg-primary/10 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-primary transition-all duration-300 ease-out" 
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <p className="text-center text-xs text-muted-foreground font-bold animate-pulse">
+              Avaliando a coesão da sua frase...
+            </p>
+          </div>
+        </div>
+      )}
 
       {analise && (
-        <div className="animate-in fade-in slide-in-from-top-2 duration-300 p-6 rounded-2xl border-2 border-border bg-card">
-          <div className="flex items-center gap-3 mb-4">
-            <div className={cn(
-              "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
-              analise.status === 'bom' && "bg-[#22c55e]/10 text-[#22c55e] border-[#22c55e]/20",
-              analise.status === 'regular' && "bg-amber-500/10 text-amber-500 border-amber-500/20",
-              analise.status === 'ruim' && "bg-destructive/10 text-destructive border-destructive/20",
-            )}>
-              Status: {analise.status}
+        <div className="animate-in fade-in slide-in-from-top-4 duration-500 p-8 rounded-3xl border-2 border-border bg-card relative overflow-hidden">
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+              <div className={cn(
+                "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm",
+                analise.status === 'bom' && "bg-[#22c55e]/10 text-[#22c55e] border-[#22c55e]/20",
+                analise.status === 'regular' && "bg-amber-500/10 text-amber-500 border-amber-500/20",
+                analise.status === 'ruim' && "bg-destructive/10 text-destructive border-destructive/20",
+              )}>
+                Avaliação: {analise.status === 'bom' ? 'Excelente' : analise.status === 'regular' ? 'Pode Melhorar' : 'Necessita Ajuste'}
+              </div>
+              <button 
+                onClick={handleReset}
+                className="text-xs font-black text-primary hover:underline uppercase tracking-widest"
+              >
+                Analisar outra frase
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Análise Técnica</h4>
+                <p className="text-base font-bold text-foreground leading-relaxed">
+                  {analise.analise}
+                </p>
+              </div>
+
+              {analise.sugestao && (
+                <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 relative">
+                  <div className="absolute top-4 right-4">
+                    <Sparkles className="w-4 h-4 text-primary opacity-50" />
+                  </div>
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Sugestão de Upgrade</h4>
+                  <p className="text-sm text-foreground font-bold">
+                    {analise.sugestao}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
-          <p className="text-sm font-bold text-foreground leading-relaxed mb-4">
-            {analise.analise}
-          </p>
-          {analise.sugestao && (
-            <div className="p-4 rounded-xl bg-primary/5 border border-primary/10">
-              <p className="text-xs text-muted-foreground font-bold">
-                <span className="text-primary mr-2">💡 Sugestão:</span>
-                {analise.sugestao}
-              </p>
-            </div>
-          )}
         </div>
       )}
     </div>

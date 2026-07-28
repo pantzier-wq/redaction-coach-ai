@@ -130,252 +130,154 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
 
   return (
     <div className="w-full space-y-8">
-      {/* Resultados da Correção (Visíveis para novos usuários) */}
       {result && !loading && (
-        <div id="resultado" className="animate-in fade-in slide-in-from-top-10 duration-700">
-          <div className="rounded-3xl border border-primary/30 bg-card p-6 md:p-8 overflow-hidden relative shadow-[0_0_50px_rgba(var(--primary-rgb),0.1)]">
-            <div className="flex items-center justify-between mb-8 pb-6 border-b border-border/50">
-              <div className="flex items-center gap-4">
-                <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.2)]">
-                  <Trophy className="w-8 h-8" />
-                </div>
-                <div>
-                  <h3 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter">Relatório de Desempenho</h3>
-                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Avaliação Finalizada com Sucesso</p>
-                </div>
-              </div>
-              <div className="text-center">
-                <div className="text-4xl md:text-5xl font-black text-primary leading-none tracking-tighter">{result.notaFinal}</div>
-                <div className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Pontos</div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
-              {Object.entries(result.competencias).map(([key, data]) => (
-                <div key={key} className="p-4 rounded-2xl bg-muted/30 border border-border/50 hover:border-primary/30 transition-colors">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Comp. {key.slice(-1)}</span>
-                    <span className="text-lg font-black text-primary">{data.nota}</span>
-                  </div>
-                  <p className="text-[11px] font-bold leading-tight text-foreground/80">{data.feedback}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="space-y-6">
-              <div className="p-6 rounded-2xl bg-destructive/5 border border-destructive/20 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-3 opacity-10"><Zap className="w-12 h-12 text-destructive" /></div>
-                <h4 className="text-sm font-black uppercase tracking-widest text-destructive mb-3 flex items-center gap-2">
-                  ⚠️ Pontos Fracos Detectados
-                </h4>
-                <ul className="space-y-2">
-                  {result.pontosFracos.map((p, i) => (
-                    <li key={i} className="text-sm font-bold text-white flex items-start gap-2">
-                      <span className="text-destructive">•</span> {p}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-3 opacity-10"><Sparkles className="w-12 h-12 text-primary" /></div>
-                <h4 className="text-sm font-black uppercase tracking-widest text-primary mb-3 flex items-center gap-2">
-                  ✨ Sugestões de Melhoria
-                </h4>
-                <ul className="space-y-2">
-                  {result.sugestoes.map((s, i) => (
-                    <li key={i} className="text-sm font-bold text-white flex items-start gap-2">
-                      <span className="text-primary">•</span> {s}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
+        <Resultado data={result} isLoggedIn={isLoggedIn} />
       )}
 
       <div className="w-full">
-      {loading ? (
-        <div 
-          className="rounded-3xl border border-primary/40 bg-card p-10 text-center animate-in fade-in zoom-in duration-500"
-          style={{ boxShadow: "var(--shadow-glow)" }}
-        >
-          <div className="mb-6 flex justify-center">
-            <div className="relative h-24 w-24">
-              <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
-              <div className="relative flex h-full w-full items-center justify-center rounded-full bg-card border-2 border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.5)]">
-                <span className="text-3xl animate-bounce">✍️</span>
-              </div>
-            </div>
-          </div>
-          
-          <h3 className="text-2xl font-black mb-4">Analisando sua Redação...</h3>
-          
-          <div className="mx-auto mb-6 h-3 w-full max-w-md overflow-hidden rounded-full bg-muted">
-            <div 
-              className="h-full bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.8)] transition-all duration-1000 ease-linear"
-              style={{ 
-                width: '100%',
-                animation: 'loading-bar 30s linear forwards'
-              }} 
-            />
-          </div>
-
-          <div className="relative h-10 w-full max-w-sm mx-auto overflow-hidden">
-            <div className="animate-vertical-slide">
-              {[
-                "Preparando a melhor correção...",
-                "Comparando com os critérios oficiais do INEP...",
-                "Analisando conectivos e coesão textual...",
-                "Verificando os 5 elementos da proposta...",
-                "Avaliando repertório sociocultural...",
-                "Calculando nota final das 5 competências...",
-                "Quase pronto! Finalizando relatório..."
-              ].map((text, i) => (
-                <div key={i} className="flex h-10 items-center justify-center">
-                  <p className="text-primary font-bold uppercase tracking-widest text-[10px] md:text-xs text-center leading-tight">
-                    {text}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <p className="mt-8 text-xs font-bold text-foreground animate-pulse">
-            O rigor da correção leva tempo. Não feche esta página.
-          </p>
-
-          <style>{`
-            @keyframes loading-bar {
-              0% { width: 0%; }
-              100% { width: 100%; }
-            }
-            @keyframes vertical-slide {
-              0%, 12% { transform: translateY(0); }
-              14.28%, 26.28% { transform: translateY(-40px); }
-              28.57%, 40.57% { transform: translateY(-80px); }
-              42.85%, 54.85% { transform: translateY(-120px); }
-              57.14%, 69.14% { transform: translateY(-160px); }
-              71.42%, 83.42% { transform: translateY(-200px); }
-              85.71%, 100% { transform: translateY(-240px); }
-            }
-            .animate-vertical-slide {
-              animation: vertical-slide 30s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-            }
-          `}</style>
-        </div>
-      ) : (
-        <div className="relative w-full">
-          <form
-            onSubmit={onSubmit}
-            className={`rounded-3xl border border-border bg-card p-6 md:p-8 transition-all duration-500 overflow-hidden ${result && showPaywall && isLoggedIn ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
+        {loading ? (
+          <div 
+            className="rounded-3xl border border-primary/40 bg-card p-10 text-center animate-in fade-in zoom-in duration-500"
             style={{ boxShadow: "var(--shadow-glow)" }}
           >
-            <label className="mb-2 block text-sm font-bold text-primary">Tema da redação</label>
-            <input
-              value={tema}
-              onChange={(e) => setTema(e.target.value)}
-              required
-              maxLength={300}
-              placeholder="Ex: Desafios para a valorização da comunidade indígena no Brasil"
-              className="w-full rounded-xl border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-
-            <label className="mt-5 mb-2 block text-sm font-bold text-primary">Cole sua redação aqui</label>
-            <textarea
-              value={redacao}
-              onChange={(e) => setRedacao(e.target.value)}
-              required
-              rows={12}
-              maxLength={8000}
-              placeholder="Cole o texto completo da sua redação..."
-              className="w-full resize-y rounded-xl border border-border bg-input px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            <div className="mt-1 text-right text-xs text-muted-foreground">
-              {charCount} caracteres {charCount < 200 && "• mínimo 200"}
+            <div className="mb-6 flex justify-center">
+              <div className="relative h-24 w-24">
+                <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
+                <div className="relative flex h-full w-full items-center justify-center rounded-full bg-card border-2 border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.5)]">
+                  <span className="text-3xl animate-bounce">✍️</span>
+                </div>
+              </div>
+            </div>
+            
+            <h3 className="text-2xl font-black mb-4">Analisando sua Redação...</h3>
+            
+            <div className="mx-auto mb-6 h-3 w-full max-w-md overflow-hidden rounded-full bg-muted">
+              <div 
+                className="h-full bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.8)] transition-all duration-1000 ease-linear"
+                style={{ 
+                  width: '100%',
+                  animation: 'loading-bar 30s linear forwards'
+                }} 
+              />
             </div>
 
-            {erro && (
-              <div className="mt-4 rounded-xl border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive-foreground">
-                {erro}
+            <div className="relative h-10 w-full max-w-sm mx-auto overflow-hidden">
+              <div className="animate-vertical-slide">
+                {[
+                  "Preparando a melhor correção...",
+                  "Comparando com os critérios oficiais do INEP...",
+                  "Analisando conectivos e coesão textual...",
+                  "Verificando os 5 elementos da proposta...",
+                  "Avaliando repertório sociocultural...",
+                  "Calculando nota final das 5 competências...",
+                  "Quase pronto! Finalizando relatório..."
+                ].map((text, i) => (
+                  <div key={i} className="flex h-10 items-center justify-center">
+                    <p className="text-primary font-bold uppercase tracking-widest text-[10px] md:text-xs text-center leading-tight">
+                      {text}
+                    </p>
+                  </div>
+                ))}
               </div>
-            )}
+            </div>
 
-            <button
-              type="submit"
-              disabled={loading || charCount < 200 || tema.trim().length < 3}
-              className="mt-6 w-full rounded-xl py-4 text-lg font-black text-white transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
-              style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)", boxShadow: "0 0 20px rgba(34, 197, 94, 0.4)" }}
-            >
-              CORRIGIR AGORA COM IA →
-            </button>
-            <p className="mt-3 text-center text-xs font-bold text-muted-foreground">
-              🔒 100% privado • Sua redação {isLoggedIn ? "fica salva no seu histórico" : "não é armazenada"}
+            <p className="mt-8 text-xs font-bold text-foreground animate-pulse">
+              O rigor da correção leva tempo. Não feche esta página.
             </p>
-          </form>
 
-          {result && showPaywall && (
-            <div className="absolute inset-0 z-50 flex items-start justify-center p-4 md:p-6 pt-16 md:pt-20">
-              <div 
-                className="w-full max-w-lg rounded-3xl border border-[#22c55e]/50 bg-card/95 p-6 md:p-10 shadow-[0_0_100px_rgba(34,197,94,0.4)] backdrop-blur-2xl relative my-8 animate-in fade-in zoom-in duration-500"
+            <style>{`
+              @keyframes loading-bar {
+                0% { width: 0%; }
+                100% { width: 100%; }
+              }
+              @keyframes vertical-slide {
+                0%, 12% { transform: translateY(0); }
+                14.28%, 26.28% { transform: translateY(-40px); }
+                28.57%, 40.57% { transform: translateY(-80px); }
+                42.85%, 54.85% { transform: translateY(-120px); }
+                57.14%, 69.14% { transform: translateY(-160px); }
+                71.42%, 83.42% { transform: translateY(-200px); }
+                85.71%, 100% { transform: translateY(-240px); }
+              }
+              .animate-vertical-slide {
+                animation: vertical-slide 30s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+              }
+            `}</style>
+          </div>
+        ) : (
+          <div className="relative w-full">
+            <form
+              onSubmit={onSubmit}
+              className={`rounded-3xl border border-border bg-card p-6 md:p-8 transition-all duration-500 overflow-hidden ${result && showPaywall && isLoggedIn ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
+              style={{ boxShadow: "var(--shadow-glow)" }}
+            >
+              <label className="mb-2 block text-sm font-bold text-primary">Tema da redação</label>
+              <input
+                value={tema}
+                onChange={(e) => setTema(e.target.value)}
+                required
+                maxLength={300}
+                placeholder="Ex: Desafios para a valorização da comunidade indígena no Brasil"
+                className="w-full rounded-xl border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+
+              <label className="mt-5 mb-2 block text-sm font-bold text-primary">Cole sua redação aqui</label>
+              <textarea
+                value={redacao}
+                onChange={(e) => setRedacao(e.target.value)}
+                required
+                rows={12}
+                maxLength={8000}
+                placeholder="Cole o texto completo da sua redação..."
+                className="w-full resize-y rounded-xl border border-border bg-input px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+              <div className="mt-1 text-right text-xs text-muted-foreground">
+                {charCount} caracteres {charCount < 200 && "• mínimo 200"}
+              </div>
+
+              {erro && (
+                <div className="mt-4 rounded-xl border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive-foreground">
+                  {erro}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading || charCount < 200 || tema.trim().length < 3}
+                className="mt-6 w-full rounded-xl py-4 text-lg font-black text-white transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+                style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)", boxShadow: "0 0 20px rgba(34, 197, 94, 0.4)" }}
               >
-                {!isLoggedIn ? (
-                  <>
-                    <div className="absolute -top-12 md:-top-16 left-1/2 -translate-x-1/2 z-10">
-                      <div className="relative">
-                        <div className="absolute inset-0 animate-ping rounded-full bg-[#22c55e]/20" />
-                        <div className="relative p-5 rounded-full bg-card text-[#22c55e] border-4 border-[#22c55e] shadow-[0_0_30px_rgba(34,197,94,0.6)]">
-                          <Sparkles className="w-10 h-10 md:w-12 md:h-12" />
-                        </div>
+                CORRIGIR AGORA COM IA →
+              </button>
+              <p className="mt-3 text-center text-xs font-bold text-muted-foreground">
+                🔒 100% privado • Sua redação {isLoggedIn ? "fica salva no seu histórico" : "não é armazenada"}
+              </p>
+            </form>
+
+            {result && showPaywall && isLoggedIn && (
+              <div className="absolute inset-0 z-50 flex items-start justify-center p-4 md:p-6 pt-16 md:pt-20">
+                <div 
+                  className="w-full max-w-lg rounded-3xl border border-[#22c55e]/50 bg-card/95 p-6 md:p-10 shadow-[0_0_100px_rgba(34,197,94,0.4)] backdrop-blur-2xl relative my-8 animate-in fade-in zoom-in duration-500"
+                >
+                  <div className="absolute -top-12 md:-top-16 left-1/2 -translate-x-1/2 z-10">
+                    <div className="relative">
+                      <div className="absolute inset-0 animate-ping rounded-full bg-[#22c55e]/20" />
+                      <div className="relative p-5 rounded-full bg-card text-[#22c55e] border-4 border-[#22c55e] shadow-[0_0_30px_rgba(34,197,94,0.6)]">
+                        <Trophy className="w-10 h-10 md:w-12 md:h-12" />
                       </div>
                     </div>
-                    
-                    <h2 className="text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-white">Correção Pronta! 🚀</h2>
-                    
-                    <p className="text-sm md:text-base text-white/90 font-semibold mb-8 leading-relaxed text-center">
-                      Sua análise está pronta e 100% gratuita! 🚀 <br className="hidden md:block"/>
-                      Para salvar seu progresso, treinar com mais temas e garantir que você não vai ficar para trás na corrida pela vaga, <span className="text-[#22c55e]">crie sua conta gratuita</span> agora e continue evoluindo rumo à nota 1000.
-                    </p>
+                  </div>
+                  
+                  <h2 className="text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-white">Análise Pronta! 🎯</h2>
+                  
+                  <p className="text-sm md:text-base text-white/90 font-semibold mb-6 md:mb-8 leading-relaxed text-center">
+                    Sua correção detalhada e nota oficial já foram geradas com precisão INEP. <br className="hidden md:block"/>
+                    <span className="text-[#22c55e]">Desbloqueie agora</span> para ver seu resultado completo e garantir sua vaga na faculdade.
+                  </p>
 
-                    <div className="space-y-4">
-                      <Link
-                        to="/auth"
-                        className="flex w-full items-center justify-center gap-2 rounded-2xl py-5 text-lg font-black text-white transition-all hover:scale-[1.02] active:scale-95 shadow-[0_0_30px_rgba(34,197,94,0.5)]"
-                        style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)" }}
-                      >
-                        SALVAR MINHA NOTA AGORA <ArrowRight className="w-5 h-5" />
-                      </Link>
-                      <p className="text-center text-[10px] font-bold text-white/50 uppercase tracking-widest">
-                        Acesso instantâneo • Comece a evoluir hoje
-                      </p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="absolute -top-12 md:-top-16 left-1/2 -translate-x-1/2 z-10">
-                      <div className="relative">
-                        <div className="absolute inset-0 animate-ping rounded-full bg-[#22c55e]/20" />
-                        <div className="relative p-5 rounded-full bg-card text-[#22c55e] border-4 border-[#22c55e] shadow-[0_0_30px_rgba(34,197,94,0.6)]">
-                          <Trophy className="w-10 h-10 md:w-12 md:h-12" />
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <h2 className="text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-white">Análise Pronta! 🎯</h2>
-                    
-                    <p className="text-sm md:text-base text-white/90 font-semibold mb-6 md:mb-8 leading-relaxed text-center">
-                      Sua correção detalhada e nota oficial já foram geradas com precisão INEP. <br className="hidden md:block"/>
-                      <span className="text-[#22c55e]">Desbloqueie agora</span> para ver seu resultado completo e garantir sua vaga na faculdade.
-                    </p>
-                  </>
-                )}
-
-                <div className="space-y-6">
-                  {/* Ocultamos os planos se o usuário não estiver logado, mostrando apenas a CTA de cadastro */}
-                  {isLoggedIn && (
+                  <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* PLAN VITALÍCIO - O "Básico" desvantajoso */}
+                      {/* PLAN VITALÍCIO */}
                       <div className="flex flex-col rounded-2xl border-2 border-white/20 bg-white/10 p-5 relative overflow-hidden group hover:opacity-100 transition-opacity">
                         <div className="mb-4 flex items-center gap-3">
                           <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
@@ -386,7 +288,6 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                             <p className="text-[10px] font-bold text-[#22c55e]/60 leading-tight">Plano Básico</p>
                           </div>
                         </div>
-
                         <ul className="space-y-2 mb-6 flex-1">
                           <li className="flex items-start gap-2 text-[11px] font-bold text-[#22c55e]">
                             <span className="shrink-0">✓</span>
@@ -400,16 +301,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                             <span className="text-destructive shrink-0">✕</span>
                             <span className="line-through">70+ Repertórios Universais</span>
                           </li>
-                          <li className="flex items-start gap-2 text-[11px] font-bold text-white/40">
-                            <span className="text-destructive shrink-0">✕</span>
-                            <span className="line-through">Flashcards de Conectivos</span>
-                          </li>
-                          <li className="flex items-start gap-2 text-[11px] font-bold text-white/40">
-                            <span className="text-destructive shrink-0">✕</span>
-                            <span className="line-through">Manual Proposta Nota 200</span>
-                          </li>
                         </ul>
-
                         <div className="mt-auto">
                           <div className="flex items-baseline gap-1 mb-3">
                              <span className="text-2xl font-black text-[#22c55e]">R$ 24,90</span>
@@ -423,120 +315,57 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                         </div>
                       </div>
 
-
-                    {/* COMBO NOTA 1000 - O "Prêmio" irresistível */}
-                    <div className="flex flex-col rounded-2xl border-2 border-primary bg-primary/10 p-5 relative overflow-hidden group shadow-[0_0_40px_rgba(var(--primary-rgb),0.3)] scale-[1.02]">
-                      <div className="absolute top-0 right-0 px-2 py-0.5 bg-[#22c55e] text-white text-[8px] font-black uppercase tracking-tighter rounded-bl-lg animate-pulse z-20">
-                        OFERTA RECOMENDADA 🔥
-                      </div>
-                      
-                      <div className="mb-4 flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-xl bg-[#22c55e] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(34,197,94,0.6)]">
-                          <Sparkles className="w-5 h-5 text-white animate-pulse" />
+                      {/* COMBO NOTA 1000 */}
+                      <div className="flex flex-col rounded-2xl border-2 border-primary bg-primary/10 p-5 relative overflow-hidden group shadow-[0_0_40px_rgba(var(--primary-rgb),0.3)] scale-[1.02]">
+                        <div className="absolute top-0 right-0 px-2 py-0.5 bg-[#22c55e] text-white text-[8px] font-black uppercase tracking-tighter rounded-bl-lg animate-pulse z-20">
+                          OFERTA RECOMENDADA 🔥
                         </div>
-                        <div>
-                          <h3 className="text-sm font-black text-white leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
-                          <p className="text-[10px] font-bold text-primary leading-tight">Acesso Total + IAs de Bônus</p>
+                        <div className="mb-4 flex items-center gap-3">
+                          <div className="h-10 w-10 rounded-xl bg-[#22c55e] flex items-center justify-center shrink-0">
+                            <Sparkles className="w-5 h-5 text-white animate-pulse" />
+                          </div>
+                          <div>
+                            <h3 className="text-sm font-black text-white leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
+                            <p className="text-[10px] font-bold text-primary leading-tight">Acesso Total + Bônus</p>
+                          </div>
                         </div>
-                      </div>
-
-                      <ul className="space-y-2.5 mb-6 flex-1">
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
-                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
-                            <span className="text-primary text-[10px] font-black">✓</span>
+                        <ul className="space-y-2.5 mb-6 flex-1">
+                          <li className="flex items-start gap-2 text-[11px] font-bold text-[#22c55e]">
+                            <span className="shrink-0">✓</span>
+                            <span>Correções Ilimitadas (VITALÍCIO)</span>
+                          </li>
+                          <li className="flex items-start gap-2 text-[11px] font-bold text-[#22c55e]">
+                            <span className="shrink-0">✓</span>
+                            <span>IAs de Repertório e Conectivos</span>
+                          </li>
+                        </ul>
+                        <div className="mt-auto">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-[10px] font-bold text-[#22c55e]/60 line-through italic uppercase tracking-tighter">R$ 59,90</span>
+                            <span className="text-2xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 42,00</span>
                           </div>
-                          <div className="flex flex-col">
-                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Correções Ilimitadas (VITALÍCIO)</span>
-                            <span className="text-[9px] text-white font-bold leading-tight">Nunca mais pague por correções individuais.</span>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
-                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
-                            <span className="text-primary text-[10px] font-black">✓</span>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Gerador de Repertórios IA</span>
-                            <span className="text-[9px] text-white font-bold leading-tight">IA que cria repertórios infalíveis para o seu tema.</span>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
-                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
-                            <span className="text-primary text-[10px] font-black">✓</span>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Laboratório de Conectivos IA</span>
-                            <span className="text-[9px] text-white font-bold leading-tight">Análise em tempo real para não repetir palavras.</span>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
-                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
-                            <span className="text-primary text-[10px] font-black">✓</span>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">70+ Repertórios Coringas</span>
-                            <span className="text-[9px] text-white font-bold leading-tight">Modelos universais prontos para qualquer tema do ENEM.</span>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
-                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
-                            <span className="text-primary text-[10px] font-black">✓</span>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Domine a C4 (Conectivos)</span>
-                            <span className="text-[9px] text-white font-bold leading-tight">Flashcards para fixar conectivos e subir sua nota.</span>
-                          </div>
-                        </li>
-                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
-                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
-                            <span className="text-primary text-[10px] font-black">✓</span>
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Segredo da C5 (Nota 200)</span>
-                            <span className="text-[9px] text-white font-bold leading-tight">Manual prático para fechar a proposta de intervenção.</span>
-                          </div>
-                        </li>
-                      </ul>
-
-
-                      <div className="mt-auto">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="text-[10px] font-bold text-[#22c55e]/60 line-through italic uppercase tracking-tighter">R$ 59,90</span>
-                          <span className="text-2xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 42,00</span>
+                          <button
+                            onClick={handleTestPurchase}
+                            className="w-full py-3.5 rounded-xl bg-[#22c55e] text-white font-black text-xs uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(34,197,94,0.5)] relative overflow-hidden"
+                          >
+                            QUERO O COMBO COMPLETO →
+                          </button>
                         </div>
-                        <button
-                          onClick={handleTestPurchase}
-                          className="w-full py-3.5 rounded-xl bg-[#22c55e] text-white font-black text-xs uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(34,197,94,0.5)] relative overflow-hidden"
-                        >
-                          <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
-                          QUERO O COMBO COMPLETO →
-                        </button>
-                      </div>
                       </div>
                     </div>
-                  )}
 
-
-                  <div className="flex flex-col gap-2 text-center pt-2">
-                    <p className="text-[10px] text-white font-black uppercase tracking-widest bg-white/5 py-1.5 rounded-lg border border-white/10">
-                      ⚡ Liberação Imediata • Pagamento Único
-                    </p>
-                    <p className="text-[9px] text-white/40 uppercase tracking-[0.2em] font-black italic">Sem mensalidades • Sem letras miúdas</p>
+                    <div className="flex flex-col gap-2 text-center pt-2">
+                      <p className="text-[10px] text-white font-black uppercase tracking-widest bg-white/5 py-1.5 rounded-lg border border-white/10">
+                        ⚡ Liberação Imediata • Pagamento Único
+                      </p>
+                    </div>
                   </div>
-                  <p className="mt-8 text-[10px] font-bold text-white/50 flex items-center justify-center gap-2">
-                    🔒 Compra 100% segura e garantida
-                  </p>
                 </div>
               </div>
-            </div>
-          )}
-
-          {result && !showPaywall && (
-            <div className="mt-10 animate-in fade-in slide-in-from-bottom-10 duration-700">
-              <Resultado data={result} isLoggedIn={isLoggedIn} />
-            </div>
-          )}
-        </div>
-      )}
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -596,9 +425,10 @@ function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }
       {!isLoggedIn && (
         <div className="mt-10 rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center">
           <Sparkles className="mx-auto mb-4 h-10 w-10 text-primary animate-pulse" />
-          <h3 className="text-2xl font-black mb-2">Gostou da correção? 🚀</h3>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-            Salve esse resultado e continue treinando para alcançar a <strong className="text-primary italic">Nota 1000</strong>. Crie sua conta gratuita agora para salvar seu progresso e ter acesso a ferramentas exclusivas de estudo.
+          <h3 className="text-2xl font-black mb-2">Correção Pronta! 🚀</h3>
+          <p className="text-muted-foreground mb-6 max-w-md mx-auto font-bold text-white">
+            Sua análise está pronta e 100% gratuita! 🚀 <br />
+            Para salvar seu progresso, treinar com mais temas e garantir que você não vai ficar para trás na corrida pela vaga, <span className="text-primary">crie sua conta gratuita</span> agora e continue evoluindo rumo à nota 1000.
           </p>
           <Link
             to="/auth"
@@ -607,8 +437,8 @@ function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }
           >
             CRIAR MINHA CONTA AGORA <ArrowRight className="w-5 h-5" />
           </Link>
-          <p className="mt-4 text-xs text-muted-foreground flex items-center justify-center gap-2">
-            <Trophy className="w-3 h-3 text-secondary" /> Mais de 5.000 alunos já estão treinando conosco
+          <p className="mt-4 text-xs text-muted-foreground flex items-center justify-center gap-2 font-bold">
+            🔒 Acesso instantâneo • Comece a evoluir hoje
           </p>
         </div>
       )}

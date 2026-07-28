@@ -441,8 +441,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                         </button>
                       </div>
                     </div>
-                  </div>
-
+                    </div>
                   )}
 
                   <div className="flex flex-col gap-2 text-center pt-2">
@@ -451,9 +450,6 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                     </p>
                     <p className="text-[9px] text-white/40 uppercase tracking-[0.2em] font-black italic">Sem mensalidades • Sem letras miúdas</p>
                   </div>
-                </div>
-              </div>
-            )}
                   <p className="mt-8 text-[10px] font-bold text-white/50 flex items-center justify-center gap-2">
                     🔒 Compra 100% segura e garantida
                   </p>

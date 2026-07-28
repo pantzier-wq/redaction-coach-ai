@@ -206,7 +206,7 @@ function Dashboard() {
                           localStorage.setItem("viewing_essay", JSON.stringify(essay));
                         }
                       }}
-                      className="rounded-2xl border border-border bg-card p-4 md:p-6 hover:border-primary/50 transition-all hover:scale-[1.01] cursor-pointer group w-full"
+                      className="rounded-2xl border border-border bg-card p-4 md:p-6 hover:border-primary/50 transition-all hover:scale-[1.01] cursor-pointer group w-full box-border overflow-hidden"
                     >
                       <div className="flex justify-between items-center gap-4">
                         <div className="flex items-center gap-3 min-w-0">

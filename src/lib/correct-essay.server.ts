@@ -169,12 +169,12 @@ export async function createRepertoryWithAi(lovableApiKey: string, input: z.infe
 
   console.log("Enviando solicitação de repertório para a IA:", JSON.stringify(messages));
 
-  const { text } = await generateText({
+  const { text, finishReason } = await generateText({
     model: gateway("openai/gpt-4o-mini"),
     messages: messages,
   });
 
-  console.log("Resposta bruta da IA para repertório:", text);
+  console.log("Resposta bruta da IA para repertório:", text, "Reason:", finishReason);
 
   try {
     const parsed = parseJsonFromText(text);

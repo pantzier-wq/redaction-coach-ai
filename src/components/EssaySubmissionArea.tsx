@@ -282,7 +282,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                   </div>
                   
                   <h2 className="text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-white">
-                    {result ? "Análise Pronta! 🎯" : "Taxa de Manutenção 🔒"}
+                    {result ? "Análise Pronta! 🎯" : "Quase lá... 🔒"}
                   </h2>
                   
                   <p className="text-sm md:text-base text-white/90 font-semibold mb-6 md:mb-8 leading-relaxed text-center">

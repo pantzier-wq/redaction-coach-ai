@@ -131,7 +131,17 @@ function Dashboard() {
                     onSuccess={() => {
                       const loadEssays = async () => {
                         const { data } = await supabase.from("essays").select("*").order("created_at", { ascending: false });
-                        setEssays(data || []);
+                        const currentEssays = data || [];
+                        
+                        // Sistema de limite de 50 redações
+                        if (currentEssays.length > 50) {
+                          const toDelete = currentEssays.slice(50);
+                          const deleteIds = toDelete.map(e => e.id);
+                          await supabase.from("essays").delete().in("id", deleteIds);
+                          setEssays(currentEssays.slice(0, 50));
+                        } else {
+                          setEssays(currentEssays);
+                        }
                       };
                       loadEssays();
                     }}
@@ -176,7 +186,17 @@ function Dashboard() {
                 onSuccess={() => {
                   const loadEssays = async () => {
                     const { data } = await supabase.from("essays").select("*").order("created_at", { ascending: false });
-                    setEssays(data || []);
+                    const currentEssays = data || [];
+                    
+                    // Sistema de limite de 50 redações
+                    if (currentEssays.length > 50) {
+                      const toDelete = currentEssays.slice(50);
+                      const deleteIds = toDelete.map(e => e.id);
+                      await supabase.from("essays").delete().in("id", deleteIds);
+                      setEssays(currentEssays.slice(0, 50));
+                    } else {
+                      setEssays(currentEssays);
+                    }
                   };
                   loadEssays();
                 }}

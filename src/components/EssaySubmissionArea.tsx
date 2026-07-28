@@ -441,7 +441,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                         </button>
                       </div>
                     </div>
-                  )}
+                  </div>
 
                   <div className="flex flex-col gap-2 text-center pt-2">
                     <p className="text-[10px] text-white font-black uppercase tracking-widest bg-white/5 py-1.5 rounded-lg border border-white/10">

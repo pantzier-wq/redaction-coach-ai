@@ -330,9 +330,57 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                         </div>
                         <div>
                           <h3 className="text-sm font-black text-white leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
-                          <p className="text-[10px] font-bold text-primary leading-tight">Acesso Total + Bônus</p>
+                          <p className="text-[10px] font-bold text-primary leading-tight">Acesso Total + IAs de Bônus</p>
                         </div>
                       </div>
+
+                      <ul className="space-y-2.5 mb-6 flex-1">
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
+                            <span className="text-primary text-[10px] font-black">✓</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Correções Ilimitadas (VITALÍCIO)</span>
+                            <span className="text-[9px] text-white font-bold leading-tight">Nunca mais pague por correções individuais.</span>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
+                            <span className="text-primary text-[10px] font-black">✓</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Gerador de Repertórios IA</span>
+                            <span className="text-[9px] text-white font-bold leading-tight">IA que cria repertórios infalíveis para o seu tema.</span>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
+                            <span className="text-primary text-[10px] font-black">✓</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Laboratório de Conectivos IA</span>
+                            <span className="text-[9px] text-white font-bold leading-tight">Análise em tempo real para não repetir palavras.</span>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
+                            <span className="text-primary text-[10px] font-black">✓</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">70+ Repertórios Coringas</span>
+                            <span className="text-[9px] text-white font-bold leading-tight">Modelos universais prontos para qualquer tema do ENEM.</span>
+                          </div>
+                        </li>
+                        <li className="flex items-start gap-2 text-[11px] font-bold text-white">
+                          <div className="h-4 w-4 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_10px_rgba(var(--primary-rgb),0.3)]">
+                            <span className="text-primary text-[10px] font-black">✓</span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[#22c55e] font-black uppercase text-[10px] tracking-wide">Domine a C4 (Conectivos)</span>
+                            <span className="text-[9px] text-white font-bold leading-tight">Flashcards para fixar conectivos e subir sua nota.</span>
+                          </div>
+                        </li>
+
 
                       <ul className="space-y-2.5 mb-6 flex-1">
                         <li className="flex items-start gap-2 text-[11px] font-bold text-white">

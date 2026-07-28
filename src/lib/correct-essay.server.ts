@@ -192,6 +192,9 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
       model: gateway("openai/gpt-4o-mini"),
       messages: messages,
       temperature: 0.7,
+      maxRetries: 2,
+      // @ts-ignore - Vercel AI SDK specific param
+      maxTokens: 1000
     });
 
     console.log("Resposta bruta da IA para repertório:", text, "Reason:", finishReason);

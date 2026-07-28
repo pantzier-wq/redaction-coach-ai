@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { analisarConectivos, criarRepertorio } from "@/lib/correct-essay.functions";
@@ -34,6 +34,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function Dashboard() {
+  const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [essays, setEssays] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,7 +71,7 @@ function Dashboard() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    window.location.href = "/";
+    navigate({ to: "/" });
   };
 
   const handleTestPurchase = async (type: 'pro' | 'full' = 'pro') => {

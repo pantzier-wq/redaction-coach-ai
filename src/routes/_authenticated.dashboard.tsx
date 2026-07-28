@@ -193,7 +193,7 @@ function Dashboard() {
                 </h2>
                 <p className="text-muted-foreground mt-2">Acompanhe sua evolução através das correções anteriores.</p>
               </div>
-              <div className="grid gap-4 overflow-x-hidden">
+              <div className="grid gap-4 w-full">
                 {essays.length > 0 ? (
                   essays.map((essay) => (
                     <div 

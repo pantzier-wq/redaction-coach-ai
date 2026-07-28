@@ -110,8 +110,8 @@ function Dashboard() {
         onLogout={handleLogout}
       />
 
-      <main className="flex-1 md:ml-64 min-h-screen pt-20 md:pt-0 overflow-x-hidden w-full">
-        <div className="max-w-5xl mx-auto px-4 py-8 md:py-12 overflow-x-hidden w-full">
+      <main className="flex-1 md:ml-64 min-h-screen pt-20 md:pt-0 w-full overflow-hidden">
+        <div className="max-w-5xl mx-auto px-4 py-8 md:py-12 w-full overflow-hidden">
           {activeSection === "dashboard" && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center">
@@ -193,7 +193,7 @@ function Dashboard() {
                 </h2>
                 <p className="text-muted-foreground mt-2">Acompanhe sua evolução através das correções anteriores.</p>
               </div>
-              <div className="grid gap-4 overflow-x-hidden">
+              <div className="grid gap-4 w-full">
                 {essays.length > 0 ? (
                   essays.map((essay) => (
                     <div 
@@ -206,7 +206,7 @@ function Dashboard() {
                           localStorage.setItem("viewing_essay", JSON.stringify(essay));
                         }
                       }}
-                      className="rounded-2xl border border-border bg-card p-4 md:p-6 hover:border-primary/50 transition-all hover:scale-[1.01] cursor-pointer group w-full"
+                      className="rounded-2xl border border-border bg-card p-4 md:p-6 hover:border-primary/50 transition-all hover:scale-[1.01] cursor-pointer group w-full box-border overflow-hidden"
                     >
                       <div className="flex justify-between items-center gap-4">
                         <div className="flex items-center gap-3 min-w-0">

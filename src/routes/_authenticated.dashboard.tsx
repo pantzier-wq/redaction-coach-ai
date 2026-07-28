@@ -578,21 +578,24 @@ function ConectivosIA() {
       )}
 
       {isAnalyzing && (
-        <div className="py-12 flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-500">
-          <div className="w-16 h-16 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-          <div className="w-full max-w-md space-y-2">
+        <div className="py-12 flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-500 bg-primary/5 rounded-3xl border-2 border-dashed border-primary/20">
+          <div className="relative">
+            <div className="w-16 h-16 rounded-full border-4 border-primary/10 border-t-primary animate-spin" />
+            <Sparkles className="w-6 h-6 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+          </div>
+          <div className="w-full max-w-md px-8 space-y-2">
             <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-primary">
-              <span>IA Processando</span>
+              <span>IA Analisando conectivos</span>
               <span>{progress}%</span>
             </div>
-            <div className="h-2 w-full bg-primary/10 rounded-full overflow-hidden">
+            <div className="h-3 w-full bg-primary/10 rounded-full overflow-hidden border border-primary/20">
               <div 
-                className="h-full bg-primary transition-all duration-300 ease-out" 
+                className="h-full bg-gradient-to-r from-primary/80 to-primary transition-all duration-300 ease-out" 
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <p className="text-center text-xs text-muted-foreground font-bold animate-pulse">
-              Avaliando a coesão da sua frase...
+            <p className="text-center text-xs text-muted-foreground font-bold animate-pulse mt-4">
+              Avaliando a coesão e buscando melhorias...
             </p>
           </div>
         </div>
@@ -612,8 +615,9 @@ function ConectivosIA() {
               </div>
               <button 
                 onClick={handleReset}
-                className="text-xs font-black text-primary hover:underline uppercase tracking-widest"
+                className="px-4 py-2 rounded-lg text-xs font-black text-primary hover:bg-primary/10 border-2 border-primary/20 hover:border-primary/40 transition-all uppercase tracking-widest flex items-center gap-2"
               >
+                <PenTool className="w-3 h-3" />
                 Analisar outra frase
               </button>
             </div>

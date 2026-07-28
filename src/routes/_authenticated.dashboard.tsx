@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { analisarConectivos } from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { type Correcao } from "@/lib/correct-essay.functions";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
@@ -478,6 +480,78 @@ function Dashboard() {
           )}
         </div>
       </main>
+    </div>
+  );
+}
+
+function ConectivosIA() {
+  const [frase, setFrase] = useState("");
+  const [analise, setAnalise] = useState<any>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const analyzeFn = useServerFn(analisarConectivos);
+
+  const handleAnalyze = async () => {
+    if (!frase.trim() || frase.length < 10) return;
+    setIsAnalyzing(true);
+    setAnalise(null);
+    try {
+      const result = await analyzeFn({ data: { frase } });
+      setAnalise(result);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="relative">
+        <textarea
+          value={frase}
+          onChange={(e) => setFrase(e.target.value)}
+          placeholder="Ex: No entanto, é necessário que o governo invista em educação..."
+          className="w-full min-h-[100px] p-5 rounded-2xl bg-background border-2 border-border focus:border-primary outline-none transition-all font-bold text-sm"
+        />
+        <button
+          onClick={handleAnalyze}
+          disabled={isAnalyzing || frase.length < 10}
+          className={cn(
+            "absolute bottom-4 right-4 px-6 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all",
+            isAnalyzing || frase.length < 10 
+              ? "bg-muted text-muted-foreground cursor-not-allowed" 
+              : "bg-primary text-primary-foreground hover:scale-105 shadow-lg"
+          )}
+        >
+          {isAnalyzing ? "Analisando..." : "Analisar Frase"}
+        </button>
+      </div>
+
+      {analise && (
+        <div className="animate-in fade-in slide-in-from-top-2 duration-300 p-6 rounded-2xl border-2 border-border bg-card">
+          <div className="flex items-center gap-3 mb-4">
+            <div className={cn(
+              "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
+              analise.status === 'bom' && "bg-[#22c55e]/10 text-[#22c55e] border-[#22c55e]/20",
+              analise.status === 'regular' && "bg-amber-500/10 text-amber-500 border-amber-500/20",
+              analise.status === 'ruim' && "bg-destructive/10 text-destructive border-destructive/20",
+            )}>
+              Status: {analise.status}
+            </div>
+          </div>
+          <p className="text-sm font-bold text-foreground leading-relaxed mb-4">
+            {analise.analise}
+          </p>
+          {analise.sugestao && (
+            <div className="p-4 rounded-xl bg-primary/5 border border-primary/10">
+              <p className="text-xs text-muted-foreground font-bold">
+                <span className="text-primary mr-2">💡 Sugestão:</span>
+                {analise.sugestao}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

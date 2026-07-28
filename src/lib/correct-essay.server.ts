@@ -137,7 +137,7 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
   const { text } = await generateText({
-    model: gateway("google/gemini-3.6-flash"),
+    model: gateway("openai/gpt-4o-mini"),
     system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, sem comentários e sem texto fora do JSON.`,
     prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija com rigor de corretor ENEM real no formato: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
   });
@@ -149,7 +149,7 @@ export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: str
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
   const { text } = await generateText({
-    model: gateway("google/gemini-3.6-flash"),
+    model: gateway("openai/gpt-4o-mini"),
     system: `${CONNECTIVES_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, no formato: {"analise":"...","status":"bom|regular|ruim","sugestao":"..."}. Não use outros nomes de campos.`,
     prompt: `Frase para análise: ${frase}`,
   });
@@ -167,10 +167,14 @@ export async function createRepertoryWithAi(lovableApiKey: string, input: z.infe
     { role: "user" as const, content: `Tema: ${input.tema}. ${input.genero ? `Gênero: ${input.genero}.` : ""} ${input.detalhes ? `Mais detalhes: ${input.detalhes}` : ""}` }
   ];
 
+  console.log("Enviando solicitação de repertório para a IA:", JSON.stringify(messages));
+
   const { text } = await generateText({
-    model: gateway("google/gemini-3.6-flash"),
+    model: gateway("openai/gpt-4o-mini"),
     messages: messages,
   });
+
+  console.log("Resposta bruta da IA para repertório:", text);
 
   try {
     const parsed = parseJsonFromText(text);

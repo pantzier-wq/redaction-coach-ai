@@ -1379,6 +1379,7 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
   const criarRep = useServerFn(criarRepertorio);
 
   const handleGenerate = async (extraDetails?: string) => {
+    console.log("Iniciando handleGenerate com:", { tema, genero, extraDetails });
     setLoading(true);
     try {
       const res = await criarRep({ 
@@ -1389,6 +1390,7 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
           historico: historico
         }
       });
+      console.log("Resposta da IA recebida:", res);
 
       setCurrentResponse(res);
       setHistorico(prev => [...prev, 
@@ -1396,12 +1398,18 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
         { role: "assistant", content: res.message }
       ]);
       if (res.repertorio) {
+        console.log("Repertório pronto, mudando para step 3");
         setStep(3); // Resultado final
       } else if (res.proximaPergunta) {
+        console.log("IA enviou próxima pergunta, mudando para step 2");
         setStep(2); // Continua funilando
+      } else {
+        console.warn("IA não enviou nem repertório nem pergunta, permanecendo no step 2");
+        setStep(2);
       }
     } catch (e) {
-      console.error(e);
+      console.error("Erro no handleGenerate:", e);
+      alert("Houve um erro ao gerar o repertório. Por favor, tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -1461,7 +1469,10 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
                 </div>
                 <button 
                   disabled={!tema || loading}
-                  onClick={() => handleGenerate()}
+                  onClick={(e) => {
+                    console.log("Clique detectado no COMEÇAR FUNIL");
+                    handleGenerate();
+                  }}
                   className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-black text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
                 >
                   {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" /> : <><Zap className="w-5 h-5" /> COMEÇAR FUNIL</>}
@@ -1493,7 +1504,10 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
                   />
                   <button 
                     disabled={!detalhes || loading}
-                    onClick={() => handleGenerate()}
+                    onClick={() => {
+                      console.log("Clique detectado no CONTINUAR ANÁLISE");
+                      handleGenerate();
+                    }}
                     className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-black hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
                   >
                     {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" /> : "CONTINUAR ANÁLISE"}

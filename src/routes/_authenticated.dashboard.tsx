@@ -1585,13 +1585,13 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
                 <div className="flex gap-4">
                   <button 
                     onClick={reset}
-                    className="flex-1 py-4 rounded-xl bg-muted font-black text-xs uppercase tracking-widest hover:bg-muted/80 transition-all"
+                    className="flex-1 py-4 rounded-xl bg-muted font-black text-xs uppercase tracking-widest hover:bg-muted/80 transition-all border-2 border-primary/10 hover:border-primary/30"
                   >
                     CRIAR OUTRO
                   </button>
                   <button 
                     onClick={onClose}
-                    className="flex-1 py-4 rounded-xl bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest hover:scale-105 transition-all"
+                    className="flex-1 py-4 rounded-xl bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg"
                   >
                     FECHAR
                   </button>

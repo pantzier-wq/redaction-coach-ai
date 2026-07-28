@@ -45,7 +45,12 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
     // Se já estiver logado e NÃO for PRO, bloquear antes mesmo de enviar para a IA
     if (isLoggedIn && !isPro) {
-      setShowPaywall(true);
+      setLoading(true);
+      // Simular carregamento de 30s para percepção de valor antes de mostrar o paywall
+      setTimeout(() => {
+        setLoading(false);
+        setShowPaywall(true);
+      }, 28000);
       return;
     }
 

@@ -1,0 +1,123 @@
+import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { generateText } from "ai";
+import { z } from "zod";
+
+export const essayInputSchema = z.object({
+  tema: z.string().trim().min(3, "Informe o tema").max(300),
+  redacao: z.string().trim().min(200, "Cole uma redação com pelo menos 200 caracteres").max(8000),
+});
+
+export const connectivesInputSchema = z.object({
+  frase: z.string().trim().min(10, "A frase é muito curta"),
+});
+
+const ENEM_GRADER_SYSTEM_PROMPT = `Você é um corretor oficial do ENEM, extremamente rigoroso e experiente, treinado nas 5 competências da matriz de referência do INEP. Corrija redações com o mesmo padrão dos corretores reais.
+
+Regras de correção:
+- Nota de 0 a 200 por competência (0, 40, 80, 120, 160, 200). Nota total = soma (0-1000).
+- Seja honesto e crítico. Não infle notas. Justifique cada nota com evidências específicas do texto.
+- Aponte erros de norma culta, coesão, estrutura dissertativo-argumentativa, projeto de texto, proposta de intervenção (com 5 elementos: ação, agente, modo/meio, efeito, detalhamento).
+- Se fugir ao tema ou ao tipo textual, zere conforme regra do ENEM.`;
+
+const CONNECTIVES_SYSTEM_PROMPT = `Você é um especialista em gramática e coesão textual para redações do ENEM, com foco na Competência 4.
+
+Analise apenas o conectivo usado na frase do aluno.
+Responda em português do Brasil, com linguagem simples, objetiva e útil para um estudante que precisa melhorar rápido.
+
+Critérios:
+- Diga se o conectivo está adequado ao contexto.
+- Se estiver fraco, repetitivo, informal ou mal aplicado, indique uma substituição melhor.
+- Explique o motivo em poucas palavras, sem texto longo.
+- Se não houver sugestão necessária, retorne sugestao como string vazia.
+- O campo status deve ser exatamente: bom, regular ou ruim.`;
+
+const CorrectionSchema = z.object({
+  nota_total: z.number(),
+  competencias: z.array(
+    z.object({
+      numero: z.number(),
+      titulo: z.string(),
+      nota: z.number(),
+      analise: z.string(),
+    }),
+  ),
+  pontos_fortes: z.array(z.string()),
+  pontos_fracos: z.array(z.string()),
+  sugestoes: z.array(z.string()),
+  resumo: z.string(),
+});
+
+const ConnectivesAnalysisSchema = z.object({
+  analise: z.string(),
+  status: z.string(),
+  sugestao: z.string(),
+});
+
+export type Correcao = z.infer<typeof CorrectionSchema>;
+export type AnaliseConectivos = z.infer<typeof ConnectivesAnalysisSchema>;
+
+function extractJsonObject(text: string) {
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start < 0 || end <= start) return null;
+
+  try {
+    return JSON.parse(text.slice(start, end + 1)) as unknown;
+  } catch {
+    return null;
+  }
+}
+
+function normalizeConnectivesStatus(status: string) {
+  const value = status.toLowerCase().trim();
+  if (value === "bom" || value === "regular" || value === "ruim") return value;
+  return "regular";
+}
+
+function parseJsonFromText(text: string) {
+  const parsed = extractJsonObject(text);
+  if (!parsed) throw new Error("A IA retornou uma resposta fora do formato esperado.");
+  return parsed;
+}
+
+function normalizeConnectivesAnalysis(value: unknown): AnaliseConectivos {
+  const record = z
+    .object({
+      analise: z.string().optional(),
+      explicacao: z.string().optional(),
+      status: z.string().optional(),
+      sugestao: z.string().optional(),
+    })
+    .parse(value);
+
+  return {
+    analise: record.analise || record.explicacao || "O conectivo foi analisado, mas a IA não detalhou a avaliação.",
+    status: normalizeConnectivesStatus(record.status || "regular"),
+    sugestao: record.sugestao || "",
+  };
+}
+
+export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<typeof essayInputSchema>) {
+  const gateway = createLovableAiGatewayProvider(lovableApiKey);
+
+  const { text } = await generateText({
+    model: gateway("google/gemini-3.6-flash"),
+    system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, sem comentários e sem texto fora do JSON.`,
+    prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija com rigor de corretor ENEM real no formato: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
+  });
+
+  return CorrectionSchema.parse(parseJsonFromText(text));
+}
+
+export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: string): Promise<AnaliseConectivos> {
+  const gateway = createLovableAiGatewayProvider(lovableApiKey);
+
+  const { text } = await generateText({
+    model: gateway("google/gemini-3.6-flash"),
+    system: `${CONNECTIVES_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, no formato: {"analise":"...","status":"bom|regular|ruim","sugestao":"..."}. Não use outros nomes de campos.`,
+    prompt: `Frase para análise: ${frase}`,
+  });
+
+  const parsed = normalizeConnectivesAnalysis(parseJsonFromText(text));
+  return ConnectivesAnalysisSchema.parse(parsed);
+}

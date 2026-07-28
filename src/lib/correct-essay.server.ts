@@ -87,7 +87,7 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
 
     return output;
   } catch (error) {
-    if (NoObjectGeneratedError.isInstance(error)) {
+    if (NoObjectGeneratedError.isInstance(error) && error.text) {
       const parsed = extractJsonObject(error.text);
       const fallback = CorrectionSchema.safeParse(parsed);
       if (fallback.success) return fallback.data;
@@ -114,7 +114,7 @@ export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: str
       sugestao: output.sugestao,
     };
   } catch (error) {
-    if (NoObjectGeneratedError.isInstance(error)) {
+    if (NoObjectGeneratedError.isInstance(error) && error.text) {
       const parsed = ConnectivesAnalysisSchema.safeParse(extractJsonObject(error.text));
       if (parsed.success) {
         return {

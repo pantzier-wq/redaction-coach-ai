@@ -1379,6 +1379,7 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
   const criarRep = useServerFn(criarRepertorio);
 
   const handleGenerate = async (extraDetails?: string) => {
+    console.log("Iniciando handleGenerate com:", { tema, genero, extraDetails });
     setLoading(true);
     try {
       const res = await criarRep({ 
@@ -1389,6 +1390,7 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
           historico: historico
         }
       });
+      console.log("Resposta da IA recebida:", res);
 
       setCurrentResponse(res);
       setHistorico(prev => [...prev, 
@@ -1396,12 +1398,18 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
         { role: "assistant", content: res.message }
       ]);
       if (res.repertorio) {
+        console.log("Repertório pronto, mudando para step 3");
         setStep(3); // Resultado final
       } else if (res.proximaPergunta) {
+        console.log("IA enviou próxima pergunta, mudando para step 2");
         setStep(2); // Continua funilando
+      } else {
+        console.warn("IA não enviou nem repertório nem pergunta, permanecendo no step 2");
+        setStep(2);
       }
     } catch (e) {
-      console.error(e);
+      console.error("Erro no handleGenerate:", e);
+      alert("Houve um erro ao gerar o repertório. Por favor, tente novamente.");
     } finally {
       setLoading(false);
     }

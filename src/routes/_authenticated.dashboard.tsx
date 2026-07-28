@@ -1382,11 +1382,14 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
     setLoading(true);
     try {
       const res = await criarRep({ 
-        tema, 
-        genero, 
-        detalhes: extraDetails || detalhes,
-        historico: historico
+        data: {
+          tema, 
+          genero, 
+          detalhes: extraDetails || detalhes,
+          historico: historico
+        }
       });
+
       setCurrentResponse(res);
       setHistorico(prev => [...prev, 
         { role: "user", content: extraDetails || `Tema: ${tema}, Gênero: ${genero}` },

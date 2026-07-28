@@ -689,23 +689,259 @@ function ConectivosLibrary() {
           </ul>
         </div>
 
-        <div className="p-8 rounded-[2rem] border-2 border-[#22c55e]/20 bg-[#22c55e]/5">
-          <h3 className="text-xl font-black text-[#22c55e] mb-6 flex items-center gap-2">
-            <Check className="w-6 h-6" /> Exercício Rápido
-          </h3>
-          <p className="text-sm font-bold text-muted-foreground mb-6">
-            Qual conectivo melhor preenche a lacuna? <br/>
-            "O governo deve investir em educação, __________ a sociedade possa evoluir."
-          </p>
-          <div className="grid gap-2">
-            {["Mas", "Portanto", "A fim de que", "Entretanto"].map(opt => (
-              <button key={opt} className="w-full p-3 rounded-xl border border-border bg-card hover:border-[#22c55e] transition-all text-left text-xs font-bold">
-                {opt}
-              </button>
-            ))}
-          </div>
+        <div className="md:col-span-2">
+          <ConectivosTraining />
         </div>
       </div>
+    </div>
+  );
+}
+
+function ConectivosTraining() {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [score, setScore] = useState(0);
+
+  const questions = [
+    {
+      text: "O governo deve investir em educação, __________ a sociedade possa evoluir.",
+      options: ["Mas", "Portanto", "A fim de que", "Entretanto"],
+      correct: 2,
+      explanation: "'A fim de que' indica finalidade, conectando o investimento ao objetivo de evolução social."
+    },
+    {
+      text: "A tecnologia traz inúmeros benefícios. __________, o uso excessivo pode causar isolamento social.",
+      options: ["Ademais", "Todavia", "Por conseguinte", "Conforme"],
+      correct: 1,
+      explanation: "'Todavia' introduz uma oposição entre os benefícios e os problemas do uso excessivo."
+    },
+    {
+      text: "A educação é o pilar da sociedade. __________, é necessário que o Estado priorize investimentos nessa área.",
+      options: ["Portanto", "Contudo", "Embora", "Caso"],
+      correct: 0,
+      explanation: "'Portanto' conclui o raciocínio iniciado na frase anterior."
+    },
+    {
+      text: "Muitos jovens sofrem com ansiedade, __________ a pressão por produtividade nas redes sociais.",
+      options: ["haja vista", "entretanto", "embora", "mas"],
+      correct: 0,
+      explanation: "'Haja vista' introduz a causa ou o motivo da ansiedade citada."
+    },
+    {
+      text: "A Constituição Federal garante o direito à saúde. __________, muitos brasileiros enfrentam filas em hospitais.",
+      options: ["Nesse sentido", "No entanto", "De fato", "Logo"],
+      correct: 1,
+      explanation: "'No entanto' marca o contraste entre o direito garantido por lei e a realidade prática."
+    },
+    {
+      text: "É preciso conscientizar a população. __________, a criação de campanhas midiáticas é urgente.",
+      options: ["Dessarte", "Embora", "Apesar de", "Ainda que"],
+      correct: 0,
+      explanation: "'Dessarte' (ou Desse modo) é um conectivo conclusivo formal, ideal para a redação ENEM."
+    },
+    {
+      text: "O acesso à cultura é restrito. __________, o preço elevado dos ingressos afasta as classes baixas.",
+      options: ["Ou seja", "Contudo", "Pois", "Se bem que"],
+      correct: 2,
+      explanation: "'Pois' justifica o motivo de o acesso ser restrito."
+    },
+    {
+      text: "__________ as leis sejam claras, o cumprimento delas ainda é um desafio.",
+      options: ["Embora", "Portanto", "Ademais", "Assim"],
+      correct: 0,
+      explanation: "'Embora' introduz uma concessão, indicando que algo acontece apesar das leis claras."
+    },
+    {
+      text: "O desmatamento cresce na Amazônia. __________, o equilíbrio climático global é ameaçado.",
+      options: ["Em contrapartida", "Por conseguinte", "Apesar disso", "Senão"],
+      correct: 1,
+      explanation: "'Por conseguinte' indica a consequência direta do crescimento do desmatamento."
+    },
+    {
+      text: "O lazer é fundamental para a saúde mental. __________, ele combate o estresse acumulado.",
+      options: ["Todavia", "Afinal", "Mesmo que", "Entretanto"],
+      correct: 1,
+      explanation: "'Afinal' reforça a ideia anterior, servindo como uma explicação ou justificativa."
+    },
+    {
+      text: "O país enfrenta uma crise hídrica. __________, o desperdício de água deve ser combatido.",
+      options: ["Nesse contexto", "Contudo", "Porém", "Embora"],
+      correct: 0,
+      explanation: "'Nesse contexto' situa a necessidade de combate ao desperdício dentro da crise citada."
+    },
+    {
+      text: "A internet democratizou o conhecimento. __________, ela também facilitou a propagação de fake news.",
+      options: ["Além disso", "Por outro lado", "Consequentemente", "Ainda que"],
+      correct: 1,
+      explanation: "'Por outro lado' introduz uma visão contrastante ou complementar sobre o mesmo tema."
+    },
+    {
+      text: "A prática de exercícios é saudável, __________ seja feita com orientação profissional.",
+      options: ["contanto que", "portanto", "então", "pois"],
+      correct: 0,
+      explanation: "'Contanto que' estabelece uma condição necessária para que a prática seja saudável."
+    },
+    {
+      text: "O preconceito linguístico é real. __________, muitos brasileiros são julgados pelo seu sotaque.",
+      options: ["A exemplo de", "Dessa forma", "Mas", "Apesar de"],
+      correct: 1,
+      explanation: "'Dessa forma' conecta a afirmação inicial à consequência ou exemplo prático citado."
+    },
+    {
+      text: "O trabalho infantil deve ser erradicado. __________, a fiscalização precisa ser intensificada.",
+      options: ["Sob essa ótica", "Entretanto", "Embora", "Contudo"],
+      correct: 0,
+      explanation: "'Sob essa ótica' reforça a perspectiva de erradicação através da fiscalização."
+    },
+    {
+      text: "A arte imita a vida. __________, os problemas sociais são refletidos no cinema.",
+      options: ["Assim sendo", "Todavia", "Embora", "No entanto"],
+      correct: 0,
+      explanation: "'Assim sendo' conclui que os problemas aparecem no cinema como reflexo da vida."
+    },
+    {
+      text: "Muitos buscam a felicidade no consumo. __________, esse sentimento costuma ser efêmero.",
+      options: ["Ademais", "Contudo", "Pois", "Logo"],
+      correct: 1,
+      explanation: "'Contudo' marca a oposição entre a busca pela felicidade e a efemeridade do consumo."
+    },
+    {
+      text: "O sedentarismo é um risco à saúde. __________, ele contribui para o aumento da obesidade.",
+      options: ["Em virtude de", "Inclusive", "Todavia", "Mas"],
+      correct: 1,
+      explanation: "'Inclusive' adiciona uma informação que reforça o risco citado."
+    },
+    {
+      text: "A leitura expande horizontes. __________, ela estimula o senso crítico dos jovens.",
+      options: ["Outrossim", "Contudo", "Ainda que", "Porém"],
+      correct: 0,
+      explanation: "'Outrossim' (também/igualmente) adiciona mais um benefício da leitura."
+    },
+    {
+      text: "O saneamento básico é um direito. __________, o investimento estatal é indispensável.",
+      options: ["Logo", "Mas", "Embora", "Entretanto"],
+      correct: 0,
+      explanation: "'Logo' fecha o raciocínio indicando a conclusão lógica do direito citado."
+    }
+  ];
+
+  const handleOptionClick = (index: number) => {
+    if (showFeedback) return;
+    setSelectedOption(index);
+    setShowFeedback(true);
+    if (index === questions[currentStep].correct) {
+      setScore(s => s + 1);
+    }
+  };
+
+  const nextQuestion = () => {
+    setSelectedOption(null);
+    setShowFeedback(false);
+    setCurrentStep(s => s + 1);
+  };
+
+  const resetQuiz = () => {
+    setCurrentStep(0);
+    setSelectedOption(null);
+    setShowFeedback(false);
+    setScore(0);
+  };
+
+  if (currentStep >= questions.length) {
+    return (
+      <div className="p-8 rounded-[2rem] border-2 border-[#22c55e]/20 bg-[#22c55e]/5 text-center">
+        <div className="w-20 h-20 rounded-full bg-[#22c55e]/20 flex items-center justify-center mx-auto mb-6">
+          <Trophy className="w-10 h-10 text-[#22c55e]" />
+        </div>
+        <h3 className="text-3xl font-black text-[#22c55e] mb-2">Treinamento Concluído!</h3>
+        <p className="text-muted-foreground font-bold mb-8">
+          Você acertou {score} de {questions.length} questões.
+        </p>
+        <button 
+          onClick={resetQuiz}
+          className="px-8 py-4 rounded-xl bg-[#22c55e] text-white font-black hover:scale-105 transition-all"
+        >
+          TREINAR NOVAMENTE
+        </button>
+      </div>
+    );
+  }
+
+  const q = questions[currentStep];
+
+  return (
+    <div className="p-8 rounded-[2rem] border-2 border-[#22c55e]/20 bg-[#22c55e]/5">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-xl font-black text-[#22c55e] flex items-center gap-2">
+          <Play className="w-6 h-6" /> Treino de Conectivos ({currentStep + 1}/{questions.length})
+        </h3>
+        <div className="px-3 py-1 rounded-full bg-[#22c55e]/10 text-[#22c55e] text-[10px] font-black uppercase">
+          Score: {score}
+        </div>
+      </div>
+
+      <div className="mb-8">
+        <p className="text-lg font-bold text-foreground leading-relaxed">
+          Qual conectivo melhor preenche a lacuna? <br/>
+          <span className="text-muted-foreground mt-4 block italic bg-background/30 p-4 rounded-xl border border-border/50">
+            "{q.text}"
+          </span>
+        </p>
+      </div>
+
+      <div className="grid gap-3 mb-8">
+        {q.options.map((opt, i) => {
+          const isCorrect = i === q.correct;
+          const isSelected = i === selectedOption;
+          
+          return (
+            <button 
+              key={opt} 
+              onClick={() => handleOptionClick(i)}
+              disabled={showFeedback}
+              className={cn(
+                "w-full p-4 rounded-xl border-2 transition-all text-left text-sm font-black flex items-center justify-between",
+                !showFeedback && "border-border bg-card hover:border-[#22c55e] hover:bg-[#22c55e]/5",
+                showFeedback && isCorrect && "border-[#22c55e] bg-[#22c55e]/10 text-[#22c55e]",
+                showFeedback && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
+                showFeedback && !isSelected && !isCorrect && "opacity-50 border-border bg-card"
+              )}
+            >
+              {opt}
+              {showFeedback && isCorrect && <Check className="w-5 h-5" />}
+              {showFeedback && isSelected && !isCorrect && <X className="w-5 h-5" />}
+            </button>
+          );
+        })}
+      </div>
+
+      {showFeedback && (
+        <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+          <div className={cn(
+            "p-6 rounded-2xl mb-8 border-2",
+            selectedOption === q.correct ? "bg-[#22c55e]/5 border-[#22c55e]/20" : "bg-destructive/5 border-destructive/20"
+          )}>
+            <div className="flex items-center gap-2 mb-2 font-black uppercase text-xs tracking-wider">
+              {selectedOption === q.correct ? (
+                <><Check className="w-4 h-4 text-[#22c55e]" /> Acertou!</>
+              ) : (
+                <><X className="w-4 h-4 text-destructive" /> Errou!</>
+              )}
+            </div>
+            <p className="text-sm font-bold text-muted-foreground">
+              {q.explanation}
+            </p>
+          </div>
+          
+          <button 
+            onClick={nextQuestion}
+            className="w-full py-4 rounded-xl bg-[#22c55e] text-white font-black hover:scale-[1.02] active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2"
+          >
+            {currentStep === questions.length - 1 ? "VER RESULTADO" : "PRÓXIMA QUESTÃO"} <ArrowRight className="w-5 h-5" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

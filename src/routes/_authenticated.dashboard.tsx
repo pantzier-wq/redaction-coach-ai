@@ -946,11 +946,6 @@ function ConectivosTraining() {
   );
 }
 
-      </div>
-    </div>
-  );
-}
-
 function RepertoriosLibrary() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeType, setActiveType] = useState("todos");

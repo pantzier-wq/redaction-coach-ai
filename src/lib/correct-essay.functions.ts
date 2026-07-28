@@ -78,3 +78,47 @@ export const corrigirRedacao = createServerFn({ method: "POST" })
       throw new Error("Não foi possível interpretar a correção. Tente novamente.");
     }
   });
+
+export const analisarConectivos = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => z.object({ frase: z.string().min(10, "A frase é muito curta") }).parse(data))
+  .handler(async ({ data }) => {
+    const key = process.env.LOVABLE_API_KEY;
+    if (!key) throw new Error("LOVABLE_API_KEY não configurada");
+
+    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${key}`,
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.0-flash",
+        messages: [
+          { 
+            role: "system", 
+            content: `Você é um especialista em gramática e coesão textual para redações do ENEM (Competência 4).
+Analise a frase do aluno focando nos conectivos usados.
+Forneça um feedback curto e direto:
+1. O conectivo usado é adequado para o contexto?
+2. Existe algum melhor/mais sofisticado?
+3. Se o uso for ruim, qual substituir?
+
+Retorne um JSON:
+{
+  "analise": "string (texto curto com a avaliação)",
+  "status": "bom" | "regular" | "ruim",
+  "sugestao": "string (opcional: sugestão de conectivo melhor)"
+}`
+          },
+          {
+            role: "user",
+            content: `Frase para análise: "${data.frase}"`
+          },
+        ],
+        response_format: { type: "json_object" },
+      }),
+    });
+
+    const json = await res.json();
+    return JSON.parse(json.choices[0].message.content);
+  });

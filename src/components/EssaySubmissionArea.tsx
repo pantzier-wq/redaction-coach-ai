@@ -282,15 +282,15 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                   </div>
                   
                   <h2 className="text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-white">
-                    {result ? "Análise Pronta! 🎯" : "Acesso Restrito! 🔒"}
+                    {result ? "Análise Pronta! 🎯" : "Taxa de Manutenção 🔒"}
                   </h2>
                   
                   <p className="text-sm md:text-base text-white/90 font-semibold mb-6 md:mb-8 leading-relaxed text-center">
                     {result 
                       ? "Sua correção detalhada e nota oficial já foram geradas com precisão INEP."
-                      : "Para realizar novas correções e acessar o dashboard completo, você precisa de um plano ativo."} 
+                      : "Para mantermos a IA funcionando e ajudando milhares de estudantes a alcançarem a nota 1000, solicitamos uma contribuição mínima."} 
                     <br className="hidden md:block"/>
-                    <span className="text-[#22c55e]"> Desbloqueie agora</span> para garantir sua vaga na faculdade.
+                    <span className="text-[#22c55e]"> Garanta seu acesso vitalício</span> para treinar sem limites e conquistar sua vaga.
                   </p>
 
                   <div className="space-y-6">

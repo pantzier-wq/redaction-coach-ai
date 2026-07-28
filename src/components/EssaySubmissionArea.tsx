@@ -267,7 +267,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                     
                     <p className="text-sm md:text-base text-white/90 font-semibold mb-8 leading-relaxed text-center">
                       Sua análise detalhada está guardada! <br className="hidden md:block"/>
-                      Para que você treine mais, chegue mais próximo do mil e garanta sua vaga no seu curso ou faculdade dos sonhos, <span className="text-[#22c55e]">crie sua conta agora</span> para liberar mais correções e não ficar para trás.
+                      Para que você treine mais, chegue mais próximo do mil e garanta sua vaga no seu curso ou faculdade dos sonhos, <span className="text-[#22c55e]">faça sua conta gratuita</span> para salvar seu resultado e evoluir sua escrita.
                     </p>
 
                     <div className="space-y-4">

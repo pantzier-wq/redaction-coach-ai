@@ -128,7 +128,7 @@ function Dashboard() {
                 <div className="max-w-3xl mx-auto">
                   <EssaySubmissionArea 
                     isLoggedIn={true} 
-                    onSuccess={() => {
+                    isPro={!!profile?.is_pro}
                       const loadEssays = async () => {
                         const { data } = await supabase.from("essays").select("*").order("created_at", { ascending: false });
                         const currentEssays = data || [];
@@ -183,7 +183,7 @@ function Dashboard() {
               </div>
               <EssaySubmissionArea 
                 isLoggedIn={true} 
-                onSuccess={() => {
+                isPro={!!profile?.is_pro}
                   const loadEssays = async () => {
                     const { data } = await supabase.from("essays").select("*").order("created_at", { ascending: false });
                     const currentEssays = data || [];

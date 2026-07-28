@@ -7,17 +7,18 @@ import { Sparkles, ArrowRight, Trophy, Zap } from "lucide-react";
 
 interface EssaySubmissionAreaProps {
   isLoggedIn: boolean;
+  isPro?: boolean;
   onSuccess?: (result: Correcao) => void;
 }
 
-export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAreaProps) {
+export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }: EssaySubmissionAreaProps) {
   const [tema, setTema] = useState("");
   const [redacao, setRedacao] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [result, setResult] = useState<Correcao | null>(null);
-  const [isPro, setIsPro] = useState(false);
+  const [isPro, setIsPro] = useState(propIsPro || false);
   const corrigir = useServerFn(corrigirRedacao);
   
   // Efeito para carregar redação do histórico se houver no localStorage
@@ -41,6 +42,13 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+
+    // Se já estiver logado e NÃO for PRO, bloquear antes mesmo de enviar para a IA
+    if (isLoggedIn && !isPro) {
+      setShowPaywall(true);
+      return;
+    }
+
     setErro(null);
     setResult(null);
     setShowPaywall(false);
@@ -208,7 +216,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
           <div className="relative w-full">
             <form
               onSubmit={onSubmit}
-              className={`rounded-3xl border border-border bg-card p-6 md:p-8 transition-all duration-500 overflow-hidden ${result && showPaywall && isLoggedIn ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
+              className={`rounded-3xl border border-border bg-card p-6 md:p-8 transition-all duration-500 overflow-hidden ${(result || (isLoggedIn && !isPro)) && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
               style={{ boxShadow: "var(--shadow-glow)" }}
             >
               <label className="mb-2 block text-sm font-bold text-primary">Tema da redação</label>
@@ -254,7 +262,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
               </p>
             </form>
 
-            {result && showPaywall && isLoggedIn && (
+            {((result && showPaywall) || (isLoggedIn && !isPro && showPaywall)) && (
               <div className="absolute inset-0 z-50 flex items-start justify-center p-4 md:p-6 pt-16 md:pt-20">
                 <div 
                   className="w-full max-w-lg rounded-3xl border border-[#22c55e]/50 bg-card/95 p-6 md:p-10 shadow-[0_0_100px_rgba(34,197,94,0.4)] backdrop-blur-2xl relative my-8 animate-in fade-in zoom-in duration-500"
@@ -268,11 +276,16 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                     </div>
                   </div>
                   
-                  <h2 className="text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-white">Análise Pronta! 🎯</h2>
+                  <h2 className="text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-white">
+                    {result ? "Análise Pronta! 🎯" : "Acesso Restrito! 🔒"}
+                  </h2>
                   
                   <p className="text-sm md:text-base text-white/90 font-semibold mb-6 md:mb-8 leading-relaxed text-center">
-                    Sua correção detalhada e nota oficial já foram geradas com precisão INEP. <br className="hidden md:block"/>
-                    <span className="text-[#22c55e]">Desbloqueie agora</span> para ver seu resultado completo e garantir sua vaga na faculdade.
+                    {result 
+                      ? "Sua correção detalhada e nota oficial já foram geradas com precisão INEP."
+                      : "Para realizar novas correções e acessar o dashboard completo, você precisa de um plano ativo."} 
+                    <br className="hidden md:block"/>
+                    <span className="text-[#22c55e]"> Desbloqueie agora</span> para garantir sua vaga na faculdade.
                   </p>
 
                   <div className="space-y-6">

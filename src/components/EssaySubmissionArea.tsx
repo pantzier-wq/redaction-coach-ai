@@ -443,12 +443,17 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                     </div>
                   </div>
 
+                  )}
+
                   <div className="flex flex-col gap-2 text-center pt-2">
                     <p className="text-[10px] text-white font-black uppercase tracking-widest bg-white/5 py-1.5 rounded-lg border border-white/10">
                       ⚡ Liberação Imediata • Pagamento Único
                     </p>
                     <p className="text-[9px] text-white/40 uppercase tracking-[0.2em] font-black italic">Sem mensalidades • Sem letras miúdas</p>
                   </div>
+                </div>
+              </div>
+            )}
                   <p className="mt-8 text-[10px] font-bold text-white/50 flex items-center justify-center gap-2">
                     🔒 Compra 100% segura e garantida
                   </p>

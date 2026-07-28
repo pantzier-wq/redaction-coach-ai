@@ -297,77 +297,100 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                   <div className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* PLAN VITALÍCIO */}
-                      <div className="flex flex-col rounded-2xl border-2 border-white/20 bg-white/10 p-5 relative overflow-hidden group hover:opacity-100 transition-opacity">
+                      <div className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 relative overflow-hidden group transition-all hover:bg-white/10">
                         <div className="mb-4 flex items-center gap-3">
                           <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                            <Zap className="w-5 h-5 text-[#22c55e]" />
+                            <Zap className="w-5 h-5 text-white/60" />
                           </div>
                           <div>
-                            <h3 className="text-sm font-black text-[#22c55e] leading-tight uppercase tracking-tight">Acesso Vitalício</h3>
-                            <p className="text-[10px] font-bold text-[#22c55e]/60 leading-tight">Plano Básico</p>
+                            <h3 className="text-sm font-black text-white/90 leading-tight uppercase tracking-tight">Plano Essencial</h3>
+                            <p className="text-[9px] font-bold text-white/40 leading-tight">ACESSO VITALÍCIO</p>
                           </div>
                         </div>
+                        
                         <ul className="space-y-2 mb-6 flex-1">
-                          <li className="flex items-start gap-2 text-[11px] font-bold text-[#22c55e]">
-                            <span className="shrink-0">✓</span>
-                            <span>Correções de redação ilimitadas</span>
+                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/70">
+                            <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
+                            <span>Correções de IA <strong>ilimitadas</strong> para sempre</span>
                           </li>
-                          <li className="flex items-start gap-2 text-[11px] font-bold text-[#22c55e]">
-                            <span className="shrink-0">✓</span>
-                            <span>Histórico completo de evolução</span>
+                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/70">
+                            <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
+                            <span>Histórico com <strong>gráfico de evolução</strong></span>
                           </li>
-                          <li className="flex items-start gap-2 text-[11px] font-bold text-white/40">
-                            <span className="text-destructive shrink-0">✕</span>
-                            <span className="line-through">70+ Repertórios Universais</span>
+                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/70">
+                            <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
+                            <span>Feedback oficial padrão <strong>INEP</strong></span>
+                          </li>
+                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/30">
+                            <span className="text-destructive shrink-0 font-bold">✕</span>
+                            <span className="line-through italic">Laboratório de Conectivos IA</span>
+                          </li>
+                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/30">
+                            <span className="text-destructive shrink-0 font-bold">✕</span>
+                            <span className="line-through italic">Gerador de Repertório Coringa</span>
                           </li>
                         </ul>
+
                         <div className="mt-auto">
                           <div className="flex items-baseline gap-1 mb-3">
-                             <span className="text-2xl font-black text-[#22c55e]">R$ 24,90</span>
+                             <span className="text-xl font-black text-white/90">R$ 24,90</span>
+                             <span className="text-[10px] font-bold text-white/40 uppercase">Taxa única</span>
                           </div>
                           <button
                             onClick={handleTestPurchase}
-                            className="w-full py-3 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-xs uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20"
+                            className="w-full py-2.5 rounded-xl bg-white/5 text-white/60 font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all border border-white/10"
                           >
-                            LIBERAR BÁSICO
+                            LIBERAR ACESSO BÁSICO
                           </button>
                         </div>
                       </div>
 
                       {/* COMBO NOTA 1000 */}
-                      <div className="flex flex-col rounded-2xl border-2 border-primary bg-primary/10 p-5 relative overflow-hidden group shadow-[0_0_40px_rgba(var(--primary-rgb),0.3)] scale-[1.02]">
-                        <div className="absolute top-0 right-0 px-2 py-0.5 bg-[#22c55e] text-white text-[8px] font-black uppercase tracking-tighter rounded-bl-lg animate-pulse z-20">
-                          OFERTA RECOMENDADA 🔥
+                      <div className="flex flex-col rounded-2xl border-2 border-[#22c55e] bg-[#22c55e]/5 p-5 relative overflow-hidden group shadow-[0_0_40px_rgba(34,197,94,0.15)] scale-[1.02]">
+                        <div className="absolute top-0 right-0 px-3 py-1 bg-[#22c55e] text-white text-[9px] font-black uppercase tracking-wider rounded-bl-lg animate-pulse z-20 shadow-lg">
+                          OFERTA COMPLETA 🔥
                         </div>
+                        
                         <div className="mb-4 flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-xl bg-[#22c55e] flex items-center justify-center shrink-0">
+                          <div className="h-10 w-10 rounded-xl bg-[#22c55e] flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(34,197,94,0.4)]">
                             <Sparkles className="w-5 h-5 text-white animate-pulse" />
                           </div>
                           <div>
                             <h3 className="text-sm font-black text-white leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
-                            <p className="text-[10px] font-bold text-primary leading-tight">Acesso Total + Bônus</p>
+                            <p className="text-[9px] font-bold text-[#22c55e] leading-tight">O PODER DA APROVAÇÃO</p>
                           </div>
                         </div>
+
                         <ul className="space-y-2.5 mb-6 flex-1">
-                          <li className="flex items-start gap-2 text-[11px] font-bold text-[#22c55e]">
-                            <span className="shrink-0">✓</span>
-                            <span>Correções Ilimitadas (VITALÍCIO)</span>
+                          <li className="flex items-start gap-2 text-[10px] font-bold text-white">
+                            <span className="text-[#22c55e] shrink-0">✓</span>
+                            <span><strong>TUDO</strong> do Vitalício + Ferramentas VIP</span>
                           </li>
-                          <li className="flex items-start gap-2 text-[11px] font-bold text-[#22c55e]">
-                            <span className="shrink-0">✓</span>
-                            <span>IAs de Repertório e Conectivos</span>
+                          <li className="flex items-start gap-2 text-[10px] font-bold text-white">
+                            <span className="text-[#22c55e] shrink-0">✓</span>
+                            <span><strong>70+ Repertórios Coringas</strong> validados</span>
+                          </li>
+                          <li className="flex items-start gap-2 text-[10px] font-bold text-white">
+                            <span className="text-[#22c55e] shrink-0">✓</span>
+                            <span><strong>IA de Conectivos</strong> (Treino Competência 4)</span>
+                          </li>
+                          <li className="flex items-start gap-2 text-[10px] font-bold text-white">
+                            <span className="text-[#22c55e] shrink-0">✓</span>
+                            <span><strong>BÔNUS:</strong> E-book "Domine a C3"</span>
                           </li>
                         </ul>
+
                         <div className="mt-auto">
                           <div className="flex items-center gap-2 mb-2">
-                            <span className="text-[10px] font-bold text-[#22c55e]/60 line-through italic uppercase tracking-tighter">R$ 59,90</span>
+                            <span className="text-[10px] font-bold text-white/40 line-through italic">R$ 59,90</span>
                             <span className="text-2xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 42,00</span>
                           </div>
                           <button
                             onClick={handleTestPurchase}
-                            className="w-full py-3.5 rounded-xl bg-[#22c55e] text-white font-black text-xs uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(34,197,94,0.5)] relative overflow-hidden"
+                            className="w-full py-3.5 rounded-xl bg-[#22c55e] text-white font-black text-xs uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(34,197,94,0.4)] relative overflow-hidden border border-[#22c55e]/20"
                           >
-                            QUERO O COMBO COMPLETO →
+                            <span className="relative z-10">GARANTIR MINHA VAGA →</span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
                           </button>
                         </div>
                       </div>

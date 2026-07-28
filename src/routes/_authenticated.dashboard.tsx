@@ -474,6 +474,24 @@ function Dashboard() {
                 </div>
               </div>
 
+              {/* IA de Conectivos */}
+              <div className="mb-12 p-8 rounded-[2rem] border-2 border-primary/20 bg-primary/5 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-4 opacity-10">
+                  <MessageSquare className="w-24 h-24 text-primary" />
+                </div>
+                
+                <div className="relative z-10">
+                  <h3 className="text-xl font-black mb-2 flex items-center gap-2">
+                    <Zap className="w-6 h-6 text-primary" /> Laboratório de Conectivos IA
+                  </h3>
+                  <p className="text-muted-foreground text-sm font-bold mb-6 max-w-2xl">
+                    Cole sua frase abaixo para que nossa IA analise se o conectivo está bem aplicado ou sugira um melhor para o seu contexto.
+                  </p>
+
+                  <ConectivosIA />
+                </div>
+              </div>
+
               {/* Biblioteca de Conectivos Section */}
               <ConectivosLibrary />
             </div>

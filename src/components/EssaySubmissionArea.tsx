@@ -88,6 +88,8 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
 
       if (!isLoggedIn || !currentIsPro) {
         setShowPaywall(true);
+      } else {
+        setShowPaywall(false);
       }
       
       // Automatic scroll to results for free tier on first correction
@@ -127,7 +129,73 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full space-y-8">
+      {/* Resultados da Correção (Visíveis para novos usuários) */}
+      {result && !loading && (
+        <div id="resultado" className="animate-in fade-in slide-in-from-top-10 duration-700">
+          <div className="rounded-3xl border border-primary/30 bg-card p-6 md:p-8 overflow-hidden relative shadow-[0_0_50px_rgba(var(--primary-rgb),0.1)]">
+            <div className="flex items-center justify-between mb-8 pb-6 border-b border-border/50">
+              <div className="flex items-center gap-4">
+                <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.2)]">
+                  <Trophy className="w-8 h-8" />
+                </div>
+                <div>
+                  <h3 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter">Relatório de Desempenho</h3>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Avaliação Finalizada com Sucesso</p>
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl md:text-5xl font-black text-primary leading-none tracking-tighter">{result.notaFinal}</div>
+                <div className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Pontos</div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+              {Object.entries(result.competencias).map(([key, data]) => (
+                <div key={key} className="p-4 rounded-2xl bg-muted/30 border border-border/50 hover:border-primary/30 transition-colors">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Comp. {key.slice(-1)}</span>
+                    <span className="text-lg font-black text-primary">{data.nota}</span>
+                  </div>
+                  <p className="text-[11px] font-bold leading-tight text-foreground/80">{data.feedback}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-6">
+              <div className="p-6 rounded-2xl bg-destructive/5 border border-destructive/20 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-3 opacity-10"><Zap className="w-12 h-12 text-destructive" /></div>
+                <h4 className="text-sm font-black uppercase tracking-widest text-destructive mb-3 flex items-center gap-2">
+                  ⚠️ Pontos Fracos Detectados
+                </h4>
+                <ul className="space-y-2">
+                  {result.pontosFracos.map((p, i) => (
+                    <li key={i} className="text-sm font-bold text-white flex items-start gap-2">
+                      <span className="text-destructive">•</span> {p}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="p-6 rounded-2xl bg-primary/5 border border-primary/20 relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-3 opacity-10"><Sparkles className="w-12 h-12 text-primary" /></div>
+                <h4 className="text-sm font-black uppercase tracking-widest text-primary mb-3 flex items-center gap-2">
+                  ✨ Sugestões de Melhoria
+                </h4>
+                <ul className="space-y-2">
+                  {result.sugestoes.map((s, i) => (
+                    <li key={i} className="text-sm font-bold text-white flex items-start gap-2">
+                      <span className="text-primary">•</span> {s}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="w-full">
       {loading ? (
         <div 
           className="rounded-3xl border border-primary/40 bg-card p-10 text-center animate-in fade-in zoom-in duration-500"
@@ -201,7 +269,7 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
         <div className="relative w-full">
           <form
             onSubmit={onSubmit}
-            className={`rounded-3xl border border-border bg-card p-6 md:p-8 transition-all duration-500 overflow-hidden ${result && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
+            className={`rounded-3xl border border-border bg-card p-6 md:p-8 transition-all duration-500 overflow-hidden ${result && showPaywall && isLoggedIn ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
             style={{ boxShadow: "var(--shadow-glow)" }}
           >
             <label className="mb-2 block text-sm font-bold text-primary">Tema da redação</label>

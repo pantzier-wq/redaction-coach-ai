@@ -636,7 +636,7 @@ function ConectivosIA() {
               </div>
               <button 
                 onClick={handleReset}
-                className="px-4 py-2 rounded-lg text-xs font-black text-primary hover:bg-primary/10 border-2 border-primary/20 hover:border-primary/40 transition-all uppercase tracking-widest flex items-center gap-2"
+                className="px-4 py-2 rounded-lg text-xs font-black text-primary hover:bg-primary/10 border-2 border-primary/40 hover:border-primary/60 transition-all uppercase tracking-widest flex items-center gap-2 bg-primary/5"
               >
                 <PenTool className="w-3 h-3" />
                 Analisar outra frase

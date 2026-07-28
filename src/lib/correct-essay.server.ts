@@ -8,7 +8,17 @@ export const essayInputSchema = z.object({
 });
 
 export const connectivesInputSchema = z.object({
-  frase: z.string().trim().min(10, "A frase é muito curta"),
+  frase: z.string().trim().min(5, "A frase é muito curta"),
+});
+
+export const repertoryInputSchema = z.object({
+  genero: z.string().optional(),
+  tema: z.string().trim().min(3, "Informe o tema"),
+  detalhes: z.string().optional(),
+  historico: z.array(z.object({
+    role: z.enum(["user", "assistant"]),
+    content: z.string()
+  })).optional()
 });
 
 const ENEM_GRADER_SYSTEM_PROMPT = `Você é um corretor oficial do ENEM, extremamente rigoroso e experiente, treinado nas 5 competências da matriz de referência do INEP. Corrija redações com o mesmo padrão dos corretores reais.
@@ -20,16 +30,21 @@ Regras de correção:
 - Se fugir ao tema ou ao tipo textual, zere conforme regra do ENEM.`;
 
 const CONNECTIVES_SYSTEM_PROMPT = `Você é um especialista em gramática e coesão textual para redações do ENEM, com foco na Competência 4.
-
-Analise apenas o conectivo usado na frase do aluno.
-Responda em português do Brasil, com linguagem simples, objetiva e útil para um estudante que precisa melhorar rápido.
-
-Critérios:
-- Diga se o conectivo está adequado ao contexto.
-- Se estiver fraco, repetitivo, informal ou mal aplicado, indique uma substituição melhor.
-- Explique o motivo em poucas palavras, sem texto longo.
-- Se não houver sugestão necessária, retorne sugestao como string vazia.
+...
 - O campo status deve ser exatamente: bom, regular ou ruim.`;
+
+const REPERTORY_SYSTEM_PROMPT = `Você é um especialista em repertório sociocultural para o ENEM.
+Sua missão é ajudar o aluno a construir um repertório "legitimado, pertinente e produtivo".
+
+Interaja com o aluno de forma dialógica e socrática:
+1. Se as informações forem insuficientes, faça UMA pergunta específica para funilar (ex: gênero textual preferido, eixo temático, ou detalhes do argumento).
+2. Se o tema for claro e você tiver detalhes suficientes, apresente um repertório completo no formato:
+   - Título/Obra/Autor
+   - Ideia Central
+   - Como relacionar ao tema (Uso Produtivo)
+   - Exemplo de aplicação no texto
+
+Mantenha o tom motivador e técnico. Responda de forma concisa.`;
 
 const CorrectionSchema = z.object({
   nota_total: z.number(),
@@ -53,8 +68,21 @@ const ConnectivesAnalysisSchema = z.object({
   sugestao: z.string(),
 });
 
+const RepertoryAiResponseSchema = z.object({
+  message: z.string(),
+  repertorio: z.object({
+    titulo: z.string(),
+    autor: z.string(),
+    ideia: z.string(),
+    relacao: z.string(),
+    exemplo: z.string(),
+  }).optional(),
+  proximaPergunta: z.string().optional(),
+});
+
 export type Correcao = z.infer<typeof CorrectionSchema>;
 export type AnaliseConectivos = z.infer<typeof ConnectivesAnalysisSchema>;
+export type RespostaRepertorio = z.infer<typeof RepertoryAiResponseSchema>;
 
 function extractJsonObject(text: string) {
   const start = text.indexOf("{");
@@ -110,14 +138,31 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
 }
 
 export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: string): Promise<AnaliseConectivos> {
+...
+  const parsed = normalizeConnectivesAnalysis(parseJsonFromText(text));
+  return ConnectivesAnalysisSchema.parse(parsed);
+}
+
+export async function createRepertoryWithAi(lovableApiKey: string, input: z.infer<typeof repertoryInputSchema>): Promise<RespostaRepertorio> {
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
+
+  const messages = [
+    { role: "system" as const, content: `${REPERTORY_SYSTEM_PROMPT}\n\nRetorne sempre um JSON válido no formato: {"message": "texto da conversa", "repertorio": {"titulo": "...", "autor": "...", "ideia": "...", "relacao": "...", "exemplo": "..."}, "proximaPergunta": "..."}. O campo repertorio e proximaPergunta são opcionais.` },
+    ...(input.historico || []).map(h => ({ role: h.role as "user" | "assistant", content: h.content })),
+    { role: "user" as const, content: `Tema: ${input.tema}. ${input.genero ? `Gênero: ${input.genero}.` : ""} ${input.detalhes ? `Mais detalhes: ${input.detalhes}` : ""}` }
+  ];
 
   const { text } = await generateText({
     model: gateway("google/gemini-3.6-flash"),
-    system: `${CONNECTIVES_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, no formato: {"analise":"...","status":"bom|regular|ruim","sugestao":"..."}. Não use outros nomes de campos.`,
-    prompt: `Frase para análise: ${frase}`,
+    messages: messages,
   });
 
-  const parsed = normalizeConnectivesAnalysis(parseJsonFromText(text));
-  return ConnectivesAnalysisSchema.parse(parsed);
+  try {
+    const parsed = parseJsonFromText(text);
+    return RepertoryAiResponseSchema.parse(parsed);
+  } catch (e) {
+    return {
+      message: text.length > 20 ? text : "Não consegui processar sua solicitação. Pode detalhar melhor o tema?",
+    };
+  }
 }

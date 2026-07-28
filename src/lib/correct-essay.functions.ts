@@ -4,10 +4,12 @@ import {
   connectivesInputSchema,
   correctEssayWithAi,
   essayInputSchema,
+  repertoryInputSchema,
   type Correcao,
+  type RespostaRepertorio,
 } from "@/lib/correct-essay.server";
 
-export type { Correcao } from "@/lib/correct-essay.server";
+export type { Correcao, RespostaRepertorio } from "@/lib/correct-essay.server";
 
 export const corrigirRedacao = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => essayInputSchema.parse(data))
@@ -34,5 +36,20 @@ export const analisarConectivos = createServerFn({ method: "POST" })
     } catch (error) {
       console.error("Erro em analisarConectivos:", error);
       throw new Error("Não foi possível analisar o conectivo agora. Tente novamente em instantes.");
+    }
+  });
+
+export const criarRepertorio = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => repertoryInputSchema.parse(data))
+  .handler(async ({ data }) => {
+    const key = process.env.LOVABLE_API_KEY;
+    if (!key) throw new Error("LOVABLE_API_KEY não configurada");
+
+    try {
+      const { createRepertoryWithAi } = await import("@/lib/correct-essay.server");
+      return await createRepertoryWithAi(key, data);
+    } catch (error) {
+      console.error("Erro em criarRepertorio:", error);
+      throw new Error("Não foi possível gerar o repertório agora.");
     }
   });

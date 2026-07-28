@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { analisarConectivos } from "@/lib/correct-essay.functions";
+import { analisarConectivos, criarRepertorio } from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { type Correcao } from "@/lib/correct-essay.functions";
+import { type Correcao, type RespostaRepertorio } from "@/lib/correct-essay.functions";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
 import { Sidebar } from "@/components/Sidebar";
 import { cn } from "@/lib/utils";

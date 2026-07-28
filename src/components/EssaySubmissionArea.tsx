@@ -441,7 +441,6 @@ export function EssaySubmissionArea({ isLoggedIn, onSuccess }: EssaySubmissionAr
                         </button>
                       </div>
                     </div>
-                    </div>
                   )}
 
                   <div className="flex flex-col gap-2 text-center pt-2">

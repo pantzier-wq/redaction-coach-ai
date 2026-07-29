@@ -15,10 +15,7 @@ import {
   Users,
   MessageSquare,
   Sparkles,
-  ArrowRight,
-  Info,
-  X,
-  ExternalLink
+  ArrowRight
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({

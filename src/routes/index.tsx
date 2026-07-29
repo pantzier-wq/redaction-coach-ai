@@ -88,7 +88,6 @@ function Landing() {
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">
-      <DisclaimerModal />
       <header className="absolute top-0 right-0 p-6 z-50">
         <Link 
           to={session ? "/dashboard" : "/auth"}

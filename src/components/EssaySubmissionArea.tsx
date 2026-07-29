@@ -263,7 +263,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                 CORRIGIR AGORA COM IA →
               </button>
               <p className="mt-3 text-center text-xs font-bold text-muted-foreground">
-                🔒 100% privado • Sua redação {isLoggedIn ? "fica salva no seu histórico" : "não é armazenada"}
+                🔒 100% privado
               </p>
             </form>
 

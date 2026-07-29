@@ -294,11 +294,27 @@ function Landing() {
             },
             {
               q: "Posso corrigir quantas redações?",
-              a: "Nesta fase de reta final, estamos liberando correções gratuitas para ajudar o máximo de estudantes desesperados.",
+              a: "A primeira correção é gratuita para você conhecer o poder da ferramenta. Depois, temos planos acessíveis para você treinar até o 1000.",
             },
             {
               q: "A IA entende qualquer tema?",
-              a: "Sim! Desde temas sociais clássicos até os mais complexos. Ela analisa a estrutura e o projeto de texto.",
+              a: "Sim! Nossa tecnologia processa qualquer tema possível para o ENEM, analisando estrutura, repertório e projeto de texto com profundidade.",
+            },
+            {
+              q: "A correção demora muito?",
+              a: "Não! Em média, em 30 segundos você recebe o relatório completo. Chega de esperar uma semana pela correção do professor.",
+            },
+            {
+              q: "Quais são as formas de pagamento?",
+              a: "Aceitamos Cartão de Crédito e PIX. O acesso é liberado instantaneamente logo após a confirmação do pagamento.",
+            },
+            {
+              q: "Vou receber sugestões de melhoria?",
+              a: "Com certeza. Além da nota por competência, a IA indica exatamente onde você errou e como pode melhorar para subir sua pontuação.",
+            },
+            {
+              q: "O acesso é vitalício?",
+              a: "Sim! Ao adquirir nossos planos de manutenção, você garante acesso às ferramentas para treinar quantas vezes precisar até o dia da prova.",
             },
           ].map((f, i) => (
             <details key={i} className="group rounded-xl border border-border bg-card">

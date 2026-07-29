@@ -15,7 +15,10 @@ import {
   Users,
   MessageSquare,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Info,
+  X,
+  ExternalLink
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -72,6 +75,92 @@ function Countdown() {
   );
 }
 
+function DisclaimerModal() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const dismissed = sessionStorage.getItem("disclaimer-dismissed");
+    if (!dismissed) {
+      setIsOpen(true);
+    }
+  }, []);
+
+  const close = () => {
+    setIsOpen(false);
+    sessionStorage.setItem("disclaimer-dismissed", "true");
+  };
+
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, []);
+
+  if (!isOpen) return null;
+
+  return (
+    <div 
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
+      onClick={close}
+    >
+      <div 
+        className="relative w-full max-w-[420px] rounded-3xl border border-border bg-card p-8 text-center shadow-2xl animate-in fade-in zoom-in duration-300"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button 
+          onClick={close}
+          className="absolute right-4 top-4 rounded-full p-2 text-muted-foreground hover:bg-muted transition-colors"
+        >
+          <X className="h-5 w-5" />
+        </button>
+
+        <div className="mb-6 flex flex-col items-center">
+          <div className="mb-4 rounded-full bg-primary/10 p-3 text-primary">
+            <Info className="h-8 w-8" />
+          </div>
+          <h2 className="text-2xl font-black tracking-tight">Versão não oficial</h2>
+        </div>
+
+        <div className="space-y-4 mb-8">
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Você está utilizando uma versão não oficial da extensão. Versões modificadas podem não receber atualizações e comprometer a segurança dos seus dados.
+          </p>
+          <p className="text-sm font-bold text-foreground leading-relaxed">
+            Para sua segurança, recomendamos usar apenas a versão oficial.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          <a 
+            href="https://chat.whatsapp.com/IWXJNQnsLj089fbjzf7796" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-black text-primary-foreground transition-transform hover:scale-105 active:scale-95"
+          >
+            Entrar no Grupo Oficial <ExternalLink className="h-4 w-4" />
+          </a>
+          <a 
+            href="https://leigosacademy.site" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 rounded-xl border border-border bg-muted/50 px-6 py-3 text-sm font-black text-foreground transition-transform hover:scale-105 active:scale-95"
+          >
+            Site Oficial
+          </a>
+          <button 
+            onClick={close}
+            className="mt-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Landing() {
   const [session, setSession] = useState<any>(null);
 
@@ -87,6 +176,7 @@ function Landing() {
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">
+      <DisclaimerModal />
       <header className="absolute top-0 right-0 p-6 z-50">
         <Link 
           to={session ? "/dashboard" : "/auth"}

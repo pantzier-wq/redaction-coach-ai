@@ -11,6 +11,8 @@ interface EssaySubmissionAreaProps {
   onSuccess?: (result: Correcao) => void;
 }
 
+const LIMITE_ESSENCIAL = 20;
+
 export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }: EssaySubmissionAreaProps) {
   const [tema, setTema] = useState("");
   const [redacao, setRedacao] = useState("");
@@ -19,7 +21,29 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   const [erro, setErro] = useState<string | null>(null);
   const [result, setResult] = useState<Correcao | null>(null);
   const [isPro, setIsPro] = useState(propIsPro || false);
+  const [hasFullAccess, setHasFullAccess] = useState(false);
+  const [credits, setCredits] = useState(0);
   const corrigir = useServerFn(corrigirRedacao);
+
+  // Carrega plano/créditos do usuário logado
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    let active = true;
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_pro, has_full_access, credits")
+        .eq("id", user.id)
+        .single();
+      if (!active || !profile) return;
+      setIsPro(!!profile.is_pro);
+      setHasFullAccess(!!(profile as any).has_full_access);
+      setCredits((profile as any).credits ?? 0);
+    })();
+    return () => { active = false; };
+  }, [isLoggedIn]);
   
   // Efeito para carregar redação do histórico se houver no localStorage
   useEffect(() => {
@@ -39,12 +63,15 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   }, []);
 
   const charCount = redacao.trim().length;
+  // Combo = ilimitado. Essencial = precisa de créditos disponíveis.
+  const canCorrect = hasFullAccess || (isPro && credits > 0);
+  const semCreditos = isPro && !hasFullAccess && credits <= 0;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // Se já estiver logado e NÃO for PRO, bloquear antes mesmo de enviar para a IA
-    if (isLoggedIn && !isPro) {
+    // Logado sem plano ativo ou sem créditos: bloqueia antes de chamar a IA
+    if (isLoggedIn && !canCorrect) {
       setLoading(true);
       // Simular carregamento de 30s para percepção de valor antes de mostrar o paywall
       setTimeout(() => {
@@ -53,6 +80,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       }, 28000);
       return;
     }
+
 
     setErro(null);
     setResult(null);
@@ -80,15 +108,24 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         }));
       }
 
-      // Check if user is PRO.
-      let currentIsPro = false;
+      // Atualiza plano e consome crédito quando for Plano Essencial
+      let stillAllowed = false;
       if (isLoggedIn) {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          const { data: profile } = await supabase.from("profiles").select("is_pro").eq("id", user.id).single();
-          currentIsPro = !!profile?.is_pro;
-          setIsPro(currentIsPro);
-          
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("is_pro, has_full_access, credits")
+            .eq("id", user.id)
+            .single();
+
+          const pro = !!profile?.is_pro;
+          const full = !!(profile as any)?.has_full_access;
+          const saldo = (profile as any)?.credits ?? 0;
+          setIsPro(pro);
+          setHasFullAccess(full);
+          stillAllowed = full || (pro && saldo > 0);
+
           // Se logado, salvar no banco
           await supabase.from("essays").insert({
             user_id: user.id,
@@ -96,10 +133,18 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
             redacao: redacao.trim(),
             resultado: r
           });
+
+          if (!full && pro) {
+            const novoSaldo = Math.max(0, saldo - 1);
+            await supabase.from("profiles").update({ credits: novoSaldo } as any).eq("id", user.id);
+            setCredits(novoSaldo);
+          } else {
+            setCredits(saldo);
+          }
         }
       }
 
-      if (!isLoggedIn || !currentIsPro) {
+      if (!isLoggedIn || !stillAllowed) {
         setShowPaywall(true);
       } else {
         setShowPaywall(false);
@@ -124,15 +169,18 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
     }
   }
 
-  async function handleTestPurchase() {
+  // type: 'basic' = Plano Essencial (20 correções) | 'combo' = vitalício ilimitado
+  async function handleTestPurchase(type: "basic" | "combo" = "basic") {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      const { error } = await supabase.from("profiles").update({ is_pro: true }).eq("id", user.id);
+      const updates: any = type === "combo"
+        ? { is_pro: true, has_full_access: true }
+        : { is_pro: true, credits: LIMITE_ESSENCIAL };
+      const { error } = await supabase.from("profiles").update(updates).eq("id", user.id);
       if (error) {
-        console.error("Erro ao ativar PRO:", error);
+        console.error("Erro ao ativar plano:", error);
         return;
       }
-      setIsPro(true);
       setShowPaywall(false);
       window.location.reload();
     } else {
@@ -140,6 +188,27 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       window.location.href = "/auth";
     }
   }
+
+  // Compra de créditos avulsos (somente para quem já tem o Plano Essencial)
+  async function handleBuyCredits(qtd: number) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      window.location.href = "/auth";
+      return;
+    }
+    const { error } = await supabase
+      .from("profiles")
+      .update({ credits: credits + qtd } as any)
+      .eq("id", user.id);
+    if (error) {
+      console.error("Erro ao adicionar créditos:", error);
+      return;
+    }
+    setCredits(credits + qtd);
+    setShowPaywall(false);
+    window.location.reload();
+  }
+
 
   return (
     <div className="w-full space-y-8">
@@ -267,7 +336,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
               </p>
             </form>
 
-            {isLoggedIn && ((result && showPaywall) || (!isPro && showPaywall)) && (
+            {isLoggedIn && ((result && showPaywall) || (!canCorrect && showPaywall)) && (
               <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-background/80 backdrop-blur-sm flex items-start justify-center p-4 md:p-6 pt-20 md:pt-24 pb-10">
                 <div 
                   className="w-full max-w-lg md:max-w-2xl rounded-3xl border border-[#22c55e]/50 bg-card/95 p-6 md:p-10 shadow-[0_0_100px_rgba(34,197,94,0.4)] backdrop-blur-2xl relative animate-in fade-in zoom-in duration-500"
@@ -283,21 +352,48 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                   </div>
                   
                   <h2 className="text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-white">
-                    {result ? "Análise Pronta! 🎯" : "Quase lá... 🔒"}
+                    {semCreditos ? "Seus créditos acabaram 🔒" : result ? "Análise Pronta! 🎯" : "Quase lá... 🔒"}
                   </h2>
                   
                   <p className="text-sm md:text-base text-white/90 font-semibold mb-6 md:mb-8 leading-relaxed text-center">
-                    {result 
-                      ? "Sua correção detalhada e nota oficial já foram geradas com precisão INEP."
-                      : "Você está a um passo de desbloquear seu potencial máximo e conquistar sua vaga no curso dos sonhos."} 
-
-                    <br className="hidden md:block"/>
-                    <span className="text-[#22c55e]"> Garanta seu acesso vitalício</span> para treinar sem limites e conquistar sua vaga.
+                    {semCreditos
+                      ? "Você já usou as 20 correções do Plano Essencial. Recarregue créditos ou faça o upgrade para o Combo Nota 1000 e corrija sem limite nenhum."
+                      : result 
+                        ? "Sua correção detalhada e nota oficial já foram geradas com precisão INEP."
+                        : "Você está a um passo de desbloquear seu potencial máximo e conquistar sua vaga no curso dos sonhos."}
                   </p>
 
+                  {semCreditos && (
+                    <div className="mb-8">
+                      <p className="text-[11px] font-black uppercase tracking-widest text-white/50 mb-3 text-center">
+                        Recarregue seus créditos
+                      </p>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        {[
+                          { qtd: 5, preco: "R$ 7,90" },
+                          { qtd: 10, preco: "R$ 9,90" },
+                          { qtd: 20, preco: "R$ 14,90" },
+                        ].map((pack) => (
+                          <button
+                            key={pack.qtd}
+                            onClick={() => handleBuyCredits(pack.qtd)}
+                            className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center hover:border-[#22c55e]/50 hover:bg-white/10 transition-all"
+                          >
+                            <div className="text-lg font-black text-white">{pack.qtd} correções</div>
+                            <div className="text-sm font-black text-[#22c55e]">{pack.preco}</div>
+                          </button>
+                        ))}
+                      </div>
+                      <p className="mt-3 text-center text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                        Créditos disponíveis apenas para quem tem o Plano Essencial
+                      </p>
+                    </div>
+                  )}
+
                   <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {/* PLAN VITALÍCIO */}
+                    <div className={`grid grid-cols-1 gap-4 ${semCreditos ? "" : "md:grid-cols-2"}`}>
+                      {/* PLANO ESSENCIAL - escondido para quem já comprou */}
+                      {!semCreditos && (
                       <div className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 relative overflow-hidden group transition-all hover:bg-white/10">
                         <div className="mb-4 flex items-center gap-3">
                           <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
@@ -305,14 +401,14 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                           </div>
                           <div>
                             <h3 className="text-sm font-black text-white/90 leading-tight uppercase tracking-tight">Plano Essencial</h3>
-                            <p className="text-[9px] font-bold text-white/40 leading-tight">ACESSO VITALÍCIO</p>
+                            <p className="text-[9px] font-bold text-white/40 leading-tight">ACESSO VITALÍCIO • 20 CORREÇÕES</p>
                           </div>
                         </div>
                         
                         <ul className="space-y-2 mb-6 flex-1">
                           <li className="flex items-start gap-2 text-[10px] font-medium text-white/70">
                             <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
-                            <span>Correções de IA <strong>ilimitadas</strong> para sempre</span>
+                            <span><strong>20 correções</strong> de IA (limite do plano)</span>
                           </li>
                           <li className="flex items-start gap-2 text-[10px] font-medium text-white/70">
                             <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
@@ -321,6 +417,14 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                           <li className="flex items-start gap-2 text-[10px] font-medium text-white/70">
                             <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
                             <span>Feedback oficial padrão <strong>INEP</strong></span>
+                          </li>
+                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/70">
+                            <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
+                            <span>Pode comprar <strong>créditos extras</strong> depois</span>
+                          </li>
+                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/30">
+                            <span className="text-destructive shrink-0 font-bold">✕</span>
+                            <span className="line-through italic">Correções ilimitadas</span>
                           </li>
                           <li className="flex items-start gap-2 text-[10px] font-medium text-white/30">
                             <span className="text-destructive shrink-0 font-bold">✕</span>
@@ -334,17 +438,19 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
                         <div className="mt-auto">
                           <div className="flex items-baseline gap-1 mb-3">
-                             <span className="text-xl font-black text-white/90">R$ 24,90</span>
+                             <span className="text-xl font-black text-white/90">R$ 19,90</span>
                              <span className="text-[10px] font-bold text-white/40 uppercase">Taxa única</span>
                           </div>
                           <button
-                            onClick={handleTestPurchase}
+                            onClick={() => handleTestPurchase("basic")}
                             className="w-full py-2.5 rounded-xl bg-white/5 text-white/60 font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all border border-white/10"
                           >
                             LIBERAR ACESSO BÁSICO
                           </button>
                         </div>
                       </div>
+                      )}
+
 
                       {/* COMBO NOTA 1000 */}
                       <div className="flex flex-col rounded-2xl border-2 border-[#22c55e] bg-[#22c55e]/5 p-5 relative overflow-hidden group shadow-[0_0_40px_rgba(34,197,94,0.15)] scale-[1.02]">
@@ -365,7 +471,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                         <ul className="space-y-2.5 mb-6 flex-1">
                           <li className="flex items-start gap-2 text-[10px] font-bold text-white">
                             <span className="text-[#22c55e] shrink-0">✓</span>
-                            <span><strong>TUDO</strong> do Vitalício + Ferramentas VIP</span>
+                            <span><strong>Correções ILIMITADAS</strong> para sempre (sem créditos)</span>
                           </li>
                           <li className="flex items-start gap-2 text-[10px] font-bold text-white">
                             <span className="text-[#22c55e] shrink-0">✓</span>
@@ -387,7 +493,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                             <span className="text-2xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 42,00</span>
                           </div>
                           <button
-                            onClick={handleTestPurchase}
+                            onClick={() => handleTestPurchase("combo")}
                             className="w-full py-3.5 rounded-xl bg-[#22c55e] text-white font-black text-xs uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(34,197,94,0.4)] relative overflow-hidden border border-[#22c55e]/20"
                           >
                             <span className="relative z-10">GARANTIR MINHA VAGA →</span>

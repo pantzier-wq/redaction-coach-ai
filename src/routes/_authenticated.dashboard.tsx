@@ -373,46 +373,50 @@ function Dashboard() {
                       </div>
                     </div>
 
-                    <ul className="space-y-4 mb-8 flex-1">
-                      <li className="flex items-start gap-3 text-sm font-bold text-white">
-                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]">
-                          <span className="text-primary font-black">✓</span>
+                    <div className="mb-6 grid grid-cols-3 gap-3">
+                      {[
+                        { n: "∞", l: "Correções" },
+                        { n: "70+", l: "Repertórios" },
+                        { n: "2", l: "IAs Bônus" },
+                      ].map((s) => (
+                        <div key={s.l} className="rounded-2xl bg-[#22c55e]/10 border border-[#22c55e]/20 py-3 text-center">
+                          <div className="text-2xl font-black text-[#22c55e] leading-none">{s.n}</div>
+                          <div className="text-[9px] font-bold uppercase tracking-widest text-white/60 mt-1">{s.l}</div>
                         </div>
-                        <span className="text-[#22c55e] uppercase tracking-tight">Tudo do Plano Vitalício</span>
-                      </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-white">
-                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]">
-                          <span className="text-primary font-black">✓</span>
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-[#22c55e] font-black uppercase text-[11px] tracking-wide">70+ Repertórios Coringas</span>
-                          <p className="text-[12px] text-white font-bold leading-tight">Modelos universais prontos for qualquer tema do ENEM.</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-white">
-                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]">
-                          <span className="text-primary font-black">✓</span>
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-[#22c55e] font-black uppercase text-[11px] tracking-wide">Domine a C4 (Conectivos)</span>
-                          <p className="text-[12px] text-white font-bold leading-tight">Flashcards para nunca mais repetir palavras na redação.</p>
-                        </div>
-                      </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-white">
-                        <div className="h-5 w-5 rounded-full bg-primary/20 flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]">
-                          <span className="text-primary font-black">✓</span>
-                        </div>
-                        <div className="flex flex-col">
-                          <span className="text-[#22c55e] font-black uppercase text-[11px] tracking-wide">Segredo da C5 (Nota 200)</span>
-                          <p className="text-[12px] text-white font-bold leading-tight">Manual prático para fechar a proposta de intervenção.</p>
-                        </div>
-                      </li>
+                      ))}
+                    </div>
+
+                    <ul className="space-y-3.5 mb-8 flex-1">
+                      {[
+                        { t: "Correções ILIMITADAS para sempre", d: "Sem créditos e sem o limite de 20 do plano básico." },
+                        { t: "IA de Repertório Sociocultural", d: "Cria repertório legitimado e pertinente para qualquer tema." },
+                        { t: "Laboratório de Conectivos (IA)", d: "Analisa suas frases e blinda sua Competência 4." },
+                        { t: "70+ Repertórios Coringas", d: "Biblioteca validada que encaixa em qualquer proposta." },
+                        { t: "Biblioteca de Conectivos + Treino", d: "Quiz e flashcards para nunca mais repetir palavras." },
+                        { t: "Histórico de até 50 redações", d: "Gráfico de evolução por competência, nota a nota." },
+                        { t: "BÔNUS: E-book \"Domine a C3\"", d: "Projeto de texto e argumentação de nota 200." },
+                      ].map((b) => (
+                        <li key={b.t} className="flex items-start gap-3">
+                          <div className="h-5 w-5 rounded-full bg-[#22c55e] flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_15px_rgba(34,197,94,0.4)]">
+                            <span className="text-white text-[10px] font-black">✓</span>
+                          </div>
+                          <div className="flex flex-col leading-tight">
+                            <span className="text-[#22c55e] font-black uppercase text-[11px] tracking-wide">{b.t}</span>
+                            <p className="text-[12px] text-white/70 font-semibold leading-snug">{b.d}</p>
+                          </div>
+                        </li>
+                      ))}
                     </ul>
 
                     <div className="mt-auto">
-                      <div className="flex items-center gap-3 mb-4">
-                        <span className="text-sm font-bold text-[#22c55e]/60 line-through italic uppercase tracking-widest">R$ 59,90</span>
-                        <span className="text-4xl font-black text-[#22c55e] drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">R$ 42,00</span>
+                      <div className="mb-4 rounded-2xl border border-[#22c55e]/20 bg-[#22c55e]/5 p-4">
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-bold text-[#22c55e]/60 line-through italic uppercase tracking-widest">R$ 59,90</span>
+                          <span className="text-4xl font-black text-[#22c55e] drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">R$ 39,90</span>
+                        </div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mt-1">
+                          Pagamento único • Acesso vitalício • Tudo liberado na hora
+                        </p>
                       </div>
                       <button
                         onClick={() => handleTestPurchase('full')}

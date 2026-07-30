@@ -468,29 +468,48 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                           </div>
                         </div>
 
-                        <ul className="space-y-2.5 mb-6 flex-1">
-                          <li className="flex items-start gap-2 text-[10px] font-bold text-white">
-                            <span className="text-[#22c55e] shrink-0">✓</span>
-                            <span><strong>Correções ILIMITADAS</strong> para sempre (sem créditos)</span>
-                          </li>
-                          <li className="flex items-start gap-2 text-[10px] font-bold text-white">
-                            <span className="text-[#22c55e] shrink-0">✓</span>
-                            <span><strong>70+ Repertórios Coringas</strong> validados</span>
-                          </li>
-                          <li className="flex items-start gap-2 text-[10px] font-bold text-white">
-                            <span className="text-[#22c55e] shrink-0">✓</span>
-                            <span><strong>IA de Conectivos</strong> (Treino Competência 4)</span>
-                          </li>
-                          <li className="flex items-start gap-2 text-[10px] font-bold text-white">
-                            <span className="text-[#22c55e] shrink-0">✓</span>
-                            <span><strong>BÔNUS:</strong> E-book "Domine a C3"</span>
-                          </li>
+                        <div className="mb-4 grid grid-cols-3 gap-2">
+                          {[
+                            { n: "∞", l: "Correções" },
+                            { n: "70+", l: "Repertórios" },
+                            { n: "2", l: "IAs Bônus" },
+                          ].map((s) => (
+                            <div key={s.l} className="rounded-xl bg-[#22c55e]/10 border border-[#22c55e]/20 py-2 text-center">
+                              <div className="text-base font-black text-[#22c55e] leading-none">{s.n}</div>
+                              <div className="text-[8px] font-bold uppercase tracking-widest text-white/60 mt-1">{s.l}</div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <ul className="space-y-2.5 mb-5 flex-1">
+                          {[
+                            { t: "Correções ILIMITADAS para sempre", d: "Sem créditos, sem limite de 20. Treine até fechar a nota." },
+                            { t: "IA de Repertório Sociocultural", d: "Gera repertório legitimado e pronto pra usar em qualquer tema." },
+                            { t: "Laboratório de Conectivos (IA)", d: "Analisa suas frases e corrige a Competência 4 em segundos." },
+                            { t: "70+ Repertórios Coringas", d: "Biblioteca validada que encaixa em qualquer proposta do ENEM." },
+                            { t: "Biblioteca de Conectivos + Treino", d: "Quiz e flashcards pra nunca mais repetir palavra." },
+                            { t: "Histórico de até 50 redações", d: "Gráfico de evolução por competência, nota a nota." },
+                            { t: "BÔNUS: E-book \"Domine a C3\"", d: "Projeto de texto e argumentação de nota 200." },
+                          ].map((b) => (
+                            <li key={b.t} className="flex items-start gap-2">
+                              <span className="mt-0.5 h-4 w-4 shrink-0 rounded-full bg-[#22c55e] text-white text-[9px] font-black flex items-center justify-center">✓</span>
+                              <div className="leading-tight">
+                                <div className="text-[11px] font-black text-white">{b.t}</div>
+                                <div className="text-[9px] font-medium text-white/50">{b.d}</div>
+                              </div>
+                            </li>
+                          ))}
                         </ul>
 
                         <div className="mt-auto">
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="text-[10px] font-bold text-white/40 line-through italic">R$ 59,90</span>
-                            <span className="text-2xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 42,00</span>
+                          <div className="mb-3 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 p-3">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px] font-bold text-white/40 line-through italic">R$ 59,90</span>
+                              <span className="text-2xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 39,90</span>
+                            </div>
+                            <p className="text-[9px] font-bold uppercase tracking-widest text-white/50 mt-1">
+                              Pagamento único • Acesso vitalício • Só R$ 20 a mais que o básico
+                            </p>
                           </div>
                           <button
                             onClick={() => handleTestPurchase("combo")}

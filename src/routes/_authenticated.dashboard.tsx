@@ -1840,20 +1840,23 @@ function ProgressSection({ essays, onGoToCorrection }: ProgressSectionProps) {
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis dataKey="nome" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-              <YAxis domain={[0, 1000]} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" />
+              <XAxis dataKey="nome" stroke="#ffffff" tick={{ fill: "#ffffff", fontWeight: 700 }} fontSize={12} />
+              <YAxis domain={[0, 1000]} stroke="#ffffff" tick={{ fill: "#ffffff", fontWeight: 700 }} fontSize={12} />
               <Tooltip
                 contentStyle={{
-                  background: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
+                  background: "#0f172a",
+                  border: "1px solid rgba(255,255,255,0.2)",
                   borderRadius: "12px",
-                  color: "hsl(var(--foreground))",
+                  color: "#ffffff",
                 }}
+                itemStyle={{ color: "#ffffff", fontWeight: 700 }}
+                labelStyle={{ color: "#ffffff", fontWeight: 700 }}
                 formatter={(value: any) => [`${value} pontos`, "Nota"]}
                 labelFormatter={(label: any, payload: any) => payload?.[0]?.payload?.data || label}
               />
-              <Line type="monotone" dataKey="nota" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="nota" stroke="#ffffff" strokeWidth={3} dot={{ r: 4, fill: "#ffffff", stroke: "#ffffff" }} activeDot={{ r: 6, fill: "#ffffff" }} />
+
             </LineChart>
           </ResponsiveContainer>
         </div>

@@ -10,8 +10,10 @@ import {
   Menu, 
   X,
   LogOut,
-  User
+  User,
+  TrendingUp
 } from "lucide-react";
+
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -43,6 +45,13 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
       icon: History,
       color: "text-foreground"
     },
+    { 
+      id: "progresso", 
+      label: "Meu Progresso", 
+      icon: TrendingUp,
+      color: "text-emerald-400"
+    },
+
     { 
       id: "repertorios", 
       label: "Biblioteca de Repertórios", 
@@ -114,16 +123,15 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
             <button
               key={item.id}
               onClick={() => {
-                // Bloqueio de acesso para quem não tem acesso total
-                if ((item.id === "repertorios" || item.id === "conectivos") && !profile?.has_full_access) {
-                  setActiveSection("upgrade");
-                } else if (item.id === "historico" && !profile?.is_pro) {
+                // Histórico detalhado continua restrito; bibliotecas têm prévia liberada
+                if (item.id === "historico" && !profile?.is_pro) {
                   setActiveSection("upgrade");
                 } else {
                   setActiveSection(item.id);
                 }
                 closeSidebar();
               }}
+
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all group",
                 activeSection === item.id 

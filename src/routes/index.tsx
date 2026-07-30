@@ -314,8 +314,8 @@ function Landing() {
               a: "Não! Em média, em 30 segundos você recebe o relatório completo. Chega de esperar uma semana pela correção do professor.",
             },
             {
-              q: "Quais são as formas de pagamento?",
-              a: "Aceitamos Cartão de Crédito e PIX. O acesso é liberado instantaneamente logo após a confirmação do pagamento.",
+              q: "Preciso enviar a redação digitada?",
+              a: "Sim, basta colar o texto na área de análise. Em segundos a IA lê tudo e devolve o relatório completo por competência.",
             },
             {
               q: "Vou receber sugestões de melhoria?",

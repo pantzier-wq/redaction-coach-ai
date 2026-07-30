@@ -1868,20 +1868,23 @@ function ProgressSection({ essays, onGoToCorrection }: ProgressSectionProps) {
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={competencias} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis dataKey="nome" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-              <YAxis domain={[0, 200]} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" />
+              <XAxis dataKey="nome" stroke="#ffffff" tick={{ fill: "#ffffff", fontWeight: 700 }} fontSize={12} />
+              <YAxis domain={[0, 200]} stroke="#ffffff" tick={{ fill: "#ffffff", fontWeight: 700 }} fontSize={12} />
               <Tooltip
-                cursor={{ fill: "hsl(var(--muted))", opacity: 0.3 }}
+                cursor={{ fill: "rgba(255,255,255,0.1)" }}
                 contentStyle={{
-                  background: "hsl(var(--card))",
-                  border: "1px solid hsl(var(--border))",
+                  background: "#0f172a",
+                  border: "1px solid rgba(255,255,255,0.2)",
                   borderRadius: "12px",
-                  color: "hsl(var(--foreground))",
+                  color: "#ffffff",
                 }}
+                itemStyle={{ color: "#ffffff", fontWeight: 700 }}
+                labelStyle={{ color: "#ffffff", fontWeight: 700 }}
                 formatter={(value: any) => [`${value} / 200`, "Média"]}
               />
-              <Bar dataKey="media" fill="hsl(var(--secondary))" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="media" fill="#ffffff" radius={[8, 8, 0, 0]} />
+
             </BarChart>
           </ResponsiveContainer>
         </div>

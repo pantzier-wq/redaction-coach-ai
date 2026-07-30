@@ -26,8 +26,21 @@ import {
   ChevronRight,
   HelpCircle,
   Play,
-  MessageSquare
+  MessageSquare,
+  TrendingUp
 } from "lucide-react";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+} from "recharts";
+
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,

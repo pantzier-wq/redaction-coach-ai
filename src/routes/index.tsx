@@ -16,6 +16,9 @@ import {
   MessageSquare,
   Sparkles,
   ArrowRight,
+} from "lucide-react";
+
+
 
 export const Route = createFileRoute("/")({
   head: () => ({

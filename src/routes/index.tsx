@@ -340,9 +340,15 @@ function Landing() {
       </section>
 
       <section className="mx-auto max-w-3xl px-4 py-16 text-center">
-        <h2 className="text-3xl md:text-4xl font-black">
-          Ou você corrige agora. Ou chora no resultado.
+        <h2 className="text-3xl md:text-4xl font-black leading-tight">
+          Ou você{" "}
+          <span className="text-primary underline decoration-primary/40 decoration-4 underline-offset-4">
+            corrige agora
+          </span>
+          . Ou{" "}
+          <span className="text-destructive">chora no resultado</span>.
         </h2>
+
         <p className="mt-3 text-muted-foreground">
           A escolha é literalmente sua. E o tempo tá acabando.
         </p>

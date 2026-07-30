@@ -151,25 +151,6 @@ function Dashboard() {
               </div>
 
 
-              {!profile?.is_pro && (
-                <div className="rounded-3xl border-2 border-secondary/40 bg-secondary/5 p-8 relative overflow-hidden mt-12">
-                  <div className="flex flex-col md:flex-row items-center gap-6 relative z-10">
-                    <div className="p-4 rounded-2xl bg-secondary/20 text-secondary">
-                      <Sparkles className="w-12 h-12" />
-                    </div>
-                    <div className="flex-1 text-center md:text-left">
-                      <h3 className="text-2xl font-black mb-2">Treino Ilimitado e VIP</h3>
-                      <p className="text-muted-foreground">Desbloqueie correções ilimitadas e todas as ferramentas PRO por apenas R$ 24,90.</p>
-                    </div>
-                    <button 
-                      onClick={() => setActiveSection("upgrade")}
-                      className="px-8 py-4 rounded-xl bg-secondary text-secondary-foreground font-black hover:scale-105 transition-transform"
-                    >
-                      ATIVAR PRO AGORA
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           )}
 

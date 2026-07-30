@@ -16,98 +16,6 @@ import {
   MessageSquare,
   Sparkles,
   ArrowRight,
-  Info,
-  X,
-  ExternalLink
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-
-function DisclaimerModal() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    const hasSeenModal = sessionStorage.getItem("hasSeenDisclaimer");
-    if (!hasSeenModal) {
-      setIsOpen(true);
-    }
-  }, []);
-
-  const closeModal = () => {
-    setIsOpen(false);
-    sessionStorage.setItem("hasSeenDisclaimer", "true");
-  };
-
-  useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeModal();
-    };
-    window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
-  }, []);
-
-  if (!isOpen) return null;
-
-  return (
-    <div 
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
-      onClick={closeModal}
-    >
-      <div 
-        className="relative w-full max-w-[420px] bg-card border border-border rounded-2xl p-8 shadow-2xl flex flex-col items-center text-center animate-in zoom-in-95 duration-200"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button 
-          onClick={closeModal}
-          className="absolute top-4 right-4 p-1 rounded-full hover:bg-muted transition-colors text-muted-foreground"
-          aria-label="Fechar"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
-          <Info className="w-8 h-8 text-primary" />
-        </div>
-
-        <h2 className="text-xl font-black mb-4">ℹ️ Versão não oficial</h2>
-
-        <div className="space-y-4 mb-8">
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Você está utilizando uma versão não oficial da extensão. Versões modificadas podem não receber atualizações e comprometer a segurança dos seus dados.
-          </p>
-          <p className="text-sm text-muted-foreground leading-relaxed font-bold">
-            Para sua segurança, recomendamos usar apenas a versão oficial.
-          </p>
-        </div>
-
-        <div className="flex flex-col w-full gap-3">
-          <Button 
-            className="w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-bold h-12 flex items-center justify-center gap-2"
-            onClick={() => window.open("https://chat.whatsapp.com/IWXJNQnsLj089fbjzf7796", "_blank")}
-          >
-            Entrar no Grupo Oficial
-            <ExternalLink className="w-4 h-4" />
-          </Button>
-          
-          <Button 
-            variant="outline"
-            className="w-full border-border hover:bg-muted font-bold h-12 flex items-center justify-center gap-2"
-            onClick={() => window.open("https://leigosacademy.site", "_blank")}
-          >
-            Site Oficial
-            <ExternalLink className="w-4 h-4" />
-          </Button>
-
-          <button 
-            onClick={closeModal}
-            className="text-xs text-muted-foreground hover:text-foreground transition-colors mt-2 underline"
-          >
-            Fechar
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -179,7 +87,6 @@ function Landing() {
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">
-      <DisclaimerModal />
       <header className="absolute top-0 right-0 p-6 z-50">
         <Link 
           to={session ? "/dashboard" : "/auth"}

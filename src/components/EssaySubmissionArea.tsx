@@ -63,12 +63,15 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   }, []);
 
   const charCount = redacao.trim().length;
+  // Combo = ilimitado. Essencial = precisa de créditos disponíveis.
+  const canCorrect = hasFullAccess || (isPro && credits > 0);
+  const semCreditos = isPro && !hasFullAccess && credits <= 0;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // Se já estiver logado e NÃO for PRO, bloquear antes mesmo de enviar para a IA
-    if (isLoggedIn && !isPro) {
+    // Logado sem plano ativo ou sem créditos: bloqueia antes de chamar a IA
+    if (isLoggedIn && !canCorrect) {
       setLoading(true);
       // Simular carregamento de 30s para percepção de valor antes de mostrar o paywall
       setTimeout(() => {
@@ -77,6 +80,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       }, 28000);
       return;
     }
+
 
     setErro(null);
     setResult(null);

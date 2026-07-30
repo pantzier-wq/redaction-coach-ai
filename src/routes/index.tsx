@@ -44,11 +44,14 @@ export const Route = createFileRoute("/")({
 });
 
 function Countdown() {
-  const [now, setNow] = useState(() => new Date());
+  const [now, setNow] = useState<Date | null>(null);
   useEffect(() => {
+    setNow(new Date());
     const id = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
+  if (!now) return <div className="h-[68px]" />;
+
   const year = now.getFullYear();
   const nov = new Date(year, 10, 1);
   const firstSun = new Date(year, 10, 1 + ((7 - nov.getDay()) % 7));

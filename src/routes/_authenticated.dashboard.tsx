@@ -1685,3 +1685,191 @@ function StatCard({ icon: Icon, label, value, onClick, color }: any) {
     </button>
   );
 }
+
+interface LockedLibraryOfferProps {
+  titulo: string;
+  descricao: string;
+  itens: string[];
+  onBuy: () => void;
+  onSeePlans: () => void;
+}
+
+function LockedLibraryOffer({ titulo, descricao, itens, onBuy, onSeePlans }: LockedLibraryOfferProps) {
+  return (
+    <div className="relative">
+      <div className="pointer-events-none select-none opacity-20 blur-[3px] grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" aria-hidden="true">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="h-28 rounded-2xl border border-border bg-card" />
+        ))}
+      </div>
+
+      <div className="rounded-[2rem] border-2 border-secondary/40 bg-card p-6 md:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/30 text-secondary text-[10px] font-black uppercase tracking-widest mb-4">
+          <Sparkles className="w-3 h-3" /> Acesso liberado no Combo Nota 1000
+        </div>
+
+        <h3 className="text-2xl md:text-3xl font-black tracking-tight mb-3">{titulo}</h3>
+        <p className="text-base text-muted-foreground leading-relaxed mb-8 max-w-2xl">{descricao}</p>
+
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+          {itens.map((item) => (
+            <li key={item} className="flex items-start gap-3 text-sm md:text-base font-bold text-foreground">
+              <Check className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex flex-col md:flex-row md:items-center gap-6 pt-6 border-t border-border">
+          <div>
+            <p className="text-sm text-muted-foreground line-through font-bold">De R$ 59,90</p>
+            <p className="text-4xl font-black text-secondary leading-none">R$ 39,90</p>
+            <p className="text-xs text-muted-foreground font-bold mt-1">Pagamento único • acesso vitalício</p>
+          </div>
+          <div className="flex-1 flex flex-col sm:flex-row gap-3 md:justify-end">
+            <button
+              onClick={onBuy}
+              className="px-6 py-4 rounded-xl bg-secondary text-secondary-foreground font-black text-base uppercase tracking-tight hover:scale-[1.02] transition-transform animate-pulse"
+            >
+              Liberar acesso agora
+            </button>
+            <button
+              onClick={onSeePlans}
+              className="px-6 py-4 rounded-xl border border-border text-muted-foreground font-bold text-sm hover:text-foreground hover:border-primary/40 transition-colors"
+            >
+              Ver todos os planos
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface ProgressSectionProps {
+  essays: any[];
+  onGoToCorrection: () => void;
+}
+
+function ProgressSection({ essays, onGoToCorrection }: ProgressSectionProps) {
+  const ordenadas = [...essays]
+    .filter((e) => e?.resultado?.nota_total != null)
+    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+  if (ordenadas.length === 0) {
+    return (
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="text-center py-20 border-2 border-dashed border-border rounded-3xl">
+          <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground font-bold">Ainda não há dados de progresso.</p>
+          <button onClick={onGoToCorrection} className="mt-4 text-primary font-black hover:underline">
+            Enviar minha primeira redação →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const notas = ordenadas.map((e) => Number(e.resultado.nota_total) || 0);
+  const media = Math.round(notas.reduce((a, b) => a + b, 0) / notas.length);
+  const melhor = Math.max(...notas);
+  const ultima = notas[notas.length - 1];
+  const primeira = notas[0];
+  const evolucao = ultima - primeira;
+
+  const chartData = ordenadas.map((e, i) => ({
+    nome: `#${i + 1}`,
+    nota: Number(e.resultado.nota_total) || 0,
+    data: new Date(e.created_at).toLocaleDateString("pt-BR"),
+  }));
+
+  const competencias = [1, 2, 3, 4, 5].map((numero) => {
+    const valores = ordenadas
+      .map((e) => (e.resultado?.competencias || []).find((c: any) => c.numero === numero)?.nota)
+      .filter((n: any) => typeof n === "number");
+    const mediaComp = valores.length ? Math.round(valores.reduce((a: number, b: number) => a + b, 0) / valores.length) : 0;
+    return { nome: `C${numero}`, media: mediaComp };
+  });
+
+  const cards = [
+    { label: "Média geral", valor: media, cor: "text-primary" },
+    { label: "Melhor nota", valor: melhor, cor: "text-emerald-400" },
+    { label: "Última nota", valor: ultima, cor: "text-secondary" },
+    { label: "Redações corrigidas", valor: ordenadas.length, cor: "text-foreground" },
+  ];
+
+  return (
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="mb-8">
+        <h2 className="text-3xl font-black flex items-center gap-3">
+          <TrendingUp className="w-8 h-8 text-emerald-400" />
+          Meu Progresso
+        </h2>
+        <p className="text-muted-foreground mt-2">Acompanhe a evolução das suas notas e onde você mais precisa treinar.</p>
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        {cards.map((c) => (
+          <div key={c.label} className="rounded-2xl border border-border bg-card p-5">
+            <p className="text-xs uppercase tracking-widest text-muted-foreground font-black mb-2">{c.label}</p>
+            <p className={cn("text-3xl font-black tabular-nums", c.cor)}>{c.valor}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="rounded-[2rem] border border-border bg-card p-4 md:p-8 mb-8">
+        <h3 className="text-xl font-black mb-1">Evolução das notas</h3>
+        <p className="text-sm text-muted-foreground font-bold mb-6">
+          {evolucao >= 0
+            ? `Você subiu ${evolucao} pontos desde a primeira correção.`
+            : `Você caiu ${Math.abs(evolucao)} pontos desde a primeira correção. Bora treinar.`}
+        </p>
+        <div className="h-64 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="nome" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <YAxis domain={[0, 1000]} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <Tooltip
+                contentStyle={{
+                  background: "hsl(var(--card))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "12px",
+                  color: "hsl(var(--foreground))",
+                }}
+                formatter={(value: any) => [`${value} pontos`, "Nota"]}
+                labelFormatter={(label: any, payload: any) => payload?.[0]?.payload?.data || label}
+              />
+              <Line type="monotone" dataKey="nota" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      <div className="rounded-[2rem] border border-border bg-card p-4 md:p-8">
+        <h3 className="text-xl font-black mb-1">Média por competência</h3>
+        <p className="text-sm text-muted-foreground font-bold mb-6">Cada competência vale até 200 pontos no ENEM.</p>
+        <div className="h-64 w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={competencias} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
+              <XAxis dataKey="nome" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <YAxis domain={[0, 200]} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+              <Tooltip
+                cursor={{ fill: "hsl(var(--muted))", opacity: 0.3 }}
+                contentStyle={{
+                  background: "hsl(var(--card))",
+                  border: "1px solid hsl(var(--border))",
+                  borderRadius: "12px",
+                  color: "hsl(var(--foreground))",
+                }}
+                formatter={(value: any) => [`${value} / 200`, "Média"]}
+              />
+              <Bar dataKey="media" fill="hsl(var(--secondary))" radius={[8, 8, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+    </div>
+  );
+}

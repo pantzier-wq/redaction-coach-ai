@@ -79,7 +79,7 @@ function Dashboard() {
       // Cast to any to bypass temporary TS errors until types regenerate
       const updates: any = type === 'full' 
         ? { is_pro: true, has_full_access: true }
-        : { is_pro: true };
+        : { is_pro: true, credits: 20 };
         
       const { error } = await supabase.from("profiles").update(updates).eq("id", profile.id);
       if (error) {
@@ -90,6 +90,19 @@ function Dashboard() {
       window.location.reload();
     }
   };
+
+  const handleBuyCredits = async (qtd: number) => {
+    if (!profile?.id) return;
+    const novoSaldo = ((profile as any)?.credits ?? 0) + qtd;
+    const { error } = await supabase.from("profiles").update({ credits: novoSaldo } as any).eq("id", profile.id);
+    if (error) {
+      console.error("Erro ao comprar créditos:", error);
+      return;
+    }
+    setProfile({ ...profile, credits: novoSaldo });
+    window.location.reload();
+  };
+
 
 
 

@@ -305,9 +305,10 @@ function Landing() {
               a: "Nossa IA foi treinada com a matriz oficial de 2024. A nota é uma estimativa ultra-precisa baseada nos mesmos critérios do INEP.",
             },
             {
-              q: "Posso corrigir quantas redações?",
-              a: "A primeira correção é gratuita para você conhecer o poder da ferramenta. Depois, temos planos acessíveis para você treinar até o 1000.",
+              q: "Preciso enviar a redação digitada?",
+              a: "Sim, basta colar o texto na área de análise. Em segundos a IA lê tudo e devolve o relatório completo por competência.",
             },
+
             {
               q: "A IA entende qualquer tema?",
               a: "Sim! Nossa tecnologia processa qualquer tema possível para o ENEM, analisando estrutura, repertório e projeto de texto com profundidade.",

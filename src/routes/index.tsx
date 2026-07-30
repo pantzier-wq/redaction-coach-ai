@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
+import depoimentoCarolina from "@/assets/depoimento-carolina.jpg";
+
 import { 
   Trophy, 
   Target, 
@@ -263,6 +265,13 @@ function Landing() {
               note: "100% Satisfeita",
               image: "https://i.imgur.com/FBKCxCS.png",
             },
+            {
+              name: "Carolina Ribeiro",
+              text: "Eu sempre achava que minha conclusão tava boa, mas a IA mostrou que eu esquecia o agente e o meio na proposta. Corrigi isso e minha nota subiu quase 100 pontos no último simulado.",
+              note: "Passou em Enfermagem",
+              image: depoimentoCarolina,
+            },
+
           ].map((p, i) => (
             <div key={i} className="rounded-2xl border border-border bg-card p-6 flex flex-col items-center text-center md:items-start md:text-left">
               <div className="mb-4 h-16 w-16 overflow-hidden rounded-full bg-muted border-2 border-primary/20">

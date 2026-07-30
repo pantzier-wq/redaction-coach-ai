@@ -108,15 +108,24 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         }));
       }
 
-      // Check if user is PRO.
-      let currentIsPro = false;
+      // Atualiza plano e consome crédito quando for Plano Essencial
+      let stillAllowed = false;
       if (isLoggedIn) {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          const { data: profile } = await supabase.from("profiles").select("is_pro").eq("id", user.id).single();
-          currentIsPro = !!profile?.is_pro;
-          setIsPro(currentIsPro);
-          
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("is_pro, has_full_access, credits")
+            .eq("id", user.id)
+            .single();
+
+          const pro = !!profile?.is_pro;
+          const full = !!(profile as any)?.has_full_access;
+          const saldo = (profile as any)?.credits ?? 0;
+          setIsPro(pro);
+          setHasFullAccess(full);
+          stillAllowed = full || (pro && saldo > 0);
+
           // Se logado, salvar no banco
           await supabase.from("essays").insert({
             user_id: user.id,
@@ -124,10 +133,18 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
             redacao: redacao.trim(),
             resultado: r
           });
+
+          if (!full && pro) {
+            const novoSaldo = Math.max(0, saldo - 1);
+            await supabase.from("profiles").update({ credits: novoSaldo } as any).eq("id", user.id);
+            setCredits(novoSaldo);
+          } else {
+            setCredits(saldo);
+          }
         }
       }
 
-      if (!isLoggedIn || !currentIsPro) {
+      if (!isLoggedIn || !stillAllowed) {
         setShowPaywall(true);
       } else {
         setShowPaywall(false);
@@ -152,15 +169,18 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
     }
   }
 
-  async function handleTestPurchase() {
+  // type: 'basic' = Plano Essencial (20 correções) | 'combo' = vitalício ilimitado
+  async function handleTestPurchase(type: "basic" | "combo" = "basic") {
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      const { error } = await supabase.from("profiles").update({ is_pro: true }).eq("id", user.id);
+      const updates: any = type === "combo"
+        ? { is_pro: true, has_full_access: true }
+        : { is_pro: true, credits: LIMITE_ESSENCIAL };
+      const { error } = await supabase.from("profiles").update(updates).eq("id", user.id);
       if (error) {
-        console.error("Erro ao ativar PRO:", error);
+        console.error("Erro ao ativar plano:", error);
         return;
       }
-      setIsPro(true);
       setShowPaywall(false);
       window.location.reload();
     } else {
@@ -168,6 +188,27 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       window.location.href = "/auth";
     }
   }
+
+  // Compra de créditos avulsos (somente para quem já tem o Plano Essencial)
+  async function handleBuyCredits(qtd: number) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      window.location.href = "/auth";
+      return;
+    }
+    const { error } = await supabase
+      .from("profiles")
+      .update({ credits: credits + qtd } as any)
+      .eq("id", user.id);
+    if (error) {
+      console.error("Erro ao adicionar créditos:", error);
+      return;
+    }
+    setCredits(credits + qtd);
+    setShowPaywall(false);
+    window.location.reload();
+  }
+
 
   return (
     <div className="w-full space-y-8">

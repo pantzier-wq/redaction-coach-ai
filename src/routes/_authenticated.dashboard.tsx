@@ -258,6 +258,12 @@ function Dashboard() {
             </div>
           )}
 
+          {activeSection === "progresso" && (
+            <ProgressSection essays={essays} onGoToCorrection={() => setActiveSection("correcao")} />
+          )}
+
+
+
           {activeSection === "upgrade" && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="max-w-2xl mx-auto text-center py-12">
@@ -432,28 +438,8 @@ function Dashboard() {
             </div>
           )}
 
-          {(activeSection === "repertorios" || activeSection === "conectivos") && !(profile as any)?.has_full_access && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="max-w-2xl mx-auto text-center py-12">
-                <div className="p-6 rounded-3xl bg-primary/10 border-2 border-primary/20 mb-8 inline-block">
-                  <Sparkles className="w-16 h-16 text-primary animate-pulse" />
-                </div>
-                <h2 className="text-4xl font-black mb-4 tracking-tight">Área Exclusiva Pro 👑</h2>
-                <p className="text-xl text-muted-foreground mb-12 leading-relaxed">
-                  Ah, se você quer adquirir melhores materiais e acessar esta área exclusiva, basta acessar a aba <strong>Plano PRO</strong> para garantir o Combo Nota 1000.
-                </p>
-                
-                <button 
-                  onClick={() => setActiveSection("upgrade")}
-                  className="px-8 py-4 rounded-xl bg-primary text-primary-foreground font-black text-lg hover:scale-105 transition-transform shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)]"
-                >
-                  VER PLANOS DISPONÍVEIS
-                </button>
-              </div>
-            </div>
-          )}
+          {activeSection === "repertorios" && (
 
-          {activeSection === "repertorios" && (profile as any)?.has_full_access && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               {/* 2. Abertura da página */}
               <div className="mb-12">
@@ -503,11 +489,29 @@ function Dashboard() {
               </div>
 
               {/* Biblioteca de Repertórios Section */}
-              <RepertoriosLibrary />
+              {(profile as any)?.has_full_access ? (
+                <RepertoriosLibrary />
+              ) : (
+                <LockedLibraryOffer
+                  titulo="Biblioteca completa de 70+ Repertórios Coringas"
+                  descricao="Você viu a introdução. A biblioteca completa, com repertórios prontos por eixo temático e a IA que cria repertórios sob medida para o seu tema, faz parte do Combo Nota 1000."
+                  itens={[
+                    "70+ repertórios validados (filosofia, sociologia, história, cinema, leis)",
+                    "IA de Repertório: gera citação + como aplicar no seu tema",
+                    "Busca por eixo temático e cópia rápida para o seu texto",
+                    "Correções de redação ilimitadas e vitalícias",
+                    "Laboratório de Conectivos IA + quiz e flashcards",
+                    "Histórico de evolução com até 50 redações",
+                  ]}
+                  onBuy={() => handleTestPurchase('full')}
+                  onSeePlans={() => setActiveSection("upgrade")}
+                />
+              )}
             </div>
           )}
 
-          {activeSection === "conectivos" && (profile as any)?.has_full_access && (
+          {activeSection === "conectivos" && (
+
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               {/* Header */}
               <div className="mb-12">
@@ -536,28 +540,48 @@ function Dashboard() {
                 </div>
               </div>
 
-              {/* IA de Conectivos */}
-              <div className="mb-12 p-8 rounded-[2rem] border-2 border-primary/20 bg-primary/5 relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-10">
-                  <MessageSquare className="w-24 h-24 text-primary" />
-                </div>
-                
-                <div className="relative z-10">
-                  <h3 className="text-xl font-black mb-2 flex items-center gap-2">
-                    <Zap className="w-6 h-6 text-primary" /> Laboratório de Conectivos IA
-                  </h3>
-                  <p className="text-muted-foreground text-sm font-bold mb-6 max-w-2xl">
-                    Cole sua frase abaixo para que nossa IA analise se o conectivo está bem aplicado ou sugira um melhor para o seu contexto.
-                  </p>
+              {(profile as any)?.has_full_access ? (
+                <>
+                  {/* IA de Conectivos */}
+                  <div className="mb-12 p-8 rounded-[2rem] border-2 border-primary/20 bg-primary/5 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-4 opacity-10">
+                      <MessageSquare className="w-24 h-24 text-primary" />
+                    </div>
 
-                  <ConectivosIA />
-                </div>
-              </div>
+                    <div className="relative z-10">
+                      <h3 className="text-xl font-black mb-2 flex items-center gap-2">
+                        <Zap className="w-6 h-6 text-primary" /> Laboratório de Conectivos IA
+                      </h3>
+                      <p className="text-muted-foreground text-sm font-bold mb-6 max-w-2xl">
+                        Cole sua frase abaixo para que nossa IA analise se o conectivo está bem aplicado ou sugira um melhor para o seu contexto.
+                      </p>
 
-              {/* Biblioteca de Conectivos Section */}
-              <ConectivosLibrary />
+                      <ConectivosIA />
+                    </div>
+                  </div>
+
+                  {/* Biblioteca de Conectivos Section */}
+                  <ConectivosLibrary />
+                </>
+              ) : (
+                <LockedLibraryOffer
+                  titulo="Biblioteca completa de Conectivos + Laboratório IA"
+                  descricao="Essa é só a introdução. A tabela completa de conectivos por função, o quiz de treino e o Laboratório de Conectivos IA fazem parte do Combo Nota 1000."
+                  itens={[
+                    "Tabela completa de conectivos separados por função",
+                    "Laboratório de Conectivos IA: analisa sua frase e sugere o melhor",
+                    "Quiz e flashcards para dominar a Competência 4",
+                    "70+ Repertórios Coringas + IA de Repertório",
+                    "Correções de redação ilimitadas e vitalícias",
+                    "Histórico de evolução com até 50 redações",
+                  ]}
+                  onBuy={() => handleTestPurchase('full')}
+                  onSeePlans={() => setActiveSection("upgrade")}
+                />
+              )}
             </div>
           )}
+
         </div>
       </main>
     </div>

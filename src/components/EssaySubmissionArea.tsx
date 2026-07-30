@@ -339,7 +339,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
             {isLoggedIn && ((result && showPaywall) || (!canCorrect && showPaywall)) && (
               <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-background/80 backdrop-blur-sm flex items-start justify-center p-4 md:p-6 pt-20 md:pt-24 pb-10">
                 <div 
-                  className="w-full max-w-lg md:max-w-2xl rounded-3xl border border-[#22c55e]/50 bg-card/95 p-6 md:p-10 shadow-[0_0_100px_rgba(34,197,94,0.4)] backdrop-blur-2xl relative animate-in fade-in zoom-in duration-500"
+                  className="w-full max-w-lg md:max-w-4xl rounded-3xl border border-[#22c55e]/50 bg-card/95 p-6 md:p-10 shadow-[0_0_100px_rgba(34,197,94,0.4)] backdrop-blur-2xl relative animate-in fade-in zoom-in duration-500"
                 >
 
                   <div className="absolute -top-12 md:-top-16 left-1/2 -translate-x-1/2 z-10">
@@ -400,37 +400,37 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                             <Zap className="w-5 h-5 text-white/60" />
                           </div>
                           <div>
-                            <h3 className="text-sm font-black text-white/90 leading-tight uppercase tracking-tight">Plano Essencial</h3>
-                            <p className="text-[9px] font-bold text-white/40 leading-tight">ACESSO VITALÍCIO • 20 CORREÇÕES</p>
+                            <h3 className="text-lg font-black text-white/90 leading-tight uppercase tracking-tight">Plano Essencial</h3>
+                            <p className="text-[11px] font-bold text-white/40 leading-tight">ACESSO VITALÍCIO • 20 CORREÇÕES</p>
                           </div>
                         </div>
                         
                         <ul className="space-y-2 mb-6 flex-1">
-                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/70">
+                          <li className="flex items-start gap-2 text-sm font-medium text-white/80">
                             <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
                             <span><strong>20 correções</strong> de IA (limite do plano)</span>
                           </li>
-                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/70">
+                          <li className="flex items-start gap-2 text-sm font-medium text-white/80">
                             <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
                             <span>Histórico com <strong>gráfico de evolução</strong></span>
                           </li>
-                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/70">
+                          <li className="flex items-start gap-2 text-sm font-medium text-white/80">
                             <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
                             <span>Feedback oficial padrão <strong>INEP</strong></span>
                           </li>
-                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/70">
+                          <li className="flex items-start gap-2 text-sm font-medium text-white/80">
                             <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
                             <span>Pode comprar <strong>créditos extras</strong> depois</span>
                           </li>
-                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/30">
+                          <li className="flex items-start gap-2 text-sm font-medium text-white/35">
                             <span className="text-destructive shrink-0 font-bold">✕</span>
                             <span className="line-through italic">Correções ilimitadas</span>
                           </li>
-                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/30">
+                          <li className="flex items-start gap-2 text-sm font-medium text-white/35">
                             <span className="text-destructive shrink-0 font-bold">✕</span>
                             <span className="line-through italic">Laboratório de Conectivos IA</span>
                           </li>
-                          <li className="flex items-start gap-2 text-[10px] font-medium text-white/30">
+                          <li className="flex items-start gap-2 text-sm font-medium text-white/35">
                             <span className="text-destructive shrink-0 font-bold">✕</span>
                             <span className="line-through italic">Gerador de Repertório Coringa</span>
                           </li>
@@ -438,12 +438,12 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
                         <div className="mt-auto">
                           <div className="flex items-baseline gap-1 mb-3">
-                             <span className="text-xl font-black text-white/90">R$ 19,90</span>
-                             <span className="text-[10px] font-bold text-white/40 uppercase">Taxa única</span>
+                             <span className="text-3xl font-black text-white/90">R$ 19,90</span>
+                             <span className="text-xs font-bold text-white/40 uppercase">Taxa única</span>
                           </div>
                           <button
                             onClick={() => handleTestPurchase("basic")}
-                            className="w-full py-2.5 rounded-xl bg-white/5 text-white/60 font-black text-[10px] uppercase tracking-widest hover:bg-white/10 transition-all border border-white/10"
+                            className="w-full py-2.5 rounded-xl bg-white/5 text-white/60 font-black text-sm uppercase tracking-widest hover:bg-white/10 transition-all border border-white/10"
                           >
                             LIBERAR ACESSO BÁSICO
                           </button>
@@ -454,7 +454,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
                       {/* COMBO NOTA 1000 */}
                       <div className="flex flex-col rounded-2xl border-2 border-[#22c55e] bg-[#22c55e]/5 p-5 relative overflow-hidden group shadow-[0_0_40px_rgba(34,197,94,0.15)] scale-[1.02]">
-                        <div className="absolute top-0 right-0 px-3 py-1 bg-[#22c55e] text-white text-[9px] font-black uppercase tracking-wider rounded-bl-lg animate-pulse z-20 shadow-lg">
+                        <div className="absolute top-0 right-0 px-3 py-1 bg-[#22c55e] text-white text-[11px] font-black uppercase tracking-wider rounded-bl-lg animate-pulse z-20 shadow-lg">
                           OFERTA COMPLETA 🔥
                         </div>
                         
@@ -463,8 +463,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                             <Sparkles className="w-5 h-5 text-white animate-pulse" />
                           </div>
                           <div>
-                            <h3 className="text-sm font-black text-white leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
-                            <p className="text-[9px] font-bold text-[#22c55e] leading-tight">O PODER DA APROVAÇÃO</p>
+                            <h3 className="text-lg font-black text-white leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
+                            <p className="text-[11px] font-bold text-[#22c55e] leading-tight">O PODER DA APROVAÇÃO</p>
                           </div>
                         </div>
 
@@ -475,8 +475,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                             { n: "2", l: "IAs Bônus" },
                           ].map((s) => (
                             <div key={s.l} className="rounded-xl bg-[#22c55e]/10 border border-[#22c55e]/20 py-2 text-center">
-                              <div className="text-base font-black text-[#22c55e] leading-none">{s.n}</div>
-                              <div className="text-[8px] font-bold uppercase tracking-widest text-white/60 mt-1">{s.l}</div>
+                              <div className="text-2xl font-black text-[#22c55e] leading-none">{s.n}</div>
+                              <div className="text-[10px] font-bold uppercase tracking-widest text-white/60 mt-1">{s.l}</div>
                             </div>
                           ))}
                         </div>
@@ -492,10 +492,10 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                             { t: "BÔNUS: E-book \"Domine a C3\"", d: "Projeto de texto e argumentação de nota 200." },
                           ].map((b) => (
                             <li key={b.t} className="flex items-start gap-2">
-                              <span className="mt-0.5 h-4 w-4 shrink-0 rounded-full bg-[#22c55e] text-white text-[9px] font-black flex items-center justify-center">✓</span>
+                              <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-[#22c55e] text-white text-[11px] font-black flex items-center justify-center">✓</span>
                               <div className="leading-tight">
-                                <div className="text-[11px] font-black text-white">{b.t}</div>
-                                <div className="text-[9px] font-medium text-white/50">{b.d}</div>
+                                <div className="text-sm font-black text-white">{b.t}</div>
+                                <div className="text-xs font-medium text-white/60 mt-0.5">{b.d}</div>
                               </div>
                             </li>
                           ))}
@@ -504,16 +504,16 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                         <div className="mt-auto">
                           <div className="mb-3 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 p-3">
                             <div className="flex items-center gap-2">
-                              <span className="text-[10px] font-bold text-white/40 line-through italic">R$ 59,90</span>
-                              <span className="text-2xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 39,90</span>
+                              <span className="text-sm font-bold text-white/40 line-through italic">R$ 59,90</span>
+                              <span className="text-4xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 39,90</span>
                             </div>
-                            <p className="text-[9px] font-bold uppercase tracking-widest text-white/50 mt-1">
+                            <p className="text-[11px] font-bold uppercase tracking-widest text-white/50 mt-2 leading-relaxed">
                               Pagamento único • Acesso vitalício • Só R$ 20 a mais que o básico
                             </p>
                           </div>
                           <button
                             onClick={() => handleTestPurchase("combo")}
-                            className="w-full py-3.5 rounded-xl bg-[#22c55e] text-white font-black text-xs uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(34,197,94,0.4)] relative overflow-hidden border border-[#22c55e]/20"
+                            className="w-full py-3.5 rounded-xl bg-[#22c55e] text-white font-black text-sm uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(34,197,94,0.4)] relative overflow-hidden border border-[#22c55e]/20"
                           >
                             <span className="relative z-10">GARANTIR MINHA VAGA →</span>
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
@@ -523,7 +523,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                     </div>
 
                     <div className="flex flex-col gap-2 text-center pt-2">
-                      <p className="text-[10px] text-white font-black uppercase tracking-widest bg-white/5 py-1.5 rounded-lg border border-white/10">
+                      <p className="text-xs text-white font-black uppercase tracking-widest bg-white/5 py-1.5 rounded-lg border border-white/10">
                         ⚡ Liberação Imediata • Pagamento Único
                       </p>
                     </div>

@@ -11,6 +11,8 @@ interface EssaySubmissionAreaProps {
   onSuccess?: (result: Correcao) => void;
 }
 
+const LIMITE_ESSENCIAL = 20;
+
 export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }: EssaySubmissionAreaProps) {
   const [tema, setTema] = useState("");
   const [redacao, setRedacao] = useState("");
@@ -19,7 +21,29 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   const [erro, setErro] = useState<string | null>(null);
   const [result, setResult] = useState<Correcao | null>(null);
   const [isPro, setIsPro] = useState(propIsPro || false);
+  const [hasFullAccess, setHasFullAccess] = useState(false);
+  const [credits, setCredits] = useState(0);
   const corrigir = useServerFn(corrigirRedacao);
+
+  // Carrega plano/créditos do usuário logado
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    let active = true;
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_pro, has_full_access, credits")
+        .eq("id", user.id)
+        .single();
+      if (!active || !profile) return;
+      setIsPro(!!profile.is_pro);
+      setHasFullAccess(!!(profile as any).has_full_access);
+      setCredits((profile as any).credits ?? 0);
+    })();
+    return () => { active = false; };
+  }, [isLoggedIn]);
   
   // Efeito para carregar redação do histórico se houver no localStorage
   useEffect(() => {

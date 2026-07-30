@@ -266,30 +266,69 @@ function Dashboard() {
                 </div>
                 <h2 className="text-4xl font-black mb-4 tracking-tight">Garanta seu Futuro 🚀</h2>
                 <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                  Garanta correções ilimitadas e acesso vitalício a todas as ferramentas do CorrigeAI.
+                  Escolha entre o Plano Essencial (20 correções) ou o Combo Nota 1000 com correções ilimitadas.
                 </p>
+
+                {/* CRÉDITOS EXTRAS — exclusivo para quem tem o Plano Essencial */}
+                {profile?.is_pro && !(profile as any)?.has_full_access && (
+                  <div className="mb-12 rounded-3xl border border-border bg-card p-6 text-left">
+                    <div className="flex items-center justify-between gap-4 mb-4">
+                      <div>
+                        <h3 className="text-lg font-black uppercase tracking-tight">Créditos de Correção</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Saldo atual: <strong className="text-primary">{(profile as any)?.credits ?? 0}</strong> correções
+                        </p>
+                      </div>
+                      <Zap className="w-8 h-8 text-primary shrink-0" />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {[
+                        { qtd: 5, preco: "R$ 7,90" },
+                        { qtd: 10, preco: "R$ 9,90" },
+                        { qtd: 20, preco: "R$ 14,90" },
+                      ].map((pack) => (
+                        <button
+                          key={pack.qtd}
+                          onClick={() => handleBuyCredits(pack.qtd)}
+                          className="rounded-2xl border border-border bg-background p-4 text-center hover:border-primary/60 transition-all"
+                        >
+                          <div className="text-lg font-black">{pack.qtd} correções</div>
+                          <div className="text-sm font-black text-[#22c55e]">{pack.preco}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-12">
-                   {/* PLANO VITALÍCIO - Básico */}
+                   {/* PLANO ESSENCIAL */}
                   <div className="flex flex-col rounded-3xl border-2 border-white/20 bg-white/10 p-8 relative overflow-hidden group hover:opacity-100 transition-opacity">
                     <div className="mb-6 flex items-center gap-4">
                       <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
                         <Zap className="w-6 h-6 text-[#22c55e]" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-black text-[#22c55e] leading-tight uppercase tracking-tight">Acesso Vitalício</h3>
-                        <p className="text-xs font-bold text-[#22c55e]/60 leading-tight">Plano Básico</p>
+                        <h3 className="text-xl font-black text-[#22c55e] leading-tight uppercase tracking-tight">Plano Essencial</h3>
+                        <p className="text-xs font-bold text-[#22c55e]/60 leading-tight">Vitalício • 20 correções</p>
                       </div>
                     </div>
 
                     <ul className="space-y-3 mb-8 flex-1">
                       <li className="flex items-start gap-3 text-sm font-bold text-[#22c55e]">
                         <span className="shrink-0">✓</span>
-                        <span>Correções de redação ilimitadas</span>
+                        <span>20 correções de redação com IA</span>
                       </li>
                       <li className="flex items-start gap-3 text-sm font-bold text-[#22c55e]">
                         <span className="shrink-0">✓</span>
                         <span>Histórico completo de evolução</span>
+                      </li>
+                      <li className="flex items-start gap-3 text-sm font-bold text-[#22c55e]">
+                        <span className="shrink-0">✓</span>
+                        <span>Pode comprar créditos extras depois</span>
+                      </li>
+                      <li className="flex items-start gap-3 text-sm font-bold text-white/40">
+                        <span className="text-destructive shrink-0">✕</span>
+                        <span className="line-through">Correções ilimitadas</span>
                       </li>
                       <li className="flex items-start gap-3 text-sm font-bold text-white/40">
                         <span className="text-destructive shrink-0">✕</span>
@@ -306,15 +345,17 @@ function Dashboard() {
                     </ul>
 
                     <div className="mt-auto">
-                      <div className="text-3xl font-black text-[#22c55e] mb-6">R$ 24,90</div>
+                      <div className="text-3xl font-black text-[#22c55e] mb-6">R$ 19,90</div>
                       <button
                         onClick={() => handleTestPurchase('pro')}
-                        className="w-full py-4 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-sm uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20"
+                        disabled={!!profile?.is_pro}
+                        className="w-full py-4 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-sm uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20 disabled:opacity-40 disabled:cursor-not-allowed"
                       >
-                        LIBERAR BÁSICO
+                        {profile?.is_pro ? "PLANO ATIVO" : "LIBERAR ESSENCIAL"}
                       </button>
                     </div>
                   </div>
+
 
                   {/* COMBO NOTA 1000 - Premium */}
                   <div className="flex flex-col rounded-3xl border-2 border-primary bg-primary/10 p-8 relative overflow-hidden group shadow-[0_0_60px_rgba(var(--primary-rgb),0.3)] scale-[1.05]">

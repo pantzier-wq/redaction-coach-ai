@@ -471,7 +471,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                         <ul className="space-y-2.5 mb-6 flex-1">
                           <li className="flex items-start gap-2 text-[10px] font-bold text-white">
                             <span className="text-[#22c55e] shrink-0">✓</span>
-                            <span><strong>TUDO</strong> do Vitalício + Ferramentas VIP</span>
+                            <span><strong>Correções ILIMITADAS</strong> para sempre (sem créditos)</span>
                           </li>
                           <li className="flex items-start gap-2 text-[10px] font-bold text-white">
                             <span className="text-[#22c55e] shrink-0">✓</span>

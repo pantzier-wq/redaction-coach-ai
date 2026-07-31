@@ -1469,6 +1469,87 @@ function RepertoriosLibrary() {
   );
 }
 
+const REPERTORIO_LOADING_STEPS = [
+  "Interpretando o seu tema...",
+  "Buscando repertórios legitimados...",
+  "Filtrando o que os corretores mais valorizam...",
+  "Conectando o repertório ao seu argumento...",
+  "Montando o exemplo pronto para usar...",
+];
+
+function RepertorioAnalyzing() {
+  const [index, setIndex] = useState(0);
+  const [progress, setProgress] = useState(6);
+
+  useEffect(() => {
+    const stepTimer = setInterval(() => {
+      setIndex((prev) => (prev + 1) % REPERTORIO_LOADING_STEPS.length);
+    }, 2200);
+
+    const progressTimer = setInterval(() => {
+      setProgress((prev) => (prev >= 95 ? 95 : prev + Math.random() * 6));
+    }, 450);
+
+    return () => {
+      clearInterval(stepTimer);
+      clearInterval(progressTimer);
+    };
+  }, []);
+
+  return (
+    <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300 py-4">
+      <div className="text-center">
+        <div className="relative w-24 h-24 mx-auto mb-6">
+          <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
+          <div className="absolute inset-2 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Sparkles className="w-9 h-9 text-primary animate-pulse" />
+          </div>
+        </div>
+        <h3 className="text-2xl font-black tracking-tight">IA analisando seu tema</h3>
+        <p className="text-sm font-bold text-muted-foreground mt-1">Isso leva só alguns segundos. Não feche esta janela.</p>
+      </div>
+
+      <div className="space-y-3">
+        <div className="h-3 w-full rounded-full bg-muted/40 overflow-hidden border border-border/50">
+          <div
+            className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+            style={{ width: `${Math.min(progress, 95)}%` }}
+          />
+        </div>
+        <p className="text-[10px] font-black uppercase tracking-widest text-primary text-center">
+          {Math.round(Math.min(progress, 95))}% concluído
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        {REPERTORIO_LOADING_STEPS.map((label, i) => (
+          <div
+            key={label}
+            className={cn(
+              "flex items-center gap-3 px-5 py-3 rounded-2xl border transition-all duration-300",
+              i < index
+                ? "bg-[#22c55e]/10 border-[#22c55e]/30 text-foreground"
+                : i === index
+                  ? "bg-primary/10 border-primary/30 text-foreground"
+                  : "bg-muted/20 border-border/40 text-muted-foreground opacity-60",
+            )}
+          >
+            {i < index ? (
+              <Check className="w-4 h-4 text-[#22c55e] shrink-0" />
+            ) : i === index ? (
+              <div className="w-4 h-4 shrink-0 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+            ) : (
+              <div className="w-4 h-4 shrink-0 rounded-full border border-border" />
+            )}
+            <span className="text-xs font-bold leading-tight">{label}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function RepertorioIA({ onClose }: { onClose: () => void }) {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -1536,7 +1617,8 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
         </button>
 
         <div className="p-8 md:p-12 overflow-y-auto">
-          {step === 1 && (
+          {loading && <RepertorioAnalyzing />}
+          {!loading && step === 1 && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
               <div className="text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -1585,7 +1667,7 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
             </div>
           )}
 
-          {step === 2 && currentResponse && (
+          {!loading && step === 2 && currentResponse && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
               <div className="flex items-start gap-4 p-6 rounded-3xl bg-primary/5 border border-primary/20">
                 <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shrink-0">
@@ -1621,7 +1703,7 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
             </div>
           )}
 
-          {step === 3 && currentResponse?.repertorio && (
+          {!loading && step === 3 && currentResponse?.repertorio && (
             <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
               <div className="text-center">
                 <div className="w-16 h-16 bg-[#22c55e]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">

@@ -139,8 +139,8 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
                   : "text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent"
               )}
             >
-              <item.icon className={cn("w-5 h-5", activeSection === item.id ? "text-primary" : item.color)} />
-              {item.label}
+              <item.icon className={cn("w-5 h-5 shrink-0", activeSection === item.id ? "text-primary" : item.color)} />
+              <span className="text-left leading-tight">{item.label}</span>
             </button>
           ))}
         </nav>

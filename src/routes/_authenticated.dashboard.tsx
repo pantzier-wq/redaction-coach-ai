@@ -1709,17 +1709,12 @@ interface LockedLibraryOfferProps {
 
 function LockedLibraryOffer({ titulo, descricao, itens, onBuy, onSeePlans }: LockedLibraryOfferProps) {
   return (
-    <div className="relative">
-      <div className="pointer-events-none select-none opacity-20 blur-[3px] grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" aria-hidden="true">
-        {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="h-28 rounded-2xl border border-border bg-card" />
-        ))}
-      </div>
-
+    <div className="relative -mt-2">
       <div className="rounded-[2rem] border-2 border-secondary/40 bg-card p-6 md:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/30 text-secondary text-[10px] font-black uppercase tracking-widest mb-4">
-          <Sparkles className="w-3 h-3" /> Acesso liberado no Combo Nota 1000
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/25 border border-secondary/60 text-foreground text-[11px] font-black uppercase tracking-widest mb-4">
+          <Sparkles className="w-3.5 h-3.5 text-secondary" /> Acesso liberado no Combo Nota 1000
         </div>
+
 
         <h3 className="text-2xl md:text-3xl font-black tracking-tight mb-3">{titulo}</h3>
         <p className="text-base text-muted-foreground leading-relaxed mb-8 max-w-2xl">{descricao}</p>
@@ -1735,10 +1730,11 @@ function LockedLibraryOffer({ titulo, descricao, itens, onBuy, onSeePlans }: Loc
 
         <div className="flex flex-col md:flex-row md:items-center gap-6 pt-6 border-t border-border">
           <div>
-            <p className="text-sm text-muted-foreground line-through font-bold">De R$ 59,90</p>
-            <p className="text-4xl font-black text-secondary leading-none">R$ 39,90</p>
-            <p className="text-xs text-muted-foreground font-bold mt-1">Pagamento único • acesso vitalício</p>
+            <p className="text-sm text-foreground/70 line-through font-bold">De R$ 59,90</p>
+            <p className="text-4xl font-black text-foreground leading-none drop-shadow-[0_0_12px_rgba(255,255,255,0.15)]">R$ 39,90</p>
+            <p className="text-sm text-foreground/90 font-bold mt-1">Pagamento único • acesso vitalício</p>
           </div>
+
           <div className="flex-1 flex flex-col sm:flex-row gap-3 md:justify-end">
             <button
               onClick={onBuy}

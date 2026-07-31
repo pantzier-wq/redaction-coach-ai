@@ -1730,10 +1730,11 @@ function LockedLibraryOffer({ titulo, descricao, itens, onBuy, onSeePlans }: Loc
 
         <div className="flex flex-col md:flex-row md:items-center gap-6 pt-6 border-t border-border">
           <div>
-            <p className="text-sm text-muted-foreground line-through font-bold">De R$ 59,90</p>
-            <p className="text-4xl font-black text-secondary leading-none">R$ 39,90</p>
-            <p className="text-xs text-muted-foreground font-bold mt-1">Pagamento único • acesso vitalício</p>
+            <p className="text-sm text-foreground/70 line-through font-bold">De R$ 59,90</p>
+            <p className="text-4xl font-black text-foreground leading-none drop-shadow-[0_0_12px_rgba(255,255,255,0.15)]">R$ 39,90</p>
+            <p className="text-sm text-foreground/90 font-bold mt-1">Pagamento único • acesso vitalício</p>
           </div>
+
           <div className="flex-1 flex flex-col sm:flex-row gap-3 md:justify-end">
             <button
               onClick={onBuy}

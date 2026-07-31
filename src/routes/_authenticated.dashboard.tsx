@@ -313,6 +313,9 @@ function Dashboard() {
                         >
                           <div className="text-lg font-black">{pack.qtd} correções</div>
                           <div className="text-sm font-black text-[#22c55e]">{pack.preco}</div>
+                          <div className="mt-2 rounded-lg bg-[#22c55e]/15 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-[#22c55e]">
+                            Obtenha clicando aqui
+                          </div>
                         </button>
                       ))}
                     </div>

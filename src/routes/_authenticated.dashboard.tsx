@@ -1617,7 +1617,8 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
         </button>
 
         <div className="p-8 md:p-12 overflow-y-auto">
-          {step === 1 && (
+          {loading && <RepertorioAnalyzing />}
+          {!loading && step === 1 && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
               <div className="text-center">
                 <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -1666,7 +1667,7 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
             </div>
           )}
 
-          {step === 2 && currentResponse && (
+          {!loading && step === 2 && currentResponse && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
               <div className="flex items-start gap-4 p-6 rounded-3xl bg-primary/5 border border-primary/20">
                 <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shrink-0">
@@ -1702,7 +1703,7 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
             </div>
           )}
 
-          {step === 3 && currentResponse?.repertorio && (
+          {!loading && step === 3 && currentResponse?.repertorio && (
             <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
               <div className="text-center">
                 <div className="w-16 h-16 bg-[#22c55e]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">

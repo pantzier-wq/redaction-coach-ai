@@ -31,7 +31,7 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
       id: "dashboard", 
       label: "Início", 
       icon: LayoutDashboard,
-      color: "text-foreground"
+      color: "text-blue-400"
     },
     { 
       id: "correcao", 
@@ -43,7 +43,7 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
       id: "historico", 
       label: "Minhas Redações", 
       icon: History,
-      color: "text-foreground"
+      color: "text-cyan-400"
     },
     { 
       id: "progresso", 
@@ -56,19 +56,19 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
       id: "repertorios", 
       label: "Biblioteca de Repertórios", 
       icon: BookOpen,
-      color: "text-secondary"
+      color: "text-amber-400"
     },
     { 
       id: "conectivos", 
       label: "Biblioteca de Conectivos", 
       icon: Zap,
-      color: "text-primary"
+      color: "text-rose-400"
     },
     { 
       id: "upgrade", 
       label: "Plano PRO", 
       icon: Sparkles,
-      color: "text-secondary"
+      color: "text-yellow-400"
     },
   ];
 

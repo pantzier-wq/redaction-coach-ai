@@ -163,10 +163,7 @@ export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: str
 export async function createRepertoryWithAi(lovableApiKey: string, input: z.infer<typeof repertoryInputSchema>): Promise<RespostaRepertorio> {
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
-  const messages = [
-    { 
-      role: "system" as const, 
-      content: `${REPERTORY_SYSTEM_PROMPT}
+  const systemPrompt = `${REPERTORY_SYSTEM_PROMPT}
 
 IMPORTANTE: Você deve responder APENAS com um objeto JSON válido. Não inclua explicações fora do JSON.
 Formato esperado:
@@ -181,29 +178,26 @@ Formato esperado:
   },
   "proximaPergunta": "Pergunta se precisar de mais detalhes"
 }
-O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obrigatório.` 
+O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obrigatório.`;
+
+  const messages = [
+    ...(input.historico || []).map((h) => ({ role: h.role as "user" | "assistant", content: h.content })),
+    {
+      role: "user" as const,
+      content: `Tema: ${input.tema}. ${input.genero ? `Gênero: ${input.genero}.` : ""} ${input.detalhes ? `Mais detalhes: ${input.detalhes}` : ""}`,
     },
-    ...(input.historico || []).map(h => ({ role: h.role as "user" | "assistant", content: h.content })),
-    { role: "user" as const, content: `Tema: ${input.tema}. ${input.genero ? `Gênero: ${input.genero}.` : ""} ${input.detalhes ? `Mais detalhes: ${input.detalhes}` : ""}` }
   ];
 
-  console.log("Enviando solicitação de repertório para a IA:", JSON.stringify(messages));
-
   try {
-    const { text, finishReason } = await generateText({
+    const { text } = await generateText({
       model: gateway("google/gemini-3.6-flash"),
-      messages: messages,
-      temperature: 0.7,
+      system: systemPrompt,
+      messages,
       maxRetries: 2,
-      // @ts-ignore - Vercel AI SDK specific param
-      maxTokens: 1000
     });
-
-    console.log("Resposta bruta da IA para repertório:", text, "Reason:", finishReason);
 
     const parsed = extractJsonObject(text);
     if (!parsed) {
-      console.error("Falha ao extrair JSON da resposta:", text);
       return {
         message: text.length > 10 ? text : "Não consegui gerar uma resposta estruturada. Por favor, tente reformular sua ideia.",
       };
@@ -212,6 +206,6 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
     return RepertoryAiResponseSchema.parse(parsed);
   } catch (e: any) {
     console.error("Erro na chamada generateText (Repertório):", e);
-    throw new Error(`Falha na comunicação com a IA: ${e.message || 'Erro desconhecido'}`);
+    throw new Error(`Falha na comunicação com a IA: ${e.message || "Erro desconhecido"}`);
   }
 }

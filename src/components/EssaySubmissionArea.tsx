@@ -214,15 +214,24 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       window.location.href = "/auth";
       return;
     }
+    // Lê o saldo real antes de somar (evita sobrescrever com estado desatualizado)
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("credits")
+      .eq("id", user.id)
+      .single();
+    const novoSaldo = ((profile as any)?.credits ?? 0) + qtd;
+
     const { error } = await supabase
       .from("profiles")
-      .update({ credits: credits + qtd } as any)
+      .update({ credits: novoSaldo } as any)
       .eq("id", user.id);
     if (error) {
       console.error("Erro ao adicionar créditos:", error);
       return;
     }
-    setCredits(credits + qtd);
+    setCredits(novoSaldo);
+
     setShowPaywall(false);
     window.location.reload();
   }

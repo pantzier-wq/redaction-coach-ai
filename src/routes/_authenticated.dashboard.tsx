@@ -413,7 +413,6 @@ function Dashboard() {
                         { t: "70+ Repertórios Coringas", d: "Biblioteca validada que encaixa em qualquer proposta." },
                         { t: "Biblioteca de Conectivos + Treino", d: "Quiz e flashcards para nunca mais repetir palavras." },
                         { t: "Histórico de até 50 redações", d: "Gráfico de evolução por competência, nota a nota." },
-                        { t: "BÔNUS: E-book \"Domine a C3\"", d: "Projeto de texto e argumentação de nota 200." },
                       ].map((b) => (
                         <li key={b.t} className="flex items-start gap-3">
                           <div className="h-5 w-5 rounded-full bg-[#22c55e] flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_15px_rgba(34,197,94,0.4)]">

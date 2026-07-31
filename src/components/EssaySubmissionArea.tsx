@@ -489,7 +489,6 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                             { t: "70+ Repertórios Coringas", d: "Biblioteca validada que encaixa em qualquer proposta do ENEM." },
                             { t: "Biblioteca de Conectivos + Treino", d: "Quiz e flashcards pra nunca mais repetir palavra." },
                             { t: "Histórico de até 50 redações", d: "Gráfico de evolução por competência, nota a nota." },
-                            { t: "BÔNUS: E-book \"Domine a C3\"", d: "Projeto de texto e argumentação de nota 200." },
                           ].map((b) => (
                             <li key={b.t} className="flex items-start gap-2">
                               <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-[#22c55e] text-white text-[11px] font-black flex items-center justify-center">✓</span>

@@ -76,7 +76,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      consume_essay_credit: {
+        Args: never
+        Returns: {
+          allowed: boolean
+          remaining: number
+          unlimited: boolean
+        }[]
+      }
+      refund_essay_credit: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never

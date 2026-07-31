@@ -163,10 +163,8 @@ export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: str
 export async function createRepertoryWithAi(lovableApiKey: string, input: z.infer<typeof repertoryInputSchema>): Promise<RespostaRepertorio> {
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
-  const messages = [
-    { 
-      role: "system" as const, 
-      content: `${REPERTORY_SYSTEM_PROMPT}
+  const systemPrompt = `${REPERTORY_SYSTEM_PROMPT}
+
 
 IMPORTANTE: Você deve responder APENAS com um objeto JSON válido. Não inclua explicações fora do JSON.
 Formato esperado:

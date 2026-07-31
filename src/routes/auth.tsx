@@ -43,7 +43,7 @@ function AuthPage() {
         const shouldUpgrade = localStorage.getItem("should_upgrade_after_auth");
         if (shouldUpgrade) {
           localStorage.removeItem("should_upgrade_after_auth");
-          const { error } = await supabase.from("profiles").update({ is_pro: true }).eq("id", session.user.id);
+          const { error } = await supabase.from("profiles").update({ is_pro: true, credits: 20 }).eq("id", session.user.id);
           if (!error) {
             toast.success("Acesso PRO liberado para testes!");
           }

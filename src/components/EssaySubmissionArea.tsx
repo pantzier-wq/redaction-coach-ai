@@ -70,17 +70,36 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // Logado sem plano ativo ou sem créditos: bloqueia antes de chamar a IA
-    if (isLoggedIn && !canCorrect) {
-      setLoading(true);
-      // Simular carregamento de 30s para percepção de valor antes de mostrar o paywall
-      setTimeout(() => {
-        setLoading(false);
-        setShowPaywall(true);
-      }, 28000);
-      return;
-    }
+    // Reserva atômica do crédito ANTES de chamar a IA (evita gastar 0 créditos
+    // abrindo várias abas ou não descontar quando o usuário sai da página).
+    let creditoConsumido = false;
+    if (isLoggedIn) {
+      const { data: rpcData, error: rpcError } = await (supabase as any).rpc("consume_essay_credit");
+      const info = Array.isArray(rpcData) ? rpcData[0] : rpcData;
 
+      if (rpcError) {
+        setErro("Não foi possível verificar seus créditos. Tente novamente.");
+        return;
+      }
+
+      if (!info?.allowed) {
+        setCredits(Math.max(0, info?.remaining ?? 0));
+        setLoading(true);
+        // Simular carregamento para percepção de valor antes de mostrar o paywall
+        setTimeout(() => {
+          setLoading(false);
+          setShowPaywall(true);
+        }, 28000);
+        return;
+      }
+
+      if (info.unlimited) {
+        setHasFullAccess(true);
+      } else {
+        creditoConsumido = true;
+        setCredits(Math.max(0, info.remaining ?? 0));
+      }
+    }
 
     setErro(null);
     setResult(null);
@@ -91,7 +110,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       const r = await corrigir({ data: { tema: tema.trim(), redacao: redacao.trim() } });
       const elapsed = Date.now() - startTime;
       const wait = Math.max(0, 28000 - elapsed);
-      
+
       if (wait > 0) {
         await new Promise((resolve) => setTimeout(resolve, wait));
       }
@@ -108,11 +127,18 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         }));
       }
 
-      // Atualiza plano e consome crédito quando for Plano Essencial
+      // Salva no banco e sincroniza saldo real
       let stillAllowed = false;
       if (isLoggedIn) {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
+          await supabase.from("essays").insert({
+            user_id: user.id,
+            tema: tema.trim(),
+            redacao: redacao.trim(),
+            resultado: r
+          });
+
           const { data: profile } = await supabase
             .from("profiles")
             .select("is_pro, has_full_access, credits")
@@ -124,23 +150,9 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
           const saldo = (profile as any)?.credits ?? 0;
           setIsPro(pro);
           setHasFullAccess(full);
+          setCredits(saldo);
+          // Saldo já descontado: só continua liberado se ainda sobrar crédito.
           stillAllowed = full || (pro && saldo > 0);
-
-          // Se logado, salvar no banco
-          await supabase.from("essays").insert({
-            user_id: user.id,
-            tema: tema.trim(),
-            redacao: redacao.trim(),
-            resultado: r
-          });
-
-          if (!full && pro) {
-            const novoSaldo = Math.max(0, saldo - 1);
-            await supabase.from("profiles").update({ credits: novoSaldo } as any).eq("id", user.id);
-            setCredits(novoSaldo);
-          } else {
-            setCredits(saldo);
-          }
         }
       }
 
@@ -163,11 +175,17 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       }
 
     } catch (err) {
+      // Se a IA falhou, devolve o crédito reservado
+      if (creditoConsumido) {
+        const { data: novoSaldo } = await (supabase as any).rpc("refund_essay_credit");
+        if (typeof novoSaldo === "number") setCredits(novoSaldo);
+      }
       setErro(err instanceof Error ? err.message : "Erro inesperado");
     } finally {
       setLoading(false);
     }
   }
+
 
   // type: 'basic' = Plano Essencial (20 correções) | 'combo' = vitalício ilimitado
   async function handleTestPurchase(type: "basic" | "combo" = "basic") {
@@ -196,15 +214,24 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       window.location.href = "/auth";
       return;
     }
+    // Lê o saldo real antes de somar (evita sobrescrever com estado desatualizado)
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("credits")
+      .eq("id", user.id)
+      .single();
+    const novoSaldo = ((profile as any)?.credits ?? 0) + qtd;
+
     const { error } = await supabase
       .from("profiles")
-      .update({ credits: credits + qtd } as any)
+      .update({ credits: novoSaldo } as any)
       .eq("id", user.id);
     if (error) {
       console.error("Erro ao adicionar créditos:", error);
       return;
     }
-    setCredits(credits + qtd);
+    setCredits(novoSaldo);
+
     setShowPaywall(false);
     window.location.reload();
   }

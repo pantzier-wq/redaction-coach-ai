@@ -533,7 +533,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                             onClick={() => handleTestPurchase("combo")}
                             className="w-full py-3.5 rounded-xl bg-[#22c55e] text-white font-black text-sm uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(34,197,94,0.4)] relative overflow-hidden border border-[#22c55e]/20"
                           >
-                            <span className="relative z-10">GARANTIR MINHA VAGA →</span>
+                            <span className="relative z-10">GARANTIR MEU COMBO AGORA →</span>
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
                           </button>
                         </div>

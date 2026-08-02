@@ -422,9 +422,9 @@ function Dashboard() {
 
                     <div className="mt-auto">
                       <div className="mb-4 rounded-2xl border border-[#22c55e]/20 bg-[#22c55e]/5 p-4">
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm font-bold text-[#22c55e]/60 line-through italic uppercase tracking-widest">R$ 59,90</span>
-                          <span className="text-4xl font-black text-[#22c55e] drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">R$ 39,90</span>
+                        <div className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
+                          <span className="whitespace-nowrap text-sm font-bold text-[#22c55e]/60 line-through italic uppercase tracking-widest">R$ 59,90</span>
+                          <span className="whitespace-nowrap text-4xl font-black text-[#22c55e] drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">R$ 39,90</span>
                         </div>
                         <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mt-1">
                           Pagamento único • Acesso vitalício • Tudo liberado na hora

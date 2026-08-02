@@ -29,7 +29,7 @@ export async function goToCheckout(plan: CheckoutPlan) {
   const base = CHECKOUT_LINKS[plan];
   if (!base) return;
 
-  let url = base;
+  let url: string = base;
 
   try {
     const { createPurchaseToken } = await import("@/lib/purchase.functions");

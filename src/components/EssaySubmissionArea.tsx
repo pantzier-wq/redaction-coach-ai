@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Sparkles, ArrowRight, Trophy, Zap } from "lucide-react";
-import { goToCheckout } from "@/lib/checkout";
+import { goToCheckout, goToCreditsCheckout } from "@/lib/checkout";
 
 
 interface EssaySubmissionAreaProps {
@@ -198,32 +198,10 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
   // Compra de créditos avulsos (somente para quem já tem o Plano Essencial)
   async function handleBuyCredits(qtd: number) {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      window.location.href = "/auth";
-      return;
-    }
-    // Lê o saldo real antes de somar (evita sobrescrever com estado desatualizado)
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("credits")
-      .eq("id", user.id)
-      .single();
-    const novoSaldo = ((profile as any)?.credits ?? 0) + qtd;
-
-    const { error } = await supabase
-      .from("profiles")
-      .update({ credits: novoSaldo } as any)
-      .eq("id", user.id);
-    if (error) {
-      console.error("Erro ao adicionar créditos:", error);
-      return;
-    }
-    setCredits(novoSaldo);
-
-    setShowPaywall(false);
-    window.location.reload();
+    // Redireciona para o checkout real da recarga (Cakto).
+    goToCreditsCheckout(qtd);
   }
+
 
 
   return (

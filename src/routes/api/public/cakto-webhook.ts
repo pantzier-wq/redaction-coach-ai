@@ -111,7 +111,6 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
         if (isApproved && token) {
           const { data, error } = await supabaseAdmin.rpc("grant_purchase", {
             _token: token,
-            _plan: null,
           });
           const row = Array.isArray(data) ? data[0] : data;
           if (error) {
@@ -141,7 +140,6 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
             if (pendingToken) {
               const { data } = await supabaseAdmin.rpc("grant_purchase", {
                 _token: pendingToken,
-                _plan: null,
               });
               const row = Array.isArray(data) ? data[0] : data;
               applied = row?.note === "applied";

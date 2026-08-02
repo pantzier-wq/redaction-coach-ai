@@ -501,7 +501,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                           <div className="mb-3 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 p-3">
                             <div className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
                               <span className="whitespace-nowrap text-sm font-bold text-white/40 line-through italic">R$ 59,90</span>
-                              <span className="whitespace-nowrap text-4xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 39,90</span>
+                              <span className="whitespace-nowrap text-4xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 39,00</span>
                             </div>
                             <p className="text-[11px] font-bold uppercase tracking-widest text-white/50 mt-2 leading-relaxed">
                               Pagamento único • Acesso vitalício • Só R$ 20 a mais que o básico

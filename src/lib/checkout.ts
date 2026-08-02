@@ -5,7 +5,7 @@
 export const CHECKOUT_LINKS = {
   /** Plano Essencial — R$ 19,90 (20 correções) */
   essencial: "https://pay.cakto.com.br/fmadxgn_1014212",
-  /** Combo Nota 1000 — R$ 39,90 (vitalício) */
+  /** Combo Nota 1000 — R$ 39,00 (vitalício) */
   combo: "https://pay.cakto.com.br/3cvwxof_1014273",
   /** Recarga — 5 correções por R$ 7,90 */
   credits5: "https://pay.cakto.com.br/mayyqgk_1017733",

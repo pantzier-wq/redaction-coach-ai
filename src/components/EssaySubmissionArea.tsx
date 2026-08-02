@@ -4,6 +4,8 @@ import { Link } from "@tanstack/react-router";
 import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Sparkles, ArrowRight, Trophy, Zap } from "lucide-react";
+import { goToCheckout } from "@/lib/checkout";
+
 
 interface EssaySubmissionAreaProps {
   isLoggedIn: boolean;

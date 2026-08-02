@@ -7,6 +7,8 @@ import { type Correcao, type RespostaRepertorio } from "@/lib/correct-essay.func
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
 import { Sidebar } from "@/components/Sidebar";
 import { cn } from "@/lib/utils";
+import { goToCheckout } from "@/lib/checkout";
+
 import { 
   History, 
   Star, 

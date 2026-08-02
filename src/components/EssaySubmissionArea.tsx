@@ -4,6 +4,8 @@ import { Link } from "@tanstack/react-router";
 import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Sparkles, ArrowRight, Trophy, Zap } from "lucide-react";
+import { goToCheckout } from "@/lib/checkout";
+
 
 interface EssaySubmissionAreaProps {
   isLoggedIn: boolean;
@@ -189,23 +191,10 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
   // type: 'basic' = Plano Essencial (20 correções) | 'combo' = vitalício ilimitado
   async function handleTestPurchase(type: "basic" | "combo" = "basic") {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const updates: any = type === "combo"
-        ? { is_pro: true, has_full_access: true }
-        : { is_pro: true, credits: LIMITE_ESSENCIAL };
-      const { error } = await supabase.from("profiles").update(updates).eq("id", user.id);
-      if (error) {
-        console.error("Erro ao ativar plano:", error);
-        return;
-      }
-      setShowPaywall(false);
-      window.location.reload();
-    } else {
-      localStorage.setItem("should_upgrade_after_auth", "true");
-      window.location.href = "/auth";
-    }
+    // Redireciona para o checkout real (Cakto). A liberação acontece após o pagamento.
+    goToCheckout(type === "combo" ? "combo" : "essencial");
   }
+
 
   // Compra de créditos avulsos (somente para quem já tem o Plano Essencial)
   async function handleBuyCredits(qtd: number) {

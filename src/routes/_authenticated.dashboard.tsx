@@ -88,21 +88,10 @@ function Dashboard() {
   };
 
   const handleTestPurchase = async (type: 'pro' | 'full' = 'pro') => {
-    if (profile?.id) {
-      // Cast to any to bypass temporary TS errors until types regenerate
-      const updates: any = type === 'full' 
-        ? { is_pro: true, has_full_access: true }
-        : { is_pro: true, credits: 20 };
-        
-      const { error } = await supabase.from("profiles").update(updates).eq("id", profile.id);
-      if (error) {
-        console.error("Erro ao ativar acesso:", error);
-        return;
-      }
-      setProfile({ ...profile, ...updates });
-      window.location.reload();
-    }
+    // Redireciona para o checkout real (Cakto). A liberação acontece após o pagamento.
+    goToCheckout(type === 'full' ? 'combo' : 'essencial');
   };
+
 
   const handleBuyCredits = async (qtd: number) => {
     if (!profile?.id) return;

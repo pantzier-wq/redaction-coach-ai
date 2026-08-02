@@ -91,13 +91,13 @@ function Dashboard() {
 
   const handleTestPurchase = async (type: 'pro' | 'full' = 'pro') => {
     // Redireciona para o checkout real (Cakto). A liberação acontece após o pagamento.
-    goToCheckout(type === 'full' ? 'combo' : 'essencial');
+    await goToCheckout(type === 'full' ? 'combo' : 'essencial');
   };
 
 
   const handleBuyCredits = async (qtd: number) => {
     // Redireciona para o checkout real da recarga (Cakto).
-    goToCreditsCheckout(qtd);
+    await goToCreditsCheckout(qtd);
   };
 
 

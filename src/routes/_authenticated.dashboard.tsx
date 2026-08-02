@@ -1805,8 +1805,8 @@ function LockedLibraryOffer({ titulo, descricao, itens, onBuy, onSeePlans }: Loc
 
         <div className="flex flex-col md:flex-row md:items-center gap-6 pt-6 border-t border-border">
           <div>
-            <p className="text-sm text-foreground/70 line-through font-bold">De R$ 59,90</p>
-            <p className="text-4xl font-black text-foreground leading-none drop-shadow-[0_0_12px_rgba(255,255,255,0.15)]">R$ 39,90</p>
+            <p className="whitespace-nowrap text-sm text-foreground/70 line-through font-bold">De R$ 59,90</p>
+            <p className="whitespace-nowrap text-4xl font-black text-foreground leading-none drop-shadow-[0_0_12px_rgba(255,255,255,0.15)]">R$ 39,90</p>
             <p className="text-sm text-foreground/90 font-bold mt-1">Pagamento único • acesso vitalício</p>
           </div>
 

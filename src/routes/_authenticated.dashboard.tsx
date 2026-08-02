@@ -7,7 +7,7 @@ import { type Correcao, type RespostaRepertorio } from "@/lib/correct-essay.func
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
 import { Sidebar } from "@/components/Sidebar";
 import { cn } from "@/lib/utils";
-import { goToCheckout } from "@/lib/checkout";
+import { goToCheckout, goToCreditsCheckout } from "@/lib/checkout";
 
 import { 
   History, 
@@ -96,16 +96,10 @@ function Dashboard() {
 
 
   const handleBuyCredits = async (qtd: number) => {
-    if (!profile?.id) return;
-    const novoSaldo = ((profile as any)?.credits ?? 0) + qtd;
-    const { error } = await supabase.from("profiles").update({ credits: novoSaldo } as any).eq("id", profile.id);
-    if (error) {
-      console.error("Erro ao comprar créditos:", error);
-      return;
-    }
-    setProfile({ ...profile, credits: novoSaldo });
-    window.location.reload();
+    // Redireciona para o checkout real da recarga (Cakto).
+    goToCreditsCheckout(qtd);
   };
+
 
 
 

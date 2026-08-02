@@ -41,6 +41,48 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_events: {
+        Row: {
+          applied: boolean
+          created_at: string
+          email: string | null
+          external_id: string | null
+          id: string
+          note: string | null
+          payload: Json
+          plan: string | null
+          provider: string
+          status: string | null
+          token: string | null
+        }
+        Insert: {
+          applied?: boolean
+          created_at?: string
+          email?: string | null
+          external_id?: string | null
+          id?: string
+          note?: string | null
+          payload: Json
+          plan?: string | null
+          provider?: string
+          status?: string | null
+          token?: string | null
+        }
+        Update: {
+          applied?: boolean
+          created_at?: string
+          email?: string | null
+          external_id?: string | null
+          id?: string
+          note?: string | null
+          payload?: Json
+          plan?: string | null
+          provider?: string
+          status?: string | null
+          token?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -71,6 +113,36 @@ export type Database = {
         }
         Relationships: []
       }
+      purchase_tokens: {
+        Row: {
+          created_at: string
+          id: string
+          paid_at: string | null
+          plan: string
+          status: string
+          token: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          plan: string
+          status?: string
+          token: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          plan?: string
+          status?: string
+          token?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -82,6 +154,15 @@ export type Database = {
           allowed: boolean
           remaining: number
           unlimited: boolean
+        }[]
+      }
+      grant_purchase: {
+        Args: { _plan?: string; _token: string }
+        Returns: {
+          note: string
+          ok: boolean
+          plan: string
+          user_id: string
         }[]
       }
       refund_essay_credit: { Args: never; Returns: number }

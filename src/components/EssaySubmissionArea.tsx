@@ -192,14 +192,14 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   // type: 'basic' = Plano Essencial (20 correções) | 'combo' = vitalício ilimitado
   async function handleTestPurchase(type: "basic" | "combo" = "basic") {
     // Redireciona para o checkout real (Cakto). A liberação acontece após o pagamento.
-    goToCheckout(type === "combo" ? "combo" : "essencial");
+    await goToCheckout(type === "combo" ? "combo" : "essencial");
   }
 
 
   // Compra de créditos avulsos (somente para quem já tem o Plano Essencial)
   async function handleBuyCredits(qtd: number) {
     // Redireciona para o checkout real da recarga (Cakto).
-    goToCreditsCheckout(qtd);
+    await goToCreditsCheckout(qtd);
   }
 
 

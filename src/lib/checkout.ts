@@ -17,15 +17,38 @@ export const CHECKOUT_LINKS = {
 
 export type CheckoutPlan = keyof typeof CHECKOUT_LINKS;
 
-/** Abre o checkout do plano informado. */
-export function goToCheckout(plan: CheckoutPlan) {
-  const url = CHECKOUT_LINKS[plan];
-  if (!url) return;
+/**
+ * Abre o checkout do plano informado.
+ *
+ * Quando há usuário logado, geramos antes um token único de compra e o
+ * enviamos ao checkout (utm_content / ref). O webhook devolve esse token e o
+ * app libera o acesso na conta correta, mesmo que o e-mail do pagamento
+ * seja diferente do e-mail cadastrado.
+ */
+export async function goToCheckout(plan: CheckoutPlan) {
+  const base = CHECKOUT_LINKS[plan];
+  if (!base) return;
+
+  let url: string = base;
+
+  try {
+    const { createPurchaseToken } = await import("@/lib/purchase.functions");
+    const { token, email } = await createPurchaseToken({ data: { plan } });
+    const u = new URL(base);
+    u.searchParams.set("utm_content", token);
+    u.searchParams.set("ref", token);
+    if (email) u.searchParams.set("email", email);
+    url = u.toString();
+  } catch {
+    // Usuário não logado (ou falha ao gerar token): segue para o checkout
+    // normal. Nesse caso a liberação será feita pelo e-mail do pagamento.
+  }
+
   window.location.href = url;
 }
 
 /** Abre o checkout da recarga de créditos correspondente à quantidade. */
-export function goToCreditsCheckout(qtd: 5 | 10 | 20 | number) {
+export async function goToCreditsCheckout(qtd: 5 | 10 | 20 | number) {
   const map: Record<number, CheckoutPlan> = {
     5: "credits5",
     10: "credits10",
@@ -33,6 +56,5 @@ export function goToCreditsCheckout(qtd: 5 | 10 | 20 | number) {
   };
   const plan = map[qtd];
   if (!plan) return;
-  goToCheckout(plan);
+  await goToCheckout(plan);
 }
-

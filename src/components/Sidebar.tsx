@@ -11,7 +11,8 @@ import {
   X,
   LogOut,
   User,
-  TrendingUp
+  TrendingUp,
+  MessageCircle
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -147,7 +148,17 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
 
         {/* Footer Section */}
         <div className="p-4 border-t border-border">
+          <a 
+            href="https://wa.me/5548996736743"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center gap-3 px-4 py-3 mb-2 rounded-xl text-sm font-bold text-emerald-400 hover:bg-emerald-400/10 transition-colors border border-transparent hover:border-emerald-400/20"
+          >
+            <MessageCircle className="w-5 h-5" />
+            Suporte WhatsApp
+          </a>
           <button 
+
             onClick={onLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-destructive hover:bg-destructive/10 transition-colors"
           >

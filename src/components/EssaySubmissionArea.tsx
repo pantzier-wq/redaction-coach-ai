@@ -51,6 +51,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   useEffect(() => {
     if (typeof window === "undefined") return;
     const saved = window.localStorage.getItem("viewing_essay");
+    const pendingData = window.localStorage.getItem("pending_essay_data");
+    
     if (saved) {
       try {
         const essay = JSON.parse(saved);
@@ -60,6 +62,15 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         window.localStorage.removeItem("viewing_essay");
       } catch (e) {
         console.error("Erro ao carregar redação salva", e);
+      }
+    } else if (pendingData) {
+      try {
+        const data = JSON.parse(pendingData);
+        setTema(data.tema);
+        setRedacao(data.redacao);
+        window.localStorage.removeItem("pending_essay_data");
+      } catch (e) {
+        console.error("Erro ao carregar dados pendentes", e);
       }
     }
   }, []);
@@ -72,8 +83,15 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // Reserva atômica do crédito ANTES de chamar a IA (evita gastar 0 créditos
-    // abrindo várias abas ou não descontar quando o usuário sai da página).
+    // Se não estiver logado, redireciona para auth para garantir que a correção seja vinculada a uma conta
+    // e o token de autorização seja enviado corretamente.
+    if (!isLoggedIn) {
+      window.localStorage.setItem("pending_essay_data", JSON.stringify({ tema, redacao }));
+      window.location.href = "/auth";
+      return;
+    }
+
+    // Reserva atômica do crédito ANTES de chamar a IA
     let creditoConsumido = false;
     if (isLoggedIn) {
       const { data: rpcData, error: rpcError } = await (supabase as any).rpc("consume_essay_credit");

@@ -153,7 +153,7 @@ function Landing() {
             CORRIGIR MINHA REDAÇÃO AGORA →
           </a>
           <p className="mt-3 text-xs font-bold text-foreground/80">
-            Grátis • Sem cadastro • Resultado em segundos
+            1ª Correção Grátis • Sem cadastro • Resultado em segundos
           </p>
         </div>
       </section>
@@ -360,7 +360,7 @@ function Landing() {
           className="mt-6 inline-flex items-center justify-center rounded-xl px-8 py-4 text-lg font-black text-primary-foreground transition-transform hover:scale-105 active:scale-95"
           style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
         >
-          QUERO MINHA CORREÇÃO GRÁTIS →
+          QUERO MINHA 1ª CORREÇÃO GRÁTIS →
         </a>
       </section>
 

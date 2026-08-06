@@ -59,7 +59,7 @@ function findValue(obj: unknown, keys: string[], depth = 0): string | null {
 
 /** Procura em todo o payload uma string com o formato do nosso token (ca_...). */
 function findToken(payload: unknown): string | null {
-  const direct = findValue(payload, ["utm_content", "ref", "reference", "custom_id", "token"]);
+  const direct = findValue(payload, ["utm_content", "ref", "reference", "custom_id", "token", "metadata", "external_id", "client_reference_id"]);
   if (direct?.startsWith("ca_")) return direct;
   const raw = JSON.stringify(payload ?? {});
   const match = raw.match(/ca_[a-z0-9]{6,}_[a-z0-9]{6,}/i);

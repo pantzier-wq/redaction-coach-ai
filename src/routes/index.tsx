@@ -153,7 +153,7 @@ function Landing() {
             CORRIGIR MINHA REDAÇÃO AGORA →
           </a>
           <p className="mt-3 text-xs font-bold text-foreground/80">
-            Grátis • Sem cadastro • Resultado em segundos
+            1ª Correção Grátis • Sem cadastro • Resultado em segundos
           </p>
         </div>
       </section>

@@ -175,7 +175,9 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         }
       }
 
-      if (!isLoggedIn || !stillAllowed) {
+      if (!isLoggedIn) {
+        setShowPaywall(true);
+      } else if (!stillAllowed) {
         setShowPaywall(true);
       } else {
         setShowPaywall(false);

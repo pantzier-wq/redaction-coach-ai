@@ -156,15 +156,25 @@ export type Database = {
           unlimited: boolean
         }[]
       }
-      grant_purchase: {
-        Args: { _plan?: string; _token: string }
-        Returns: {
-          note: string
-          ok: boolean
-          plan: string
-          user_id: string
-        }[]
-      }
+      grant_purchase:
+        | {
+            Args: { _amount_cents?: number; _token: string }
+            Returns: {
+              note: string
+              ok: boolean
+              plan: string
+              user_id: string
+            }[]
+          }
+        | {
+            Args: { _plan?: string; _token: string }
+            Returns: {
+              note: string
+              ok: boolean
+              plan: string
+              user_id: string
+            }[]
+          }
       refund_essay_credit: { Args: never; Returns: number }
     }
     Enums: {

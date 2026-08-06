@@ -86,6 +86,10 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
           return new Response("Unauthorized", { status: 401 });
         }
 
+        if (request.method !== "POST") {
+          return new Response("Method Not Allowed", { status: 405 });
+        }
+
         const body = await request.text();
         let payload: unknown;
         try {
@@ -99,6 +103,8 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
         ).toLowerCase();
         const email = findValue(payload, ["email", "customer_email", "buyer_email"]);
         const externalId = findValue(payload, ["id", "transaction_id", "order_id", "checkout_id"]);
+        const amountStr = findValue(payload, ["amount", "value", "price", "total"]);
+        const amount = amountStr ? parseFloat(amountStr) : 0;
         const token = findToken(payload);
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -111,6 +117,7 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
         if (isApproved && token) {
           const { data, error } = await supabaseAdmin.rpc("grant_purchase", {
             _token: token,
+            _amount_cents: Math.round(amount * 100),
           });
           const row = Array.isArray(data) ? data[0] : data;
           if (error) {
@@ -140,6 +147,7 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
             if (pendingToken) {
               const { data } = await supabaseAdmin.rpc("grant_purchase", {
                 _token: pendingToken,
+                _amount_cents: Math.round(amount * 100),
               });
               const row = Array.isArray(data) ? data[0] : data;
               applied = row?.note === "applied";
@@ -153,16 +161,24 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
           }
         }
 
+        // Mascarar dados sensíveis no payload antes de logar
+        const safePayload = JSON.parse(JSON.stringify(payload));
+        if (safePayload.customer) {
+          if (safePayload.customer.email) safePayload.customer.email = "***@***.com";
+          if (safePayload.customer.phone) safePayload.customer.phone = "********";
+          if (safePayload.customer.cpf) safePayload.customer.cpf = "***********";
+        }
+
         await supabaseAdmin.from("payment_events").insert({
           provider: "cakto",
           external_id: externalId,
           token,
-          email,
+          email: email ? `${email.split('@')[0].slice(0, 3)}...@${email.split('@')[1]}` : null,
           plan,
           status,
           applied,
           note,
-          payload: payload as never,
+          payload: safePayload as never,
         });
 
         // Sempre 200 para o provedor não reenviar infinitamente.

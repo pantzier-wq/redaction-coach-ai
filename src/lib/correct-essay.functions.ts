@@ -10,8 +10,10 @@ import {
 } from "@/lib/correct-essay.server";
 
 export type { Correcao, RespostaRepertorio } from "@/lib/correct-essay.server";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const corrigirRedacao = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => essayInputSchema.parse(data))
   .handler(async ({ data }): Promise<Correcao> => {
     const key = process.env.LOVABLE_API_KEY;
@@ -29,6 +31,7 @@ export const corrigirRedacao = createServerFn({ method: "POST" })
   });
 
 export const analisarConectivos = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => connectivesInputSchema.parse(data))
   .handler(async ({ data }) => {
     const key = process.env.LOVABLE_API_KEY;
@@ -46,6 +49,7 @@ export const analisarConectivos = createServerFn({ method: "POST" })
   });
 
 export const criarRepertorio = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => repertoryInputSchema.parse(data))
   .handler(async ({ data }) => {
     const key = process.env.LOVABLE_API_KEY;

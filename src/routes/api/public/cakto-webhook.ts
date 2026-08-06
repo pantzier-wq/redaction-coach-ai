@@ -99,6 +99,8 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
         ).toLowerCase();
         const email = findValue(payload, ["email", "customer_email", "buyer_email"]);
         const externalId = findValue(payload, ["id", "transaction_id", "order_id", "checkout_id"]);
+        const amountStr = findValue(payload, ["amount", "value", "price", "total"]);
+        const amount = amountStr ? parseFloat(amountStr) : 0;
         const token = findToken(payload);
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -111,6 +113,7 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
         if (isApproved && token) {
           const { data, error } = await supabaseAdmin.rpc("grant_purchase", {
             _token: token,
+            _amount_cents: Math.round(amount * 100),
           });
           const row = Array.isArray(data) ? data[0] : data;
           if (error) {
@@ -140,6 +143,7 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
             if (pendingToken) {
               const { data } = await supabaseAdmin.rpc("grant_purchase", {
                 _token: pendingToken,
+                _amount_cents: Math.round(amount * 100),
               });
               const row = Array.isArray(data) ? data[0] : data;
               applied = row?.note === "applied";

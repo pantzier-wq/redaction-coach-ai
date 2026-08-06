@@ -153,8 +153,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
           setIsPro(pro);
           setHasFullAccess(full);
           setCredits(saldo);
-          // Saldo já descontado: só continua liberado se ainda sobrar crédito.
-          stillAllowed = full || (pro && saldo > 0);
+          // Saldo já descontado: só continua liberado se ainda sobrar crédito ou se for acesso vitalício.
+          stillAllowed = full || (pro && saldo >= 0);
         }
       }
 

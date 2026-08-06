@@ -140,10 +140,19 @@ function Dashboard() {
                   <EssaySubmissionArea 
                     isLoggedIn={true} 
                     isPro={!!profile?.is_pro}
-                    onSuccess={() => {
+                    onSuccess={(newResult) => {
                       const loadEssays = async () => {
-                        const { data } = await supabase.from("essays").select("*").order("created_at", { ascending: false });
-                        const currentEssays = data || [];
+                        const { data: { user } } = await supabase.auth.getUser();
+                        if (!user) return;
+                        
+                        const [profRes, essayRes] = await Promise.all([
+                          supabase.from("profiles").select("*").eq("id", user.id).single(),
+                          supabase.from("essays").select("*").order("created_at", { ascending: false })
+                        ]);
+                        
+                        if (profRes.data) setProfile(profRes.data);
+                        
+                        const currentEssays = essayRes.data || [];
                         
                         // Sistema de limite de 50 redações
                         if (currentEssays.length > 50) {
@@ -177,10 +186,19 @@ function Dashboard() {
               <EssaySubmissionArea 
                 isLoggedIn={true} 
                 isPro={!!profile?.is_pro}
-                onSuccess={() => {
+                onSuccess={(newResult) => {
                   const loadEssays = async () => {
-                    const { data } = await supabase.from("essays").select("*").order("created_at", { ascending: false });
-                    const currentEssays = data || [];
+                    const { data: { user } } = await supabase.auth.getUser();
+                    if (!user) return;
+                    
+                    const [profRes, essayRes] = await Promise.all([
+                      supabase.from("profiles").select("*").eq("id", user.id).single(),
+                      supabase.from("essays").select("*").order("created_at", { ascending: false })
+                    ]);
+                    
+                    if (profRes.data) setProfile(profRes.data);
+                    
+                    const currentEssays = essayRes.data || [];
                     
                     // Sistema de limite de 50 redações
                     if (currentEssays.length > 50) {

@@ -13,7 +13,7 @@ export type { Correcao, RespostaRepertorio } from "@/lib/correct-essay.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const corrigirRedacao = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  // .middleware([requireSupabaseAuth]) — Permitindo acesso público para a 1ª correção gratuita
   .inputValidator((data: unknown) => essayInputSchema.parse(data))
   .handler(async ({ data }): Promise<Correcao> => {
     const key = process.env.LOVABLE_API_KEY;

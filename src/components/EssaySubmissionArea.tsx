@@ -51,6 +51,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   useEffect(() => {
     if (typeof window === "undefined") return;
     const saved = window.localStorage.getItem("viewing_essay");
+    const pendingData = window.localStorage.getItem("pending_essay_data");
+    
     if (saved) {
       try {
         const essay = JSON.parse(saved);
@@ -60,6 +62,15 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         window.localStorage.removeItem("viewing_essay");
       } catch (e) {
         console.error("Erro ao carregar redação salva", e);
+      }
+    } else if (pendingData) {
+      try {
+        const data = JSON.parse(pendingData);
+        setTema(data.tema);
+        setRedacao(data.redacao);
+        window.localStorage.removeItem("pending_essay_data");
+      } catch (e) {
+        console.error("Erro ao carregar dados pendentes", e);
       }
     }
   }, []);

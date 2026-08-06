@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://redaction-coach-ai.lovable.app/sitemap.xml

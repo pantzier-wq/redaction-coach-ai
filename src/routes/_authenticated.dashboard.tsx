@@ -534,7 +534,7 @@ function Dashboard() {
               {/* Header */}
               <div className="mb-12">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest mb-4">
-                  <Zap className="w-3 h-3" /> Material Exclusivo Order Bump
+                  <Zap className="w-3 h-3" /> Material Exclusivo
                 </div>
                 <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
                   Pare de repetir os mesmos conectivos na redação

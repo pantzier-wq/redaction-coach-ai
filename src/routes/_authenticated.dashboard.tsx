@@ -266,7 +266,7 @@ function Dashboard() {
                       onClick={() => setActiveSection("correcao")}
                       className="mt-4 text-primary font-black hover:underline"
                     >
-                      Corrigir meu primeiro texto (Grátis) agora →
+                      Enviar redação agora →
                     </button>
                   </div>
                 )}

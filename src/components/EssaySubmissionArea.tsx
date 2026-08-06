@@ -83,12 +83,11 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // Se não estiver logado, redireciona para auth para garantir que a correção seja vinculada a uma conta
-    // e o token de autorização seja enviado corretamente.
+    // Se não estiver logado, permite a primeira correção gratuita.
+    // O resultado será armazenado localmente e o usuário será convidado a criar conta depois.
     if (!isLoggedIn) {
-      window.localStorage.setItem("pending_essay_data", JSON.stringify({ tema, redacao }));
-      window.location.href = "/auth";
-      return;
+      // Não redireciona ainda. Deixa prosseguir para a correção gratuita.
+      console.log("Processando primeira correção gratuita (sem login)");
     }
 
     // Reserva atômica do crédito ANTES de chamar a IA
@@ -176,7 +175,9 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         }
       }
 
-      if (!isLoggedIn || !stillAllowed) {
+      if (!isLoggedIn) {
+        setShowPaywall(true);
+      } else if (!stillAllowed) {
         setShowPaywall(true);
       } else {
         setShowPaywall(false);

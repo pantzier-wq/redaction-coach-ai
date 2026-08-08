@@ -289,7 +289,6 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
       throw new Error(aiError.message || "Erro na análise da IA");
     }
   }
-  }
 
   // 2. Tentar reservar crédito atômico no DB para usuário logado
   const { data: rpcData, error: rpcError } = await supabaseAdmin.rpc("execute_essay_correction_flow", {

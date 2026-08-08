@@ -237,7 +237,7 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
 
   if (rpcError) throw new Error(`Erro no fluxo de crédito: ${rpcError.message}`);
   
-  const flow = Array.isArray(rpcData) ? rpcData[0] : rpcData;
+  const flow = (Array.isArray(rpcData) ? rpcData[0] : rpcData) as any;
   if (!flow?.ok) {
       if (flow?.error === 'insufficient_credits') throw new Error("CRÉDITOS_INSUFICIENTES");
       throw new Error(flow?.error || "Erro ao processar créditos");

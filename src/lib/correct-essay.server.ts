@@ -5,6 +5,7 @@ import { z } from "zod";
 export const essayInputSchema = z.object({
   tema: z.string().trim().min(3, "Informe o tema").max(300),
   redacao: z.string().trim().min(200, "Cole uma redação com pelo menos 200 caracteres").max(8000),
+  fingerprint: z.string().optional(), // Identificador anônimo opcional
 });
 
 export const connectivesInputSchema = z.object({
@@ -106,16 +107,16 @@ function extractJsonObject(text: string) {
   }
 }
 
-function normalizeConnectivesStatus(status: string) {
-  const value = status.toLowerCase().trim();
-  if (value === "bom" || value === "regular" || value === "ruim") return value;
-  return "regular";
-}
-
 function parseJsonFromText(text: string) {
   const parsed = extractJsonObject(text);
   if (!parsed) throw new Error("A IA retornou uma resposta fora do formato esperado.");
   return parsed;
+}
+
+function normalizeConnectivesStatus(status: string) {
+  const value = status.toLowerCase().trim();
+  if (value === "bom" || value === "regular" || value === "ruim") return value;
+  return "regular";
 }
 
 function normalizeConnectivesAnalysis(value: unknown): AnaliseConectivos {
@@ -225,10 +226,51 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
 
   // 1. Caso seja anônimo (Primeira correção gratuita)
   if (!userId) {
-    return await correctEssayWithAi(lovableApiKey, input);
+    const fingerprint = input.fingerprint || "unknown";
+    
+    // Validar elegibilidade gratuita no servidor
+    const { data: isEligible, error: eligError } = await supabaseAdmin.rpc("check_anonymous_eligibility", {
+      _fingerprint: fingerprint
+    });
+
+    if (eligError) throw new Error("Erro ao validar elegibilidade gratuita");
+    if (!isEligible) throw new Error("Você já utilizou sua correção gratuita. Crie uma conta para continuar.");
+
+    // Registrar tentativa pendente
+    const { data: attemptId, error: createError } = await supabaseAdmin.rpc("create_anonymous_attempt", {
+      _fingerprint: fingerprint,
+      _tema: input.tema,
+      _redacao: input.redacao
+    });
+
+    if (createError) throw new Error("Erro ao registrar tentativa");
+
+    try {
+      const result = await correctEssayWithAi(lovableApiKey, input);
+      
+      // Finalizar com sucesso
+      await supabaseAdmin.rpc("finalize_anonymous_essay_correction", {
+        _attempt_id: attemptId,
+        _status: 'completed',
+        _result: result
+      });
+
+      return result;
+    } catch (aiError: any) {
+      console.error("IA falhou para anônimo:", aiError);
+      
+      // Finalizar com erro
+      await supabaseAdmin.rpc("finalize_anonymous_essay_correction", {
+        _attempt_id: attemptId,
+        _status: 'failed',
+        _error: aiError.message
+      });
+
+      throw new Error("Não foi possível analisar sua redação no momento. Tente novamente em alguns instantes.");
+    }
   }
 
-  // 2. Tentar reservar crédito atômico no DB
+  // 2. Tentar reservar crédito atômico no DB para usuário logado
   const { data: rpcData, error: rpcError } = await supabaseAdmin.rpc("execute_essay_correction_flow", {
     _user_id: userId,
     _tema: input.tema,
@@ -267,6 +309,6 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
       _error: aiError.message
     });
 
-    throw aiError;
+    throw new Error("Ocorreu um erro técnico durante a análise. Seus créditos foram preservados. Tente novamente.");
   }
 }

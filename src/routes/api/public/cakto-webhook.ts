@@ -91,10 +91,12 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
         }
 
         const body = await request.text();
+        console.log("Cakto Webhook Payload:", body);
         let payload: unknown;
         try {
           payload = JSON.parse(body);
-        } catch {
+        } catch (e: any) {
+          console.error("Erro ao fazer parse do JSON:", e.message, "Body:", body);
           return new Response("Invalid JSON", { status: 400 });
         }
 

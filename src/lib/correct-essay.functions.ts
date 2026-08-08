@@ -34,13 +34,18 @@ export const corrigirRedacao = createServerFn({ method: "POST" })
     }
 
     try {
-      return await secureEssayCorrection(userId, data);
+      // Orquestrador seguro
+      const result = await secureEssayCorrection(userId, data);
+      return result as Correcao;
     } catch (error: any) {
       console.error("Erro em corrigirRedacao (Server Side):", error);
+      
       const message = error.message || "";
       if (message.includes("CRÉDITOS_INSUFICIENTES") || message.includes("já utilizou sua correção gratuita")) {
         throw new Error("LIMITE_EXCEDIDO");
       }
+      
+      // Lançar erro serializável
       throw new Error("ERRO_TECNICO");
     }
   });

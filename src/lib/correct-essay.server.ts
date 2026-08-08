@@ -266,7 +266,8 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
         _error: aiError.message
       });
 
-      throw new Error("Não foi possível analisar sua redação no momento. Tente novamente em alguns instantes.");
+      console.error("ERRO DETALHADO IA ANÔNIMO:", aiError);
+      throw aiError;
     }
   }
 

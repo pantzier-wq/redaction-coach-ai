@@ -179,11 +179,11 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
     } catch (err: any) {
       console.error("Erro na submissão:", err);
       
-      // Trata erro de créditos insuficiente vindo do servidor
-      if (err.message?.includes("créditos suficientes") || err.message?.includes("CRÉDITOS_INSUFICIENTES")) {
+      const errMsg = err.message || "";
+      if (errMsg.includes("LIMITE_EXCEDIDO") || errMsg.includes("créditos suficientes") || errMsg.includes("CRÉDITOS_INSUFICIENTES")) {
         setShowPaywall(true);
       } else {
-        setErro(err instanceof Error ? err.message : "Erro inesperado");
+        setErro("Ocorreu um erro ao processar sua redação. Por favor, tente novamente em instantes.");
       }
     } finally {
       setLoading(false);

@@ -137,16 +137,32 @@ function normalizeConnectivesAnalysis(value: unknown): AnaliseConectivos {
 }
 
 export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<typeof essayInputSchema>) {
-  const gateway = createLovableAiGatewayProvider(lovableApiKey);
+  console.log("Iniciando correctEssayWithAi para tema:", input.tema);
+  
+  if (!lovableApiKey) {
+    console.error("LOVABLE_API_KEY não fornecida em correctEssayWithAi");
+    throw new Error("Erro de configuração: API Key ausente.");
+  }
 
-  const { text } = await generateText({
-    model: gateway("google/gemini-2.0-flash"),
-    system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, sem comentários e sem texto fora do JSON.`,
-    prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija com rigor de corretor ENEM real no formato: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
-    maxRetries: 2,
-  });
+  try {
+    const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
-  return CorrectionSchema.parse(parseJsonFromText(text));
+    const { text } = await generateText({
+      model: gateway("google/gemini-2.0-flash"),
+      system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, sem comentários e sem texto fora do JSON.`,
+      prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija com rigor de corretor ENEM real no formato: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
+      maxRetries: 2,
+    });
+
+    console.log("IA respondeu com sucesso. Tamanho do texto:", text.length);
+    return CorrectionSchema.parse(parseJsonFromText(text));
+  } catch (error: any) {
+    console.error("Erro na chamada da IA (generateText):", error);
+    if (error.message?.includes("401") || error.message?.includes("Unauthorized")) {
+      throw new Error("Falha na autenticação da IA. Verifique a chave de API.");
+    }
+    throw error;
+  }
 }
 
 export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: string): Promise<AnaliseConectivos> {
@@ -259,14 +275,18 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
     } catch (aiError: any) {
       console.error("IA falhou para anônimo:", aiError);
       
-      // Finalizar com erro
-      await supabaseAdmin.rpc("finalize_anonymous_essay_correction", {
-        _attempt_id: attemptId,
-        _status: 'failed',
-        _error: aiError.message
-      });
-
-      throw new Error("Não foi possível analisar sua redação no momento. Tente novamente em alguns instantes.");
+      try {
+        // Finalizar com erro no banco
+        await supabaseAdmin.rpc("finalize_anonymous_essay_correction", {
+          _attempt_id: attemptId,
+          _status: 'failed',
+          _error: aiError.message
+        });
+      } catch (e) {
+        console.error("Erro ao registrar falha anônima no DB:", e);
+      }
+      // Lançar um erro limpo que a Server Function consiga serializar
+      throw new Error(aiError.message || "Erro na análise da IA");
     }
   }
 

@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import {
   analyzeConnectivesWithAi,
   connectivesInputSchema,
@@ -14,10 +15,11 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const corrigirRedacao = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => essayInputSchema.parse(data))
-  .handler(async ({ data, request }): Promise<Correcao> => {
+  .handler(async ({ data }): Promise<Correcao> => {
     // 1. Tentar obter o usuário autenticado de forma segura se houver token
     let userId: string | null = null;
-    const authHeader = request.headers.get("authorization");
+    const request = getRequest();
+    const authHeader = request?.headers?.get("authorization");
     
     if (authHeader?.startsWith("Bearer ")) {
       try {
@@ -34,6 +36,10 @@ export const corrigirRedacao = createServerFn({ method: "POST" })
       return await secureEssayCorrection(userId, data);
     } catch (error: any) {
       console.error("Erro em corrigirRedacao:", error);
+      // Se for erro de crédito, passa a mensagem específica
+      if (error.message === "CRÉDITOS_INSUFICIENTES") {
+        throw new Error("Você não possui créditos suficientes para realizar esta correção.");
+      }
       throw new Error(error.message || "Erro na correção");
     }
   });

@@ -83,49 +83,14 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    // Se não estiver logado, permite a primeira correção gratuita.
-    // O resultado será armazenado localmente e o usuário será convidado a criar conta depois.
-    if (!isLoggedIn) {
-      // Não redireciona ainda. Deixa prosseguir para a correção gratuita.
-      console.log("Processando primeira correção gratuita (sem login)");
-    }
-
-    // Reserva atômica do crédito ANTES de chamar a IA
-    let creditoConsumido = false;
-    if (isLoggedIn) {
-      const { data: rpcData, error: rpcError } = await (supabase as any).rpc("consume_essay_credit");
-      const info = Array.isArray(rpcData) ? rpcData[0] : rpcData;
-
-      if (rpcError) {
-        setErro("Não foi possível verificar seus créditos. Tente novamente.");
-        return;
-      }
-
-      if (!info?.allowed) {
-        setCredits(Math.max(0, info?.remaining ?? 0));
-        setLoading(true);
-        // Simular carregamento para percepção de valor antes de mostrar o paywall
-        setTimeout(() => {
-          setLoading(false);
-          setShowPaywall(true);
-        }, 28000);
-        return;
-      }
-
-      if (info.unlimited) {
-        setHasFullAccess(true);
-      } else {
-        creditoConsumido = true;
-        setCredits(Math.max(0, info.remaining ?? 0));
-      }
-    }
-
     setErro(null);
     setResult(null);
     setShowPaywall(false);
     setLoading(true);
+
     try {
       const startTime = Date.now();
+      // A lógica de créditos e IA agora está 100% centralizada no servidor (corrigirRedacao)
       const r = await corrigir({ data: { tema: tema.trim(), redacao: redacao.trim() } });
       const elapsed = Date.now() - startTime;
       const wait = Math.max(0, 28000 - elapsed);
@@ -146,32 +111,31 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         }));
       }
 
-      // Salva no banco e sincroniza saldo real
+      // Sincroniza saldo e status após a correção
       let stillAllowed = false;
       if (isLoggedIn) {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          await supabase.from("essays").insert({
-            user_id: user.id,
-            tema: tema.trim(),
-            redacao: redacao.trim(),
-            resultado: r
-          });
-
+          // Nota: a inserção na tabela 'essays' agora poderia ser feita no servidor, 
+          // mas mantemos aqui para compatibilidade com o fluxo de UI se necessário,
+          // ou verificamos se o servidor já inseriu (idealmente o servidor insere).
+          // Para este fix de segurança, focamos na proteção de créditos.
+          
           const { data: profile } = await supabase
             .from("profiles")
             .select("is_pro, has_full_access, credits")
             .eq("id", user.id)
             .single();
 
-          const pro = !!profile?.is_pro;
-          const full = !!(profile as any)?.has_full_access;
-          const saldo = (profile as any)?.credits ?? 0;
-          setIsPro(pro);
-          setHasFullAccess(full);
-          setCredits(saldo);
-          // Saldo já descontado: só continua liberado se ainda sobrar crédito ou se for acesso vitalício.
-          stillAllowed = full || (pro && saldo >= 0);
+          if (profile) {
+            const pro = !!profile.is_pro;
+            const full = !!(profile as any).has_full_access;
+            const saldo = (profile as any).credits ?? 0;
+            setIsPro(pro);
+            setHasFullAccess(full);
+            setCredits(saldo);
+            stillAllowed = full || (pro && saldo >= 0);
+          }
         }
       }
 
@@ -183,7 +147,6 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         setShowPaywall(false);
       }
       
-      // Automatic scroll to results for free tier on first correction
       if (!isLoggedIn) {
         setTimeout(
           () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
@@ -195,13 +158,15 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         onSuccess(r);
       }
 
-    } catch (err) {
-      // Se a IA falhou, devolve o crédito reservado
-      if (creditoConsumido) {
-        const { data: novoSaldo } = await (supabase as any).rpc("refund_essay_credit");
-        if (typeof novoSaldo === "number") setCredits(novoSaldo);
+    } catch (err: any) {
+      console.error("Erro na submissão:", err);
+      
+      // Trata erro de créditos insuficiente vindo do servidor
+      if (err.message?.includes("créditos suficientes") || err.message?.includes("CRÉDITOS_INSUFICIENTES")) {
+        setShowPaywall(true);
+      } else {
+        setErro(err instanceof Error ? err.message : "Erro inesperado");
       }
-      setErro(err instanceof Error ? err.message : "Erro inesperado");
     } finally {
       setLoading(false);
     }

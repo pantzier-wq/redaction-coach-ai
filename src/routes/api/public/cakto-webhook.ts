@@ -91,13 +91,26 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
         }
 
         const body = await request.text();
-        console.log("Cakto Webhook Payload:", body);
+        console.log("[Cakto Webhook] Raw Body:", body);
+        
+        if (!body || body.trim() === "") {
+          console.error("[Cakto Webhook] Empty body received");
+          return new Response("Empty Body", { status: 400 });
+        }
+
         let payload: unknown;
         try {
           payload = JSON.parse(body);
         } catch (e: any) {
-          console.error("Erro ao fazer parse do JSON:", e.message, "Body:", body);
-          return new Response("Invalid JSON", { status: 400 });
+          console.error("[Cakto Webhook] JSON Parse Error:", e.message, "| Raw Body:", body);
+          // Tenta sanitizar caso venha com caracteres estranhos (BOM, etc)
+          try {
+             const sanitized = body.replace(/^\uFEFF/, "").trim();
+             payload = JSON.parse(sanitized);
+             console.log("[Cakto Webhook] Successfully parsed after sanitization");
+          } catch (e2) {
+             return new Response("Invalid JSON", { status: 400 });
+          }
         }
 
         const status = (

@@ -139,7 +139,7 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
   const { text } = await generateText({
-    model: gateway("google/gemini-3.6-flash"),
+    model: gateway("google/gemini-2.0-flash"),
     system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, sem comentários e sem texto fora do JSON.`,
     prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija com rigor de corretor ENEM real no formato: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
     maxRetries: 2,
@@ -152,7 +152,7 @@ export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: str
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
   const { text } = await generateText({
-    model: gateway("google/gemini-3.6-flash"),
+    model: gateway("google/gemini-2.0-flash"),
     system: `${CONNECTIVES_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, no formato: {"analise":"...","status":"bom|regular|ruim","sugestao":"..."}. Não use outros nomes de campos.`,
     prompt: `Frase para análise: ${frase}`,
     maxRetries: 2,
@@ -192,7 +192,7 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
 
   try {
     const { text } = await generateText({
-      model: gateway("google/gemini-3.6-flash"),
+      model: gateway("google/gemini-2.0-flash"),
       system: systemPrompt,
       messages,
       maxRetries: 2,
@@ -209,5 +209,64 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
   } catch (e: any) {
     console.error("Erro na chamada generateText (Repertório):", e);
     throw new Error(`Falha na comunicação com a IA: ${e.message || "Erro desconhecido"}`);
+  }
+}
+
+/**
+ * Orquestração segura no servidor: Validação -> Consumo -> IA -> (opcional) Reembolso
+ */
+export async function secureEssayCorrection(userId: string | null, input: z.infer<typeof essayInputSchema>) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const lovableApiKey = process.env.LOVABLE_API_KEY;
+
+  if (!lovableApiKey) {
+    throw new Error("Erro de configuração no servidor (API Key)");
+  }
+
+  // 1. Caso seja anônimo (Primeira correção gratuita)
+  if (!userId) {
+    return await correctEssayWithAi(lovableApiKey, input);
+  }
+
+  // 2. Tentar reservar crédito atômico no DB
+  const { data: rpcData, error: rpcError } = await supabaseAdmin.rpc("execute_essay_correction_flow", {
+    _user_id: userId,
+    _tema: input.tema,
+    _redacao: input.redacao
+  });
+
+  if (rpcError) throw new Error(`Erro no fluxo de crédito: ${rpcError.message}`);
+  
+  const flow = Array.isArray(rpcData) ? rpcData[0] : rpcData;
+  if (!flow?.ok) {
+      if (flow?.error === 'insufficient_credits') throw new Error("CRÉDITOS_INSUFICIENTES");
+      throw new Error(flow?.error || "Erro ao processar créditos");
+  }
+
+  const attemptId = flow.attempt_id;
+
+  try {
+    // 3. Chamar a IA
+    const result = await correctEssayWithAi(lovableApiKey, input);
+
+    // 4. Finalizar com Sucesso
+    await supabaseAdmin.rpc("finalize_essay_correction", {
+      _attempt_id: attemptId,
+      _status: 'completed',
+      _result: result
+    });
+
+    return result;
+  } catch (aiError: any) {
+    console.error("IA falhou, processando estorno:", aiError);
+    
+    // 5. Finalizar com Erro (estorno automático via DB)
+    await supabaseAdmin.rpc("finalize_essay_correction", {
+      _attempt_id: attemptId,
+      _status: 'failed',
+      _error: aiError.message
+    });
+
+    throw aiError;
   }
 }

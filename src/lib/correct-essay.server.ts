@@ -259,15 +259,19 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
     } catch (aiError: any) {
       console.error("IA falhou para anônimo:", aiError);
       
-      // Finalizar com erro
-      await supabaseAdmin.rpc("finalize_anonymous_essay_correction", {
-        _attempt_id: attemptId,
-        _status: 'failed',
-        _error: aiError.message
-      });
+      try {
+        // Finalizar com erro no banco
+        await supabaseAdmin.rpc("finalize_anonymous_essay_correction", {
+          _attempt_id: attemptId,
+          _status: 'failed',
+          _error: aiError.message
+        });
+      } catch (e) {
+        console.error("Erro ao registrar falha anônima no DB:", e);
+      }
 
-      console.error("ERRO DETALHADO IA ANÔNIMO:", aiError);
-      throw aiError;
+      // Lançar um erro limpo que a Server Function consiga serializar
+      throw new Error(aiError.message || "Erro na análise da IA");
     }
   }
 

@@ -39,15 +39,11 @@ function AuthPage() {
           }
         }
 
-        // Handle testing "mock purchase" redirect
-        const shouldUpgrade = localStorage.getItem("should_upgrade_after_auth");
-        if (shouldUpgrade) {
-          localStorage.removeItem("should_upgrade_after_auth");
-          const { error } = await supabase.from("profiles").update({ is_pro: true, credits: 20 }).eq("id", session.user.id);
-          if (!error) {
-            toast.success("Acesso PRO liberado para testes!");
-          }
-        }
+        // A liberação de plano/créditos acontece exclusivamente pelo webhook de
+        // pagamento no servidor. O frontend não tem (e não deve ter) esse poder.
+        localStorage.removeItem("should_upgrade_after_auth");
+
+
 
         navigate({ to: "/dashboard" });
       }

@@ -90,8 +90,26 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
     try {
       const startTime = Date.now();
+      
+      // Gera ou recupera fingerprint para visitantes anônimos
+      let fingerprint = "";
+      if (!isLoggedIn) {
+        fingerprint = localStorage.getItem("visitor_fingerprint") || "";
+        if (!fingerprint) {
+          fingerprint = crypto.randomUUID();
+          localStorage.setItem("visitor_fingerprint", fingerprint);
+        }
+      }
+
       // A lógica de créditos e IA agora está 100% centralizada no servidor (corrigirRedacao)
-      const r = await corrigir({ data: { tema: tema.trim(), redacao: redacao.trim() } });
+      const r = await corrigir({ 
+        data: { 
+          tema: tema.trim(), 
+          redacao: redacao.trim(),
+          fingerprint: fingerprint || undefined
+        } 
+      });
+      
       const elapsed = Date.now() - startTime;
       const wait = Math.max(0, 28000 - elapsed);
 

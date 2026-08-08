@@ -19,15 +19,23 @@ export const corrigirRedacao = createServerFn({ method: "POST" })
     // 1. Tentar obter o usuário autenticado de forma segura se houver token
     let userId: string | null = null;
     const request = getRequest();
+    
+    // Em TanStack Start, o request pode não ter headers se chamado de forma específica
+    // mas o middleware/contexto é o lugar ideal. Aqui fazemos um check defensivo.
     const authHeader = request?.headers?.get("authorization");
     
-    if (authHeader?.startsWith("Bearer ")) {
+    if (authHeader && authHeader.startsWith("Bearer ")) {
       try {
-        const { supabase } = await import("@/integrations/supabase/client");
-        const { data: { user } } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
-        userId = user?.id || null;
+        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+        const token = authHeader.replace("Bearer ", "");
+        
+        // Verifica se o token é válido e obtém o user_id
+        const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+        if (!error && user) {
+          userId = user.id;
+        }
       } catch (e) {
-        console.warn("Falha ao validar token na correção:", e);
+        console.warn("Falha ao validar token na correção (Server Side):", e);
       }
     }
 

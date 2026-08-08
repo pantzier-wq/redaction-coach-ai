@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      anonymous_essay_attempts: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          fingerprint: string
+          id: string
+          redacao_hash: string
+          result: Json | null
+          status: string
+          tema: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          fingerprint: string
+          id?: string
+          redacao_hash: string
+          result?: Json | null
+          status: string
+          tema: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          fingerprint?: string
+          id?: string
+          redacao_hash?: string
+          result?: Json | null
+          status?: string
+          tema?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       essay_attempts: {
         Row: {
           created_at: string
@@ -184,6 +220,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_anonymous_eligibility: {
+        Args: { _fingerprint: string }
+        Returns: boolean
+      }
       consume_essay_credit: {
         Args: never
         Returns: {
@@ -191,6 +231,10 @@ export type Database = {
           remaining: number
           unlimited: boolean
         }[]
+      }
+      create_anonymous_attempt: {
+        Args: { _fingerprint: string; _redacao: string; _tema: string }
+        Returns: string
       }
       execute_essay_correction_flow: {
         Args: {
@@ -200,6 +244,15 @@ export type Database = {
           _user_id: string
         }
         Returns: Json
+      }
+      finalize_anonymous_essay_correction: {
+        Args: {
+          _attempt_id: string
+          _error?: string
+          _result?: Json
+          _status: string
+        }
+        Returns: undefined
       }
       finalize_essay_correction: {
         Args: {

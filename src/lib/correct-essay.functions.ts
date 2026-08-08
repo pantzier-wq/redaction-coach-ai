@@ -43,12 +43,24 @@ export const corrigirRedacao = createServerFn({ method: "POST" })
       // 2. Chamar orquestrador seguro no servidor
       return await secureEssayCorrection(userId, data);
     } catch (error: any) {
-      console.error("Erro em corrigirRedacao:", error);
-      // Se for erro de crédito, passa a mensagem específica
-      if (error.message === "CRÉDITOS_INSUFICIENTES") {
-        throw new Error("Você não possui créditos suficientes para realizar esta correção.");
+      console.error("Erro em corrigirRedacao (Server Side):", error);
+      
+      // Mapear erros para mensagens amigáveis no frontend
+      const message = error.message || "";
+      
+      if (message.includes("CRÉDITOS_INSUFICIENTES") || message.includes("já utilizou sua correção gratuita")) {
+        throw new Error("Você não possui créditos suficientes. Adquira um plano para continuar.");
       }
-      throw new Error(error.message || "Erro na correção");
+      
+      if (message.includes("IA retornou uma resposta fora do formato")) {
+        throw new Error("A IA teve uma falha técnica na análise. Tente novamente.");
+      }
+
+      if (message.includes("Erro ao validar elegibilidade")) {
+        throw new Error("Não foi possível validar seu acesso. Tente novamente.");
+      }
+
+      throw new Error("Ocorreu um erro ao processar sua redação. Por favor, tente novamente em instantes.");
     }
   });
 

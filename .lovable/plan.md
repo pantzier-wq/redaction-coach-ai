@@ -1,48 +1,55 @@
-# Diagnóstico: "Signed-In Users Can Execute SECURITY DEFINER Function"
+# Corrigir "Usuários podem se conceder acesso premium"
 
-Nenhuma alteração foi feita. Abaixo o diagnóstico completo, confirmado com consulta direta às permissões do banco e ao código do app.
+## Auditoria do estado atual (verificado no banco)
 
-## Quais funções disparam o alerta
+| Item | Situação real |
+|---|---|
+| Policy de UPDATE em `profiles` | `Usuários podem atualizar seu próprio perfil`, para `authenticated`, com `USING (auth.uid() = id)` e **sem `WITH CHECK`** e **sem restrição de coluna** |
+| Trigger de proteção | `tr_protect_profile_fields` existe e está **ativo**, `BEFORE UPDATE ... FOR EACH ROW` |
+| Campos protegidos pelo trigger | `is_pro`, `credits`, `has_full_access` — revertidos para o valor antigo quando o papel não é `service_role` |
+| Permissão de coluna | `authenticated` tem UPDATE em **todas** as colunas, incluindo as de cobrança |
+| Funções privilegiadas | `grant_purchase`, `execute_essay_correction_flow`, `finalize_essay_correction`, `consume_essay_credit`, `refund_essay_credit`: execução liberada apenas para `postgres` e `service_role` — o app continua usando-as pelo backend |
 
-Existem 6 funções no schema público. Apenas duas são `SECURITY DEFINER` **e** executáveis por usuários logados (role `authenticated`) — são essas duas que geram o alerta:
+### Conclusão da auditoria
 
-| Função | SECURITY DEFINER | Quem pode executar hoje |
-|---|---|---|
-| `consume_essay_credit()` | sim | postgres, service_role, **authenticated** |
-| `refund_essay_credit()` | sim | postgres, service_role, **authenticated** |
-| `grant_purchase(...)` (2 versões) | sim | postgres, service_role (authenticated **não** tem acesso) |
-| `handle_new_user()` | sim | postgres, service_role (trigger) |
-| `protect_profile_sensitive_fields()` | não (INVOKER) | trigger |
+O trigger **já bloqueia** na prática a escalada de privilégio, então hoje um usuário logado não consegue de fato virar premium pelo navegador. Porém:
 
-## O que cada uma faz e onde é usada
+1. O bloqueio é **silencioso**: o UPDATE "dá sucesso" e apenas descarta os campos. O usuário/frontend não recebe erro, o que dificulta detectar abuso e mantém o alerta do scanner válido (a policy realmente não restringe colunas).
+2. A permissão de coluna continua concedida — se o trigger for removido ou desabilitado em qualquer migração futura, a brecha volta imediatamente. Hoje há **uma única camada** de defesa.
+3. Encontrei código de teste ainda ativo em `src/routes/auth.tsx` (linha 46) que tenta `update({ is_pro: true, credits: 20 })` direto do navegador após login, disparado por uma flag no `localStorage`. Hoje ele é neutralizado pelo trigger, mas é exatamente o padrão que o alerta descreve e precisa sair.
 
-**`consume_essay_credit()`** — verifica o plano do usuário logado (`auth.uid()`) e desconta 1 crédito antes da correção. Retorna se está liberado, se é acesso vitalício e o saldo restante. Chamada no frontend em `src/components/EssaySubmissionArea.tsx` (linha 96), antes de acionar a IA.
+## O que será feito
 
-**`refund_essay_credit()`** — devolve 1 crédito ao usuário logado caso a IA falhe. Chamada no frontend em `src/components/EssaySubmissionArea.tsx` (linha 201), dentro do `catch` de erro.
+### 1. Defesa em profundidade no banco (migração)
 
-Ambas estão diretamente ligadas a **créditos, planos e monetização** (leem/escrevem `profiles.is_pro`, `credits`, `has_full_access`). Elas precisam ser `SECURITY DEFINER` porque a tabela `profiles` tem um trigger que bloqueia o usuário de alterar esses campos por conta própria — só a função privilegiada consegue mexer no saldo.
+- Revogar `UPDATE` de `authenticated` na tabela `profiles` e reconceder **apenas** nas colunas realmente editáveis pelo usuário: `full_name`, `avatar_url`, `updated_at`. Tentar escrever `credits`, `is_pro` ou `has_full_access` passa a falhar com erro de permissão, em vez de ser silenciosamente ignorado.
+- Manter `service_role` com acesso total (webhook e fluxo seguro de correção continuam funcionando).
+- Manter o trigger `tr_protect_profile_fields` como segunda camada, agora **falhando explicitamente** (erro claro em português) quando alguém que não é `service_role` tenta alterar campo de cobrança, em vez de reverter em silêncio. Alterações de campos normais seguem passando sem erro.
+- Adicionar `WITH CHECK (auth.uid() = id)` à policy de UPDATE, para o usuário não poder reatribuir a linha a outro id.
 
-`grant_purchase` (liberação de plano após pagamento) já está corretamente fechada: só o webhook, via chave de serviço, consegue chamá-la. Isso não é problema.
+### 2. Remover a escrita privilegiada do frontend
 
-## Usuários logados precisam chamar essas funções direto?
+- Em `src/routes/auth.tsx`: remover o bloco de "mock purchase" que faz `update({ is_pro: true, credits: 20 })` e a flag `should_upgrade_after_auth`. A liberação de plano passa a existir apenas pelo webhook de pagamento.
 
-Hoje sim — o fluxo de correção é iniciado no navegador e chama as duas por RPC. Se o `EXECUTE` de `authenticated` fosse simplesmente revogado sem mais nada, o app quebraria: nenhuma correção de usuário pago seria autorizada (erro "Não foi possível verificar seus créditos") e o estorno em caso de falha da IA pararia de funcionar.
+### 3. Testes
 
-## Existe risco real de manipulação pelo frontend?
+Após a migração, verificar diretamente no banco, no papel `authenticated`:
 
-- `consume_essay_credit()` — **risco baixo**. Ela só desconta crédito, sempre para o próprio `auth.uid()`. Chamar de forma abusiva só prejudica o próprio usuário.
-- `refund_essay_credit()` — **risco real e concreto**. Ela **adiciona** 1 crédito ao próprio usuário e não valida se houve realmente uma falha de correção. Qualquer usuário logado com plano Essencial pode abrir o console do navegador e chamar `supabase.rpc('refund_essay_credit')` em loop para gerar créditos infinitos de graça. Isso é perda direta de receita, não apenas um aviso de linter.
+- `is_pro = true` → deve falhar
+- `has_full_access = true` → deve falhar
+- aumentar `credits` → deve falhar
+- alterar `full_name` do próprio perfil → deve funcionar
+- alterar perfil de outro usuário → deve falhar
+- `grant_purchase` pelo backend (liberação após pagamento) → deve funcionar
+- consumo e estorno de crédito pelo fluxo seguro → deve funcionar
+- criação de conta (`handle_new_user`) → deve funcionar
 
-Ou seja: o alerta do scanner é genérico, mas ao investigar encontramos um problema de negócio de verdade em `refund_essay_credit`.
-
-## Recomendação (para decidir depois — nada será feito agora)
-
-A correção adequada é mover o crédito/estorno para o servidor: as duas chamadas passariam a acontecer dentro do server function que já executa a correção (`correct-essay`), e o `EXECUTE` de `authenticated` seria revogado. Assim o estorno só pode ocorrer quando a IA realmente falhou, o linter para de alertar, e o frontend deixa de ter poder sobre o saldo.
-
-Alternativa mais barata (só fecha a brecha grave): manter `consume_essay_credit` acessível e proteger apenas `refund_essay_credit`, exigindo prova de uma tentativa de correção falhada.
+Depois rodo o Security Scanner novamente e informo se o alerta desapareceu.
 
 ## Detalhes técnicos
 
-- Permissões verificadas em `pg_proc.proacl`: `authenticated=X` presente somente em `consume_essay_credit` e `refund_essay_credit`.
-- Nenhuma dessas funções é chamada por trigger; ambas dependem de `auth.uid()`, portanto exigem contexto de sessão do usuário.
-- `refund_essay_credit` já filtra por `is_pro = true AND has_full_access = false`, então o abuso se limita a usuários do plano Essencial — mas nesse grupo é ilimitado.
+- `REVOKE UPDATE ON public.profiles FROM authenticated;` seguido de `GRANT UPDATE (full_name, avatar_url, updated_at) ON public.profiles TO authenticated;`
+- `GRANT ALL ON public.profiles TO service_role;` mantido/reafirmado.
+- `protect_profile_sensitive_fields()` reescrita: comparar `OLD`/`NEW` dos três campos e `RAISE EXCEPTION` quando `current_setting('role', true) <> 'service_role'`; continua `SECURITY DEFINER SET search_path = public`. As funções `SECURITY DEFINER` chamadas pelo backend rodam sob o papel `service_role`, portanto passam pelo trigger.
+- `handle_new_user()` (INSERT) não é afetada: o trigger é só de UPDATE e a função roda como `postgres`.
+- Nenhuma alteração em `essay_attempts`, na primeira correção gratuita ou nos links de checkout.

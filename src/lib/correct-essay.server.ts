@@ -285,10 +285,10 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
       } catch (e) {
         console.error("Erro ao registrar falha anônima no DB:", e);
       }
-
       // Lançar um erro limpo que a Server Function consiga serializar
       throw new Error(aiError.message || "Erro na análise da IA");
     }
+  }
   }
 
   // 2. Tentar reservar crédito atômico no DB para usuário logado

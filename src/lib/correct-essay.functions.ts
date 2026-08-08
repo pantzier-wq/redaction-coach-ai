@@ -14,7 +14,7 @@ export type { Correcao, RespostaRepertorio } from "@/lib/correct-essay.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const corrigirRedacao = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) => essayInputSchema.parse(data))
+  .validator((data: unknown) => essayInputSchema.parse(data))
   .handler(async ({ data }): Promise<Correcao> => {
     // 1. Tentar obter o usuário autenticado de forma segura se houver token
     let userId: string | null = null;
@@ -66,7 +66,7 @@ export const corrigirRedacao = createServerFn({ method: "POST" })
 
 export const analisarConectivos = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => connectivesInputSchema.parse(data))
+  .validator((data: unknown) => connectivesInputSchema.parse(data))
   .handler(async ({ data }) => {
     const key = process.env.LOVABLE_API_KEY;
     if (!key) {
@@ -84,7 +84,7 @@ export const analisarConectivos = createServerFn({ method: "POST" })
 
 export const criarRepertorio = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data: unknown) => repertoryInputSchema.parse(data))
+  .validator((data: unknown) => repertoryInputSchema.parse(data))
   .handler(async ({ data }) => {
     const key = process.env.LOVABLE_API_KEY;
     if (!key) {

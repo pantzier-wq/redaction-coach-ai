@@ -2,9 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 import {
   analyzeConnectivesWithAi,
   connectivesInputSchema,
-  correctEssayWithAi,
   essayInputSchema,
   repertoryInputSchema,
+  secureEssayCorrection,
   type Correcao,
   type RespostaRepertorio,
 } from "@/lib/correct-essay.server";
@@ -13,17 +13,25 @@ export type { Correcao, RespostaRepertorio } from "@/lib/correct-essay.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const corrigirRedacao = createServerFn({ method: "POST" })
-  // .middleware([requireSupabaseAuth]) — Permitindo acesso público para a 1ª correção gratuita
   .inputValidator((data: unknown) => essayInputSchema.parse(data))
-  .handler(async ({ data }): Promise<Correcao> => {
-    const key = process.env.LOVABLE_API_KEY;
-    if (!key) {
-      console.error("LOVABLE_API_KEY não encontrada no ambiente");
-      throw new Error("Erro de configuração no servidor (API Key)");
+  .handler(async ({ data, request }): Promise<Correcao> => {
+    // 1. Tentar obter o usuário autenticado de forma segura se houver token
+    let userId: string | null = null;
+    const authHeader = request.headers.get("authorization");
+    
+    if (authHeader?.startsWith("Bearer ")) {
+      try {
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { data: { user } } = await supabase.auth.getUser(authHeader.replace("Bearer ", ""));
+        userId = user?.id || null;
+      } catch (e) {
+        console.warn("Falha ao validar token na correção:", e);
+      }
     }
 
     try {
-      return await correctEssayWithAi(key, data);
+      // 2. Chamar orquestrador seguro no servidor
+      return await secureEssayCorrection(userId, data);
     } catch (error: any) {
       console.error("Erro em corrigirRedacao:", error);
       throw new Error(error.message || "Erro na correção");

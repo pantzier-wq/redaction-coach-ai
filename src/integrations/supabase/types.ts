@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      essay_attempts: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          redacao_hash: string
+          result: Json | null
+          status: string
+          tema: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          redacao_hash: string
+          result?: Json | null
+          status: string
+          tema: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          redacao_hash?: string
+          result?: Json | null
+          status?: string
+          tema?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       essays: {
         Row: {
           created_at: string | null
@@ -155,6 +191,24 @@ export type Database = {
           remaining: number
           unlimited: boolean
         }[]
+      }
+      execute_essay_correction_flow: {
+        Args: {
+          _attempt_id?: string
+          _redacao: string
+          _tema: string
+          _user_id: string
+        }
+        Returns: Json
+      }
+      finalize_essay_correction: {
+        Args: {
+          _attempt_id: string
+          _error?: string
+          _result?: Json
+          _status: string
+        }
+        Returns: undefined
       }
       grant_purchase:
         | {

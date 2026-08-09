@@ -251,7 +251,10 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
       _fingerprint: fingerprint
     });
 
-    if (eligError) throw new Error("Erro ao validar elegibilidade gratuita");
+    if (eligError) {
+      console.error("Erro RPC check_anonymous_eligibility:", eligError);
+      throw new Error("Erro ao validar elegibilidade gratuita");
+    }
     if (!isEligible) throw new Error("Você já utilizou sua correção gratuita. Crie uma conta para continuar.");
 
     // Registrar tentativa pendente
@@ -261,7 +264,10 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
       _redacao: input.redacao
     });
 
-    if (createError) throw new Error("Erro ao registrar tentativa");
+    if (createError) {
+      console.error("Erro RPC create_anonymous_attempt:", createError);
+      throw new Error("Erro ao registrar tentativa");
+    }
 
     try {
       const result = await correctEssayWithAi(lovableApiKey, input);
@@ -299,7 +305,10 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
     _redacao: input.redacao
   });
 
-  if (rpcError) throw new Error(`Erro no fluxo de crédito: ${rpcError.message}`);
+  if (rpcError) {
+    console.error("Erro RPC execute_essay_correction_flow:", rpcError);
+    throw new Error(`Erro no fluxo de crédito: ${rpcError.message}`);
+  }
   
   const flow = (Array.isArray(rpcData) ? rpcData[0] : rpcData) as any;
   if (!flow?.ok) {

@@ -46,7 +46,7 @@ export const corrigirRedacao = createServerFn({ method: "POST" })
       }
       
       // Lançar erro serializável
-      throw new Error("ERRO_TECNICO");
+      throw new Error(`ERRO_TECNICO: ${message}`);
     }
   });
 

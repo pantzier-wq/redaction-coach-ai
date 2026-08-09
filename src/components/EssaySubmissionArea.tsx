@@ -183,9 +183,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       if (errMsg.includes("LIMITE_EXCEDIDO") || errMsg.includes("créditos suficientes") || errMsg.includes("CRÉDITOS_INSUFICIENTES")) {
         setShowPaywall(true);
       } else {
-        setErro(errMsg.includes("ERRO_TECNICO") 
-          ? "Ocorreu um erro técnico na análise da IA. Tente novamente em alguns instantes." 
-          : "Não foi possível processar sua redação. Verifique sua conexão ou tente mais tarde.");
+        // Exibir a mensagem de erro detalhada vinda do servidor se disponível
+        setErro(errMsg);
       }
     } finally {
       setLoading(false);

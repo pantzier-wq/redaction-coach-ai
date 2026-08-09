@@ -106,7 +106,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         data: { 
           tema: tema.trim(), 
           redacao: redacao.trim(),
-          fingerprint: fingerprint
+          fingerprint
         } 
       });
       

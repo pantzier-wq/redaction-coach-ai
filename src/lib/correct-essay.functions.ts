@@ -15,7 +15,8 @@ export type { Correcao, RespostaRepertorio };
 
 export const corrigirRedacao = createServerFn({ method: "POST" })
   .validator((data: any) => data)
-  .handler(async ({ data }) => {
+  .handler(async ({ data }): Promise<any> => {
+    console.log("Servidor recebeu pedido de correção...");
     try {
       const result = await secureEssayCorrection(null, data);
       return JSON.stringify(result);

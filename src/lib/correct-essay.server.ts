@@ -240,6 +240,7 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
  * Orquestração segura no servidor: Validação -> Consumo -> IA -> (opcional) Reembolso
  */
 export async function secureEssayCorrection(userId: string | null, input: z.infer<typeof essayInputSchema>) {
+  console.log("--- ORQUESTRAÇÃO INICIADA ---");
   console.log("Iniciando secureEssayCorrection. UserID:", userId);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   console.log("Iniciando secureEssayCorrection. UserID:", userId);

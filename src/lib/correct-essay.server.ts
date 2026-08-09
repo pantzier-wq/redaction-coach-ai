@@ -255,6 +255,7 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
     const { data: isEligible, error: eligError } = await supabaseAdmin.rpc("check_anonymous_eligibility", {
       _fingerprint: fingerprint
     });
+    console.log("Check anon eligibility para:", fingerprint, "Resultado:", isEligible, "Erro:", eligError);
 
     if (eligError) {
       console.error("Erro RPC check_anonymous_eligibility:", eligError);

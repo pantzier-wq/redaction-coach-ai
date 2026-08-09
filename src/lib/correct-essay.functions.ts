@@ -13,12 +13,10 @@ import type { Correcao, RespostaRepertorio } from "@/lib/correct-essay.server";
 
 export type { Correcao, RespostaRepertorio };
 
-// Versão ultra-simplificada para diagnosticar o 400 Bad Request
 export const corrigirRedacao = createServerFn({ method: "POST" })
   .validator((data: any) => data)
   .handler(async ({ data }) => {
     try {
-      // Forçamos userId null para o teste inicial de landing page
       const result = await secureEssayCorrection(null, data);
       return JSON.stringify(result);
     } catch (error: any) {

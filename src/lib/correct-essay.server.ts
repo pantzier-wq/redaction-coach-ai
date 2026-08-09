@@ -101,8 +101,12 @@ function extractJsonObject(text: string) {
   if (start < 0 || end <= start) return null;
 
   try {
-    return JSON.parse(text.slice(start, end + 1)) as unknown;
-  } catch {
+    const jsonString = text.slice(start, end + 1);
+    // Remover possíveis caracteres invisíveis ou BOM que quebram o JSON.parse
+    const cleanJson = jsonString.replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
+    return JSON.parse(cleanJson) as unknown;
+  } catch (e) {
+    console.error("Erro ao fazer parse do JSON extraído:", e);
     return null;
   }
 }
@@ -155,8 +159,9 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     });
 
     console.log("IA respondeu com sucesso. Tamanho do texto:", text.length);
+    console.log("Conteúdo bruto da IA:", text);
     const parsedJson = parseJsonFromText(text);
-    console.log("JSON extraído da IA com sucesso");
+    console.log("JSON extraído da IA com sucesso:", JSON.stringify(parsedJson).slice(0, 100) + "...");
     return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
     console.error("Erro na chamada da IA (generateText):", error);

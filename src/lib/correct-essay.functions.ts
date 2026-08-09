@@ -15,7 +15,7 @@ import type { Correcao, RespostaRepertorio } from "@/lib/correct-essay.server";
 export type { Correcao, RespostaRepertorio };
 
 export const corrigirRedacao = createServerFn({ method: "POST" })
-  .validator(essayInputSchema)
+  .validator((data: unknown) => data as z.infer<typeof essayInputSchema>)
   .handler(async ({ data }): Promise<any> => {
     let userId: string | null = null;
     const request = getRequest();
@@ -48,7 +48,7 @@ export const corrigirRedacao = createServerFn({ method: "POST" })
       
       // Lançar erro serializável
       const detailedMessage = error instanceof Error ? error.message : String(error);
-      throw new Error(detailedMessage);
+      throw error;
     }
   });
 

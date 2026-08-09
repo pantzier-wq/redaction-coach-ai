@@ -164,11 +164,11 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     console.log("JSON extraído da IA com sucesso:", JSON.stringify(parsedJson).slice(0, 100) + "...");
     return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
-    console.error("Erro na chamada da IA (generateText):", error);
+    console.error("ERRO CRÍTICO NA IA (correctEssayWithAi):", error);
     if (error.message?.includes("401") || error.message?.includes("Unauthorized")) {
       throw new Error("Falha na autenticação da IA. Verifique a chave de API.");
     }
-    throw error;
+    throw new Error(`Erro na IA: ${error.message || "desconhecido"}`);
   }
 }
 
@@ -241,6 +241,7 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
  */
 export async function secureEssayCorrection(userId: string | null, input: z.infer<typeof essayInputSchema>) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  console.log("Iniciando secureEssayCorrection. UserID:", userId);
   const lovableApiKey = process.env.LOVABLE_API_KEY;
 
   if (!lovableApiKey) {
@@ -265,6 +266,7 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
     }
     if (!isEligible) throw new Error("Você já utilizou sua correção gratuita. Crie uma conta para continuar.");
 
+    console.log("Criando tentativa anônima para:", fingerprint);
     // Registrar tentativa pendente
     const { data: attemptId, error: createError } = await supabaseAdmin.rpc("create_anonymous_attempt", {
       _fingerprint: fingerprint,
@@ -274,8 +276,9 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
 
     if (createError) {
       console.error("Erro RPC create_anonymous_attempt:", createError);
-      throw new Error("Erro ao registrar tentativa");
+      throw new Error(`Erro ao registrar tentativa: ${createError.message}`);
     }
+    console.log("Tentativa criada ID:", attemptId);
 
     try {
       const result = await correctEssayWithAi(lovableApiKey, input);
@@ -289,7 +292,7 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
 
       return result;
     } catch (aiError: any) {
-      console.error("IA falhou para anônimo:", aiError);
+      console.error("IA falhou para anônimo (DETALHADO):", aiError);
       
       try {
         // Finalizar com erro no banco

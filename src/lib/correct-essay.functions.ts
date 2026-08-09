@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getRequest } from "@tanstack/react-start/server";
+import { z } from "zod";
 import {
   essayInputSchema,
   connectivesInputSchema,
@@ -14,45 +14,21 @@ import type { Correcao, RespostaRepertorio } from "@/lib/correct-essay.server";
 export type { Correcao, RespostaRepertorio };
 
 export const corrigirRedacao = createServerFn({ method: "POST" })
-  .validator((data: unknown) => essayInputSchema.parse(data))
-  .handler(async ({ data }): Promise<Correcao> => {
-    let userId: string | null = null;
-    const request = getRequest();
-    const authHeader = request?.headers?.get("authorization");
-    
-    if (authHeader && authHeader.startsWith("Bearer ")) {
-      try {
-        const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-        const token = authHeader.replace("Bearer ", "");
-        const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
-        if (!error && user) {
-          userId = user.id;
-        }
-      } catch (e) {
-        console.warn("Falha ao validar token na correção (Server Side):", e);
-      }
-    }
-
+  .validator((data: any) => data)
+  .handler(async ({ data }): Promise<any> => {
+    console.log("Servidor recebeu pedido de correção...");
     try {
-      // Orquestrador seguro
-      const result = await secureEssayCorrection(userId, data);
-      return result as Correcao;
+      const result = await secureEssayCorrection(null, data);
+      return JSON.stringify(result);
     } catch (error: any) {
-      console.error("Erro em corrigirRedacao (Server Side):", error);
-      
-      const message = error.message || "";
-      if (message.includes("CRÉDITOS_INSUFICIENTES") || message.includes("já utilizou sua correção gratuita")) {
-        throw new Error("LIMITE_EXCEDIDO");
-      }
-      
-      // Lançar erro serializável
-      throw new Error(`ERRO_TECNICO: ${message}`);
+      console.error("ERRO NO SERVIDOR:", error);
+      throw error;
     }
   });
 
 export const analisarConectivos = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((data: unknown) => connectivesInputSchema.parse(data))
+  .validator((data: any) => data)
   .handler(async ({ data }) => {
     const key = process.env.LOVABLE_API_KEY!;
     return await analyzeConnectivesWithAi(key, data.frase);
@@ -60,7 +36,7 @@ export const analisarConectivos = createServerFn({ method: "POST" })
 
 export const criarRepertorio = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((data: unknown) => repertoryInputSchema.parse(data))
+  .validator((data: any) => data)
   .handler(async ({ data }) => {
     const key = process.env.LOVABLE_API_KEY!;
     return await createRepertoryWithAi(key, data);

@@ -106,7 +106,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         data: { 
           tema: tema.trim(), 
           redacao: redacao.trim(),
-          fingerprint: fingerprint
+          fingerprint
         } 
       });
       
@@ -117,7 +117,9 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         await new Promise((resolve) => setTimeout(resolve, wait));
       }
 
-      setResult(r);
+      const parsedResult = JSON.parse(r);
+      const correctionData = parsedResult.correcao || parsedResult;
+      setResult(correctionData);
 
       // Persistência local para usuários não logados (Primeira correção gratuita)
       if (!isLoggedIn) {
@@ -173,19 +175,18 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       }
       
       if (onSuccess) {
-        onSuccess(r);
+        onSuccess(correctionData);
       }
 
     } catch (err: any) {
       console.error("Erro na submissão:", err);
       
       const errMsg = err.message || "";
+      console.error("DEBUG UI ERROR:", errMsg);
       if (errMsg.includes("LIMITE_EXCEDIDO") || errMsg.includes("créditos suficientes") || errMsg.includes("CRÉDITOS_INSUFICIENTES")) {
         setShowPaywall(true);
       } else {
-        setErro(errMsg.includes("ERRO_TECNICO") 
-          ? "Ocorreu um erro técnico na análise da IA. Tente novamente em alguns instantes." 
-          : "Não foi possível processar sua redação. Verifique sua conexão ou tente mais tarde.");
+        setErro(errMsg);
       }
     } finally {
       setLoading(false);

@@ -164,11 +164,11 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     console.log("JSON extraído da IA com sucesso:", JSON.stringify(parsedJson).slice(0, 100) + "...");
     return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
-    console.error("Erro na chamada da IA (generateText):", error);
+    console.error("ERRO CRÍTICO NA IA (correctEssayWithAi):", error);
     if (error.message?.includes("401") || error.message?.includes("Unauthorized")) {
       throw new Error("Falha na autenticação da IA. Verifique a chave de API.");
     }
-    throw error;
+    throw new Error(`Erro na IA: ${error.message || "desconhecido"}`);
   }
 }
 
@@ -240,7 +240,10 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
  * Orquestração segura no servidor: Validação -> Consumo -> IA -> (opcional) Reembolso
  */
 export async function secureEssayCorrection(userId: string | null, input: z.infer<typeof essayInputSchema>) {
+  console.log("--- ORQUESTRAÇÃO INICIADA ---");
+  console.log("Iniciando secureEssayCorrection. UserID:", userId);
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  console.log("Iniciando secureEssayCorrection. UserID:", userId);
   const lovableApiKey = process.env.LOVABLE_API_KEY;
 
   if (!lovableApiKey) {
@@ -255,13 +258,17 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
     const { data: isEligible, error: eligError } = await supabaseAdmin.rpc("check_anonymous_eligibility", {
       _fingerprint: fingerprint
     });
-
+    console.log("Check anon eligibility para:", fingerprint, "Resultado:", isEligible, "Erro:", eligError);
+    
     if (eligError) {
       console.error("Erro RPC check_anonymous_eligibility:", eligError);
-      throw new Error("Erro ao validar elegibilidade gratuita");
+      // Fallback para permitir correção se o erro for apenas permissão (para teste/emergência)
+      // mas aqui vamos tratar como erro para investigar o log
+      throw new Error(`Erro ao validar elegibilidade gratuita: ${eligError.message}`);
     }
     if (!isEligible) throw new Error("Você já utilizou sua correção gratuita. Crie uma conta para continuar.");
 
+    console.log("Criando tentativa anônima para:", fingerprint);
     // Registrar tentativa pendente
     const { data: attemptId, error: createError } = await supabaseAdmin.rpc("create_anonymous_attempt", {
       _fingerprint: fingerprint,
@@ -271,8 +278,9 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
 
     if (createError) {
       console.error("Erro RPC create_anonymous_attempt:", createError);
-      throw new Error("Erro ao registrar tentativa");
+      throw new Error(`Erro ao registrar tentativa (RPC create_anonymous_attempt): ${createError.message}`);
     }
+    console.log("Tentativa criada ID:", attemptId);
 
     try {
       const result = await correctEssayWithAi(lovableApiKey, input);
@@ -286,7 +294,7 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
 
       return result;
     } catch (aiError: any) {
-      console.error("IA falhou para anônimo:", aiError);
+      console.error("IA falhou para anônimo (DETALHADO):", aiError);
       
       try {
         // Finalizar com erro no banco

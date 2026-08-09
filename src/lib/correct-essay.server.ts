@@ -256,10 +256,12 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
       _fingerprint: fingerprint
     });
     console.log("Check anon eligibility para:", fingerprint, "Resultado:", isEligible, "Erro:", eligError);
-
+    
     if (eligError) {
       console.error("Erro RPC check_anonymous_eligibility:", eligError);
-      throw new Error("Erro ao validar elegibilidade gratuita");
+      // Fallback para permitir correção se o erro for apenas permissão (para teste/emergência)
+      // mas aqui vamos tratar como erro para investigar o log
+      throw new Error(`Erro ao validar elegibilidade gratuita: ${eligError.message}`);
     }
     if (!isEligible) throw new Error("Você já utilizou sua correção gratuita. Crie uma conta para continuar.");
 

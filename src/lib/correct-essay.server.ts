@@ -276,7 +276,7 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
 
     if (createError) {
       console.error("Erro RPC create_anonymous_attempt:", createError);
-      throw new Error(`Erro ao registrar tentativa: ${createError.message}`);
+      throw new Error(`Erro ao registrar tentativa (RPC create_anonymous_attempt): ${createError.message}`);
     }
     console.log("Tentativa criada ID:", attemptId);
 

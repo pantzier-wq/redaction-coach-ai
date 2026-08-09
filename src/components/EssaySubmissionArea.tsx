@@ -180,10 +180,10 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       console.error("Erro na submissão:", err);
       
       const errMsg = err.message || "";
+      console.error("DEBUG UI ERROR:", errMsg);
       if (errMsg.includes("LIMITE_EXCEDIDO") || errMsg.includes("créditos suficientes") || errMsg.includes("CRÉDITOS_INSUFICIENTES")) {
         setShowPaywall(true);
       } else {
-        // Exibir a mensagem de erro detalhada vinda do servidor se disponível
         setErro(errMsg);
       }
     } finally {

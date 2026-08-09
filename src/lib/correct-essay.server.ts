@@ -155,7 +155,9 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     });
 
     console.log("IA respondeu com sucesso. Tamanho do texto:", text.length);
-    return CorrectionSchema.parse(parseJsonFromText(text));
+    const parsedJson = parseJsonFromText(text);
+    console.log("JSON extraído da IA com sucesso");
+    return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
     console.error("Erro na chamada da IA (generateText):", error);
     if (error.message?.includes("401") || error.message?.includes("Unauthorized")) {

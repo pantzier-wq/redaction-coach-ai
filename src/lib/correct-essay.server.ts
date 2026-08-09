@@ -152,7 +152,7 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
     const { text } = await generateText({
-      model: gateway("google/gemini-2.0-flash"),
+      model: gateway("openai/gpt-4o-mini"),
       system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, sem comentários e sem texto fora do JSON.`,
       prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija com rigor de corretor ENEM real no formato: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
       maxRetries: 2,
@@ -176,7 +176,7 @@ export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: str
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
   const { text } = await generateText({
-    model: gateway("google/gemini-2.0-flash"),
+    model: gateway("openai/gpt-4o-mini"),
     system: `${CONNECTIVES_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, no formato: {"analise":"...","status":"bom|regular|ruim","sugestao":"..."}. Não use outros nomes de campos.`,
     prompt: `Frase para análise: ${frase}`,
     maxRetries: 2,
@@ -216,7 +216,7 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
 
   try {
     const { text } = await generateText({
-      model: gateway("google/gemini-2.0-flash"),
+      model: gateway("openai/gpt-4o-mini"),
       system: systemPrompt,
       messages,
       maxRetries: 2,

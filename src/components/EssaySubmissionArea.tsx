@@ -106,7 +106,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         data: { 
           tema: tema.trim(), 
           redacao: redacao.trim(),
-          fingerprint: fingerprint || undefined
+          fingerprint: fingerprint
         } 
       });
       
@@ -316,8 +316,16 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
               </div>
 
               {erro && (
-                <div className="mt-4 rounded-xl border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive-foreground">
-                  {erro}
+                <div className="mt-4 rounded-xl border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive-foreground animate-in slide-in-from-top-2 duration-300">
+                  <p className="font-bold mb-1">Ops! Algo deu errado:</p>
+                  <p className="opacity-90">{erro}</p>
+                  <button 
+                    type="button" 
+                    onClick={() => setErro(null)}
+                    className="mt-2 text-[10px] uppercase tracking-wider font-black hover:underline"
+                  >
+                    Fechar aviso
+                  </button>
                 </div>
               )}
 

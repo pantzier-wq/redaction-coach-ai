@@ -15,7 +15,7 @@ import type { Correcao, RespostaRepertorio } from "@/lib/correct-essay.server";
 export type { Correcao, RespostaRepertorio };
 
 export const corrigirRedacao = createServerFn({ method: "POST" })
-  .validator((data: any) => data as z.infer<typeof essayInputSchema>)
+  .validator((data: unknown) => data as any)
   .handler(async ({ data }): Promise<Correcao> => {
     let userId: string | null = null;
     const request = getRequest();

@@ -101,8 +101,12 @@ function extractJsonObject(text: string) {
   if (start < 0 || end <= start) return null;
 
   try {
-    return JSON.parse(text.slice(start, end + 1)) as unknown;
-  } catch {
+    const jsonString = text.slice(start, end + 1);
+    // Remover possíveis caracteres invisíveis ou BOM que quebram o JSON.parse
+    const cleanJson = jsonString.replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
+    return JSON.parse(cleanJson) as unknown;
+  } catch (e) {
+    console.error("Erro ao fazer parse do JSON extraído:", e);
     return null;
   }
 }
@@ -148,15 +152,16 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
     const { text } = await generateText({
-      model: gateway("google/gemini-2.0-flash"),
+      model: gateway("openai/gpt-4o-mini"),
       system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, sem comentários e sem texto fora do JSON.`,
       prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija com rigor de corretor ENEM real no formato: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
       maxRetries: 2,
     });
 
     console.log("IA respondeu com sucesso. Tamanho do texto:", text.length);
+    console.log("Conteúdo bruto da IA:", text);
     const parsedJson = parseJsonFromText(text);
-    console.log("JSON extraído da IA com sucesso");
+    console.log("JSON extraído da IA com sucesso:", JSON.stringify(parsedJson).slice(0, 100) + "...");
     return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
     console.error("Erro na chamada da IA (generateText):", error);
@@ -171,7 +176,7 @@ export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: str
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
   const { text } = await generateText({
-    model: gateway("google/gemini-2.0-flash"),
+    model: gateway("openai/gpt-4o-mini"),
     system: `${CONNECTIVES_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, no formato: {"analise":"...","status":"bom|regular|ruim","sugestao":"..."}. Não use outros nomes de campos.`,
     prompt: `Frase para análise: ${frase}`,
     maxRetries: 2,
@@ -211,7 +216,7 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
 
   try {
     const { text } = await generateText({
-      model: gateway("google/gemini-2.0-flash"),
+      model: gateway("openai/gpt-4o-mini"),
       system: systemPrompt,
       messages,
       maxRetries: 2,

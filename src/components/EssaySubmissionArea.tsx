@@ -117,7 +117,9 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         await new Promise((resolve) => setTimeout(resolve, wait));
       }
 
-      setResult(r);
+      const parsedResult = JSON.parse(r);
+      const correctionData = parsedResult.correcao || parsedResult;
+      setResult(correctionData);
 
       // Persistência local para usuários não logados (Primeira correção gratuita)
       if (!isLoggedIn) {

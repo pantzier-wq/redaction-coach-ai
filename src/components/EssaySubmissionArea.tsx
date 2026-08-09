@@ -175,7 +175,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       }
       
       if (onSuccess) {
-        onSuccess(r);
+        onSuccess(correctionData);
       }
 
     } catch (err: any) {

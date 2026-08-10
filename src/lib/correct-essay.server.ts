@@ -152,8 +152,7 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     const requestPayload = {
       model: "google/gemini-1.5-flash",
       messages: [
-        { role: "system", content: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne EXCLUSIVAMENTE um objeto JSON válido.` },
-        { role: "user", content: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.` }
+        { role: "user", content: "hi" }
       ]
     };
 

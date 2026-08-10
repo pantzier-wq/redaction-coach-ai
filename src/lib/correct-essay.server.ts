@@ -172,10 +172,18 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error("DEBUG: AI Gateway Payload enviado:", JSON.stringify(requestPayload).slice(0, 500));
-      console.error("DEBUG: AI Gateway Status:", response.status);
-      console.error("DEBUG: AI Gateway Error Body:", errorBody);
-      throw new Error(`AI Gateway Error (${response.status}): ${errorBody}`);
+      console.error("AI Gateway Payload enviado:", JSON.stringify(requestPayload).slice(0, 500));
+      console.error("AI Gateway Status:", response.status);
+      console.error("AI Gateway Error Body:", errorBody);
+      
+      // Tentamos extrair a mensagem amigável do JSON de erro se existir
+      let friendlyError = errorBody;
+      try {
+        const errorJson = JSON.parse(errorBody);
+        friendlyError = errorJson.message || errorJson.error?.message || errorBody;
+      } catch (e) {}
+      
+      throw new Error(`AI Gateway Error: ${friendlyError}`);
     }
 
     const resData = await response.json();

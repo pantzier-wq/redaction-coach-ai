@@ -330,14 +330,11 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
       console.log("Correção anônima finalizada com sucesso");
       return result;
     } catch (aiError: any) {
-      const finalError = `DETALHE: ${aiError.message || 'Erro desconhecido'}`;
-      console.error("DEBUG AI ERROR:", finalError);
-      
-      await supabaseAdmin.rpc("finalize_anonymous_essay_correction", {
-        _attempt_id: attemptId,
-        _status: 'failed',
-        _error: finalError.substring(0, 500)
-      });
+      const dbErr = `REAL_ERR: ${aiError.message || 'NONE'}`;
+      await supabaseAdmin.from('anonymous_essay_attempts').update({
+        status: 'failed',
+        error_message: dbErr
+      }).eq('id', attemptId);
       throw aiError;
     }
   }

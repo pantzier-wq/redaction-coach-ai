@@ -1,5 +1,5 @@
+import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { generateText } from "ai";
-import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
 
 export const essayInputSchema = z.object({
@@ -140,16 +140,14 @@ function normalizeConnectivesAnalysis(value: unknown): AnaliseConectivos {
 }
 
 export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<typeof essayInputSchema>) {
-  const gateway = createOpenAI({
-    baseURL: "https://ai.gateway.lovable.dev/v1",
-    apiKey: lovableApiKey,
-  });
+  const gateway = createLovableAiGatewayProvider(lovableApiKey);
   
   try {
     const { text } = await generateText({
       model: gateway("google/gemini-1.5-flash"),
-      prompt: "hi",
-      maxRetries: 0,
+      system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne EXCLUSIVAMENTE um objeto JSON válido.`,
+      prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
+      maxRetries: 2,
     });
 
     const parsedJson = parseJsonFromText(text);

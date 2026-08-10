@@ -152,13 +152,15 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     const gateway = createLovableAiGatewayProvider(lovableApiKey);
     const api_url = "https://ai.gateway.lovable.dev/v1/chat/completions";
     
+    // Payload simplificado para diagnóstico
     const requestPayload = {
-      model: "google/gemini-1.5-flash",
+      model: "google/gemini-2.0-flash-exp",
       messages: [
-        { role: "system", content: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne EXCLUSIVAMENTE um objeto JSON válido.` },
-        { role: "user", content: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.` }
+        { role: "user", content: "Olá, responda apenas com a palavra 'OK'." }
       ]
     };
+
+    console.log("DEBUG: Enviando payload mínimo para o gateway...");
 
     const response = await fetch(api_url, {
       method: "POST",

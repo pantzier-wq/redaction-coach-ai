@@ -5,7 +5,7 @@ import { z } from "zod";
 export const essayInputSchema = z.object({
   tema: z.string().trim().min(3, "Informe o tema").max(300),
   redacao: z.string().trim().min(200, "Cole uma redação com pelo menos 200 caracteres").max(8000),
-  fingerprint: z.string().optional(), // Identificador anônimo opcional
+  fingerprint: z.string().optional(),
 });
 
 export const connectivesInputSchema = z.object({
@@ -102,7 +102,6 @@ function extractJsonObject(text: string) {
 
   try {
     const jsonString = text.slice(start, end + 1);
-    // Remover possíveis caracteres invisíveis ou BOM que quebram o JSON.parse
     const cleanJson = jsonString.replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
     return JSON.parse(cleanJson) as unknown;
   } catch (e) {
@@ -144,45 +143,33 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
   console.log("Iniciando correctEssayWithAi para tema:", input.tema);
   
   if (!lovableApiKey) {
-    console.error("LOVABLE_API_KEY não fornecida em correctEssayWithAi");
     throw new Error("Erro de configuração: API Key ausente.");
   }
 
   try {
-    const gateway = createLovableAiGatewayProvider(lovableApiKey);
     const api_url = "https://ai.gateway.lovable.dev/v1/chat/completions";
     
-    // Teste de DNS e Conectividade básica via fetch puro
-    let response;
-    try {
-      response = await fetch(api_url, {
-        method: "POST",
-        headers: {
-          "Lovable-API-Key": lovableApiKey,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: "google/gemini-2.0-flash-exp",
-          messages: [{ role: "user", content: "hi" }]
-        })
-      });
-    } catch (e: any) {
-      throw new Error(`DNS_CONN_FAIL: ${e.message}`);
-    }
+    const requestPayload = {
+      model: "google/gemini-1.5-flash",
+      messages: [
+        { role: "system", content: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne EXCLUSIVAMENTE um objeto JSON válido.` },
+        { role: "user", content: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.` }
+      ]
+    };
+
+    const response = await fetch(api_url, {
+      method: "POST",
+      headers: {
+        "Lovable-API-Key": lovableApiKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(requestPayload)
+    });
 
     if (!response.ok) {
-      const body = await response.text();
-      throw new Error(`STATUS_${response.status}: ${body.substring(0, 100)}`);
+      const errorText = await response.text();
+      throw new Error(`AI_GATEWAY_FAIL_${response.status}: ${errorText.substring(0, 100)}`);
     }
-
-    const resData = await response.json();
-    const text = resData.choices[0].message.content;
-    
-    const parsedJson = parseJsonFromText(text);
-    return CorrectionSchema.parse(parsedJson);
-  } catch (error: any) {
-    throw new Error(`CRITICAL: ${error.message}`);
-  }
 
     const resData = await response.json();
     const text = resData.choices[0].message.content;
@@ -199,7 +186,7 @@ export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: str
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
   const { text } = await generateText({
-    model: gateway("google/gemini-2.5-flash"),
+    model: gateway("google/gemini-1.5-flash"),
     system: `${CONNECTIVES_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, no formato: {"analise":"...","status":"bom|regular|ruim","sugestao":"..."}. Não use outros nomes de campos.`,
     prompt: `Frase para análise: ${frase}`,
     maxRetries: 2,
@@ -233,13 +220,13 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
     ...(input.historico || []).map((h) => ({ role: h.role as "user" | "assistant", content: h.content })),
     {
       role: "user" as const,
-      content: `Tema: ${input.tema}. ${input.genero ? `Gênero: ${input.genero}.` : ""} ${input.detalhes ? `Mais detalhes: ${input.detalhes}` : ""}`,
+      content: `Tema: ${input.tema}. ${input.genero ? \`Gênero: \${input.genero}.\` : ""} \${input.detalhes ? \`Mais detalhes: \${input.detalhes}\` : ""}`,
     },
   ];
 
   try {
     const { text } = await generateText({
-      model: gateway("google/gemini-2.5-flash"),
+      model: gateway("google/gemini-1.5-flash"),
       system: systemPrompt,
       messages,
       maxRetries: 2,
@@ -259,55 +246,35 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
   }
 }
 
-/**
- * Orquestração segura no servidor: Validação -> Consumo -> IA -> (opcional) Reembolso
- */
 export async function secureEssayCorrection(userId: string | null, input: z.infer<typeof essayInputSchema>) {
-  console.log("--- ORQUESTRAÇÃO INICIADA ---");
-  console.log("Iniciando secureEssayCorrection. UserID:", userId);
+  console.log("--- ORQUESTRAÇÃO INICIADA ---. UserID:", userId);
   
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const lovableApiKey = process.env.LOVABLE_API_KEY;
 
   if (!lovableApiKey) {
-    console.error("LOVABLE_API_KEY não encontrada no process.env");
     throw new Error("Erro de configuração no servidor (API Key)");
   }
 
-  // 1. Caso seja anônimo (Primeira correção gratuita)
   if (!userId) {
     const fingerprint = input.fingerprint || "unknown";
-    console.log("Fluxo anônimo para fingerprint:", fingerprint);
     
-    // Validar elegibilidade gratuita
     const { data: isEligible, error: eligError } = await supabaseAdmin.rpc("check_anonymous_eligibility", {
       _fingerprint: fingerprint
     });
     
-    if (eligError) {
-      console.error("Erro ao validar elegibilidade RPC:", eligError);
-      throw new Error("Erro ao validar acesso gratuito. Tente novamente.");
+    if (eligError || !isEligible) {
+      throw new Error("Você já utilizou sua correção gratuita ou ocorreu um erro de acesso.");
     }
 
-    if (!isEligible) {
-      console.warn("Fingerprint não elegível:", fingerprint);
-      throw new Error("Você já utilizou sua correção gratuita. Crie uma conta para continuar.");
-    }
-
-    // Registrar tentativa pendente
     const { data: attemptId, error: createError } = await supabaseAdmin.rpc("create_anonymous_attempt", {
       _fingerprint: fingerprint,
       _tema: input.tema,
       _redacao: input.redacao
     });
 
-    if (createError) {
-      console.error("Erro ao criar tentativa anônima RPC:", createError);
-      throw new Error("Erro ao registrar tentativa. Tente novamente.");
-    }
+    if (createError) throw new Error("Erro ao registrar tentativa.");
     
-    console.log("Tentativa anônima registrada ID:", attemptId);
-
     try {
       const result = await correctEssayWithAi(lovableApiKey, input);
       
@@ -318,28 +285,21 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
 
       return result;
     } catch (aiError: any) {
-      const dbErr = `FORCED_EXPOSE: ${aiError.message || 'NO_MESSAGE'}`;
       await supabaseAdmin.from('anonymous_essay_attempts').update({
         status: 'failed',
-        error_message: dbErr
+        error_message: aiError.message
       }).eq('id', attemptId);
-      // Não lançar erro para o TanStack, retornar null para ver se o erro persiste no banco
-      return null;
+      throw aiError;
     }
   }
 
-  // 2. Fluxo para usuário logado (créditos)
-  console.log("Iniciando fluxo de créditos para usuário:", userId);
   const { data: rpcData, error: rpcError } = await supabaseAdmin.rpc("execute_essay_correction_flow", {
     _user_id: userId,
     _tema: input.tema,
     _redacao: input.redacao
   });
 
-  if (rpcError) {
-    console.error("Erro no RPC de fluxo de crédito:", rpcError);
-    throw new Error("Erro ao processar seus créditos.");
-  }
+  if (rpcError) throw new Error("Erro ao processar seus créditos.");
   
   const flow = (Array.isArray(rpcData) ? rpcData[0] : rpcData) as any;
   if (!flow?.ok) {
@@ -348,7 +308,6 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
   }
 
   const attemptId = flow.attempt_id;
-  console.log("Tentativa registrada para usuário logado, ID:", attemptId);
 
   try {
     const result = await correctEssayWithAi(lovableApiKey, input);
@@ -361,8 +320,6 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
 
     return result;
   } catch (aiError: any) {
-    console.error("IA falhou para usuário logado, estornando:", aiError);
-    
     await supabaseAdmin.rpc("finalize_essay_correction", {
       _attempt_id: attemptId,
       _status: 'failed',

@@ -220,7 +220,7 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
     ...(input.historico || []).map((h) => ({ role: h.role as "user" | "assistant", content: h.content })),
     {
       role: "user" as const,
-      content: `Tema: ${input.tema}. ${input.genero ? \`Gênero: \${input.genero}.\` : ""} \${input.detalhes ? \`Mais detalhes: \${input.detalhes}\` : ""}`,
+      content: `Tema: ${input.tema}. ${input.genero ? `Gênero: ${input.genero}.` : ""} ${input.detalhes ? `Mais detalhes: ${input.detalhes}` : ""}`,
     },
   ];
 

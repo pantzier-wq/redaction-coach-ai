@@ -151,26 +151,30 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
   try {
     const gateway = createLovableAiGatewayProvider(lovableApiKey);
     const api_url = "https://ai.gateway.lovable.dev/v1/chat/completions";
-    console.log("Chamando AI Gateway diretamente via fetch com modelo Gemini 2.5 Flash...");
+    console.log("Chamando AI Gateway diretamente via fetch...");
     
+    const requestPayload = {
+      model: "google/gemini-2.5-flash",
+      messages: [
+        { role: "system", content: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne EXCLUSIVAMENTE um objeto JSON válido.` },
+        { role: "user", content: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.` }
+      ]
+    };
+
     const response = await fetch(api_url, {
       method: "POST",
       headers: {
         "Lovable-API-Key": lovableApiKey,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          { role: "system", content: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne EXCLUSIVAMENTE um objeto JSON válido.` },
-          { role: "user", content: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.` }
-        ]
-      })
+      body: JSON.stringify(requestPayload)
     });
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error("AI Gateway Error Body:", errorBody);
+      console.error("DEBUG: AI Gateway Payload enviado:", JSON.stringify(requestPayload).slice(0, 500));
+      console.error("DEBUG: AI Gateway Status:", response.status);
+      console.error("DEBUG: AI Gateway Error Body:", errorBody);
       throw new Error(`AI Gateway Error (${response.status}): ${errorBody}`);
     }
 

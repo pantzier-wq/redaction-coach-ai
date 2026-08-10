@@ -150,13 +150,29 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
 
   try {
     const gateway = createLovableAiGatewayProvider(lovableApiKey);
-    const { text } = await generateText({
-      model: gateway("google/gemini-2.5-flash"),
-      system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRESPOSTA OBRIGATÓRIA: Retorne EXCLUSIVAMENTE um objeto JSON válido.`,
-      prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
-      maxRetries: 3,
-      experimental_telemetry: { isEnabled: true },
+    const api_url = "https://ai.gateway.lovable.dev/v1/chat/completions";
+    const response = await fetch(api_url, {
+      method: "POST",
+      headers: {
+        "Lovable-API-Key": lovableApiKey,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne EXCLUSIVAMENTE um objeto JSON válido.` },
+          { role: "user", content: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.` }
+        ]
+      })
     });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      throw new Error(`AI Gateway Error (${response.status}): ${errorBody}`);
+    }
+
+    const data = await response.json();
+    const text = data.choices[0].message.content;
 
     console.log("IA respondeu com sucesso. Tamanho do texto:", text.length);
     console.log("Conteúdo bruto da IA:", text);

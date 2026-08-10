@@ -317,7 +317,7 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
       console.log("Correção anônima finalizada com sucesso");
       return result;
     } catch (aiError: any) {
-      console.error("Erro na IA para anônimo:", aiError);
+      console.error("Erro na IA para anônimo (DETALHADO):", aiError.message, aiError.stack);
       
       await supabaseAdmin.rpc("finalize_anonymous_essay_correction", {
         _attempt_id: attemptId,

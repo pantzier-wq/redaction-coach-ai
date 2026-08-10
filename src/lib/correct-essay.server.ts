@@ -181,18 +181,13 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
     console.error("ERRO CRÍTICO NA IA (correctEssayWithAi):", error);
-    console.error("Tipo do erro:", typeof error);
-    console.error("Mensagem do erro:", error.message);
     
-    if (error.response) {
-      console.error("Status da resposta da IA:", error.response.status);
-    }
-
-    if (error.message?.includes("401") || error.message?.includes("Unauthorized")) {
-      throw new Error("Falha na autenticação da IA. Verifique a chave de API.");
+    let dbErrorMessage = error.message;
+    if (error.message && error.message.includes("AI Gateway Error")) {
+      dbErrorMessage = `AI Gateway: ${error.message}`;
     }
     
-    throw new Error(`Erro na IA: ${error.message || "desconhecido"}`);
+    throw new Error(dbErrorMessage || "Erro desconhecido na IA");
   }
 }
 

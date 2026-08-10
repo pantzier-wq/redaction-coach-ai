@@ -159,7 +159,7 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     const response = await fetch(api_url, {
       method: "POST",
       headers: {
-        "Lovable-API-Key": lovableApiKey,
+        "apikey": lovableApiKey,
         "Content-Type": "application/json"
       },
       body: JSON.stringify(requestPayload)

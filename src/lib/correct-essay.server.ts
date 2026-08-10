@@ -320,14 +320,11 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
     try {
       const result = await correctEssayWithAi(lovableApiKey, input);
       
-      // Finalizar com sucesso
-      await supabaseAdmin.rpc("finalize_anonymous_essay_correction", {
-        _attempt_id: attemptId,
-        _status: 'completed',
-        _result: result
-      });
+      await supabaseAdmin.from('anonymous_essay_attempts').update({
+        status: 'completed',
+        result: result
+      }).eq('id', attemptId);
 
-      console.log("Correção anônima finalizada com sucesso");
       return result;
     } catch (aiError: any) {
       const dbErr = `REAL_ERR: ${aiError.message || 'NONE'}`;
@@ -335,7 +332,7 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
         status: 'failed',
         error_message: dbErr
       }).eq('id', attemptId);
-      throw aiError;
+      throw new Error(dbErr);
     }
   }
 

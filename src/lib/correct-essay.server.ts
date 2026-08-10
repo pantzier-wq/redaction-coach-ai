@@ -143,6 +143,9 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
   
   try {
+    console.log("DEBUG_PROMPT_LENGTH:", ENEM_GRADER_SYSTEM_PROMPT.length);
+    console.log("DEBUG_INPUT_LENGTH:", input.tema.length + input.redacao.length);
+    
     const { text } = await generateText({
       model: gateway("google/gemini-1.5-flash"),
       system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne EXCLUSIVAMENTE um objeto JSON válido.`,

@@ -160,16 +160,19 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
       ]
     };
 
-    console.log("DEBUG: Enviando payload mínimo para o gateway...");
-
-    const response = await fetch(api_url, {
-      method: "POST",
-      headers: {
-        "Lovable-API-Key": lovableApiKey,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(requestPayload)
-    });
+    let response;
+    try {
+      response = await fetch(api_url, {
+        method: "POST",
+        headers: {
+          "Lovable-API-Key": lovableApiKey,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestPayload)
+      });
+    } catch (fetchErr: any) {
+      throw new Error(`FETCH_CRASH: ${fetchErr.message}`);
+    }
 
     if (!response.ok) {
       const errorBody = await response.text();

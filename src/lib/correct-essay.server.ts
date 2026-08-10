@@ -172,35 +172,20 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error("AI Gateway Payload enviado:", JSON.stringify(requestPayload).slice(0, 500));
-      console.error("AI Gateway Status:", response.status);
-      console.error("AI Gateway Error Body:", errorBody);
-      
-      // Tentamos extrair a mensagem amigável do JSON de erro se existir
-      let friendlyError = errorBody;
-      try {
-        const errorJson = JSON.parse(errorBody);
-        friendlyError = errorJson.message || errorJson.error?.message || errorBody;
-      } catch (e) {}
-      
-      throw new Error(`AI Gateway Error: ${friendlyError}`);
+      // NUNCA MASCARAR O ERRO AQUI PARA O DESENVOLVEDOR
+      const detailedError = `AI_GATEWAY_FAIL_${response.status}: ${errorBody.substring(0, 300)}`;
+      console.error(detailedError);
+      throw new Error(detailedError);
     }
 
     const resData = await response.json();
     const text = resData.choices[0].message.content;
     
-    console.log("IA respondeu com sucesso.");
     const parsedJson = parseJsonFromText(text);
     return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
-    console.error("ERRO CRÍTICO NA IA (correctEssayWithAi):", error);
-    
-    let dbErrorMessage = error.message;
-    if (error.message && error.message.includes("AI Gateway Error")) {
-      dbErrorMessage = `AI Gateway: ${error.message}`;
-    }
-    
-    throw new Error(dbErrorMessage || "Erro desconhecido na IA");
+    console.error("ERRO NO correctEssayWithAi:", error.message);
+    throw error;
   }
 }
 

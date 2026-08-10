@@ -153,9 +153,9 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
 
     const { text } = await generateText({
       model: gateway("openai/gpt-4o-mini"),
-      system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, sem comentários e sem texto fora do JSON.`,
-      prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija com rigor de corretor ENEM real no formato: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
-      maxRetries: 2,
+      system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRESPOSTA OBRIGATÓRIA: Retorne EXCLUSIVAMENTE um objeto JSON válido. Nunca inclua blocos de código markdown (como \`\`\`json).`,
+      prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
+      maxRetries: 3,
     });
 
     console.log("IA respondeu com sucesso. Tamanho do texto:", text.length);
@@ -165,9 +165,20 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
     console.error("ERRO CRÍTICO NA IA (correctEssayWithAi):", error);
+    
+    // Log do erro completo para depuração no Lovable
+    if (error.response) {
+      console.error("Status da resposta da IA:", error.response.status);
+      try {
+        const errorBody = await error.response.text();
+        console.error("Corpo do erro da IA:", errorBody);
+      } catch (e) {}
+    }
+
     if (error.message?.includes("401") || error.message?.includes("Unauthorized")) {
       throw new Error("Falha na autenticação da IA. Verifique a chave de API.");
     }
+    
     throw new Error(`Erro na IA: ${error.message || "desconhecido"}`);
   }
 }

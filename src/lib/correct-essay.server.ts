@@ -242,33 +242,35 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
 export async function secureEssayCorrection(userId: string | null, input: z.infer<typeof essayInputSchema>) {
   console.log("--- ORQUESTRAÇÃO INICIADA ---");
   console.log("Iniciando secureEssayCorrection. UserID:", userId);
+  
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  console.log("Iniciando secureEssayCorrection. UserID:", userId);
   const lovableApiKey = process.env.LOVABLE_API_KEY;
 
   if (!lovableApiKey) {
+    console.error("LOVABLE_API_KEY não encontrada no process.env");
     throw new Error("Erro de configuração no servidor (API Key)");
   }
 
   // 1. Caso seja anônimo (Primeira correção gratuita)
   if (!userId) {
     const fingerprint = input.fingerprint || "unknown";
+    console.log("Fluxo anônimo para fingerprint:", fingerprint);
     
-    // Validar elegibilidade gratuita no servidor
+    // Validar elegibilidade gratuita
     const { data: isEligible, error: eligError } = await supabaseAdmin.rpc("check_anonymous_eligibility", {
       _fingerprint: fingerprint
     });
-    console.log("Check anon eligibility para:", fingerprint, "Resultado:", isEligible, "Erro:", eligError);
     
     if (eligError) {
-      console.error("Erro RPC check_anonymous_eligibility:", eligError);
-      // Fallback para permitir correção se o erro for apenas permissão (para teste/emergência)
-      // mas aqui vamos tratar como erro para investigar o log
-      throw new Error(`Erro ao validar elegibilidade gratuita: ${eligError.message}`);
+      console.error("Erro ao validar elegibilidade RPC:", eligError);
+      throw new Error("Erro ao validar acesso gratuito. Tente novamente.");
     }
-    if (!isEligible) throw new Error("Você já utilizou sua correção gratuita. Crie uma conta para continuar.");
 
-    console.log("Criando tentativa anônima para:", fingerprint);
+    if (!isEligible) {
+      console.warn("Fingerprint não elegível:", fingerprint);
+      throw new Error("Você já utilizou sua correção gratuita. Crie uma conta para continuar.");
+    }
+
     // Registrar tentativa pendente
     const { data: attemptId, error: createError } = await supabaseAdmin.rpc("create_anonymous_attempt", {
       _fingerprint: fingerprint,
@@ -277,10 +279,11 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
     });
 
     if (createError) {
-      console.error("Erro RPC create_anonymous_attempt:", createError);
-      throw new Error(`Erro ao registrar tentativa (RPC create_anonymous_attempt): ${createError.message}`);
+      console.error("Erro ao criar tentativa anônima RPC:", createError);
+      throw new Error("Erro ao registrar tentativa. Tente novamente.");
     }
-    console.log("Tentativa criada ID:", attemptId);
+    
+    console.log("Tentativa anônima registrada ID:", attemptId);
 
     try {
       const result = await correctEssayWithAi(lovableApiKey, input);
@@ -292,26 +295,23 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
         _result: result
       });
 
+      console.log("Correção anônima finalizada com sucesso");
       return result;
     } catch (aiError: any) {
-      console.error("IA falhou para anônimo (DETALHADO):", aiError);
+      console.error("Erro na IA para anônimo:", aiError);
       
-      try {
-        // Finalizar com erro no banco
-        await supabaseAdmin.rpc("finalize_anonymous_essay_correction", {
-          _attempt_id: attemptId,
-          _status: 'failed',
-          _error: aiError.message
-        });
-      } catch (e) {
-        console.error("Erro ao registrar falha anônima no DB:", e);
-      }
-      // Lançar um erro limpo que a Server Function consiga serializar
-      throw new Error(aiError.message || "Erro na análise da IA");
+      await supabaseAdmin.rpc("finalize_anonymous_essay_correction", {
+        _attempt_id: attemptId,
+        _status: 'failed',
+        _error: aiError.message
+      });
+
+      throw aiError;
     }
   }
 
-  // 2. Tentar reservar crédito atômico no DB para usuário logado
+  // 2. Fluxo para usuário logado (créditos)
+  console.log("Iniciando fluxo de créditos para usuário:", userId);
   const { data: rpcData, error: rpcError } = await supabaseAdmin.rpc("execute_essay_correction_flow", {
     _user_id: userId,
     _tema: input.tema,
@@ -319,23 +319,22 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
   });
 
   if (rpcError) {
-    console.error("Erro RPC execute_essay_correction_flow:", rpcError);
-    throw new Error(`Erro no fluxo de crédito: ${rpcError.message}`);
+    console.error("Erro no RPC de fluxo de crédito:", rpcError);
+    throw new Error("Erro ao processar seus créditos.");
   }
   
   const flow = (Array.isArray(rpcData) ? rpcData[0] : rpcData) as any;
   if (!flow?.ok) {
-      if (flow?.error === 'insufficient_credits') throw new Error("CRÉDITOS_INSUFICIENTES");
-      throw new Error(flow?.error || "Erro ao processar créditos");
+    if (flow?.error === 'insufficient_credits') throw new Error("CRÉDITOS_INSUFICIENTES");
+    throw new Error(flow?.error || "Erro ao processar créditos");
   }
 
   const attemptId = flow.attempt_id;
+  console.log("Tentativa registrada para usuário logado, ID:", attemptId);
 
   try {
-    // 3. Chamar a IA
     const result = await correctEssayWithAi(lovableApiKey, input);
 
-    // 4. Finalizar com Sucesso
     await supabaseAdmin.rpc("finalize_essay_correction", {
       _attempt_id: attemptId,
       _status: 'completed',
@@ -344,15 +343,14 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
 
     return result;
   } catch (aiError: any) {
-    console.error("IA falhou, processando estorno:", aiError);
+    console.error("IA falhou para usuário logado, estornando:", aiError);
     
-    // 5. Finalizar com Erro (estorno automático via DB)
     await supabaseAdmin.rpc("finalize_essay_correction", {
       _attempt_id: attemptId,
       _status: 'failed',
       _error: aiError.message
     });
 
-    throw new Error("Ocorreu um erro técnico durante a análise. Seus créditos foram preservados. Tente novamente.");
+    throw new Error("Ocorreu um erro na análise. Seus créditos foram preservados.");
   }
 }

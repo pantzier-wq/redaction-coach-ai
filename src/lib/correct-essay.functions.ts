@@ -18,11 +18,15 @@ export const corrigirRedacao = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<any> => {
     console.log("Servidor recebeu pedido de correção...");
     try {
+      // O orquestrador secureEssayCorrection já lida com userId null (anônimo) e usa fingerprint
       const result = await secureEssayCorrection(null, data);
-      return JSON.stringify(result);
+      
+      // Retornamos o objeto diretamente, o TanStack cuida da serialização
+      return result;
     } catch (error: any) {
-      console.error("ERRO NO SERVIDOR:", error);
-      throw error;
+      console.error("ERRO NO HANDLER DE CORREÇÃO:", error);
+      // Lançamos um erro com mensagem limpa
+      throw new Error(error.message || "Erro interno no servidor de correção");
     }
   });
 

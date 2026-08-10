@@ -152,14 +152,7 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     const gateway = createLovableAiGatewayProvider(lovableApiKey);
     const api_url = "https://ai.gateway.lovable.dev/v1/chat/completions";
     
-    // Payload simplificado para diagnóstico
-    const requestPayload = {
-      model: "google/gemini-2.0-flash-exp",
-      messages: [
-        { role: "user", content: "Olá, responda apenas com a palavra 'OK'." }
-      ]
-    };
-
+    // Teste de DNS e Conectividade básica via fetch puro
     let response;
     try {
       response = await fetch(api_url, {
@@ -168,19 +161,28 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
           "Lovable-API-Key": lovableApiKey,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(requestPayload)
+        body: JSON.stringify({
+          model: "google/gemini-2.0-flash-exp",
+          messages: [{ role: "user", content: "hi" }]
+        })
       });
-    } catch (fetchErr: any) {
-      throw new Error(`FETCH_CRASH: ${fetchErr.message}`);
+    } catch (e: any) {
+      throw new Error(`DNS_CONN_FAIL: ${e.message}`);
     }
 
     if (!response.ok) {
-      const errorBody = await response.text();
-      // NUNCA MASCARAR O ERRO AQUI PARA O DESENVOLVEDOR
-      const detailedError = `AI_GATEWAY_FAIL_${response.status}: ${errorBody.substring(0, 300)}`;
-      console.error(detailedError);
-      throw new Error(detailedError);
+      const body = await response.text();
+      throw new Error(`STATUS_${response.status}: ${body.substring(0, 100)}`);
     }
+
+    const resData = await response.json();
+    const text = resData.choices[0].message.content;
+    
+    const parsedJson = parseJsonFromText(text);
+    return CorrectionSchema.parse(parsedJson);
+  } catch (error: any) {
+    throw new Error(`CRITICAL: ${error.message}`);
+  }
 
     const resData = await response.json();
     const text = resData.choices[0].message.content;

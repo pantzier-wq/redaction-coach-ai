@@ -1,5 +1,5 @@
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
-import { generateText, createAmazonBedrock } from "ai";
+import { generateText } from "ai";
 import { z } from "zod";
 
 export const essayInputSchema = z.object({
@@ -168,14 +168,11 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
     console.error("ERRO CRÍTICO NA IA (correctEssayWithAi):", error);
+    console.error("Tipo do erro:", typeof error);
+    console.error("Mensagem do erro:", error.message);
     
-    // Log do erro completo para depuração no Lovable
     if (error.response) {
       console.error("Status da resposta da IA:", error.response.status);
-      try {
-        const errorBody = await error.response.text();
-        console.error("Corpo do erro da IA:", errorBody);
-      } catch (e) {}
     }
 
     if (error.message?.includes("401") || error.message?.includes("Unauthorized")) {

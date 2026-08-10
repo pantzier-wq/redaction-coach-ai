@@ -1,4 +1,4 @@
-import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
+import { createGoogleGenerationAI } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { z } from "zod";
 
@@ -140,11 +140,13 @@ function normalizeConnectivesAnalysis(value: unknown): AnaliseConectivos {
 }
 
 export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<typeof essayInputSchema>) {
-  const gateway = createLovableAiGatewayProvider(lovableApiKey);
+  const google = createGoogleGenerationAI({
+    apiKey: lovableApiKey,
+  });
   
   try {
     const { text } = await generateText({
-      model: gateway("google/gemini-1.5-flash"),
+      model: google("gemini-1.5-flash"),
       system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne EXCLUSIVAMENTE um objeto JSON válido.`,
       prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
       maxRetries: 2,

@@ -5,7 +5,7 @@ export function createLovableAiGatewayProvider(lovableApiKey: string) {
     name: "lovable",
     baseURL: "https://ai.gateway.lovable.dev/v1",
     headers: {
-      "apikey": lovableApiKey,
+      "Lovable-API-Key": lovableApiKey,
     },
   });
 }

@@ -1,5 +1,5 @@
-import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
 import { generateText } from "ai";
+import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
 
 export const essayInputSchema = z.object({
@@ -140,7 +140,10 @@ function normalizeConnectivesAnalysis(value: unknown): AnaliseConectivos {
 }
 
 export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<typeof essayInputSchema>) {
-  const gateway = createLovableAiGatewayProvider(lovableApiKey);
+  const gateway = createOpenAI({
+    baseURL: "https://ai.gateway.lovable.dev/v1",
+    apiKey: lovableApiKey,
+  });
   
   try {
     const { text } = await generateText({

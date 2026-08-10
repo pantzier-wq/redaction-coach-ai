@@ -311,12 +311,13 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
 
       return result;
     } catch (aiError: any) {
-      const dbErr = `FORCED_EXPOSE: ${aiError.message}`;
+      const dbErr = `FORCED_EXPOSE: ${aiError.message || 'NO_MESSAGE'}`;
       await supabaseAdmin.from('anonymous_essay_attempts').update({
         status: 'failed',
         error_message: dbErr
       }).eq('id', attemptId);
-      throw new Error(dbErr);
+      // Não lançar erro para o TanStack, retornar null para ver se o erro persiste no banco
+      return null;
     }
   }
 

@@ -151,6 +151,8 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
   try {
     const gateway = createLovableAiGatewayProvider(lovableApiKey);
     const api_url = "https://ai.gateway.lovable.dev/v1/chat/completions";
+    console.log("Chamando AI Gateway diretamente via fetch com modelo Gemini 2.5 Flash...");
+    
     const response = await fetch(api_url, {
       method: "POST",
       headers: {
@@ -168,16 +170,15 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
 
     if (!response.ok) {
       const errorBody = await response.text();
+      console.error("AI Gateway Error Body:", errorBody);
       throw new Error(`AI Gateway Error (${response.status}): ${errorBody}`);
     }
 
-    const data = await response.json();
-    const text = data.choices[0].message.content;
-
-    console.log("IA respondeu com sucesso. Tamanho do texto:", text.length);
-    console.log("Conteúdo bruto da IA:", text);
+    const resData = await response.json();
+    const text = resData.choices[0].message.content;
+    
+    console.log("IA respondeu com sucesso.");
     const parsedJson = parseJsonFromText(text);
-    console.log("JSON extraído da IA com sucesso:", JSON.stringify(parsedJson).slice(0, 100) + "...");
     return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
     console.error("ERRO CRÍTICO NA IA (correctEssayWithAi):", error);

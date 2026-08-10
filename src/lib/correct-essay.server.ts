@@ -155,6 +155,7 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
       system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRESPOSTA OBRIGATÓRIA: Retorne EXCLUSIVAMENTE um objeto JSON válido.`,
       prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
       maxRetries: 3,
+      experimental_telemetry: { isEnabled: true },
     });
 
     console.log("IA respondeu com sucesso. Tamanho do texto:", text.length);

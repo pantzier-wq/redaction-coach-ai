@@ -152,7 +152,7 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     const gateway = createLovableAiGatewayProvider(lovableApiKey);
     const { text } = await generateText({
       model: gateway("google/gemini-2.5-flash"),
-      system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRESPOSTA OBRIGATÓRIA: Retorne EXCLUSIVAMENTE um objeto JSON válido. Nunca inclua blocos de código markdown (como \`\`\`json).`,
+      system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRESPOSTA OBRIGATÓRIA: Retorne EXCLUSIVAMENTE um objeto JSON válido.`,
       prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
       maxRetries: 3,
     });

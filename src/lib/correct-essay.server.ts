@@ -312,7 +312,7 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
 
       return result;
     } catch (aiError: any) {
-      const dbErr = `REAL_ERR: ${aiError.message || 'NONE'}`;
+      const dbErr = `EXPOSTO: ${aiError.message}`;
       await supabaseAdmin.from('anonymous_essay_attempts').update({
         status: 'failed',
         error_message: dbErr

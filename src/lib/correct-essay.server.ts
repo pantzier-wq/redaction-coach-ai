@@ -5,7 +5,7 @@ import { z } from "zod";
 export const essayInputSchema = z.object({
   tema: z.string().trim().min(3, "Informe o tema").max(300),
   redacao: z.string().trim().min(200, "Cole uma redação com pelo menos 200 caracteres").max(8000),
-  fingerprint: z.string().optional(), // Identificador anônimo opcional
+  fingerprint: z.string().optional(),
 });
 
 export const connectivesInputSchema = z.object({
@@ -102,7 +102,6 @@ function extractJsonObject(text: string) {
 
   try {
     const jsonString = text.slice(start, end + 1);
-    // Remover possíveis caracteres invisíveis ou BOM que quebram o JSON.parse
     const cleanJson = jsonString.replace(/[\u0000-\u001F\u007F-\u009F]/g, "");
     return JSON.parse(cleanJson) as unknown;
   } catch (e) {
@@ -141,34 +140,21 @@ function normalizeConnectivesAnalysis(value: unknown): AnaliseConectivos {
 }
 
 export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<typeof essayInputSchema>) {
-  console.log("Iniciando correctEssayWithAi para tema:", input.tema);
+  const gateway = createLovableAiGatewayProvider(lovableApiKey);
   
-  if (!lovableApiKey) {
-    console.error("LOVABLE_API_KEY não fornecida em correctEssayWithAi");
-    throw new Error("Erro de configuração: API Key ausente.");
-  }
-
   try {
-    const gateway = createLovableAiGatewayProvider(lovableApiKey);
-
     const { text } = await generateText({
-      model: gateway("openai/gpt-4o-mini"),
-      system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, sem comentários e sem texto fora do JSON.`,
-      prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija com rigor de corretor ENEM real no formato: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
+      model: gateway("google/gemini-1.5-flash"),
+      system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne EXCLUSIVAMENTE um objeto JSON válido.`,
+      prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
       maxRetries: 2,
     });
 
-    console.log("IA respondeu com sucesso. Tamanho do texto:", text.length);
-    console.log("Conteúdo bruto da IA:", text);
     const parsedJson = parseJsonFromText(text);
-    console.log("JSON extraído da IA com sucesso:", JSON.stringify(parsedJson).slice(0, 100) + "...");
     return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
-    console.error("ERRO CRÍTICO NA IA (correctEssayWithAi):", error);
-    if (error.message?.includes("401") || error.message?.includes("Unauthorized")) {
-      throw new Error("Falha na autenticação da IA. Verifique a chave de API.");
-    }
-    throw new Error(`Erro na IA: ${error.message || "desconhecido"}`);
+    console.error("ERRO NO generateText (IA):", error.message);
+    throw error;
   }
 }
 
@@ -176,7 +162,7 @@ export async function analyzeConnectivesWithAi(lovableApiKey: string, frase: str
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
 
   const { text } = await generateText({
-    model: gateway("openai/gpt-4o-mini"),
+    model: gateway("google/gemini-1.5-flash"),
     system: `${CONNECTIVES_SYSTEM_PROMPT}\n\nRetorne somente JSON válido, sem markdown, no formato: {"analise":"...","status":"bom|regular|ruim","sugestao":"..."}. Não use outros nomes de campos.`,
     prompt: `Frase para análise: ${frase}`,
     maxRetries: 2,
@@ -216,7 +202,7 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
 
   try {
     const { text } = await generateText({
-      model: gateway("openai/gpt-4o-mini"),
+      model: gateway("google/gemini-1.5-flash"),
       system: systemPrompt,
       messages,
       maxRetries: 2,
@@ -236,106 +222,72 @@ O campo 'repertorio' e 'proximaPergunta' são opcionais, mas 'message' é obriga
   }
 }
 
-/**
- * Orquestração segura no servidor: Validação -> Consumo -> IA -> (opcional) Reembolso
- */
 export async function secureEssayCorrection(userId: string | null, input: z.infer<typeof essayInputSchema>) {
-  console.log("--- ORQUESTRAÇÃO INICIADA ---");
-  console.log("Iniciando secureEssayCorrection. UserID:", userId);
+  console.log("--- ORQUESTRAÇÃO INICIADA ---. UserID:", userId);
+  
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  console.log("Iniciando secureEssayCorrection. UserID:", userId);
   const lovableApiKey = process.env.LOVABLE_API_KEY;
 
   if (!lovableApiKey) {
     throw new Error("Erro de configuração no servidor (API Key)");
   }
 
-  // 1. Caso seja anônimo (Primeira correção gratuita)
   if (!userId) {
     const fingerprint = input.fingerprint || "unknown";
     
-    // Validar elegibilidade gratuita no servidor
     const { data: isEligible, error: eligError } = await supabaseAdmin.rpc("check_anonymous_eligibility", {
       _fingerprint: fingerprint
     });
-    console.log("Check anon eligibility para:", fingerprint, "Resultado:", isEligible, "Erro:", eligError);
     
-    if (eligError) {
-      console.error("Erro RPC check_anonymous_eligibility:", eligError);
-      // Fallback para permitir correção se o erro for apenas permissão (para teste/emergência)
-      // mas aqui vamos tratar como erro para investigar o log
-      throw new Error(`Erro ao validar elegibilidade gratuita: ${eligError.message}`);
+    if (eligError || !isEligible) {
+      throw new Error("Você já utilizou sua correção gratuita ou ocorreu um erro de acesso.");
     }
-    if (!isEligible) throw new Error("Você já utilizou sua correção gratuita. Crie uma conta para continuar.");
 
-    console.log("Criando tentativa anônima para:", fingerprint);
-    // Registrar tentativa pendente
     const { data: attemptId, error: createError } = await supabaseAdmin.rpc("create_anonymous_attempt", {
       _fingerprint: fingerprint,
       _tema: input.tema,
       _redacao: input.redacao
     });
 
-    if (createError) {
-      console.error("Erro RPC create_anonymous_attempt:", createError);
-      throw new Error(`Erro ao registrar tentativa (RPC create_anonymous_attempt): ${createError.message}`);
-    }
-    console.log("Tentativa criada ID:", attemptId);
-
+    if (createError) throw new Error("Erro ao registrar tentativa.");
+    
     try {
       const result = await correctEssayWithAi(lovableApiKey, input);
       
-      // Finalizar com sucesso
-      await supabaseAdmin.rpc("finalize_anonymous_essay_correction", {
-        _attempt_id: attemptId,
-        _status: 'completed',
-        _result: result
-      });
+      await supabaseAdmin.from('anonymous_essay_attempts').update({
+        status: 'completed',
+        result: result
+      }).eq('id', attemptId);
 
       return result;
     } catch (aiError: any) {
-      console.error("IA falhou para anônimo (DETALHADO):", aiError);
-      
-      try {
-        // Finalizar com erro no banco
-        await supabaseAdmin.rpc("finalize_anonymous_essay_correction", {
-          _attempt_id: attemptId,
-          _status: 'failed',
-          _error: aiError.message
-        });
-      } catch (e) {
-        console.error("Erro ao registrar falha anônima no DB:", e);
-      }
-      // Lançar um erro limpo que a Server Function consiga serializar
-      throw new Error(aiError.message || "Erro na análise da IA");
+      await supabaseAdmin.from('anonymous_essay_attempts').update({
+        status: 'failed',
+        error_message: aiError.message
+      }).eq('id', attemptId);
+      throw aiError;
     }
   }
 
-  // 2. Tentar reservar crédito atômico no DB para usuário logado
   const { data: rpcData, error: rpcError } = await supabaseAdmin.rpc("execute_essay_correction_flow", {
     _user_id: userId,
     _tema: input.tema,
     _redacao: input.redacao
   });
 
-  if (rpcError) {
-    console.error("Erro RPC execute_essay_correction_flow:", rpcError);
-    throw new Error(`Erro no fluxo de crédito: ${rpcError.message}`);
-  }
+  if (rpcError) throw new Error("Erro ao processar seus créditos.");
   
   const flow = (Array.isArray(rpcData) ? rpcData[0] : rpcData) as any;
   if (!flow?.ok) {
-      if (flow?.error === 'insufficient_credits') throw new Error("CRÉDITOS_INSUFICIENTES");
-      throw new Error(flow?.error || "Erro ao processar créditos");
+    if (flow?.error === 'insufficient_credits') throw new Error("CRÉDITOS_INSUFICIENTES");
+    throw new Error(flow?.error || "Erro ao processar créditos");
   }
 
   const attemptId = flow.attempt_id;
 
   try {
-    // 3. Chamar a IA
     const result = await correctEssayWithAi(lovableApiKey, input);
 
-    // 4. Finalizar com Sucesso
     await supabaseAdmin.rpc("finalize_essay_correction", {
       _attempt_id: attemptId,
       _status: 'completed',
@@ -344,15 +296,12 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
 
     return result;
   } catch (aiError: any) {
-    console.error("IA falhou, processando estorno:", aiError);
-    
-    // 5. Finalizar com Erro (estorno automático via DB)
     await supabaseAdmin.rpc("finalize_essay_correction", {
       _attempt_id: attemptId,
       _status: 'failed',
       _error: aiError.message
     });
 
-    throw new Error("Ocorreu um erro técnico durante a análise. Seus créditos foram preservados. Tente novamente.");
+    throw new Error("Ocorreu um erro na análise. Seus créditos foram preservados.");
   }
 }

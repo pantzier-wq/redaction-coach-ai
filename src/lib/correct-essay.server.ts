@@ -140,43 +140,20 @@ function normalizeConnectivesAnalysis(value: unknown): AnaliseConectivos {
 }
 
 export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<typeof essayInputSchema>) {
-  console.log("Iniciando correctEssayWithAi para tema:", input.tema);
+  const gateway = createLovableAiGatewayProvider(lovableApiKey);
   
-  if (!lovableApiKey) {
-    throw new Error("Erro de configuração: API Key ausente.");
-  }
-
   try {
-    const api_url = "https://ai.gateway.lovable.dev/v1/chat/completions";
-    
-    const requestPayload = {
-      model: "google/gemini-1.5-flash",
-      messages: [
-        { role: "user", content: "hi" }
-      ]
-    };
-
-    const response = await fetch(api_url, {
-      method: "POST",
-      headers: {
-        "apikey": lovableApiKey,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(requestPayload)
+    const { text } = await generateText({
+      model: gateway("google/gemini-1.5-flash"),
+      system: `${ENEM_GRADER_SYSTEM_PROMPT}\n\nRetorne EXCLUSIVAMENTE um objeto JSON válido.`,
+      prompt: `TEMA: ${input.tema}\n\nREDAÇÃO DO ALUNO:\n${input.redacao}\n\nCorrija no formato JSON: {"nota_total": number, "competencias": [{"numero": number, "titulo": string, "nota": number, "analise": string}], "pontos_fortes": string[], "pontos_fracos": string[], "sugestoes": string[], "resumo": string}.`,
+      maxRetries: 2,
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`AI_GATEWAY_FAIL_${response.status}: ${errorText.substring(0, 100)}`);
-    }
-
-    const resData = await response.json();
-    const text = resData.choices[0].message.content;
-    
     const parsedJson = parseJsonFromText(text);
     return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
-    console.error("ERRO NO correctEssayWithAi:", error.message);
+    console.error("ERRO NO generateText (IA):", error.message);
     throw error;
   }
 }

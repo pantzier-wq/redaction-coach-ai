@@ -5,6 +5,7 @@ import {
   connectivesInputSchema,
   repertoryInputSchema,
   secureEssayCorrection,
+  resolveUserIdFromToken,
   analyzeConnectivesWithAi,
   createRepertoryWithAi,
 } from "@/lib/correct-essay.server";
@@ -18,9 +19,11 @@ export const corrigirRedacao = createServerFn({ method: "POST" })
   .handler(async ({ data }): Promise<any> => {
     console.log("Servidor recebeu pedido de correção...");
     try {
-      // O orquestrador secureEssayCorrection já lida com userId null (anônimo) e usa fingerprint
-      const result = await secureEssayCorrection(null, data);
-      
+      // Usuário logado: valida o token no servidor para usar o fluxo de créditos.
+      // Visitante: userId null e uso do fingerprint (1 correção grátis).
+      const userId = await resolveUserIdFromToken(data?.accessToken);
+      const result = await secureEssayCorrection(userId, data);
+
       // Retornamos o objeto diretamente, o TanStack cuida da serialização
       return result;
     } catch (error: any) {
@@ -29,6 +32,7 @@ export const corrigirRedacao = createServerFn({ method: "POST" })
       throw new Error(error.message || "Erro interno no servidor de correção");
     }
   });
+
 
 export const analisarConectivos = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])

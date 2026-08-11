@@ -86,19 +86,36 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
     setErro(null);
     setResult(null);
     setShowPaywall(false);
+
+    // Usuário logado sem plano ativo ou sem créditos: mostra as ofertas direto.
+    if (isLoggedIn && !canCorrect) {
+      setShowPaywall(true);
+      setTimeout(
+        () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
+        100,
+      );
+      return;
+    }
+
     setLoading(true);
 
     try {
       const startTime = Date.now();
+
+
       
       // Gera ou recupera fingerprint para visitantes anônimos
       let fingerprint = "";
+      let accessToken: string | undefined;
       if (!isLoggedIn) {
         fingerprint = localStorage.getItem("visitor_fingerprint") || "";
         if (!fingerprint) {
           fingerprint = crypto.randomUUID();
           localStorage.setItem("visitor_fingerprint", fingerprint);
         }
+      } else {
+        const { data: { session } } = await supabase.auth.getSession();
+        accessToken = session?.access_token;
       }
 
       // A lógica de créditos e IA agora está 100% centralizada no servidor (corrigirRedacao)
@@ -106,9 +123,11 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         data: { 
           tema: tema.trim(), 
           redacao: redacao.trim(),
-          fingerprint
+          fingerprint,
+          accessToken
         } 
       });
+
       
       const elapsed = Date.now() - startTime;
       const wait = Math.max(0, 28000 - elapsed);
@@ -183,11 +202,21 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       
       const errMsg = err.message || "";
       console.error("DEBUG UI ERROR:", errMsg);
-      if (errMsg.includes("LIMITE_EXCEDIDO") || errMsg.includes("créditos suficientes") || errMsg.includes("CRÉDITOS_INSUFICIENTES")) {
+      const semAcesso =
+        errMsg.includes("LIMITE_EXCEDIDO") ||
+        errMsg.includes("créditos suficientes") ||
+        errMsg.includes("CRÉDITOS_INSUFICIENTES") ||
+        errMsg.includes("insufficient_credits") ||
+        errMsg.includes("correção gratuita") ||
+        errMsg.includes("créditos");
+      // Usuário logado sem plano/créditos deve ver as ofertas, nunca um erro genérico.
+      if (semAcesso || (isLoggedIn && !canCorrect)) {
         setShowPaywall(true);
+        setErro(null);
       } else {
         setErro(errMsg);
       }
+
     } finally {
       setLoading(false);
     }

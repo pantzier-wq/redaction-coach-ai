@@ -305,3 +305,19 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
     throw new Error("Ocorreu um erro na análise. Seus créditos foram preservados.");
   }
 }
+
+/**
+ * Resolve o usuário autenticado a partir de um access token do Supabase.
+ * Retorna null quando não há token válido (visitante anônimo).
+ */
+export async function resolveUserIdFromToken(token?: string | null): Promise<string | null> {
+  if (!token || typeof token !== "string") return null;
+  try {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin.auth.getUser(token);
+    if (error) return null;
+    return data?.user?.id ?? null;
+  } catch {
+    return null;
+  }
+}

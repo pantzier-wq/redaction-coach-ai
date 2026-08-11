@@ -99,6 +99,10 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
     setLoading(true);
 
+    try {
+      const startTime = Date.now();
+
+
       
       // Gera ou recupera fingerprint para visitantes anônimos
       let fingerprint = "";

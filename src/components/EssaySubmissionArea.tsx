@@ -189,11 +189,21 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       
       const errMsg = err.message || "";
       console.error("DEBUG UI ERROR:", errMsg);
-      if (errMsg.includes("LIMITE_EXCEDIDO") || errMsg.includes("créditos suficientes") || errMsg.includes("CRÉDITOS_INSUFICIENTES")) {
+      const semAcesso =
+        errMsg.includes("LIMITE_EXCEDIDO") ||
+        errMsg.includes("créditos suficientes") ||
+        errMsg.includes("CRÉDITOS_INSUFICIENTES") ||
+        errMsg.includes("insufficient_credits") ||
+        errMsg.includes("correção gratuita") ||
+        errMsg.includes("créditos");
+      // Usuário logado sem plano/créditos deve ver as ofertas, nunca um erro genérico.
+      if (semAcesso || (isLoggedIn && !canCorrect)) {
         setShowPaywall(true);
+        setErro(null);
       } else {
         setErro(errMsg);
       }
+
     } finally {
       setLoading(false);
     }

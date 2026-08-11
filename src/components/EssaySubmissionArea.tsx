@@ -93,12 +93,16 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       
       // Gera ou recupera fingerprint para visitantes anônimos
       let fingerprint = "";
+      let accessToken: string | undefined;
       if (!isLoggedIn) {
         fingerprint = localStorage.getItem("visitor_fingerprint") || "";
         if (!fingerprint) {
           fingerprint = crypto.randomUUID();
           localStorage.setItem("visitor_fingerprint", fingerprint);
         }
+      } else {
+        const { data: { session } } = await supabase.auth.getSession();
+        accessToken = session?.access_token;
       }
 
       // A lógica de créditos e IA agora está 100% centralizada no servidor (corrigirRedacao)
@@ -106,9 +110,11 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         data: { 
           tema: tema.trim(), 
           redacao: redacao.trim(),
-          fingerprint
+          fingerprint,
+          accessToken
         } 
       });
+
       
       const elapsed = Date.now() - startTime;
       const wait = Math.max(0, 28000 - elapsed);

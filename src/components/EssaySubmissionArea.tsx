@@ -86,10 +86,19 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
     setErro(null);
     setResult(null);
     setShowPaywall(false);
+
+    // Usuário logado sem plano ativo ou sem créditos: mostra as ofertas direto.
+    if (isLoggedIn && !canCorrect) {
+      setShowPaywall(true);
+      setTimeout(
+        () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
+        100,
+      );
+      return;
+    }
+
     setLoading(true);
 
-    try {
-      const startTime = Date.now();
       
       // Gera ou recupera fingerprint para visitantes anônimos
       let fingerprint = "";

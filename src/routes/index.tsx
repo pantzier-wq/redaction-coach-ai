@@ -364,8 +364,24 @@ function Landing() {
         </a>
       </section>
 
-      <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
-        © {new Date().getFullYear()} CorrigeAI — feito para quem não pode mais perder tempo.
+      <footer className="border-t border-border py-12 text-center">
+        <div className="mb-6 flex flex-col items-center justify-center space-y-4 px-4">
+          <p className="text-sm font-bold text-foreground">
+            Ainda com dúvidas? Fale com nosso time agora mesmo.
+          </p>
+          <a
+            href="https://wa.me/5548996736743?text=Olá! Tenho uma dúvida sobre o CorrigeAI."
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-6 py-2.5 text-sm font-bold text-primary transition-all hover:bg-primary/20"
+          >
+            <MessageSquare className="h-4 w-4" />
+            CHAMAR NO WHATSAPP
+          </a>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          © {new Date().getFullYear()} CorrigeAI — feito para quem não pode mais perder tempo.
+        </p>
       </footer>
     </div>
   );

@@ -87,8 +87,13 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
     setResult(null);
     setShowPaywall(false);
 
-    // Usuário logado sem plano ativo ou sem créditos: mostra as ofertas direto.
+    // Usuário logado sem plano ativo ou sem créditos:
+    // mostramos o carregamento (mesma experiência da primeira correção) e,
+    // ao final, exibimos as ofertas em vez do resultado.
     if (isLoggedIn && !canCorrect) {
+      setLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 6000));
+      setLoading(false);
       setShowPaywall(true);
       setTimeout(
         () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
@@ -96,6 +101,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       );
       return;
     }
+
 
     setLoading(true);
 

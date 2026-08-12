@@ -102,17 +102,6 @@ function AuthPage() {
     }
   }
 
-  async function handleGoogleAuth() {
-    setError(null);
-    try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/auth`,
-      });
-      if (result.error) throw result.error;
-    } catch (err) {
-      setError(traduzirErro(err instanceof Error ? err.message : ""));
-    }
-  }
 
   return (
     <div className="dark min-h-screen bg-background text-foreground flex items-center justify-center px-4">

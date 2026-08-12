@@ -100,7 +100,10 @@ function AuthPage() {
     } finally {
       setLoading(false);
     }
+  }
+
   async function handleResetPassword(e: React.FormEvent) {
+
     e.preventDefault();
     if (!email) {
       setError("Por favor, digite seu e-mail.");

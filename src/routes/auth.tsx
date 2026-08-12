@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
+
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
@@ -102,17 +102,6 @@ function AuthPage() {
     }
   }
 
-  async function handleGoogleAuth() {
-    setError(null);
-    try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}/auth`,
-      });
-      if (result.error) throw result.error;
-    } catch (err) {
-      setError(traduzirErro(err instanceof Error ? err.message : ""));
-    }
-  }
 
   return (
     <div className="dark min-h-screen bg-background text-foreground flex items-center justify-center px-4">
@@ -203,23 +192,6 @@ function AuthPage() {
             {loading ? "Processando..." : view === "login" ? "Entrar" : "Criar Conta"}
           </button>
         </form>
-
-        <div className="relative my-6">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-border" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">Ou continue com</span>
-          </div>
-        </div>
-
-        <button
-          onClick={handleGoogleAuth}
-          className="w-full flex items-center justify-center gap-3 rounded-xl border border-border bg-background py-3 font-bold transition-all hover:bg-muted"
-        >
-          <img src="https://www.google.com/favicon.ico" alt="Google" className="w-4 h-4" />
-          Google
-        </button>
       </div>
     </div>
   );

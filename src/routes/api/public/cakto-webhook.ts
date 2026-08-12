@@ -83,7 +83,8 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
           "";
 
         console.log("[Cakto Webhook] Provided Secret:", provided);
-        console.log("[Cakto Webhook] Expected Secret Length:", expected.length);
+        console.log("[Cakto Webhook] Expected Secret:", expected);
+        console.log("[Cakto Webhook] Expected Secret Length:", expected?.length);
 
         if (!timingSafeEqual(provided, expected)) {
           return new Response(`Unauthorized: mismatch`, { status: 401 });

@@ -68,13 +68,13 @@ function Dashboard() {
         supabase.from("essays").select("*").order("created_at", { ascending: false })
       ]);
 
+      // Filtragem por unicidade baseada em ID e timestamp para evitar duplicatas visuais
       const uniqueEssays = (essayRes.data || []).reduce((acc: any[], current: any) => {
-        const x = acc.find(item => item.tema === current.tema && item.redacao === current.redacao);
-        if (!x) {
-          return acc.concat([current]);
-        } else {
-          return acc;
+        const isDuplicate = acc.some(item => item.id === current.id);
+        if (!isDuplicate) {
+          return [...acc, current];
         }
+        return acc;
       }, []);
 
       setProfile(profRes.data);

@@ -202,6 +202,19 @@ function AuthPage() {
             />
           </div>
 
+          {view === "login" && (
+            <div className="text-right">
+              <a
+                href="https://wa.me/5548996736743?text=Olá! Esqueci minha senha do CorrigeAI e preciso de ajuda para recuperar."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
+              >
+                Esqueci minha senha
+              </a>
+            </div>
+          )}
+
 
           {error && (
             <div className="text-xs text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20">

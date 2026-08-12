@@ -269,8 +269,10 @@ function AuthPage() {
             {loading ? "Processando..." : view === "login" ? "Entrar" : "Criar Conta"}
           </button>
         </form>
+        )}
       </div>
     </div>
   );
 }
+
 

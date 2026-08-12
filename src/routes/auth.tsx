@@ -13,7 +13,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<"login" | "signup">("login");
+  const [view, setView] = useState<"login" | "signup" | "forgot">("login");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -102,6 +102,31 @@ function AuthPage() {
     }
   }
 
+  async function handleResetPassword(e: React.FormEvent) {
+
+    e.preventDefault();
+    if (!email) {
+      setError("Por favor, digite seu e-mail.");
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+      if (error) throw error;
+      toast.success("Enviamos um link para recuperação de senha no seu e-mail!");
+      setView("login");
+    } catch (err) {
+      setError(traduzirErro(err instanceof Error ? err.message : ""));
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
+
 
   return (
     <div className="dark min-h-screen bg-background text-foreground flex items-center justify-center px-4">
@@ -147,12 +172,52 @@ function AuthPage() {
         </div>
 
         <p className="text-center text-sm text-muted-foreground">
-          {view === "login"
-            ? "Entre para acessar sua área exclusiva"
-            : "Crie sua conta e decole sua nota"}
+          {view === "forgot"
+            ? "Digite seu e-mail para recuperar a senha"
+            : view === "login"
+              ? "Entre para acessar sua área exclusiva"
+              : "Crie sua conta e decole sua nota"}
         </p>
 
-        <form onSubmit={handleEmailAuth} className="space-y-4">
+        {view === "forgot" ? (
+          <form onSubmit={handleResetPassword} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Email</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full rounded-xl border border-border bg-input px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
+                placeholder="seu@email.com"
+              />
+            </div>
+            {error && (
+              <div className="text-xs text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20">
+                {error}
+              </div>
+            )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-xl py-3 font-bold text-primary-foreground transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+              style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
+            >
+              {loading ? "Enviando..." : "Enviar link de recuperação"}
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setView("login");
+                setError(null);
+              }}
+              className="w-full text-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Voltar para o login
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleEmailAuth} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Email</label>
             <input
@@ -176,6 +241,21 @@ function AuthPage() {
               placeholder="••••••••"
             />
           </div>
+          {view === "login" && (
+            <div className="text-right">
+              <button
+                type="button"
+                onClick={() => {
+                  setView("forgot");
+                  setError(null);
+                }}
+                className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
+              >
+                Esqueci minha senha
+              </button>
+            </div>
+          )}
+
 
           {error && (
             <div className="text-xs text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20">
@@ -192,8 +272,10 @@ function AuthPage() {
             {loading ? "Processando..." : view === "login" ? "Entrar" : "Criar Conta"}
           </button>
         </form>
+        )}
       </div>
     </div>
   );
 }
+
 

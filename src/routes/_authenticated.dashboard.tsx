@@ -68,13 +68,13 @@ function Dashboard() {
         supabase.from("essays").select("*").order("created_at", { ascending: false })
       ]);
 
+      // Filtragem por unicidade baseada em ID e timestamp para evitar duplicatas visuais
       const uniqueEssays = (essayRes.data || []).reduce((acc: any[], current: any) => {
-        const x = acc.find(item => item.tema === current.tema && item.redacao === current.redacao);
-        if (!x) {
-          return acc.concat([current]);
-        } else {
-          return acc;
+        const isDuplicate = acc.some(item => item.id === current.id);
+        if (!isDuplicate) {
+          return [...acc, current];
         }
+        return acc;
       }, []);
 
       setProfile(profRes.data);
@@ -140,8 +140,8 @@ function Dashboard() {
                   <EssaySubmissionArea 
                     isLoggedIn={true} 
                     isPro={!!profile?.is_pro}
-                    onSuccess={(newResult) => {
-                      const loadEssays = async () => {
+                    onSuccess={() => {
+                      const loadData = async () => {
                         const { data: { user } } = await supabase.auth.getUser();
                         if (!user) return;
                         
@@ -154,17 +154,26 @@ function Dashboard() {
                         
                         const currentEssays = essayRes.data || [];
                         
-                        // Sistema de limite de 50 redações
+                        // Sistema de limite de 50 redações (exclusivo para quem tem plano)
                         if (currentEssays.length > 50) {
                           const toDelete = currentEssays.slice(50);
                           const deleteIds = toDelete.map(e => e.id);
                           await supabase.from("essays").delete().in("id", deleteIds);
-                          setEssays(currentEssays.slice(0, 50));
+                          
+                          const uniqueEssays = currentEssays.slice(0, 50).reduce((acc: any[], current: any) => {
+                            if (!acc.some(item => item.id === current.id)) return [...acc, current];
+                            return acc;
+                          }, []);
+                          setEssays(uniqueEssays);
                         } else {
-                          setEssays(currentEssays);
+                          const uniqueEssays = currentEssays.reduce((acc: any[], current: any) => {
+                            if (!acc.some(item => item.id === current.id)) return [...acc, current];
+                            return acc;
+                          }, []);
+                          setEssays(uniqueEssays);
                         }
                       };
-                      loadEssays();
+                      loadData();
                     }}
                   />
                 </div>
@@ -186,8 +195,8 @@ function Dashboard() {
               <EssaySubmissionArea 
                 isLoggedIn={true} 
                 isPro={!!profile?.is_pro}
-                onSuccess={(newResult) => {
-                  const loadEssays = async () => {
+                onSuccess={() => {
+                  const loadData = async () => {
                     const { data: { user } } = await supabase.auth.getUser();
                     if (!user) return;
                     
@@ -200,17 +209,25 @@ function Dashboard() {
                     
                     const currentEssays = essayRes.data || [];
                     
-                    // Sistema de limite de 50 redações
                     if (currentEssays.length > 50) {
                       const toDelete = currentEssays.slice(50);
                       const deleteIds = toDelete.map(e => e.id);
                       await supabase.from("essays").delete().in("id", deleteIds);
-                      setEssays(currentEssays.slice(0, 50));
+                      
+                      const uniqueEssays = currentEssays.slice(0, 50).reduce((acc: any[], current: any) => {
+                        if (!acc.some(item => item.id === current.id)) return [...acc, current];
+                        return acc;
+                      }, []);
+                      setEssays(uniqueEssays);
                     } else {
-                      setEssays(currentEssays);
+                      const uniqueEssays = currentEssays.reduce((acc: any[], current: any) => {
+                        if (!acc.some(item => item.id === current.id)) return [...acc, current];
+                        return acc;
+                      }, []);
+                      setEssays(uniqueEssays);
                     }
                   };
-                  loadEssays();
+                  loadData();
                 }}
               />
             </div>

@@ -294,6 +294,16 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
       _result: result
     });
 
+
+    // 6. Persistir na tabela de redações finalizadas para o histórico (essays)
+    // Isso garante que a redação apareça no dashboard imediatamente após a conclusão.
+    await supabaseAdmin.from('essays').insert({
+      user_id: userId,
+      tema: input.tema,
+      redacao: input.redacao,
+      resultado: result
+    });
+
     return result;
   } catch (aiError: any) {
     await supabaseAdmin.rpc("finalize_essay_correction", {

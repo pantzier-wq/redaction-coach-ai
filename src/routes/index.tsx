@@ -162,7 +162,7 @@ function Landing() {
         <div className="grid gap-4 md:grid-cols-3">
           {[
             { t: "😰", d: "Você escreve, escreve… e não faz ideia se tá bom ou vai zerar." },
-            { t: "⏰", d: "Faltam semanas. Professor não vai corrigir 20 redações suas a tempo." },
+            { t: "⏰", d: "Faltam semanas. Professor não vai corrigir 15 redações suas a tempo." },
             { t: "💸", d: "Cursinho cobra R$150 por correção. Você precisa de 10, no mínimo." },
           ].map((x) => (
             <div key={x.t} className="rounded-2xl border border-border bg-card p-5">

@@ -13,7 +13,7 @@ interface EssaySubmissionAreaProps {
   onSuccess?: (result: Correcao) => void;
 }
 
-const LIMITE_ESSENCIAL = 20;
+const LIMITE_ESSENCIAL = 15;
 
 export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }: EssaySubmissionAreaProps) {
   const [tema, setTema] = useState("");
@@ -229,7 +229,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   }
 
 
-  // type: 'basic' = Plano Essencial (20 correções) | 'combo' = vitalício ilimitado
+  // type: 'basic' = Plano Essencial (15 correções) | 'combo' = vitalício ilimitado
   async function handleTestPurchase(type: "basic" | "combo" = "basic") {
     // Redireciona para o checkout real (Cakto). A liberação acontece após o pagamento.
     await goToCheckout(type === "combo" ? "combo" : "essencial");
@@ -399,7 +399,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                   
                   <p className="text-sm md:text-base text-white/90 font-semibold mb-6 md:mb-8 leading-relaxed text-center">
                     {semCreditos
-                      ? "Você já usou as 20 correções do Plano Essencial. Recarregue créditos ou faça o upgrade para o Combo Nota 1000 e corrija sem limite nenhum."
+                      ? "Você já usou as 15 correções do Plano Essencial. Recarregue créditos ou faça o upgrade para o Combo Nota 1000 e corrija sem limite nenhum."
                       : result 
                         ? "Sua correção detalhada e nota oficial já foram geradas com precisão INEP."
                         : "Você está a um passo de desbloquear seu potencial máximo e conquistar sua vaga no curso dos sonhos."}

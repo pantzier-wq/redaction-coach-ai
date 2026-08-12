@@ -3,7 +3,7 @@
  * Centralizados aqui para que qualquer botão de plano use a mesma fonte de verdade.
  */
 export const CHECKOUT_LINKS = {
-  /** Plano Essencial — R$ 19,90 (20 correções) */
+  /** Plano Essencial — R$ 19,90 (15 correções) */
   essencial: "https://pay.cakto.com.br/fmadxgn_1014212",
   /** Combo Nota 1000 — R$ 39,00 (vitalício) */
   combo: "https://pay.cakto.com.br/3cvwxof_1014273",

@@ -308,7 +308,7 @@ function Dashboard() {
                 </div>
                 <h2 className="text-4xl font-black mb-4 tracking-tight">Garanta seu Futuro 🚀</h2>
                 <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
-                  Escolha entre o Plano Essencial (20 correções) ou o Combo Nota 1000 com correções ilimitadas.
+                  Escolha entre o Plano Essencial (15 correções) ou o Combo Nota 1000 com correções ilimitadas.
                 </p>
 
                 {/* CRÉDITOS EXTRAS — exclusivo para quem tem o Plano Essencial */}
@@ -354,14 +354,14 @@ function Dashboard() {
                       </div>
                       <div>
                         <h3 className="text-xl font-black text-[#22c55e] leading-tight uppercase tracking-tight">Plano Essencial</h3>
-                        <p className="text-xs font-bold text-[#22c55e]/60 leading-tight">Vitalício • 20 correções</p>
+                        <p className="text-xs font-bold text-[#22c55e]/60 leading-tight">Vitalício • 15 correções</p>
                       </div>
                     </div>
 
                     <ul className="space-y-3 mb-8 flex-1">
                       <li className="flex items-start gap-3 text-sm font-bold text-[#22c55e]">
                         <span className="shrink-0">✓</span>
-                        <span>20 correções de redação com IA</span>
+                        <span>15 correções de redação com IA</span>
                       </li>
                       <li className="flex items-start gap-3 text-sm font-bold text-[#22c55e]">
                         <span className="shrink-0">✓</span>

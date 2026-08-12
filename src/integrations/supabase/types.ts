@@ -264,7 +264,7 @@ export type Database = {
         Returns: undefined
       }
       grant_purchase: {
-        Args: { _amount_cents?: number; _token: string }
+        Args: { _amount_cents: number; _token: string }
         Returns: {
           note: string
           ok: boolean

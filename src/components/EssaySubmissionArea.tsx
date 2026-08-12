@@ -92,7 +92,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
     // ao final, exibimos as ofertas em vez do resultado.
     if (isLoggedIn && !canCorrect) {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 6000));
+      await new Promise((resolve) => setTimeout(resolve, 25000));
       setLoading(false);
       setShowPaywall(true);
       setTimeout(

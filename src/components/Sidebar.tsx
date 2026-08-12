@@ -125,7 +125,7 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
               key={item.id}
               onClick={() => {
                 // Histórico detalhado continua restrito; bibliotecas têm prévia liberada
-                if (item.id === "historico" && !profile?.is_pro) {
+                if ((item.id === "historico" || item.id === "progresso") && !profile?.is_pro) {
                   setActiveSection("upgrade");
                 } else {
                   setActiveSection(item.id);

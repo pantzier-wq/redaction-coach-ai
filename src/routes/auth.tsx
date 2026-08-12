@@ -238,6 +238,21 @@ function AuthPage() {
               placeholder="••••••••"
             />
           </div>
+          {view === "login" && (
+            <div className="text-right">
+              <button
+                type="button"
+                onClick={() => {
+                  setView("forgot");
+                  setError(null);
+                }}
+                className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
+              >
+                Esqueci minha senha
+              </button>
+            </div>
+          )}
+
 
           {error && (
             <div className="text-xs text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20">

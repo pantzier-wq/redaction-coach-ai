@@ -82,8 +82,28 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
           url.searchParams.get("secret") ??
           "";
 
-        if (!timingSafeEqual(provided, expected)) {
-          return new Response("Unauthorized", { status: 401 });
+        console.log("[Cakto Webhook] Provided Secret:", provided);
+        console.log("[Cakto Webhook] Expected Secret (masked):", expected.substring(0, 5) + "...");
+        console.log("[Cakto Webhook] Expected Secret Length:", expected.length);
+
+        // Se o segredo começa com "https:", o usuário provavelmente configurou a URL inteira como segredo.
+        // Vamos extrair o parâmetro secret da URL se for o caso.
+        let finalExpected = expected;
+        if (expected.startsWith("http")) {
+          try {
+            const expUrl = new URL(expected);
+            const secretParam = expUrl.searchParams.get("secret");
+            if (secretParam) {
+              finalExpected = secretParam;
+              console.log("[Cakto Webhook] Extracted Secret from URL:", finalExpected);
+            }
+          } catch (e) {
+            // Não é uma URL válida, mantém o original
+          }
+        }
+
+        if (!timingSafeEqual(provided, finalExpected)) {
+          return new Response(`Unauthorized: mismatch`, { status: 401 });
         }
 
         if (request.method !== "POST") {

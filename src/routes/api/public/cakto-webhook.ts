@@ -118,8 +118,8 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
         ).toLowerCase();
         const email = findValue(payload, ["email", "customer_email", "buyer_email"]);
         const externalId = findValue(payload, ["id", "transaction_id", "order_id", "checkout_id"]);
-        const amountStr = findValue(payload, ["amount", "value", "price", "total"]);
-        const amount = amountStr ? parseFloat(amountStr) : 0;
+        const amountRaw = findValue(payload, ["amount", "value", "price", "total"]);
+        const amount = amountRaw ? parseFloat(String(amountRaw).replace(",", ".")) : 0;
         const token = findToken(payload);
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

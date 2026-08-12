@@ -275,7 +275,27 @@ function Dashboard() {
           )}
 
           {activeSection === "progresso" && (
-            <ProgressSection essays={essays} onGoToCorrection={() => setActiveSection("correcao")} />
+            profile?.is_pro ? (
+              <ProgressSection essays={essays} onGoToCorrection={() => setActiveSection("correcao")} />
+            ) : (
+              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="max-w-2xl mx-auto text-center py-20">
+                  <div className="p-6 rounded-3xl bg-emerald-400/10 border-2 border-emerald-400/20 mb-8 inline-block">
+                    <TrendingUp className="w-16 h-16 text-emerald-400 animate-pulse" />
+                  </div>
+                  <h2 className="text-4xl font-black mb-4 tracking-tight">Análise de Evolução Bloqueada 📈</h2>
+                  <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+                    Acompanhe seu gráfico de notas e desempenho por competência em tempo real com o Plano PRO.
+                  </p>
+                  <button 
+                    onClick={() => setActiveSection("upgrade")}
+                    className="px-8 py-4 rounded-2xl bg-primary text-primary-foreground font-black text-lg uppercase tracking-widest hover:scale-105 transition-all shadow-xl"
+                  >
+                    LIBERAR MEU PROGRESSO AGORA
+                  </button>
+                </div>
+              </div>
+            )
           )}
 
 

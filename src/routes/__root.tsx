@@ -101,6 +101,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         "data-utmify-prevent-xcod-sck": "",
         "data-utmify-prevent-subids": "",
       },
+      { children: `window.pixelId = "6a841af43e9b25d11e40efb3";` },
+      {
+        src: "https://cdn.utmify.com.br/scripts/pixel/pixel.js",
+        async: true,
+        defer: true,
+      },
     ],
   }),
   shellComponent: RootShell,

@@ -42,50 +42,49 @@ export function CouponUnlockedBanner({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-3xl border border-primary/40 bg-primary/15 p-5 shadow-[0_0_30px_-10px_hsl(var(--primary))]",
+        "relative overflow-hidden rounded-[2.5rem] bg-[#e91e63] p-6 md:p-8 shadow-[0_20px_50px_rgba(233,30,99,0.3)]",
         className,
       )}
       {...props}
     >
-      <div
-        className="pointer-events-none absolute inset-0 opacity-40 blur-2xl"
-        style={{ background: "var(--gradient-cta)" }}
-        aria-hidden
-      />
       <div className="relative z-10">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-primary/25">
-            <Trophy className="h-5 w-5 text-primary" />
+        <div className="flex items-center gap-4">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-yellow-400">
+            <Trophy className="h-8 w-8 fill-current" />
           </div>
           <div className="min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60">
+            <p className="text-[10px] md:text-xs font-black uppercase tracking-[0.15em] text-white/70">
               Conquista desbloqueada
             </p>
-            <p className="text-lg md:text-2xl font-black leading-tight text-foreground">
+            <p className="text-xl md:text-3xl font-black leading-tight text-white tracking-tight">
               Você liberou {discountLabel} de desconto
             </p>
           </div>
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center gap-2">
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5">
-            <span className="font-mono text-xs font-bold uppercase tracking-wider text-foreground">
+        <div className="mt-6 flex flex-wrap items-center gap-3">
+          <div className="flex items-center rounded-2xl border-2 border-dashed border-white/30 px-4 py-2 bg-white/5">
+            <span className="font-mono text-sm md:text-base font-black uppercase tracking-widest text-white/90">
               {couponCode}
             </span>
-            <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-black uppercase text-primary-foreground">
+            <span className="ml-3 rounded-xl bg-yellow-400 px-3 py-1 text-[10px] md:text-xs font-black uppercase text-black shadow-lg">
               aplicado
             </span>
-          </span>
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-black tabular-nums text-foreground">
-            <Clock className="h-3.5 w-3.5 text-primary" />
+          </div>
+          
+          <div className="flex items-center gap-2 rounded-2xl bg-black/20 px-4 py-2 text-sm md:text-base font-black tabular-nums text-white">
+            <Clock className="h-4 w-4 text-white/70" />
             {left === null ? "--:--" : `${mm}:${String(ss).padStart(2, "0")}`}
-          </span>
+          </div>
         </div>
 
-        <p className="mt-3 text-[11px] font-bold text-foreground/60">
+        <p className="mt-5 text-[11px] md:text-xs font-bold text-white/60">
           Passado o prazo volta para {fallbackPrice}. O contador não reinicia.
         </p>
       </div>
+
+      {/* Brilho decorativo sutil */}
+      <div className="absolute top-0 right-0 -mr-20 -mt-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
     </div>
   );
 }

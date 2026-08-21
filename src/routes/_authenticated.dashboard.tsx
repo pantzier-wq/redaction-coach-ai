@@ -365,18 +365,14 @@ function Dashboard() {
                 
                 <CouponUnlockedBanner
                   discountLabel="R$ 10,00"
-                  couponCode="PRIMEIRAREDACAO"
+                  couponCode="ENEM10"
                   fallbackPrice="R$ 29,90"
-                  className="mb-6 text-left"
+                  className="mb-8 text-left"
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-12">
                    {/* PLANO ESSENCIAL */}
                   <div className="flex flex-col rounded-3xl border-2 border-white/20 bg-white/10 p-8 relative overflow-hidden group hover:opacity-100 transition-opacity">
-                    {/* Cupom Visual */}
-                    <div className="absolute top-0 right-0 px-3 py-1 bg-white/20 text-white/60 text-[10px] font-black uppercase tracking-tighter rounded-bl-lg">
-                      CUPOM: ENEM10 APLICADO
-                    </div>
                     
                     <div className="mb-6 flex items-center gap-4">
                       <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
@@ -437,9 +433,6 @@ function Dashboard() {
 
                   {/* COMBO NOTA 1000 - Premium */}
                   <div className="flex flex-col rounded-3xl border-2 border-primary bg-primary/10 p-8 relative overflow-hidden group shadow-[0_0_60px_rgba(var(--primary-rgb),0.3)] scale-[1.05]">
-                    <div className="absolute top-0 right-0 px-4 py-1.5 bg-[#22c55e] text-white text-[11px] font-black uppercase tracking-widest rounded-bl-2xl animate-pulse z-20">
-                      CUPOM: APROVADO20 APLICADO 🔥
-                    </div>
                     
                     <div className="mb-6 flex items-center gap-4">
                       <div className="h-12 w-12 rounded-2xl bg-[#22c55e] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(34,197,94,0.5)]">

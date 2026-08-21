@@ -439,18 +439,15 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                   <div className="space-y-6">
                     <CouponUnlockedBanner
                       discountLabel="R$ 10,00"
-                      couponCode="PRIMEIRAREDACAO"
+                      couponCode="ENEM10"
                       fallbackPrice="R$ 29,90"
+                      className="mb-8"
                     />
                     <div className={`grid grid-cols-1 gap-4 ${semCreditos ? "" : "md:grid-cols-2"}`}>
 
                       {/* PLANO ESSENCIAL - escondido para quem já comprou */}
                       {!semCreditos && (
                       <div className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 relative overflow-hidden group transition-all hover:bg-white/10">
-                        {/* Cupom Visual */}
-                        <div className="absolute top-0 right-0 px-3 py-1 bg-white/10 text-white/40 text-[9px] font-black uppercase tracking-tighter rounded-bl-lg">
-                          CUPOM: ENEM10 APLICADO
-                        </div>
                         
                         <div className="mb-4 flex items-center gap-3">
                           <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
@@ -512,9 +509,6 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
                       {/* COMBO NOTA 1000 */}
                       <div className="flex flex-col rounded-2xl border-2 border-[#22c55e] bg-[#22c55e]/5 p-5 relative overflow-hidden group shadow-[0_0_40px_rgba(34,197,94,0.15)] scale-[1.02]">
-                        <div className="absolute top-0 right-0 px-3 py-1 bg-[#22c55e] text-white text-[10px] font-black uppercase tracking-wider rounded-bl-lg animate-pulse z-20 shadow-lg">
-                          CUPOM: APROVADO20 APLICADO 🔥
-                        </div>
                         
                         <div className="mb-4 flex items-center gap-3">
                           <div className="h-10 w-10 rounded-xl bg-[#22c55e] flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(34,197,94,0.4)]">

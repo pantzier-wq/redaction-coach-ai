@@ -88,8 +88,12 @@ function AuthPage() {
           options: { emailRedirectTo: `${window.location.origin}/auth` },
         });
         if (error) throw error;
-        if (!data.session) {
-          toast.info("Enviamos um e-mail de confirmação. Confirme para entrar.");
+        
+        // If data.user exists but data.session is null, it means confirmation is required
+        if (data.user && !data.session) {
+          toast.success("Conta criada! Enviamos um e-mail de confirmação para você.");
+          // Also set a local state to show a visual message in the form
+          setError("✅ Verifique seu e-mail para confirmar a conta e poder entrar.");
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });

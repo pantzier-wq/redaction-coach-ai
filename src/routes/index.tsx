@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-/* 'como o exemplo que eu mostrei quero nos 2 planos atuais esse cupom, o de 19,90 com o cupom com um nome ficticio e o de 39,90 coloar um cupom de desconto tbm so q com 20 reais de desconto' (on element 'body' at '/src/routes/index.tsx:1') */
+/* 'faça um cupom bonito igual esse inves do cupom falar que esta aplicado no canto da caixa' (on element 'body' at '/src/routes/index.tsx:1') */
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";

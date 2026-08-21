@@ -365,9 +365,9 @@ function Dashboard() {
                 
                 <CouponUnlockedBanner
                   discountLabel="R$ 10,00"
-                  couponCode="PRIMEIRAREDACAO"
+                  couponCode="ENEM10"
                   fallbackPrice="R$ 29,90"
-                  className="mb-6 text-left"
+                  className="mb-8 text-left"
                 />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-12">

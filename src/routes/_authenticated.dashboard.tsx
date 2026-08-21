@@ -373,10 +373,6 @@ function Dashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-12">
                    {/* PLANO ESSENCIAL */}
                   <div className="flex flex-col rounded-3xl border-2 border-white/20 bg-white/10 p-8 relative overflow-hidden group hover:opacity-100 transition-opacity">
-                    {/* Cupom Visual */}
-                    <div className="absolute top-0 right-0 px-3 py-1 bg-white/20 text-white/60 text-[10px] font-black uppercase tracking-tighter rounded-bl-lg">
-                      CUPOM: ENEM10 APLICADO
-                    </div>
                     
                     <div className="mb-6 flex items-center gap-4">
                       <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">

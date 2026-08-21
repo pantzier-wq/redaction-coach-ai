@@ -447,10 +447,6 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                       {/* PLANO ESSENCIAL - escondido para quem já comprou */}
                       {!semCreditos && (
                       <div className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 relative overflow-hidden group transition-all hover:bg-white/10">
-                        {/* Cupom Visual */}
-                        <div className="absolute top-0 right-0 px-3 py-1 bg-white/10 text-white/40 text-[9px] font-black uppercase tracking-tighter rounded-bl-lg">
-                          CUPOM: ENEM10 APLICADO
-                        </div>
                         
                         <div className="mb-4 flex items-center gap-3">
                           <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">

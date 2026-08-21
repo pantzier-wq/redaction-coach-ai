@@ -439,8 +439,9 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                   <div className="space-y-6">
                     <CouponUnlockedBanner
                       discountLabel="R$ 10,00"
-                      couponCode="PRIMEIRAREDACAO"
+                      couponCode="ENEM10"
                       fallbackPrice="R$ 29,90"
+                      className="mb-8"
                     />
                     <div className={`grid grid-cols-1 gap-4 ${semCreditos ? "" : "md:grid-cols-2"}`}>
 

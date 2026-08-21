@@ -440,6 +440,11 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                       {/* PLANO ESSENCIAL - escondido para quem já comprou */}
                       {!semCreditos && (
                       <div className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 relative overflow-hidden group transition-all hover:bg-white/10">
+                        {/* Cupom Visual */}
+                        <div className="absolute top-0 right-0 px-3 py-1 bg-white/10 text-white/40 text-[9px] font-black uppercase tracking-tighter rounded-bl-lg">
+                          CUPOM: ENEM10 APLICADO
+                        </div>
+                        
                         <div className="mb-4 flex items-center gap-3">
                           <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
                             <Zap className="w-5 h-5 text-white/60" />
@@ -482,7 +487,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                         </ul>
 
                         <div className="mt-auto">
-                          <div className="flex items-baseline gap-1 mb-3">
+                          <div className="flex items-baseline gap-2 mb-3">
+                             <span className="text-sm font-bold text-white/30 line-through italic">R$ 29,90</span>
                              <span className="text-3xl font-black text-white/90">R$ 19,90</span>
                              <span className="text-xs font-bold text-white/40 uppercase">Taxa única</span>
                           </div>
@@ -499,8 +505,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
                       {/* COMBO NOTA 1000 */}
                       <div className="flex flex-col rounded-2xl border-2 border-[#22c55e] bg-[#22c55e]/5 p-5 relative overflow-hidden group shadow-[0_0_40px_rgba(34,197,94,0.15)] scale-[1.02]">
-                        <div className="absolute top-0 right-0 px-3 py-1 bg-[#22c55e] text-white text-[11px] font-black uppercase tracking-wider rounded-bl-lg animate-pulse z-20 shadow-lg">
-                          OFERTA COMPLETA 🔥
+                        <div className="absolute top-0 right-0 px-3 py-1 bg-[#22c55e] text-white text-[10px] font-black uppercase tracking-wider rounded-bl-lg animate-pulse z-20 shadow-lg">
+                          CUPOM: APROVADO20 APLICADO 🔥
                         </div>
                         
                         <div className="mb-4 flex items-center gap-3">
@@ -548,11 +554,11 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                         <div className="mt-auto">
                           <div className="mb-3 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 p-3">
                             <div className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-                              <span className="whitespace-nowrap text-sm font-bold text-white/40 line-through italic">R$ 59,90</span>
+                              <span className="whitespace-nowrap text-sm font-bold text-white/40 line-through italic">R$ 59,00</span>
                               <span className="whitespace-nowrap text-4xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 39,00</span>
                             </div>
                             <p className="text-[11px] font-bold uppercase tracking-widest text-white/50 mt-2 leading-relaxed">
-                              Pagamento único • Acesso vitalício • Só R$ 20 a mais que o básico
+                              Pagamento único • Acesso vitalício • Cupom de R$ 20,00 aplicado!
                             </p>
                           </div>
                           <button

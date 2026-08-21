@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-/* 'olhei essa oferta de exemplo e gostaria de fazer parecido com a nossa ali na parte do pro tanto na area, quando se o usuario tentar mais uma redação la dentro da plataforma, a idea desse cupom aplicado so visual, colocar esse cupom aplicado para os dois planos da diferença do valor riscado e do preço real. A imagem é so uma ideia, vamos seguir com a indentidade visual do nosso corrigeai' (on element 'body' at '/src/routes/index.tsx:1') */
+/* 'como o exemplo que eu mostrei quero nos 2 planos atuais esse cupom, o de 19,90 com o cupom com um nome ficticio e o de 39,90 coloar um cupom de desconto tbm so q com 20 reais de desconto' (on element 'body' at '/src/routes/index.tsx:1') */
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";

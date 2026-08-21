@@ -5,6 +5,7 @@ import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Sparkles, ArrowRight, Trophy, Zap } from "lucide-react";
 import { goToCheckout, goToCreditsCheckout } from "@/lib/checkout";
+import { CouponUnlockedBanner } from "@/components/CouponUnlockedBanner";
 
 
 interface EssaySubmissionAreaProps {
@@ -436,7 +437,13 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                   )}
 
                   <div className="space-y-6">
+                    <CouponUnlockedBanner
+                      discountLabel="R$ 10,00"
+                      couponCode="PRIMEIRAREDACAO"
+                      fallbackPrice="R$ 29,90"
+                    />
                     <div className={`grid grid-cols-1 gap-4 ${semCreditos ? "" : "md:grid-cols-2"}`}>
+
                       {/* PLANO ESSENCIAL - escondido para quem já comprou */}
                       {!semCreditos && (
                       <div className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 relative overflow-hidden group transition-all hover:bg-white/10">

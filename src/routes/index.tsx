@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-/* 'consegue verificar pra mim se em algum momento teve alguem que tentou criar conta? to analisando as metricas pela utmify e tbm queria saber se alguem ja fez a primeira redacao sem cadstro' (on element 'body' at '/src/routes/index.tsx:1') */
+/* 'algumas foram minhas mesmo, veja nessas ultimas 3 horas' (on element 'body' at '/src/routes/index.tsx:1') */
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";

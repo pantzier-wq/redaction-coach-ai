@@ -8,6 +8,7 @@ import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
 import { Sidebar } from "@/components/Sidebar";
 import { cn } from "@/lib/utils";
 import { goToCheckout, goToCreditsCheckout } from "@/lib/checkout";
+import { CouponUnlockedBanner } from "@/components/CouponUnlockedBanner";
 
 import { 
   History, 
@@ -362,6 +363,13 @@ function Dashboard() {
                   </div>
                 )}
                 
+                <CouponUnlockedBanner
+                  discountLabel="R$ 10,00"
+                  couponCode="PRIMEIRAREDACAO"
+                  fallbackPrice="R$ 29,90"
+                  className="mb-6 text-left"
+                />
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-12">
                    {/* PLANO ESSENCIAL */}
                   <div className="flex flex-col rounded-3xl border-2 border-white/20 bg-white/10 p-8 relative overflow-hidden group hover:opacity-100 transition-opacity">

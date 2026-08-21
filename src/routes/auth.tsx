@@ -91,9 +91,11 @@ function AuthPage() {
         
         // If data.user exists but data.session is null, it means confirmation is required
         if (data.user && !data.session) {
-          toast.success("Conta criada! Enviamos um e-mail de confirmação para você.");
-          // Also set a local state to show a visual message in the form
-          setError("✅ Verifique seu e-mail para confirmar a conta e poder entrar.");
+          toast.success("Verifique seu e-mail!", {
+            description: "Enviamos um link de confirmação para você poder acessar a plataforma.",
+            duration: 10000,
+          });
+          setError("✅ Quase lá! Enviamos um e-mail de confirmação. Você precisa clicar no link que enviamos para ativar sua conta e poder entrar.");
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });

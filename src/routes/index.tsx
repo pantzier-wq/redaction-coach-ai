@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+/* "o usuário receba um feedback visual claro após criar a conta, informando sobre a necessidade de confirmação por e-mail" Que aviso é esse q eu n to sabendo? */
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";

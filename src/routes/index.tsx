@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-/* 'faça um cupom bonito igual esse inves do cupom falar que esta aplicado no canto da caixa' (on element 'body' at '/src/routes/index.tsx:1') */
+/* Hoje foram submetidas 2 redações. (on element 'body' at '/src/routes/index.tsx:1') */
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";

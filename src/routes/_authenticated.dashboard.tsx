@@ -412,7 +412,10 @@ function Dashboard() {
                     </ul>
 
                     <div className="mt-auto">
-                      <div className="text-3xl font-black text-[#22c55e] mb-6">R$ 19,90</div>
+                      <div className="flex items-baseline gap-2 mb-6">
+                        <span className="text-lg font-bold text-white/30 line-through italic">R$ 29,90</span>
+                        <span className="text-3xl font-black text-[#22c55e]">R$ 19,90</span>
+                      </div>
                       <button
                         onClick={() => handleTestPurchase('pro')}
                         disabled={!!profile?.is_pro}
@@ -426,8 +429,8 @@ function Dashboard() {
 
                   {/* COMBO NOTA 1000 - Premium */}
                   <div className="flex flex-col rounded-3xl border-2 border-primary bg-primary/10 p-8 relative overflow-hidden group shadow-[0_0_60px_rgba(var(--primary-rgb),0.3)] scale-[1.05]">
-                    <div className="absolute top-0 right-0 px-4 py-1.5 bg-[#22c55e] text-white text-[10px] font-black uppercase tracking-widest rounded-bl-2xl animate-pulse z-20">
-                      MELHOR ESCOLHA 🎁
+                    <div className="absolute top-0 right-0 px-4 py-1.5 bg-[#22c55e] text-white text-[11px] font-black uppercase tracking-widest rounded-bl-2xl animate-pulse z-20">
+                      CUPOM: APROVADO20 APLICADO 🔥
                     </div>
                     
                     <div className="mb-6 flex items-center gap-4">
@@ -477,11 +480,11 @@ function Dashboard() {
                     <div className="mt-auto">
                       <div className="mb-4 rounded-2xl border border-[#22c55e]/20 bg-[#22c55e]/5 p-4">
                         <div className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-                          <span className="whitespace-nowrap text-sm font-bold text-[#22c55e]/60 line-through italic uppercase tracking-widest">R$ 59,90</span>
+                          <span className="whitespace-nowrap text-sm font-bold text-[#22c55e]/60 line-through italic uppercase tracking-widest">R$ 59,00</span>
                           <span className="whitespace-nowrap text-4xl font-black text-[#22c55e] drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">R$ 39,00</span>
                         </div>
                         <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mt-1">
-                          Pagamento único • Acesso vitalício • Tudo liberado na hora
+                          Pagamento único • Acesso vitalício • Cupom de R$ 20,00 aplicado!
                         </p>
                       </div>
                       <button

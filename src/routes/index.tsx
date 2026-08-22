@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-/* 'tire todas as alterações e pedidos que eu fiz de ontem' (on element 'body' at '/src/routes/index.tsx:1') */
+/* 'tudo que eu pedi pra fazer ontem no dia 21/08 no projeto quero que tire e deixe como estava ate a ultima alteração do dia 19 /08, na parte visual e por dentro do projeto. Comprendido?' (on element 'body' at '/src/routes/index.tsx:1') */
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";

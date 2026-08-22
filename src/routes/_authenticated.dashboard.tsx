@@ -363,12 +363,10 @@ function Dashboard() {
                   </div>
                 )}
                 
-                <CouponUnlockedBanner
-                  discountLabel="R$ 10,00"
-                  couponCode="ENEM10"
-                  fallbackPrice="R$ 29,90"
-                  className="mb-8 text-left"
-                />
+                <div className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8 mb-8 text-left">
+                  <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">Pagamento Único • Acesso Vitalício</p>
+                  <p className="text-xl md:text-2xl font-black text-white uppercase tracking-tight">Cupom de R$ 20,00 aplicado!</p>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-12">
                    {/* PLANO ESSENCIAL */}

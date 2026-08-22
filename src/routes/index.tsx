@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-/* 'voce nao entendeu, querro que tire o cupom, não é pra ter nada disso mais no momento. e inves de abaixo do preco estar escrito: "Pagamento único • Acesso vitalício • Cupom de R$ 20,00 aplicado!". Deixe dessa forma: Pagamento único • Acesso vitalício • Desconto de R$ 20,00' (on element 'body' at '/src/routes/index.tsx:1') */
+/* 'perceba que nao faz sentido ter esse aviso aqui se a primeira opcao de plano supostamente nao da um desconto de 20 reais e sim de 10, dito isso tire agora' (on element 'body' at '/src/routes/index.tsx:1') */
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";

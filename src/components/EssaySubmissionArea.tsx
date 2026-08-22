@@ -437,9 +437,6 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                   )}
 
                   <div className="space-y-6">
-                    <div className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8 mb-8 text-left">
-                      <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">Pagamento Único • Acesso Vitalício • Desconto de R$ 20,00</p>
-                    </div>
                     <div className={`grid grid-cols-1 gap-4 ${semCreditos ? "" : "md:grid-cols-2"}`}>
 
                       {/* PLANO ESSENCIAL - escondido para quem já comprou */}

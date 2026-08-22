@@ -363,9 +363,6 @@ function Dashboard() {
                   </div>
                 )}
                 
-                <div className="rounded-3xl border border-white/10 bg-white/5 p-6 md:p-8 mb-8 text-left">
-                  <p className="text-[11px] font-black uppercase tracking-[0.2em] text-white/40 mb-2">Pagamento Único • Acesso Vitalício • Desconto de R$ 20,00</p>
-                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-12">
                    {/* PLANO ESSENCIAL */}
@@ -482,7 +479,7 @@ function Dashboard() {
                           <span className="whitespace-nowrap text-4xl font-black text-[#22c55e] drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">R$ 39,00</span>
                         </div>
                         <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mt-1">
-                          Pagamento único • Acesso vitalício • Cupom de R$ 20,00 aplicado!
+                          Pagamento único • Acesso vitalício • Desconto de R$ 20,00
                         </p>
                       </div>
                       <button

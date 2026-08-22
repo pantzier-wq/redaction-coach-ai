@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-/* Hoje foram submetidas 2 redações. (on element 'body' at '/src/routes/index.tsx:1') */
+/* 'tire todas as alterações e pedidos que eu fiz de ontem' (on element 'body' at '/src/routes/index.tsx:1') */
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";

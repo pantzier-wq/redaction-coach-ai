@@ -127,13 +127,13 @@ function Dashboard() {
           {activeSection === "dashboard" && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest mb-4">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--paper-2)] border border-[var(--line)] text-[var(--red)] text-xs font-black uppercase tracking-[0.2em] mb-6 shadow-sm">
                   <Trophy className="w-3 h-3" /> Dashboard Estudante
                 </div>
-                <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
-                  Olá, <span className="text-primary">{profile?.full_name?.split(' ')[0] || 'Estudante'}</span>! ✍️
+                <h1 className="font-['Fraunces'] text-5xl md:text-6xl font-black mb-6 tracking-tight text-[var(--ink)] leading-tight">
+                  Olá, <span className="text-[var(--red)] italic">{profile?.full_name?.split(' ')[0] || 'Estudante'}</span>! ✍️
                 </h1>
-                <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-8">
+                <p className="text-lg md:text-xl text-[var(--ink-2)] max-w-xl mx-auto mb-10 font-medium">
                   Pronto para a nota 1000 hoje? Cole seu texto abaixo para começar a correção.
                 </p>
 

@@ -1453,11 +1453,11 @@ function RepertoriosLibrary() {
             </div>
             
             <div className="w-full md:w-64 space-y-4">
-              <div className="p-6 rounded-2xl bg-muted/50 border border-border">
-                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-3">Eixos Temáticos</span>
+              <div className="p-6 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] shadow-inner">
+                <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-widest block mb-3">Eixos Temáticos</span>
                 <div className="flex flex-wrap gap-2">
                   {r.eixosTematicos.map(e => (
-                    <span key={e} className="px-2 py-1 rounded-md bg-background border border-border text-[9px] font-black uppercase tracking-tighter text-foreground">
+                    <span key={e} className="px-2 py-1 rounded-md bg-[var(--paper)] border border-[var(--line)] text-[9px] font-black uppercase tracking-tighter text-[var(--ink)] shadow-sm">
                       {e}
                     </span>
                   ))}

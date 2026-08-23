@@ -1405,14 +1405,14 @@ function RepertoriosLibrary() {
       {/* Repertórios Grid */}
       <div className="grid grid-cols-1 gap-6">
         {filtered.map((r) => (
-          <div key={r.id} className="p-8 rounded-[2rem] border border-border bg-card hover:border-primary/40 transition-all flex flex-col md:flex-row gap-8">
+          <div key={r.id} className="p-8 rounded-[2.5rem] border border-[var(--line)] bg-[var(--paper)] hover:border-[var(--red)]/40 transition-all flex flex-col md:flex-row gap-8 shadow-sm group/card">
             <div className="flex-1 space-y-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-2xl font-black text-foreground tracking-tight">{r.titulo}</h3>
-                  <p className="text-sm font-bold text-primary uppercase tracking-widest">{r.autorOuOrigem}</p>
+                  <h3 className="font-['Fraunces'] text-2xl font-black text-[var(--ink)] tracking-tight italic">{r.titulo}</h3>
+                  <p className="text-[10px] font-black text-[var(--red)] uppercase tracking-[0.2em]">{r.autorOuOrigem}</p>
                 </div>
-                <div className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
+                <div className="px-3 py-1 rounded-full bg-[var(--paper-2)] border border-[var(--line)] text-[var(--ink-3)] text-[9px] font-black uppercase tracking-widest shadow-inner">
                   {r.tipo}
                 </div>
               </div>

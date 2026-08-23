@@ -329,7 +329,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
               className={`rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 transition-all duration-500 overflow-hidden ${(result || (isLoggedIn && !isPro)) && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
               style={{ boxShadow: "var(--paper-shadow)" }}
             >
-              <label className="mb-2 block text-sm font-bold text-primary">Tema da redação</label>
+              <label className="mb-2 block text-sm font-bold text-[var(--red)] uppercase tracking-widest">Tema da redação</label>
               <input
                 value={tema}
                 onChange={(e) => setTema(e.target.value)}
@@ -400,7 +400,7 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
               </p>
             </form>
 
-            {isLoggedIn && ((result && showPaywall) || (!canCorrect && showPaywall)) && (
+            {((result && showPaywall) || (isLoggedIn && !canCorrect && showPaywall) || (!isLoggedIn && showPaywall)) && (
               <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-[var(--paper)]/80 backdrop-blur-sm flex items-start justify-center p-4 md:p-6 pt-20 md:pt-24 pb-10 font-['Public_Sans']">
                 <div 
                   className="w-full max-w-lg md:max-w-4xl rounded-3xl border border-[var(--red)]/30 bg-[var(--paper)] p-6 md:p-10 shadow-[var(--paper-shadow)] backdrop-blur-2xl relative animate-in fade-in zoom-in duration-500"
@@ -416,16 +416,32 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
                   </div>
                   
                   <h2 className="font-['Fraunces'] text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-[var(--ink)]">
-                    {semCreditos ? "Seus créditos acabaram" : result ? "Análise Pronta! 🎯" : "Quase lá..."}
+                    {semCreditos ? "Seus créditos acabaram" : (result || showPaywall) ? "Análise Pronta! 🎯" : "Quase lá..."}
                   </h2>
                   
                   <p className="text-sm md:text-base text-[var(--ink-2)] font-semibold mb-6 md:mb-8 leading-relaxed text-center">
-                    {semCreditos
-                      ? "Você já usou as 15 correções do Plano Essencial. Recarregue créditos ou faça o upgrade para o Combo Nota 1000 e corrija sem limite nenhum."
-                      : result 
-                        ? "Sua correção detalhada e nota oficial já foram geradas com precisão INEP."
-                        : "Você está a um passo de desbloquear seu potencial máximo e conquistar sua vaga no curso dos sonhos."}
+                    {!isLoggedIn 
+                      ? "Crie sua conta agora para salvar seu diagnóstico e desbloquear sua correção detalhada com nota oficial padrão INEP."
+                      : semCreditos
+                        ? "Você já usou as 15 correções do Plano Essencial. Recarregue créditos ou faça o upgrade para o Combo Nota 1000 e corrija sem limite nenhum."
+                        : (result || showPaywall)
+                          ? "Sua correção detalhada e nota oficial já foram geradas com precisão INEP."
+                          : "Você está a um passo de desbloquear seu potencial máximo e conquistar sua vaga no curso dos sonhos."}
                   </p>
+
+                  {!isLoggedIn && (
+                    <div className="mb-8 flex flex-col gap-4 items-center">
+                       <button
+                         onClick={() => window.location.href = "/auth"}
+                         className="w-full max-w-sm py-4 rounded-xl bg-[var(--red)] text-white font-black text-lg uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg"
+                       >
+                         CRIAR MINHA CONTA GRÁTIS
+                       </button>
+                       <p className="text-xs font-bold text-[var(--ink-3)] uppercase tracking-widest">
+                         Leve apenas 10 segundos
+                       </p>
+                    </div>
+                  )}
 
                   {semCreditos && (
                     <div className="mb-8">

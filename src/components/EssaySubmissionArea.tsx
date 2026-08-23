@@ -151,11 +151,25 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
     if (isLoggedIn && !canCorrect) {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 25000));
-      setLoading(false);
-      setShowPaywall(true);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const r = await corrigir({ 
+          data: { 
+            tema: tema.trim(), 
+            redacao: redacao.trim(),
+            accessToken: session?.access_token
+          } 
+        });
+        const correctionData = r.correcao || r;
+        setResult(correctionData);
+        setShowPaywall(true);
+      } catch (err) {
+        console.error("Erro no fluxo logado sem crédito:", err);
+      } finally {
+        setLoading(false);
+      }
       setTimeout(
-        () => document.getElementById("paywall-anchor")?.scrollIntoView({ behavior: "smooth" }),
+        () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
         100,
       );
       return;

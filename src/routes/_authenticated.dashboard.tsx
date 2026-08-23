@@ -366,58 +366,54 @@ function Dashboard() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-12">
                    {/* PLANO ESSENCIAL */}
-                  <div className="flex flex-col rounded-3xl border-2 border-white/20 bg-white/10 p-8 relative overflow-hidden group hover:opacity-100 transition-opacity">
+                   <div className="flex flex-col rounded-3xl border border-[var(--line)] bg-[var(--paper-2)]/50 p-8 relative overflow-hidden group shadow-sm transition-all hover:bg-[var(--paper-2)]">
                     
                     <div className="mb-6 flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
-                        <Zap className="w-6 h-6 text-[#22c55e]" />
+                      <div className="h-12 w-12 rounded-2xl bg-[var(--line)]/30 flex items-center justify-center shrink-0">
+                        <Zap className="w-6 h-6 text-[var(--ink-3)]" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-black text-[#22c55e] leading-tight uppercase tracking-tight">Plano Essencial</h3>
-                        <p className="text-xs font-bold text-[#22c55e]/60 leading-tight">Vitalício • 15 correções</p>
+                        <h3 className="text-xl font-black text-[var(--ink)] leading-tight uppercase tracking-tight">Plano Essencial</h3>
+                        <p className="text-xs font-bold text-[var(--ink-3)] leading-tight uppercase tracking-[0.1em]">Vitalício • 15 correções</p>
                       </div>
                     </div>
 
                     <ul className="space-y-3 mb-8 flex-1">
-                      <li className="flex items-start gap-3 text-sm font-bold text-[#22c55e]">
-                        <span className="shrink-0">✓</span>
+                      <li className="flex items-start gap-3 text-sm font-medium text-[var(--ink-2)]">
+                        <span className="text-green-600 shrink-0 font-bold">✓</span>
                         <span>15 correções de redação com IA</span>
                       </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-[#22c55e]">
-                        <span className="shrink-0">✓</span>
+                      <li className="flex items-start gap-3 text-sm font-medium text-[var(--ink-2)]">
+                        <span className="text-green-600 shrink-0 font-bold">✓</span>
                         <span>Histórico completo de evolução</span>
                       </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-[#22c55e]">
-                        <span className="shrink-0">✓</span>
+                      <li className="flex items-start gap-3 text-sm font-medium text-[var(--ink-2)]">
+                        <span className="text-green-600 shrink-0 font-bold">✓</span>
                         <span>Pode comprar créditos extras depois</span>
                       </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-white/40">
-                        <span className="text-destructive shrink-0">✕</span>
-                        <span className="line-through">Correções ilimitadas</span>
+                      <li className="flex items-start gap-3 text-sm font-medium text-[var(--ink-3)]">
+                        <span className="text-[var(--red)] shrink-0 font-bold">✕</span>
+                        <span className="line-through italic">Correções ilimitadas</span>
                       </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-white/40">
-                        <span className="text-destructive shrink-0">✕</span>
-                        <span className="line-through">70+ Repertórios Universais</span>
+                      <li className="flex items-start gap-3 text-sm font-medium text-[var(--ink-3)]">
+                        <span className="text-[var(--red)] shrink-0 font-bold">✕</span>
+                        <span className="line-through italic">70+ Repertórios Universais</span>
                       </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-white/40">
-                        <span className="text-destructive shrink-0">✕</span>
-                        <span className="line-through">Flashcards de Conectivos</span>
-                      </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-white/40">
-                        <span className="text-destructive shrink-0">✕</span>
-                        <span className="line-through">Manual Proposta Nota 200</span>
+                      <li className="flex items-start gap-3 text-sm font-medium text-[var(--ink-3)]">
+                        <span className="text-[var(--red)] shrink-0 font-bold">✕</span>
+                        <span className="line-through italic">Laboratório de Conectivos</span>
                       </li>
                     </ul>
 
                     <div className="mt-auto">
                       <div className="flex items-baseline gap-2 mb-6">
-                        <span className="text-lg font-bold text-white/30 line-through italic">R$ 29,90</span>
-                        <span className="text-3xl font-black text-[#22c55e]">R$ 19,90</span>
+                        <span className="text-lg font-bold text-[var(--ink-3)] line-through italic">R$ 29,90</span>
+                        <span className="text-3xl font-black text-[var(--ink)]">R$ 19,90</span>
                       </div>
                       <button
                         onClick={() => handleTestPurchase('pro')}
                         disabled={!!profile?.is_pro}
-                        className="w-full py-4 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-sm uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="w-full py-4 rounded-xl bg-[var(--ink)] text-[var(--paper)] font-black text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
                       >
                         {profile?.is_pro ? "PLANO ATIVO" : "LIBERAR ESSENCIAL"}
                       </button>

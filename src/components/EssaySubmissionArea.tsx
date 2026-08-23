@@ -487,73 +487,54 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
 
                       {/* COMBO NOTA 1000 */}
-                      <div className="flex flex-col rounded-2xl border-2 border-[#22c55e] bg-[#22c55e]/5 p-5 relative overflow-hidden group shadow-[0_0_40px_rgba(34,197,94,0.15)] scale-[1.02]">
+                      <div className="flex flex-col rounded-2xl border-2 border-[var(--red)] bg-[var(--red)]/5 p-5 relative overflow-hidden group shadow-[0_20px_40px_-12px_rgba(196,50,42,0.15)] scale-[1.02]">
                         
                         <div className="mb-4 flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-xl bg-[#22c55e] flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(34,197,94,0.4)]">
+                          <div className="h-10 w-10 rounded-xl bg-[var(--red)] flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(196,50,42,0.4)]">
                             <Sparkles className="w-5 h-5 text-white animate-pulse" />
                           </div>
                           <div>
-                            <h3 className="text-lg font-black text-white leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
-                            <p className="text-[11px] font-bold text-[#22c55e] leading-tight">O PODER DA APROVAÇÃO</p>
+                            <h3 className="text-lg font-black text-[var(--ink)] leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
+                            <p className="text-[11px] font-bold text-[var(--red)] leading-tight uppercase tracking-widest">O PODER DA APROVAÇÃO</p>
                           </div>
                         </div>
 
-                        <div className="mb-4 grid grid-cols-3 gap-2">
+                        <ul className="space-y-3 mb-6 flex-1">
                           {[
-                            { n: "∞", l: "Correções" },
-                            { n: "70+", l: "Repertórios" },
-                            { n: "2", l: "IAs Bônus" },
-                          ].map((s) => (
-                            <div key={s.l} className="rounded-xl bg-[#22c55e]/10 border border-[#22c55e]/20 py-2 text-center">
-                              <div className="text-2xl font-black text-[#22c55e] leading-none">{s.n}</div>
-                              <div className="text-[10px] font-bold uppercase tracking-widest text-white/60 mt-1">{s.l}</div>
-                            </div>
-                          ))}
-                        </div>
-
-                        <ul className="space-y-2.5 mb-5 flex-1">
-                          {[
-                            { t: "Correções ILIMITADAS para sempre", d: "Sem créditos, sem limite de 20. Treine até fechar a nota." },
-                            { t: "IA de Repertório Sociocultural", d: "Gera repertório legitimado e pronto pra usar em qualquer tema." },
-                            { t: "Laboratório de Conectivos (IA)", d: "Analisa suas frases e corrige a Competência 4 em segundos." },
-                            { t: "70+ Repertórios Coringas", d: "Biblioteca validada que encaixa em qualquer proposta do ENEM." },
-                            { t: "Biblioteca de Conectivos + Treino", d: "Quiz e flashcards pra nunca mais repetir palavra." },
-                            { t: "Histórico de até 50 redações", d: "Gráfico de evolução por competência, nota a nota." },
+                            { t: "Correções ILIMITADAS para sempre", d: "Sem créditos, sem limite. Treine até fechar a nota." },
+                            { t: "IA de Repertório Sociocultural", d: "Gera repertório legitimado para qualquer tema." },
+                            { t: "Laboratório de Conectivos (IA)", d: "Corrige sua Competência 4 em segundos." },
+                            { t: "70+ Repertórios Coringas", d: "Biblioteca validada que encaixa em tudo." },
+                            { t: "Suporte priorizado via WhatsApp", d: "Atendimento humano e rápido." },
                           ].map((b) => (
                             <li key={b.t} className="flex items-start gap-2">
-                              <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-[#22c55e] text-white text-[11px] font-black flex items-center justify-center">✓</span>
+                              <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-[var(--red)] text-white text-[11px] font-black flex items-center justify-center">✓</span>
                               <div className="leading-tight">
-                                <div className="text-sm font-black text-white">{b.t}</div>
-                                <div className="text-xs font-medium text-white/60 mt-0.5">{b.d}</div>
+                                <div className="text-sm font-black text-[var(--ink)]">{b.t}</div>
+                                <div className="text-xs font-medium text-[var(--ink-2)] mt-0.5">{b.d}</div>
                               </div>
                             </li>
                           ))}
                         </ul>
 
-                        <div className="mt-auto">
-                          <div className="mb-3 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 p-3">
-                            <div className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-                              <span className="whitespace-nowrap text-sm font-bold text-white/40 line-through italic">R$ 59,00</span>
-                              <span className="whitespace-nowrap text-4xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 39,00</span>
-                            </div>
-                            <p className="text-[11px] font-bold uppercase tracking-widest text-white/50 mt-2 leading-relaxed">
-                              Pagamento único • Acesso vitalício • Cupom de R$ 20,00 aplicado!
-                            </p>
+                        <div className="mt-auto pt-4 border-t border-[var(--line)]">
+                          <div className="flex items-baseline gap-2 mb-4">
+                             <span className="text-sm font-bold text-[var(--ink-3)] line-through italic">R$ 59,00</span>
+                             <span className="text-3xl font-black text-[var(--ink)]">R$ 39,00</span>
                           </div>
                           <button
                             onClick={() => handleTestPurchase("combo")}
-                            className="w-full py-3.5 rounded-xl bg-[#22c55e] text-white font-black text-sm uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(34,197,94,0.4)] relative overflow-hidden border border-[#22c55e]/20"
+                            className="w-full py-5 rounded-xl bg-[var(--red)] text-white font-black text-sm uppercase tracking-[0.15em] hover:scale-[1.02] active:scale-95 transition-all shadow-[0_10px_20px_-5px_rgba(196,50,42,0.4)]"
                           >
-                            <span className="relative z-10">GARANTIR MEU COMBO AGORA →</span>
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
+                            LIBERAR TUDO AGORA
                           </button>
+                          <p className="mt-3 text-center text-[9px] font-bold text-[var(--red)] uppercase tracking-[0.2em]">Desconto de R$ 20,00</p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-2 text-center pt-2">
-                      <p className="text-xs text-white font-black uppercase tracking-widest bg-white/5 py-1.5 rounded-lg border border-white/10">
+                    <div className="flex flex-col gap-2 text-center pt-4">
+                      <p className="text-xs text-[var(--ink)] font-black uppercase tracking-widest bg-[var(--paper-2)] py-2 rounded-lg border border-[var(--line)] shadow-sm">
                         ⚡ Liberação Imediata • Pagamento Único
                       </p>
                     </div>

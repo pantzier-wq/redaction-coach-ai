@@ -123,7 +123,7 @@ function Landing() {
         <div className="mx-auto max-w-4xl text-center space-y-8">
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <span className="text-[11px] font-bold tracking-[.16em] uppercase text-[var(--red)]">
-              MÉTODO COMPROVADO
+              +12.000 REDAÇÕES CORRIGIDAS
             </span>
             <h1 className="font-['Fraunces'] text-5xl md:text-8xl font-black leading-[0.95] tracking-tight text-[var(--ink)]">
               Em 2 minutos você descobre sua{" "}

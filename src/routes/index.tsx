@@ -107,7 +107,7 @@ function Landing() {
           <style>{`@keyframes quiz-analysis { from { transform: scaleX(0); } to { transform: scaleX(1); } }`}</style>
         </div>
       )}
-      <header className="absolute top-0 right-0 p-6 z-50">
+      {!quizResult && <header className="absolute top-0 right-0 p-6 z-50">
         <Link 
           to={session ? "/dashboard" : "/auth"}
           className="text-sm font-bold text-[var(--ink-2)] hover:text-[var(--red)] transition-colors border border-[var(--line)] bg-[var(--paper)]/50 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 shadow-[var(--paper-shadow)]"
@@ -118,9 +118,9 @@ function Landing() {
             "Entrar"
           )}
         </Link>
-      </header>
+      </header>}
 
-      <section className="relative min-h-[90vh] flex flex-col justify-center px-4">
+      {!quizResult && <section className="relative min-h-[90vh] flex flex-col justify-center px-4">
         <div className="mx-auto max-w-4xl text-center space-y-8">
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <span className="text-[11px] font-bold tracking-[.16em] uppercase text-[var(--red)]">
@@ -166,7 +166,7 @@ function Landing() {
             </p>
           </div>
         </div>
-      </section>
+      </section>}
 
       {quizResult && !isAnalyzingQuiz && (
         <section id="corrigir" className="py-20 px-4 max-w-4xl mx-auto">
@@ -175,7 +175,7 @@ function Landing() {
       )}
 
 
-      <footer className="border-t border-[var(--line)] py-16 bg-[var(--paper-2)]">
+      {!quizResult && <footer className="border-t border-[var(--line)] py-16 bg-[var(--paper-2)]">
         <div className="mx-auto max-w-4xl px-4">
           <div className="grid gap-12 md:grid-cols-2">
             <div className="space-y-6">
@@ -210,7 +210,7 @@ function Landing() {
             </div>
           </div>
         </div>
-      </footer>
+      </footer>}
     </div>
   );
 }

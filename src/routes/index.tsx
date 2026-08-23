@@ -57,12 +57,18 @@ function Landing() {
       setSession(session);
     });
 
-    // Cada refresh começa um novo teste, sem reutilizar o progresso anterior.
-    localStorage.removeItem("quiz_answers");
-    localStorage.removeItem("pending_submission");
-    localStorage.removeItem("pending_essay_data");
-    localStorage.removeItem("viewing_essay");
+    // Cada refresh começa um novo teste, sem reutilizar qualquer etapa do funil.
+    // A sessão de autenticação não é tocada: apenas dados temporários da experiência.
+    [
+      "quiz_answers",
+      "pending_submission",
+      "pending_essay_data",
+      "viewing_essay",
+    ].forEach((key) => localStorage.removeItem(key));
+    setShowQuiz(false);
+    setIsAnalyzingQuiz(false);
     setQuizResult(null);
+    setShowEssayForm(false);
 
     return () => subscription.unsubscribe();
   }, []);

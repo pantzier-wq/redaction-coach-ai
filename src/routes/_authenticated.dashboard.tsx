@@ -1856,7 +1856,7 @@ function LockedLibraryOffer({ titulo, descricao, itens, onBuy, onSeePlans }: Loc
             </button>
             <button
               onClick={onSeePlans}
-              className="px-6 py-4 rounded-xl border border-border text-muted-foreground font-bold text-sm hover:text-foreground hover:border-primary/40 transition-colors"
+              className="px-6 py-4 rounded-xl border border-[var(--line)] text-[var(--ink-3)] font-bold text-sm hover:text-[var(--ink)] hover:border-[var(--ink-3)] transition-colors shadow-sm bg-[var(--paper-2)]"
             >
               Ver todos os planos
             </button>

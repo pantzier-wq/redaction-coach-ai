@@ -405,7 +405,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
               <div className="flex flex-col sm:flex-row gap-4 mt-6">
                 <button
                   type="submit"
-                  disabled={loading || charCount < 200 || tema.trim().length < 3}
+                  disabled={loading || charCount < 200 || tema.trim().length < 3 || (!isLoggedIn && showPaywall)}
                   className="flex-1 rounded-xl py-4 text-lg font-black text-white transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
                   style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)", boxShadow: "0 0 20px rgba(34, 197, 94, 0.4)" }}
                 >

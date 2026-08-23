@@ -339,7 +339,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                 className="w-full rounded-xl border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
 
-              <label className="mt-5 mb-2 block text-sm font-bold text-primary">Cole sua redação aqui</label>
+              <label className="mt-5 mb-2 block text-sm font-bold text-[var(--red)] uppercase tracking-widest">Cole sua redação aqui</label>
               <textarea
                 value={redacao}
                 onChange={(e) => setRedacao(e.target.value)}

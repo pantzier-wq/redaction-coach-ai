@@ -418,9 +418,17 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
                 </div>
               </div>
             )}
+            {!showEssayForm && (
+              <div className="rounded-3xl border border-[var(--red)] bg-[var(--paper-2)] p-8 text-center shadow-sm">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-[var(--red)]">O ENEM está chegando</p>
+                <div className="my-4 font-['Fraunces'] text-5xl font-black text-[var(--ink)]">{daysUntilExam} <span className="text-base text-[var(--ink-3)]">dias</span></div>
+                <p className="mx-auto mb-6 max-w-md text-sm font-medium text-[var(--ink-2)]">Cada dia sem feedback é uma oportunidade perdida de melhorar sua nota.</p>
+                <button type="button" onClick={onContinue} className="inline-flex items-center justify-center rounded-2xl bg-[var(--red)] px-8 py-4 text-sm font-black text-[var(--paper)] transition-transform hover:scale-105">CONTINUAR PARA A REDAÇÃO <ArrowRight className="ml-2 h-4 w-4" /></button>
+              </div>
+            )}
             <form
               onSubmit={onSubmit}
-              className={`rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 transition-all duration-500 overflow-hidden ${(result || (isLoggedIn && !isPro)) && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
+              className={`rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 transition-all duration-500 overflow-hidden ${!showEssayForm ? "hidden" : ""} ${(result || (isLoggedIn && !isPro)) && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
               style={{ boxShadow: "var(--paper-shadow)" }}
             >
               <label className="mb-2 block text-sm font-bold text-[var(--red)] uppercase tracking-widest">Tema da redação</label>

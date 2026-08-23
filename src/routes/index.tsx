@@ -47,6 +47,7 @@ function Landing() {
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizResult, setQuizResult] = useState<Record<string, string> | null>(null);
   const [isAnalyzingQuiz, setIsAnalyzingQuiz] = useState(false);
+  const [showEssayForm, setShowEssayForm] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -161,7 +162,7 @@ function Landing() {
       </section>
 
       <section id="corrigir" className="py-20 px-4 max-w-4xl mx-auto">
-        <EssaySubmissionArea isLoggedIn={!!session} isPro={false} />
+        <EssaySubmissionArea isLoggedIn={!!session} isPro={false} showEssayForm={showEssayForm} onContinue={() => setShowEssayForm(true)} />
       </section>
 
       <footer className="border-t border-[var(--line)] py-16 bg-[var(--paper-2)]">

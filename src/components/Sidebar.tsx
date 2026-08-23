@@ -151,9 +151,9 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
             href="https://wa.me/5548996736743"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-black text-green-600 hover:bg-green-50 transition-colors border border-transparent hover:border-green-200"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-black text-[#25D366] hover:bg-[#25D366]/5 transition-colors border border-transparent hover:border-[#25D366]/20"
           >
-            <MessageCircle className="w-5 h-5" />
+            <MessageCircle className="w-5 h-5 fill-[#25D366]/10" />
             Suporte WhatsApp
           </a>
           <button 

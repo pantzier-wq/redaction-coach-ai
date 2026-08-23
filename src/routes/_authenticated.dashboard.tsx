@@ -1551,20 +1551,20 @@ function RepertorioAnalyzing() {
           <div
             key={label}
             className={cn(
-              "flex items-center gap-3 px-5 py-3 rounded-2xl border transition-all duration-300",
+              "flex items-center gap-3 px-5 py-3 rounded-2xl border transition-all duration-300 shadow-sm",
               i < index
-                ? "bg-[#22c55e]/10 border-[#22c55e]/30 text-foreground"
+                ? "bg-green-50 border-green-200 text-[var(--ink)]"
                 : i === index
-                  ? "bg-primary/10 border-primary/30 text-foreground"
-                  : "bg-muted/20 border-border/40 text-muted-foreground opacity-60",
+                  ? "bg-[var(--red)]/5 border-[var(--red)]/20 text-[var(--ink)]"
+                  : "bg-[var(--paper-2)] border-[var(--line)] text-[var(--ink-3)] opacity-60",
             )}
           >
             {i < index ? (
-              <Check className="w-4 h-4 text-[#22c55e] shrink-0" />
+              <Check className="w-4 h-4 text-green-700 shrink-0" />
             ) : i === index ? (
-              <div className="w-4 h-4 shrink-0 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+              <div className="w-4 h-4 shrink-0 rounded-full border-2 border-[var(--red)]/20 border-t-[var(--red)] animate-spin" />
             ) : (
-              <div className="w-4 h-4 shrink-0 rounded-full border border-border" />
+              <div className="w-4 h-4 shrink-0 rounded-full border border-[var(--line)]" />
             )}
             <span className="text-xs font-bold leading-tight">{label}</span>
           </div>

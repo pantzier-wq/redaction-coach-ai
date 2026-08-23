@@ -135,12 +135,12 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all group",
                 activeSection === item.id 
-                  ? "bg-primary/10 text-primary border border-primary/20" 
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent"
+                  ? "bg-[var(--paper-2)] text-[var(--ink)] border border-[var(--line)] shadow-sm" 
+                  : "text-[var(--ink-3)] hover:bg-[var(--paper-2)] hover:text-[var(--ink)] border border-transparent"
               )}
             >
-              <item.icon className={cn("w-5 h-5 shrink-0", activeSection === item.id ? "text-primary" : item.color)} />
-              <span className="text-left leading-tight">{item.label}</span>
+              <item.icon className={cn("w-5 h-5 shrink-0", activeSection === item.id ? "text-[var(--red)]" : item.color)} />
+              <span className="text-left leading-tight tracking-tight">{item.label}</span>
             </button>
           ))}
         </nav>

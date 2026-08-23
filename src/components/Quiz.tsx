@@ -68,27 +68,27 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/95 backdrop-blur-md p-4">
-      <div className="w-full max-w-xl rounded-3xl border border-border bg-card p-8 shadow-[0_0_50px_rgba(var(--primary-rgb),0.2)] animate-in zoom-in-95 duration-300">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--paper)]/95 backdrop-blur-md p-4 font-['Public_Sans']">
+      <div className="w-full max-w-xl rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-8 shadow-[var(--paper-shadow)] animate-in zoom-in-95 duration-300">
         <div className="mb-8 flex items-center justify-between">
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             {questions.map((_, i) => (
               <div
                 key={i}
                 className={cn(
                   "h-1.5 w-8 rounded-full transition-all duration-500",
-                  i <= step ? "bg-primary" : "bg-muted"
+                  i <= step ? "bg-[var(--red)]" : "bg-[var(--line)]"
                 )}
               />
             ))}
           </div>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+          <button onClick={onClose} className="text-[var(--ink-3)] hover:text-[var(--red)] transition-colors">
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        <div className="min-h-[300px] flex flex-col">
-          <h3 className="text-2xl md:text-3xl font-black mb-8 leading-tight">
+        <div className="min-h-[350px] flex flex-col">
+          <h3 className="font-['Fraunces'] text-2xl md:text-3xl font-black mb-8 leading-tight text-[var(--ink)]">
             {current.question}
           </h3>
 
@@ -99,7 +99,7 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
                   autoFocus
                   type="text"
                   placeholder={current.placeholder}
-                  className="w-full rounded-2xl border border-border bg-input px-6 py-4 text-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] px-6 py-5 text-lg text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:outline-none focus:ring-2 focus:ring-[var(--red)]/20 focus:border-[var(--red)] transition-all"
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && e.currentTarget.value) next(e.currentTarget.value);
                   }}
@@ -109,7 +109,7 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
                     const input = e.currentTarget.previousElementSibling as HTMLInputElement;
                     if (input.value) next(input.value);
                   }}
-                  className="w-full rounded-2xl bg-primary py-4 text-lg font-black text-primary-foreground hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2"
+                  className="w-full rounded-2xl bg-[var(--ink)] py-5 text-lg font-black text-[var(--paper)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg"
                 >
                   Continuar <ArrowRight className="w-5 h-5" />
                 </button>
@@ -122,10 +122,12 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
                   <button
                     key={opt}
                     onClick={() => next(opt)}
-                    className="w-full rounded-2xl border border-border bg-muted/30 px-6 py-4 text-left text-lg font-bold hover:bg-primary/10 hover:border-primary/50 transition-all flex items-center justify-between group"
+                    className="w-full rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 px-6 py-5 text-left text-lg font-bold text-[var(--ink-2)] hover:bg-[var(--paper-2)] hover:border-[var(--red)] hover:text-[var(--red)] transition-all flex items-center justify-between group"
                   >
                     {opt}
-                    <CheckCircle2 className="w-5 h-5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="w-6 h-6 rounded-full border-2 border-[var(--line)] group-hover:border-[var(--red)] group-hover:bg-[var(--red)] flex items-center justify-center transition-all">
+                      <CheckCircle2 className="w-4 h-4 text-[var(--paper)] opacity-0 group-hover:opacity-100" />
+                    </div>
                   </button>
                 ))}
               </div>
@@ -133,21 +135,20 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
 
             {current.type === "final" && (
               <div className="text-center py-4">
-                <div className="mb-6 flex justify-center">
+                <div className="mb-8 flex justify-center">
                   <div className="relative">
-                    <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
-                    <div className="relative p-6 rounded-full bg-card border-2 border-primary shadow-[0_0_30px_rgba(var(--primary-rgb),0.5)]">
-                      <Trophy className="w-12 h-12 text-primary" />
+                    <div className="absolute inset-0 animate-ping rounded-full bg-[var(--red)]/10" />
+                    <div className="relative p-6 rounded-full bg-[var(--paper-2)] border-2 border-[var(--red)] shadow-[0_0_30px_rgba(196,50,42,0.2)]">
+                      <Trophy className="w-12 h-12 text-[var(--red)]" />
                     </div>
                   </div>
                 </div>
-                <p className="text-muted-foreground mb-8 font-medium">
-                  Identificamos exatamente o que está bloqueando sua nota 900+.
+                <p className="text-[var(--ink-2)] mb-8 font-medium leading-relaxed">
+                  Identificamos exatamente o que está bloqueando sua nota 900+ e como resolver em tempo recorde.
                 </p>
                 <button
                   onClick={() => next()}
-                  className="w-full rounded-2xl py-6 text-xl font-black text-white hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_25px_rgba(var(--primary-rgb),0.4)]"
-                  style={{ background: "var(--gradient-cta)" }}
+                  className="w-full rounded-2xl bg-[var(--red)] py-6 text-xl font-black text-white hover:scale-[1.02] active:scale-95 transition-all shadow-[0_20px_40px_-12px_rgba(196,50,42,0.3)]"
                 >
                   {current.cta}
                 </button>
@@ -158,7 +159,7 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
           {step > 0 && current.type !== "final" && (
             <button
               onClick={back}
-              className="mt-8 flex items-center gap-2 text-sm font-bold text-muted-foreground hover:text-foreground"
+              className="mt-8 flex items-center gap-2 text-sm font-bold text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
             >
               <ArrowLeft className="w-4 h-4" /> Voltar
             </button>

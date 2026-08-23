@@ -14,6 +14,25 @@ interface EssaySubmissionAreaProps {
   onSuccess?: (result: Correcao) => void;
 }
 
+function Step({ text, delay, isLast }: { text: string; delay: number; isLast?: boolean }) {
+  const [visible, setVisible] = useState(false);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), delay * 1000);
+    return () => clearTimeout(timer);
+  }, [delay]);
+
+  if (!visible) return null;
+
+  return (
+    <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-2 duration-500">
+      <span className={`text-sm font-medium ${isLast ? 'text-[var(--red)] font-bold italic' : 'text-[var(--ink-2)]'}`}>
+        {text}
+      </span>
+    </div>
+  );
+}
+
 const LIMITE_ESSENCIAL = 15;
 
 export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }: EssaySubmissionAreaProps) {
@@ -247,29 +266,37 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   return (
     <div className="w-full space-y-8">
       {result && !loading && (
-        <Resultado data={result} isLoggedIn={isLoggedIn} />
+        <Resultado 
+          data={result} 
+          isLoggedIn={isLoggedIn} 
+          showPaywall={showPaywall && !isPro && !hasFullAccess}
+          onShowAll={() => {
+            const el = document.getElementById("paywall-anchor");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}
+        />
       )}
 
       <div className="w-full">
         {loading ? (
           <div 
-            className="rounded-3xl border border-primary/40 bg-card p-10 text-center animate-in fade-in zoom-in duration-500"
-            style={{ boxShadow: "var(--shadow-glow)" }}
+            className="rounded-3xl border border-[var(--red)] bg-[var(--paper)] p-10 text-center animate-in fade-in zoom-in duration-500"
+            style={{ boxShadow: "var(--paper-shadow)" }}
           >
             <div className="mb-6 flex justify-center">
               <div className="relative h-24 w-24">
-                <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
-                <div className="relative flex h-full w-full items-center justify-center rounded-full bg-card border-2 border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.5)]">
+                <div className="absolute inset-0 animate-ping rounded-full bg-[var(--red)]/20" />
+                <div className="relative flex h-full w-full items-center justify-center rounded-full bg-[var(--paper)] border-2 border-[var(--red)] shadow-[0_0_20px_rgba(196,50,42,0.3)]">
                   <span className="text-3xl animate-bounce">✍️</span>
                 </div>
               </div>
             </div>
             
-            <h3 className="text-2xl font-black mb-4">Analisando sua Redação...</h3>
+            <h3 className="text-2xl font-['Fraunces'] font-black mb-4 text-[var(--ink)]">Análise rodando...</h3>
             
-            <div className="mx-auto mb-6 h-3 w-full max-w-md overflow-hidden rounded-full bg-muted">
+            <div className="mx-auto mb-6 h-3 w-full max-w-md overflow-hidden rounded-full bg-[var(--paper-2)] border border-[var(--line)]">
               <div 
-                className="h-full bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.8)] transition-all duration-1000 ease-linear"
+                className="h-full bg-[var(--red)] shadow-[0_0_15px_rgba(196,50,42,0.4)] transition-all duration-1000 ease-linear"
                 style={{ 
                   width: '100%',
                   animation: 'loading-bar 30s linear forwards'
@@ -277,27 +304,19 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
               />
             </div>
 
-            <div className="relative h-10 w-full max-w-sm mx-auto overflow-hidden">
-              <div className="animate-vertical-slide">
-                {[
-                  "Preparando a melhor correção...",
-                  "Comparando com os critérios oficiais do INEP...",
-                  "Analisando conectivos e coesão textual...",
-                  "Verificando os 5 elementos da proposta...",
-                  "Avaliando repertório sociocultural...",
-                  "Calculando nota final das 5 competências...",
-                  "Quase pronto! Finalizando relatório..."
-                ].map((text, i) => (
-                  <div key={i} className="flex h-10 items-center justify-center">
-                    <p className="text-primary font-bold uppercase tracking-widest text-[10px] md:text-xs text-center leading-tight">
-                      {text}
-                    </p>
-                  </div>
-                ))}
+            <div className="relative h-64 w-full max-w-sm mx-auto overflow-hidden text-left border border-[var(--line)] p-4 rounded-xl bg-[var(--paper-2)]/50">
+              <div className="space-y-3">
+                <Step text={`✓ Lendo sua redação — ${redacao.split(/\s+/).filter(Boolean).length} palavras`} delay={1} />
+                <Step text="✓ Competência 1 · domínio da norma culta" delay={5} />
+                <Step text="✓ Competência 2 · compreensão do tema" delay={9} />
+                <Step text="✓ Competência 3 · organização dos argumentos" delay={13} />
+                <Step text="○ Competência 4 · coesão e conectivos" delay={17} />
+                <Step text="○ Competência 5 · proposta de intervenção" delay={21} />
+                <Step text="Comparando com a matriz oficial do INEP…" delay={25} isLast />
               </div>
             </div>
 
-            <p className="mt-8 text-xs font-bold text-foreground animate-pulse">
+            <p className="mt-8 text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-[0.2em] animate-pulse">
               O rigor da correção leva tempo. Não feche esta página.
             </p>
 
@@ -305,18 +324,6 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
               @keyframes loading-bar {
                 0% { width: 0%; }
                 100% { width: 100%; }
-              }
-              @keyframes vertical-slide {
-                0%, 12% { transform: translateY(0); }
-                14.28%, 26.28% { transform: translateY(-40px); }
-                28.57%, 40.57% { transform: translateY(-80px); }
-                42.85%, 54.85% { transform: translateY(-120px); }
-                57.14%, 69.14% { transform: translateY(-160px); }
-                71.42%, 83.42% { transform: translateY(-200px); }
-                85.71%, 100% { transform: translateY(-240px); }
-              }
-              .animate-vertical-slide {
-                animation: vertical-slide 30s cubic-bezier(0.4, 0, 0.2, 1) infinite;
               }
             `}</style>
           </div>

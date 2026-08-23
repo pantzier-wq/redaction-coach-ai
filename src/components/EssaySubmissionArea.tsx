@@ -114,13 +114,36 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
     // ou se estamos seguindo o novo fluxo de "Quiz -> Diagnóstico -> Redação -> Paywall"
     const quizAnswers = localStorage.getItem("quiz_answers");
     if (!isLoggedIn && quizAnswers) {
-      // Mostra o carregamento antes do paywall/resultado
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 25000));
-      setLoading(false);
-      setShowPaywall(true);
+      
+      // Simula a correção mas não faz a chamada pesada da IA se for apenas para mostrar o paywall parcial
+      // No fluxo anônimo, mostramos a nota (mockada ou real dependendo da necessidade de retenção)
+      // O usuário quer ver a Nota Total + C1. Para ser "real", precisamos da IA.
+      
+      try {
+        const fingerprint = localStorage.getItem("visitor_fingerprint") || crypto.randomUUID();
+        localStorage.setItem("visitor_fingerprint", fingerprint);
+
+        const r = await corrigir({ 
+          data: { 
+            tema: tema.trim(), 
+            redacao: redacao.trim(),
+            fingerprint,
+            accessToken: undefined
+          } 
+        });
+        
+        const correctionData = r.correcao || r;
+        setResult(correctionData);
+        setShowPaywall(true);
+      } catch (err) {
+        console.error("Erro no fluxo anônimo:", err);
+      } finally {
+        setLoading(false);
+      }
+      
       setTimeout(
-        () => document.getElementById("paywall-anchor")?.scrollIntoView({ behavior: "smooth" }),
+        () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
         100,
       );
       return;

@@ -917,30 +917,30 @@ function ConectivosLibrary() {
         {filtered.map((c, i) => (
           <div 
             key={i} 
-            className="group p-6 rounded-3xl border border-border bg-card hover:border-primary/40 transition-all hover:scale-[1.02] flex flex-col"
+            className="group p-6 rounded-3xl border border-[var(--line)] bg-[var(--paper)] hover:border-[var(--red)]/40 transition-all hover:scale-[1.02] flex flex-col shadow-sm"
           >
             <div className="flex justify-between items-start mb-4">
-              <h4 className="text-xl font-black text-primary tracking-tight">{c.termo}</h4>
-              <span className="text-[10px] font-black uppercase px-2 py-1 rounded-md bg-primary/10 text-primary border border-primary/20">
+              <h4 className="font-['Fraunces'] text-xl font-black text-[var(--red)] tracking-tight italic">{c.termo}</h4>
+              <span className="text-[9px] font-black uppercase px-2 py-1 rounded-md bg-[var(--paper-2)] text-[var(--ink-2)] border border-[var(--line)] tracking-widest">
                 {c.cat}
               </span>
             </div>
             
             <div className="space-y-4 flex-1">
-              <div className="p-4 rounded-2xl bg-muted/30 border border-border/50">
-                <p className="text-sm font-medium italic text-foreground leading-relaxed">
+              <div className="p-4 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)]/50 shadow-inner">
+                <p className="text-sm font-medium italic text-[var(--ink)] leading-relaxed">
                   "{c.ex}"
                 </p>
               </div>
               
               <div className="grid grid-cols-1 gap-3">
                 <div className="flex items-start gap-2">
-                  <div className="mt-1 shrink-0"><Check className="w-3 h-3 text-[#22c55e]" /></div>
-                  <p className="text-xs text-muted-foreground font-bold"><span className="text-foreground">Uso:</span> {c.uso}</p>
+                  <div className="mt-1 shrink-0"><Check className="w-3 h-3 text-green-600" /></div>
+                  <p className="text-[11px] text-[var(--ink-2)] font-bold italic"><span className="text-[var(--ink)] not-italic font-black uppercase text-[9px] tracking-widest mr-1">Uso:</span> {c.uso}</p>
                 </div>
                 <div className="flex items-start gap-2">
-                  <div className="mt-1 shrink-0"><Lightbulb className="w-3 h-3 text-amber-500" /></div>
-                  <p className="text-xs text-muted-foreground font-bold"><span className="text-foreground">Dica:</span> {c.dica}</p>
+                  <div className="mt-1 shrink-0"><Lightbulb className="w-3 h-3 text-amber-600" /></div>
+                  <p className="text-[11px] text-[var(--ink-2)] font-bold italic"><span className="text-[var(--ink)] not-italic font-black uppercase text-[9px] tracking-widest mr-1">Dica:</span> {c.dica}</p>
                 </div>
               </div>
             </div>
@@ -948,9 +948,9 @@ function ConectivosLibrary() {
             <button 
               onClick={() => {
                 navigator.clipboard.writeText(c.termo);
-                // Simple feedback would be nice here
+                toast.success("Copiado!");
               }}
-              className="mt-6 w-full py-3 rounded-xl bg-muted hover:bg-primary/10 hover:text-primary text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+              className="mt-6 w-full py-3 rounded-xl bg-[var(--ink)] text-[var(--paper)] font-black text-[10px] uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
             >
               <Copy className="w-3 h-3" /> Copiar Termo
             </button>

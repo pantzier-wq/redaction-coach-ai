@@ -12,6 +12,8 @@ interface EssaySubmissionAreaProps {
   isLoggedIn: boolean;
   isPro?: boolean;
   onSuccess?: (result: Correcao) => void;
+  showEssayForm?: boolean;
+  onContinue?: () => void;
 }
 
 function Step({ text, delay, isLast }: { text: string; delay: number; isLast?: boolean }) {

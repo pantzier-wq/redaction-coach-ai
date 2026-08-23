@@ -1388,10 +1388,10 @@ function RepertoriosLibrary() {
                   key={e.id}
                   onClick={() => setActiveEixo(e.id)}
                   className={cn(
-                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border",
+                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border shadow-sm",
                     activeEixo === e.id 
-                      ? "bg-secondary text-secondary-foreground border-secondary shadow-[0_0_15px_rgba(var(--secondary-rgb),0.4)]" 
-                      : "bg-transparent border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground"
+                      ? "bg-[var(--red)] text-white border-[var(--red)]" 
+                      : "bg-[var(--paper-2)] border-[var(--line)] text-[var(--ink-3)] hover:text-[var(--ink)]"
                   )}
                 >
                   {e.label}

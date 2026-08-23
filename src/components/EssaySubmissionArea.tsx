@@ -372,18 +372,18 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
                   <div className="absolute -top-12 md:-top-16 left-1/2 -translate-x-1/2 z-10">
                     <div className="relative">
-                      <div className="absolute inset-0 animate-ping rounded-full bg-[#22c55e]/20" />
-                      <div className="relative p-5 rounded-full bg-card text-[#22c55e] border-4 border-[#22c55e] shadow-[0_0_30px_rgba(34,197,94,0.6)]">
+                      <div className="absolute inset-0 animate-ping rounded-full bg-[var(--red)]/10" />
+                      <div className="relative p-5 rounded-full bg-[var(--paper)] text-[var(--red)] border-4 border-[var(--red)] shadow-[0_0_30px_rgba(196,50,42,0.2)]">
                         <Trophy className="w-10 h-10 md:w-12 md:h-12" />
                       </div>
                     </div>
                   </div>
                   
-                  <h2 className="text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-white">
+                  <h2 className="font-['Fraunces'] text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-[var(--ink)]">
                     {semCreditos ? "Seus créditos acabaram" : result ? "Análise Pronta! 🎯" : "Quase lá..."}
                   </h2>
                   
-                  <p className="text-sm md:text-base text-white/90 font-semibold mb-6 md:mb-8 leading-relaxed text-center">
+                  <p className="text-sm md:text-base text-[var(--ink-2)] font-semibold mb-6 md:mb-8 leading-relaxed text-center">
                     {semCreditos
                       ? "Você já usou as 15 correções do Plano Essencial. Recarregue créditos ou faça o upgrade para o Combo Nota 1000 e corrija sem limite nenhum."
                       : result 

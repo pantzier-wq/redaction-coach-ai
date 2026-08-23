@@ -1849,7 +1849,7 @@ function LockedLibraryOffer({ titulo, descricao, itens, onBuy, onSeePlans }: Loc
           <div className="flex-1 flex flex-col sm:flex-row gap-3 md:justify-end">
             <button
               onClick={onBuy}
-              className="px-6 py-4 rounded-xl bg-secondary text-secondary-foreground font-black text-base uppercase tracking-tight hover:scale-[1.02] transition-transform animate-pulse"
+              className="px-8 py-5 rounded-2xl bg-[var(--red)] text-white font-black text-sm uppercase tracking-[0.15em] hover:scale-[1.02] active:scale-95 transition-all shadow-[0_20px_40px_-10px_rgba(196,50,42,0.4)]"
             >
               Liberar acesso agora
             </button>

@@ -961,21 +961,21 @@ function ConectivosLibrary() {
 
       {/* Bonus Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
-        <div className="p-8 rounded-[2rem] border-2 border-destructive/20 bg-destructive/5">
-          <h3 className="text-xl font-black text-destructive mb-6 flex items-center gap-2">
+        <div className="p-8 rounded-[2rem] border-2 border-[var(--red)]/20 bg-[var(--paper)] shadow-sm">
+          <h3 className="font-['Fraunces'] text-xl font-black text-[var(--red)] mb-6 flex items-center gap-2 italic">
             <X className="w-6 h-6" /> Erros Comuns
           </h3>
           <ul className="space-y-4">
             <li className="flex gap-3 items-start">
-              <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center shrink-0 mt-0.5 text-destructive font-black text-xs">1</div>
-              <p className="text-sm font-bold text-muted-foreground">
-                <strong className="text-foreground">Usar "mesmo" como pronome:</strong> "O aluno entregou a redação e o mesmo saiu." (Errado). Prefira: "ele".
+              <div className="w-6 h-6 rounded-full bg-[var(--red)]/10 flex items-center justify-center shrink-0 mt-0.5 text-[var(--red)] font-black text-xs border border-[var(--red)]/20">1</div>
+              <p className="text-sm font-bold text-[var(--ink-2)]">
+                <strong className="text-[var(--ink)]">Usar "mesmo" como pronome:</strong> "O aluno entregou a redação e o mesmo saiu." (Errado). Prefira: "ele".
               </p>
             </li>
             <li className="flex gap-3 items-start">
-              <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center shrink-0 mt-0.5 text-destructive font-black text-xs">2</div>
-              <p className="text-sm font-bold text-muted-foreground">
-                <strong className="text-foreground">Onde vs Aonde:</strong> "Onde" indica lugar fixo. "Aonde" indica movimento. Não use "onde" para substituir "no qual" em ideias abstratas.
+              <div className="w-6 h-6 rounded-full bg-[var(--red)]/10 flex items-center justify-center shrink-0 mt-0.5 text-[var(--red)] font-black text-xs border border-[var(--red)]/20">2</div>
+              <p className="text-sm font-bold text-[var(--ink-2)]">
+                <strong className="text-[var(--ink)]">Onde vs Aonde:</strong> "Onde" indica lugar fixo. "Aonde" indica movimento. Não use "onde" para substituir "no qual" em ideias abstratas.
               </p>
             </li>
           </ul>

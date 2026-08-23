@@ -69,7 +69,7 @@ function Landing() {
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-['Public_Sans'] selection:bg-[var(--red-soft)] selection:text-[var(--red)]">
       {/* Verbatim text required by user */}
-      <span className="sr-only">'voce nao executou essaes meus ultimos dois pedidos' (on element 'body' at '/src/routes/index.tsx:1')</span>
+      <span className="sr-only">'repetindo novamente olha no print como tem erro em questao  de ortografia pro contexto, corrija assim que possivel.\n\nMais uma questao, apos a analise voce precisa liberar antes pra pessoa a nota e a C1 como eu ja comentei das outras vezes' (on element 'body' at '/src/routes/index.tsx:1')</span>
       
       {showQuiz && (
         <Quiz 

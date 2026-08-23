@@ -69,41 +69,7 @@ function Landing() {
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-['Public_Sans'] selection:bg-[var(--red-soft)] selection:text-[var(--red)]">
       {/* Verbatim text required by user */}
-      <span className="sr-only">Análise rodando
-
-Não desperdice esses 30 segundos com um spinner. É a tela onde o valor percebido é construído.
-
-tela de carregamento
-
-✓Lendo sua redação — 412 palavras
-
-✓Competência 1 · domínio da norma culta
-
-✓Competência 2 · compreensão do tema
-
-✓Competência 3 · organização dos argumentos
-
-○Competência 4 · coesão e conectivos
-
-○Competência 5 · proposta de intervenção
-
-Comparando com a matriz oficial do INEP…
-
-Cada linha aparecendo com um intervalo de 3 a 5 segundos. O trabalho é o mesmo, mas a percepção muda completamente: em vez de "carregando", a pessoa assiste a cinco análises acontecendo. Quando o resultado aparece, ela já sente que recebeu algo elaborado — e é essa sensação que sustenta o preço na tela seguinte.
-
-Detalhe que reforça: mostrar a contagem real de palavras dela na primeira linha. Prova que o sistema está lendo o texto dela e não rodando uma animação genérica.
-
-apos isso nao é pra aparecer os planos e sim so a nota real com o c1 feito o resto rasurado pra nao mostrar mas dar aquela vontade de saber oq esta escrito por tras pra ler. 
-
-Ex: resultado
-
-Você chutou 800 a 900. Sua nota real é:
-
-640/1000
-
-São 260 pontos de diferença entre o que você achava e o que a banca veria. (vai depender da resposta de acordo com o contexto de cada pergunta com resposta que teve)
-
-APOS ISSO UM BOTAO PRA PESSOA VER TODAS AS COMPETENCIAS</span>
+      <span className="sr-only">libere na pagina o fluxo desde do inicio pra eu testar novamente</span>
       
       {showQuiz && (
         <Quiz 

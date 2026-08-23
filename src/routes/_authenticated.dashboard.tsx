@@ -453,17 +453,17 @@ function Dashboard() {
                     </ul>
 
                     <div className="mt-auto">
-                      <div className="flex items-baseline gap-2 mb-6 justify-center">
+                      <div className="flex items-baseline gap-2 mb-6">
                         <span className="text-lg font-bold text-[var(--ink-3)] line-through italic">R$ 59,00</span>
-                        <span className="text-4xl font-black text-[var(--ink)] drop-shadow-sm">R$ 39,00</span>
+                        <span className="text-3xl font-black text-[var(--ink)]">R$ 39,00</span>
                       </div>
                       <button
-                        onClick={() => handleTestPurchase('full')}
-                        disabled={(profile as any)?.has_full_access}
-                        className="w-full py-5 rounded-xl bg-[var(--red)] text-white font-black text-sm uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-[0_10px_25px_rgba(196,50,42,0.4)] disabled:opacity-40 disabled:cursor-not-allowed"
+                        onClick={() => handleTestPurchase('combo')}
+                        className="w-full py-5 rounded-xl bg-[var(--red)] text-white font-black text-sm uppercase tracking-[0.15em] hover:scale-[1.02] active:scale-95 transition-all shadow-[0_10px_20px_-5px_rgba(196,50,42,0.4)]"
                       >
-                        {(profile as any)?.has_full_access ? "COMBO ATIVO" : "GARANTIR MEU COMBO →"}
+                        LIBERAR TUDO AGORA
                       </button>
+                      <p className="mt-4 text-center text-[10px] font-black text-[var(--red)] uppercase tracking-[0.2em]">Desconto de R$ 20,00</p>
                     </div>
 
                     {/* Badge de destaque */}

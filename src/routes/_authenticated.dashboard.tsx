@@ -107,14 +107,14 @@ function Dashboard() {
 
   if (loading) {
     return (
-      <div className="dark min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary" />
+      <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-[var(--red)]" />
       </div>
     );
   }
 
   return (
-    <div className="dark min-h-screen bg-background text-foreground flex">
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] flex">
       <Sidebar 
         profile={profile} 
         activeSection={activeSection} 

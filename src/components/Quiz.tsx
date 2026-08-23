@@ -93,28 +93,6 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
           </h3>
 
           <div className="flex-1">
-            {current.type === "text" && (
-              <div className="space-y-4">
-                <input
-                  autoFocus
-                  type="text"
-                  placeholder={current.placeholder}
-                  className="w-full rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] px-6 py-5 text-lg text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:outline-none focus:ring-2 focus:ring-[var(--red)]/20 focus:border-[var(--red)] transition-all"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && e.currentTarget.value) next(e.currentTarget.value);
-                  }}
-                />
-                <button
-                  onClick={(e) => {
-                    const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                    if (input.value) next(input.value);
-                  }}
-                  className="w-full rounded-2xl bg-[var(--ink)] py-5 text-lg font-black text-[var(--paper)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg"
-                >
-                  Continuar <ArrowRight className="w-5 h-5" />
-                </button>
-              </div>
-            )}
 
             {current.type === "options" && (
               <div className="grid gap-4">
@@ -133,30 +111,9 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
               </div>
             )}
 
-            {current.type === "final" && (
-              <div className="text-center py-4">
-                <div className="mb-8 flex justify-center">
-                  <div className="relative">
-                    <div className="absolute inset-0 animate-ping rounded-full bg-[var(--red)]/10" />
-                    <div className="relative p-6 rounded-full bg-[var(--paper-2)] border-2 border-[var(--red)] shadow-[0_0_30px_rgba(196,50,42,0.2)]">
-                      <Trophy className="w-12 h-12 text-[var(--red)]" />
-                    </div>
-                  </div>
-                </div>
-                <p className="text-[var(--ink-2)] mb-8 font-medium leading-relaxed">
-                  Identificamos exatamente o que está bloqueando sua nota 900+ e como resolver em tempo recorde.
-                </p>
-                <button
-                  onClick={() => next()}
-                  className="w-full rounded-2xl bg-[var(--red)] py-6 text-xl font-black text-white hover:scale-[1.02] active:scale-95 transition-all shadow-[0_20px_40px_-12px_rgba(196,50,42,0.3)]"
-                >
-                  {current.cta}
-                </button>
-              </div>
-            )}
           </div>
 
-          {step > 0 && current.type !== "final" && (
+          {step > 0 && (
             <button
               onClick={back}
               className="mt-8 flex items-center gap-2 text-sm font-bold text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"

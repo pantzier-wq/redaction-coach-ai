@@ -883,13 +883,13 @@ function ConectivosLibrary() {
   return (
     <div className="space-y-8 pb-20">
       {/* Search and Filters */}
-      <div className="sticky top-2 z-30 flex flex-col gap-4 p-4 rounded-3xl bg-card/80 backdrop-blur-md border border-border shadow-xl">
+      <div className="sticky top-2 z-30 flex flex-col gap-4 p-4 rounded-3xl bg-[var(--paper)]/90 backdrop-blur-md border border-[var(--line)] shadow-xl">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--ink-3)]" />
           <input 
             type="text" 
             placeholder="Pesquisar conectivo ou exemplo..."
-            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold"
+            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] focus:border-[var(--red)] focus:ring-1 focus:ring-[var(--red)] outline-none transition-all font-bold text-[var(--ink)] placeholder:text-[var(--ink-3)]/40 shadow-inner"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -900,10 +900,10 @@ function ConectivosLibrary() {
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
               className={cn(
-                "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all",
+                "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap transition-all",
                 activeCategory === cat.id 
-                  ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]" 
-                  : "bg-muted text-muted-foreground hover:text-foreground"
+                  ? "bg-[var(--ink)] text-[var(--paper)] shadow-md" 
+                  : "bg-[var(--paper-2)] text-[var(--ink-3)] hover:text-[var(--ink)] border border-[var(--line)]"
               )}
             >
               {cat.label}

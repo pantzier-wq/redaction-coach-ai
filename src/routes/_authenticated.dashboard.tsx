@@ -350,11 +350,11 @@ function Dashboard() {
                         <button
                           key={pack.qtd}
                           onClick={() => handleBuyCredits(pack.qtd)}
-                          className="rounded-2xl border border-border bg-background p-4 text-center hover:border-primary/60 transition-all"
+                          className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-4 text-center hover:border-[var(--red)]/60 transition-all shadow-sm"
                         >
-                          <div className="text-lg font-black">{pack.qtd} correções</div>
-                          <div className="text-sm font-black text-[#22c55e]">{pack.preco}</div>
-                          <div className="mt-2 rounded-lg bg-[#22c55e]/15 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-[#22c55e]">
+                          <div className="text-lg font-black text-[var(--ink)]">{pack.qtd} correções</div>
+                          <div className="text-sm font-black text-green-600">{pack.preco}</div>
+                          <div className="mt-2 rounded-lg bg-green-50 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-green-600 border border-green-100">
                             Obtenha clicando aqui
                           </div>
                         </button>

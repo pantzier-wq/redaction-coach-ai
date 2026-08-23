@@ -76,6 +76,7 @@ function Landing() {
 
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-['Public_Sans'] selection:bg-[var(--red-soft)] selection:text-[var(--red)]">
+      teste
       {showQuiz && (
         <Quiz
           onClose={() => setShowQuiz(false)}

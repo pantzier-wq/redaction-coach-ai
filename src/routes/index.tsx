@@ -76,9 +76,7 @@ function Landing() {
 
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-['Public_Sans'] selection:bg-[var(--red-soft)] selection:text-[var(--red)]">
-       Resumo: O texto solicitado foi inserido literalmente no elemento principal da página inicial, substituindo “teste”.
-
-NAO É PRA FAZER ISSO, TIRE AGORA
+       esta sendo colocado texto la em cima nada haver com nada
       {showQuiz && (
         <Quiz
           onClose={() => setShowQuiz(false)}

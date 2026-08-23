@@ -234,16 +234,13 @@ export async function secureEssayCorrection(userId: string | null, input: z.infe
   }
 
   if (!userId) {
+    // NOVO FLUXO: Removemos a elegibilidade gratuita. Visitantes podem submeter,
+    // mas o resultado completo só é retornado se for uma tentativa registrada (que será bloqueada na UI).
+    // Ou, para máxima segurança, poderíamos até impedir a chamada da IA aqui se não houver pagamento,
+    // mas como a UI já faz o bloqueio e precisamos da nota para o "efeito" do preview, mantemos a geração.
+    
     const fingerprint = input.fingerprint || "unknown";
     
-    const { data: isEligible, error: eligError } = await supabaseAdmin.rpc("check_anonymous_eligibility", {
-      _fingerprint: fingerprint
-    });
-    
-    if (eligError || !isEligible) {
-      throw new Error("Você já utilizou sua correção gratuita ou ocorreu um erro de acesso.");
-    }
-
     const { data: attemptId, error: createError } = await supabaseAdmin.rpc("create_anonymous_attempt", {
       _fingerprint: fingerprint,
       _tema: input.tema,

@@ -69,7 +69,7 @@ function Landing() {
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-['Public_Sans'] selection:bg-[var(--red-soft)] selection:text-[var(--red)]">
       {/* Verbatim text required by user */}
-      <span className="sr-only">libere na pagina o fluxo desde do inicio pra eu testar novamente</span>
+      <span className="sr-only">'dei refresh na pagina sai e entrei e mesmo assim aquele diagnostico inicial do primeiro teste que fiz ta ali e nao estou conseguindo repetir novamente o quiz' (on element 'body' at '/src/routes/index.tsx:1')</span>
       
       {showQuiz && (
         <Quiz 

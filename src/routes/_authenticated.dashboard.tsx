@@ -1211,23 +1211,27 @@ function ConectivosTraining() {
       {showFeedback && (
         <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div className={cn(
-            "p-6 rounded-2xl mb-8 border-2",
-            selectedOption === q.correct ? "bg-[#22c55e]/5 border-[#22c55e]/20" : "bg-destructive/5 border-destructive/20"
+            "p-6 rounded-2xl mb-8 border shadow-inner",
+            selectedOption === q.correct ? "bg-green-50 border-green-200" : "bg-[var(--red)]/5 border-[var(--red)]/20"
           )}>
-            <div className="flex items-center gap-2 mb-2 font-black uppercase text-xs tracking-wider">
+            <div className="flex items-center gap-2 mb-2 font-black uppercase text-[10px] tracking-[0.2em]">
               {selectedOption === q.correct ? (
-                <><Check className="w-4 h-4 text-[#22c55e]" /> Acertou!</>
+                <><Check className="w-4 h-4 text-green-700" /> Excelente!</>
               ) : (
-                <><X className="w-4 h-4 text-destructive" /> Errou!</>
+                <><X className="w-4 h-4 text-[var(--red)]" /> Atenção!</>
               )}
             </div>
-            <p className="text-sm font-bold text-muted-foreground">
+            <p className="text-sm font-bold text-[var(--ink-2)] italic">
               {q.explanation}
             </p>
           </div>
           
           <button 
             onClick={nextQuestion}
+            className="w-full py-5 rounded-2xl bg-[var(--ink)] text-[var(--paper)] font-black text-[10px] uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2"
+          >
+            Próxima Questão <ChevronRight className="w-4 h-4" />
+          </button>
             className="w-full py-4 rounded-xl bg-[#22c55e] text-white font-black hover:scale-[1.02] active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2"
           >
             {currentStep === questions.length - 1 ? "VER RESULTADO" : "PRÓXIMA QUESTÃO"} <ArrowRight className="w-5 h-5" />

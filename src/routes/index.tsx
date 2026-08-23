@@ -167,9 +167,12 @@ function Landing() {
         </div>
       </section>
 
-      <section id="corrigir" className="py-20 px-4 max-w-4xl mx-auto">
-        <EssaySubmissionArea isLoggedIn={!!session} isPro={false} showEssayForm={showEssayForm} onContinue={() => setShowEssayForm(true)} />
-      </section>
+      {quizResult && !isAnalyzingQuiz && (
+        <section id="corrigir" className="py-20 px-4 max-w-4xl mx-auto">
+          <EssaySubmissionArea isLoggedIn={!!session} isPro={false} showEssayForm={showEssayForm} onContinue={() => setShowEssayForm(true)} />
+        </section>
+      )}
+
 
       <footer className="border-t border-[var(--line)] py-16 bg-[var(--paper-2)]">
         <div className="mx-auto max-w-4xl px-4">

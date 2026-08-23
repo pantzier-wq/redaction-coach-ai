@@ -53,13 +53,17 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
   const current = questions[step];
 
   const next = (val?: string) => {
+    const nextAnswers = val
+      ? { ...answers, [current.id]: val }
+      : answers;
+
     if (val) {
-      setAnswers((prev) => ({ ...prev, [current.id]: val }));
+      setAnswers(nextAnswers);
     }
     if (step < questions.length - 1) {
       setStep(step + 1);
     } else {
-      onComplete(answers);
+      onComplete(nextAnswers);
     }
   };
 

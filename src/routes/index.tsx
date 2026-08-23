@@ -83,6 +83,7 @@ function Countdown() {
 
 function Landing() {
   const [session, setSession] = useState<any>(null);
+  const [showQuiz, setShowQuiz] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -96,6 +97,16 @@ function Landing() {
 
   return (
     <div className="dark min-h-screen bg-background text-foreground">
+      {showQuiz && (
+        <Quiz 
+          onClose={() => setShowQuiz(false)} 
+          onComplete={() => {
+            setShowQuiz(false);
+            const el = document.getElementById("corrigir");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}
+        />
+      )}
       <header className="absolute top-0 right-0 p-6 z-50">
         <Link 
           to={session ? "/dashboard" : "/auth"}
@@ -109,20 +120,15 @@ function Landing() {
         </Link>
       </header>
 
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden min-h-[80vh] flex flex-col justify-center">
         <div
           className="pointer-events-none absolute inset-0 opacity-40 blur-3xl"
           style={{ background: "var(--gradient-hero)" }}
           aria-hidden
         />
         <div className="relative mx-auto max-w-4xl px-4 pt-16 pb-10 text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-secondary bg-secondary/20 px-4 py-1.5 text-xs font-black uppercase tracking-wider text-white shadow-[0_0_15px_rgba(var(--secondary-rgb),0.3)]">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-secondary shadow-[0_0_8px_#ff4d4d]" />
-            ENEM está chegando — não dá mais pra enrolar
-          </div>
-
-          <h1 className="text-4xl md:text-6xl font-black leading-[1.05] tracking-tight">
-            Sua redação zerada no ENEM vai{" "}
+          <h1 className="text-4xl md:text-7xl font-black leading-[1.05] tracking-tight">
+            Em 2 minutos você descobre sua{" "}
             <span
               style={{
                 background: "var(--gradient-hero)",
@@ -130,32 +136,24 @@ function Landing() {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              destruir
+              nota real
             </span>{" "}
-            o sonho da faculdade.
+            do ENEM e por que ela é essa.
           </h1>
 
-          <p className="mx-auto mt-5 max-w-2xl text-lg md:text-xl text-muted-foreground">
-            A <strong className="text-foreground">CorrigeAI</strong> corrige sua redação em{" "}
-            <strong className="text-primary">30 segundos</strong>, nas 5 competências oficiais, com
-            o mesmo rigor dos corretores do INEP. Descubra AGORA o que está te separando dos 1000.
+          <p className="mx-auto mt-6 max-w-2xl text-lg md:text-2xl text-muted-foreground font-medium">
+            Responda 6 perguntas rápidas, cole sua redação e receba a nota nas 5 competências oficiais do ENEM.
           </p>
 
-          <div className="mt-8 mb-4">
-            <Countdown />
-            <p className="mt-2 text-xs font-bold text-foreground">⏳ Tempo até o próximo ENEM</p>
+          <div className="mt-10">
+            <button
+              onClick={() => setShowQuiz(true)}
+              className="inline-flex items-center justify-center rounded-2xl px-10 py-6 text-xl md:text-2xl font-black text-primary-foreground transition-transform hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(var(--primary-rgb),0.4)]"
+              style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
+            >
+              DESCUBRIR MINHA NOTA AGORA →
+            </button>
           </div>
-
-          <a
-            href="#corrigir"
-            className="inline-flex items-center justify-center rounded-xl px-8 py-4 text-lg font-black text-primary-foreground transition-transform hover:scale-105 active:scale-95"
-            style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
-          >
-            CORRIGIR MINHA REDAÇÃO AGORA →
-          </a>
-          <p className="mt-3 text-xs font-bold text-foreground/80">
-            1ª Correção Grátis • Sem cadastro • Resultado em segundos
-          </p>
         </div>
       </section>
 

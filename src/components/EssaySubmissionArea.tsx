@@ -147,26 +147,11 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       const correctionData = r.correcao || r;
       setResult(correctionData);
 
-      // Persistência local para usuários não logados (Primeira correção gratuita)
-      if (!isLoggedIn) {
-        localStorage.setItem("pending_essay_correction", JSON.stringify({
-          tema: tema.trim(),
-          redacao: redacao.trim(),
-          resultado: r,
-          timestamp: Date.now()
-        }));
-      }
-
       // Sincroniza saldo e status após a correção
       let stillAllowed = false;
       if (isLoggedIn) {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          // Nota: a inserção na tabela 'essays' agora poderia ser feita no servidor, 
-          // mas mantemos aqui para compatibilidade com o fluxo de UI se necessário,
-          // ou verificamos se o servidor já inseriu (idealmente o servidor insere).
-          // Para este fix de segurança, focamos na proteção de créditos.
-          
           const { data: profile } = await supabase
             .from("profiles")
             .select("is_pro, has_full_access, credits")
@@ -180,14 +165,14 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
             setIsPro(pro);
             setHasFullAccess(full);
             setCredits(saldo);
-            stillAllowed = full || (pro && saldo >= 0);
+            stillAllowed = full || (pro && saldo > 0);
           }
         }
       }
 
-      if (!isLoggedIn) {
-        setShowPaywall(true);
-      } else if (!stillAllowed) {
+      // NOVO FLUXO: Sempre mostra paywall se não for PRO, mesmo após a primeira correção.
+      // A primeira correção agora é "bloqueada" até o pagamento.
+      if (!isLoggedIn || !stillAllowed) {
         setShowPaywall(true);
       } else {
         setShowPaywall(false);

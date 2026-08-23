@@ -591,10 +591,11 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
                         ⚡ Liberação Imediata • Pagamento Único
                       </p>
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+          )}
           </div>
         )}
       </div>

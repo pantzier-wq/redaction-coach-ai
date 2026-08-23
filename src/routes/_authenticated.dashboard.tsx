@@ -321,11 +321,11 @@ function Dashboard() {
           {activeSection === "upgrade" && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="max-w-2xl mx-auto text-center py-12">
-                <div className="p-6 rounded-3xl bg-secondary/10 border-2 border-secondary/20 mb-8 inline-block">
-                  <Sparkles className="w-16 h-16 text-secondary animate-pulse" />
+                <div className="p-6 rounded-3xl bg-[var(--paper-2)] border-2 border-[var(--line)] mb-8 inline-block shadow-sm">
+                  <Sparkles className="w-16 h-16 text-[var(--red)] animate-pulse" />
                 </div>
-                <h2 className="text-4xl font-black mb-4 tracking-tight">Garanta seu Futuro 🚀</h2>
-                <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+                <h2 className="font-['Fraunces'] text-4xl font-black mb-4 tracking-tight text-[var(--ink)] italic">Garanta seu Futuro 🚀</h2>
+                <p className="text-xl text-[var(--ink-2)] mb-8 leading-relaxed font-medium">
                   Escolha entre o Plano Essencial (15 correções) ou o Combo Nota 1000 com correções ilimitadas.
                 </p>
 

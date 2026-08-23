@@ -1329,16 +1329,16 @@ function RepertoriosLibrary() {
   return (
     <div className="space-y-8 pb-20">
       {/* Header com Botão do Gerador */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-card p-8 rounded-[2rem] border border-border">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[var(--paper)] p-8 rounded-[2.5rem] border border-[var(--line)] shadow-sm">
         <div>
-          <h2 className="text-3xl font-black text-foreground">Biblioteca de Repertórios</h2>
-          <p className="text-muted-foreground mt-2 font-medium">Use modelos prontos ou crie um exclusivo com nossa IA.</p>
+          <h2 className="font-['Fraunces'] text-3xl font-black text-[var(--ink)] italic">Biblioteca de Repertórios</h2>
+          <p className="text-[var(--ink-2)] mt-2 font-medium">Use modelos prontos ou crie um exclusivo com nossa IA.</p>
         </div>
         <button 
           onClick={() => setShowGenerator(true)}
-          className="flex items-center gap-2 px-6 py-4 rounded-xl bg-primary text-primary-foreground font-black hover:scale-105 transition-all shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]"
+          className="flex items-center gap-2 px-6 py-4 rounded-xl bg-[var(--ink)] text-[var(--paper)] font-black text-[10px] uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-lg"
         >
-          <Sparkles className="w-5 h-5" />
+          <Sparkles className="w-5 h-5 text-[var(--red)]" />
           CRIAR COM IA
         </button>
       </div>

@@ -1717,9 +1717,9 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
                       console.log("Clique detectado no CONTINUAR ANÁLISE");
                       handleGenerate();
                     }}
-                    className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-black hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
+                    className="w-full py-5 rounded-2xl bg-[var(--ink)] text-[var(--paper)] font-black hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3 uppercase tracking-widest text-xs"
                   >
-                    {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" /> : "CONTINUAR ANÁLISE"}
+                    {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-[var(--paper)]/30 border-t-[var(--paper)]" /> : "CONTINUAR ANÁLISE"}
                   </button>
                 </div>
               )}

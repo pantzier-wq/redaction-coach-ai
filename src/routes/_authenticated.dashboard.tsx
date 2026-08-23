@@ -1437,14 +1437,14 @@ function RepertoriosLibrary() {
                   </p>
                   <button 
                     onClick={() => navigator.clipboard.writeText(r.modeloAdaptavel)}
-                    className="absolute top-4 right-4 p-2 rounded-lg bg-background border border-border text-muted-foreground hover:text-primary transition-colors"
+                    className="absolute top-4 right-4 p-2 rounded-lg bg-[var(--paper)] border border-[var(--line)] text-[var(--ink-3)] hover:text-[var(--red)] transition-colors shadow-sm"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
                 </div>
 
                 {r.alerta && (
-                  <div className="flex items-start gap-2 text-amber-500 text-xs font-bold p-3 rounded-xl bg-amber-500/5 border border-amber-500/20">
+                  <div className="flex items-start gap-2 text-amber-600 text-[10px] font-black uppercase tracking-tight p-3 rounded-xl bg-amber-50 border border-amber-200 shadow-sm">
                     <AlertTriangle className="w-4 h-4 shrink-0" />
                     <span>Atenção: {r.alerta}</span>
                   </div>

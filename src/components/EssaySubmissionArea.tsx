@@ -389,7 +389,11 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                       return (
                         <>
                           <p>
-                            Você já escreveu <span className="text-[var(--ink)] font-bold">{quiz.essays_written || "algumas"} redações</span>, mas <span className="text-[var(--ink)] font-bold">{quiz.essays_corrected?.toLowerCase() === "nenhuma" ? "nenhuma" : "quase nenhuma"} foi corrigida de verdade</span>. Sem feedback real, você está apenas repetindo os mesmos erros.
+                            {quiz.essays_written === "Nenhuma ainda" ? (
+                              <>Você ainda não escreveu nenhuma redação para treinar. Começar agora é a forma mais rápida de descobrir e corrigir seus erros.</>
+                            ) : (
+                              <>Você já escreveu <span className="text-[var(--ink)] font-bold">{quiz.essays_written.toLowerCase()}</span> redações, mas <span className="text-[var(--ink)] font-bold">{quiz.essays_corrected?.toLowerCase() === "nenhuma" ? "nenhuma delas foi corrigida de verdade" : "poucas receberam uma correção de verdade"}</span>. Sem feedback real, você pode estar repetindo os mesmos erros.</>
+                            )}
                           </p>
                           <p>
                             Faltam <span className="text-[var(--red)] font-black italic">{days} dias</span> para o ENEM. É hora de parar de chutar e começar a agir com estratégia.

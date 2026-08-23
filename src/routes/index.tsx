@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-/* 'perceba que nao faz sentido ter esse aviso aqui se a primeira opcao de plano supostamente nao da um desconto de 20 reais e sim de 10, dito isso tire agora' (on element 'body' at '/src/routes/index.tsx:1') */
 import { useEffect, useState } from "react";
+import { Quiz } from "@/components/Quiz";
 import { supabase } from "@/integrations/supabase/client";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
 import depoimentoCarolina from "@/assets/depoimento-carolina.jpg";

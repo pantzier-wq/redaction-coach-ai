@@ -21,8 +21,6 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -43,43 +41,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Landing,
 });
-
-function Countdown() {
-  const [now, setNow] = useState<Date | null>(null);
-  useEffect(() => {
-    setNow(new Date());
-    const id = setInterval(() => setNow(new Date()), 1000);
-    return () => clearInterval(id);
-  }, []);
-  if (!now) return <div className="h-[68px]" />;
-
-  const year = now.getFullYear();
-  const nov = new Date(year, 10, 1);
-  const firstSun = new Date(year, 10, 1 + ((7 - nov.getDay()) % 7));
-  const target =
-    now > firstSun
-      ? new Date(year + 1, 10, 1 + ((7 - new Date(year + 1, 10, 1).getDay()) % 7))
-      : firstSun;
-  const diff = Math.max(0, target.getTime() - now.getTime());
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor((diff / 3600000) % 24);
-  const m = Math.floor((diff / 60000) % 60);
-  const s = Math.floor((diff / 1000) % 60);
-  const Box = ({ v, l }: { v: number; l: string }) => (
-    <div className="flex min-w-16 flex-col items-center rounded-xl border border-border bg-card px-3 py-2">
-      <span className="text-2xl md:text-3xl font-black tabular-nums text-primary">
-        {String(v).padStart(2, "0")}
-      </span>
-      <span className="text-[10px] uppercase tracking-wider text-muted-foreground">{l}</span>
-    </div>
-  );
-  return (
-    <div className="flex justify-center gap-2">
-      <Box v={d} l="dias" /> <Box v={h} l="hrs" /> <Box v={m} l="min" /> <Box v={s} l="seg" />
-    </div>
-  );
-}
-
 
 function Landing() {
   const [session, setSession] = useState<any>(null);
@@ -232,7 +193,6 @@ function Landing() {
                 </div>
               </div>
               
-              {/* Decorative corner glow */}
               <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-primary/10 blur-2xl group-hover:bg-primary/20 transition-all" />
             </div>
           ))}
@@ -354,17 +314,15 @@ function Landing() {
         <p className="mt-3 text-muted-foreground">
           A escolha é literalmente sua. E o tempo tá acabando.
         </p>
-        <a
-          href="#corrigir"
-          className="mt-6 inline-flex items-center justify-center rounded-xl px-8 py-4 text-lg font-black text-primary-foreground transition-transform hover:scale-105 active:scale-95"
+        <button
+          onClick={() => setShowQuiz(true)}
+          className="mt-6 inline-flex items-center justify-center rounded-xl px-8 py-4 text-lg font-black text-primary-foreground transition-transform hover:scale-105 active:scale-95 shadow-[0_0_25px_rgba(var(--primary-rgb),0.4)]"
           style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
         >
-          QUERO MINHA 1ª CORREÇÃO GRÁTIS →
-        </a>
+          QUERO MINHA NOTA AGORA →
+        </button>
       </section>
 
-      <footer className="border-t border-border py-12 text-center">
-        <div className="mb-6 flex flex-col items-center justify-center space-y-4 px-4">
       <footer className="border-t border-border py-12 text-center bg-card/30">
         <div className="mx-auto max-w-4xl px-4">
           <div className="mb-8 grid gap-8 md:grid-cols-2 text-left">
@@ -398,4 +356,3 @@ function Landing() {
     </div>
   );
 }
-

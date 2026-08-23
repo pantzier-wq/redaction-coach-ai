@@ -47,12 +47,24 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
   const [isPro, setIsPro] = useState(propIsPro || false);
   const [hasFullAccess, setHasFullAccess] = useState(false);
   const [credits, setCredits] = useState(0);
-  const [daysUntilExam, setDaysUntilExam] = useState(0);
+  const [timeUntilExam, setTimeUntilExam] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const corrigir = useServerFn(corrigirRedacao);
 
   useEffect(() => {
-    const examDate = new Date("2026-11-01T00:00:00").getTime();
-    setDaysUntilExam(Math.max(0, Math.ceil((examDate - Date.now()) / 86400000)));
+    const examDate = new Date("2026-11-08T00:00:00").getTime();
+    const updateCountdown = () => {
+      const remaining = Math.max(0, examDate - Date.now());
+      const totalSeconds = Math.floor(remaining / 1000);
+      setTimeUntilExam({
+        days: Math.floor(totalSeconds / 86400),
+        hours: Math.floor((totalSeconds % 86400) / 3600),
+        minutes: Math.floor((totalSeconds % 3600) / 60),
+        seconds: totalSeconds % 60,
+      });
+    };
+    updateCountdown();
+    const interval = window.setInterval(updateCountdown, 1000);
+    return () => window.clearInterval(interval);
   }, []);
 
   // Carrega plano/créditos do usuário logado
@@ -392,7 +404,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
                   {(() => {
                     try {
                       const quiz = JSON.parse(localStorage.getItem("quiz_answers") || "{}");
-                      const days = Math.max(0, Math.floor((new Date("2026-11-01").getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
+                      const days = Math.max(0, Math.floor((new Date("2026-11-08").getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
                       
                       return (
                         <>
@@ -421,7 +433,14 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
             {!showEssayForm && (
               <div className="rounded-3xl border border-[var(--red)] bg-[var(--paper-2)] p-8 text-center shadow-sm">
                 <p className="text-xs font-black uppercase tracking-[0.2em] text-[var(--red)]">O ENEM está chegando</p>
-                <div className="my-4 font-['Fraunces'] text-5xl font-black text-[var(--ink)]">{daysUntilExam} <span className="text-base text-[var(--ink-3)]">dias</span></div>
+                <div className="my-4 grid grid-cols-4 gap-2 font-['Fraunces'] text-[var(--ink)]" aria-label="Contagem regressiva para o ENEM">
+                  {Object.entries(timeUntilExam).map(([unit, value]) => (
+                    <div key={unit} className="rounded-xl border border-[var(--line)] bg-[var(--paper)] px-2 py-3">
+                      <div className="text-2xl font-black tabular-nums md:text-3xl">{String(value).padStart(2, "0")}</div>
+                      <div className="mt-1 text-[9px] font-bold uppercase tracking-wider text-[var(--ink-3)]">{unit === "days" ? "dias" : unit === "hours" ? "horas" : unit === "minutes" ? "min" : "seg"}</div>
+                    </div>
+                  ))}
+                </div>
                 <p className="mx-auto mb-6 max-w-md text-sm font-medium text-[var(--ink-2)]">Cada dia sem feedback é uma oportunidade perdida de melhorar sua nota.</p>
                 <button type="button" onClick={onContinue} className="inline-flex items-center justify-center rounded-2xl bg-[var(--red)] px-8 py-4 text-sm font-black text-[var(--paper)] transition-transform hover:scale-105">CONTINUAR PARA A REDAÇÃO <ArrowRight className="ml-2 h-4 w-4" /></button>
               </div>

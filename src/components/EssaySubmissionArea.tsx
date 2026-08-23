@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, ArrowRight, Trophy, Zap } from "lucide-react";
+import { Sparkles, ArrowRight, Trophy, Zap, CheckCircle2 } from "lucide-react";
 import { goToCheckout, goToCreditsCheckout } from "@/lib/checkout";
 import { CouponUnlockedBanner } from "@/components/CouponUnlockedBanner";
 
@@ -12,6 +12,25 @@ interface EssaySubmissionAreaProps {
   isLoggedIn: boolean;
   isPro?: boolean;
   onSuccess?: (result: Correcao) => void;
+}
+
+function Step({ text, delay, isLast }: { text: string; delay: number; isLast?: boolean }) {
+  const [visible, setVisible] = useState(false);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => setVisible(true), delay * 1000);
+    return () => clearTimeout(timer);
+  }, [delay]);
+
+  if (!visible) return null;
+
+  return (
+    <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-2 duration-500">
+      <span className={`text-sm font-medium ${isLast ? 'text-[var(--red)] font-bold italic' : 'text-[var(--ink-2)]'}`}>
+        {text}
+      </span>
+    </div>
+  );
 }
 
 const LIMITE_ESSENCIAL = 15;
@@ -162,6 +181,11 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       // r já vem como objeto se o servidor retornar direto
       const correctionData = r.correcao || r;
       setResult(correctionData);
+      
+      // Rola para o resultado após o delay de carregamento
+      setTimeout(() => {
+        document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
 
       // Sincroniza saldo e status após a correção
       let stillAllowed = false;
@@ -247,29 +271,37 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
   return (
     <div className="w-full space-y-8">
       {result && !loading && (
-        <Resultado data={result} isLoggedIn={isLoggedIn} />
+        <Resultado 
+          data={result} 
+          isLoggedIn={isLoggedIn} 
+          showPaywall={showPaywall && !isPro && !hasFullAccess}
+          onShowAll={() => {
+            const el = document.getElementById("paywall-anchor");
+            if (el) el.scrollIntoView({ behavior: "smooth" });
+          }}
+        />
       )}
 
       <div className="w-full">
         {loading ? (
           <div 
-            className="rounded-3xl border border-primary/40 bg-card p-10 text-center animate-in fade-in zoom-in duration-500"
-            style={{ boxShadow: "var(--shadow-glow)" }}
+            className="rounded-3xl border border-[var(--red)] bg-[var(--paper)] p-10 text-center animate-in fade-in zoom-in duration-500"
+            style={{ boxShadow: "var(--paper-shadow)" }}
           >
             <div className="mb-6 flex justify-center">
               <div className="relative h-24 w-24">
-                <div className="absolute inset-0 animate-ping rounded-full bg-primary/20" />
-                <div className="relative flex h-full w-full items-center justify-center rounded-full bg-card border-2 border-primary shadow-[0_0_20px_rgba(var(--primary-rgb),0.5)]">
+                <div className="absolute inset-0 animate-ping rounded-full bg-[var(--red)]/20" />
+                <div className="relative flex h-full w-full items-center justify-center rounded-full bg-[var(--paper)] border-2 border-[var(--red)] shadow-[0_0_20px_rgba(196,50,42,0.3)]">
                   <span className="text-3xl animate-bounce">✍️</span>
                 </div>
               </div>
             </div>
             
-            <h3 className="text-2xl font-black mb-4">Analisando sua Redação...</h3>
+            <h3 className="text-2xl font-['Fraunces'] font-black mb-4 text-[var(--ink)]">Análise rodando...</h3>
             
-            <div className="mx-auto mb-6 h-3 w-full max-w-md overflow-hidden rounded-full bg-muted">
+            <div className="mx-auto mb-6 h-3 w-full max-w-md overflow-hidden rounded-full bg-[var(--paper-2)] border border-[var(--line)]">
               <div 
-                className="h-full bg-primary shadow-[0_0_15px_rgba(var(--primary-rgb),0.8)] transition-all duration-1000 ease-linear"
+                className="h-full bg-[var(--red)] shadow-[0_0_15px_rgba(196,50,42,0.4)] transition-all duration-1000 ease-linear"
                 style={{ 
                   width: '100%',
                   animation: 'loading-bar 30s linear forwards'
@@ -277,27 +309,19 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
               />
             </div>
 
-            <div className="relative h-10 w-full max-w-sm mx-auto overflow-hidden">
-              <div className="animate-vertical-slide">
-                {[
-                  "Preparando a melhor correção...",
-                  "Comparando com os critérios oficiais do INEP...",
-                  "Analisando conectivos e coesão textual...",
-                  "Verificando os 5 elementos da proposta...",
-                  "Avaliando repertório sociocultural...",
-                  "Calculando nota final das 5 competências...",
-                  "Quase pronto! Finalizando relatório..."
-                ].map((text, i) => (
-                  <div key={i} className="flex h-10 items-center justify-center">
-                    <p className="text-primary font-bold uppercase tracking-widest text-[10px] md:text-xs text-center leading-tight">
-                      {text}
-                    </p>
-                  </div>
-                ))}
+            <div className="relative h-64 w-full max-w-sm mx-auto overflow-hidden text-left border border-[var(--line)] p-4 rounded-xl bg-[var(--paper-2)]/50">
+              <div className="space-y-3">
+                <Step text={`✓ Lendo sua redação — ${redacao.split(/\s+/).filter(Boolean).length} palavras`} delay={1} />
+                <Step text="✓ Competência 1 · domínio da norma culta" delay={5} />
+                <Step text="✓ Competência 2 · compreensão do tema" delay={9} />
+                <Step text="✓ Competência 3 · organização dos argumentos" delay={13} />
+                <Step text="○ Competência 4 · coesão e conectivos" delay={17} />
+                <Step text="○ Competência 5 · proposta de intervenção" delay={21} />
+                <Step text="Comparando com a matriz oficial do INEP…" delay={25} isLast />
               </div>
             </div>
 
-            <p className="mt-8 text-xs font-bold text-foreground animate-pulse">
+            <p className="mt-8 text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-[0.2em] animate-pulse">
               O rigor da correção leva tempo. Não feche esta página.
             </p>
 
@@ -305,18 +329,6 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
               @keyframes loading-bar {
                 0% { width: 0%; }
                 100% { width: 100%; }
-              }
-              @keyframes vertical-slide {
-                0%, 12% { transform: translateY(0); }
-                14.28%, 26.28% { transform: translateY(-40px); }
-                28.57%, 40.57% { transform: translateY(-80px); }
-                42.85%, 54.85% { transform: translateY(-120px); }
-                57.14%, 69.14% { transform: translateY(-160px); }
-                71.42%, 83.42% { transform: translateY(-200px); }
-                85.71%, 100% { transform: translateY(-240px); }
-              }
-              .animate-vertical-slide {
-                animation: vertical-slide 30s cubic-bezier(0.4, 0, 0.2, 1) infinite;
               }
             `}</style>
           </div>
@@ -636,79 +648,104 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
   );
 }
 
-function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }) {
+function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correcao; isLoggedIn: boolean; showPaywall?: boolean; onShowAll?: () => void }) {
   const pct = Math.round((data.nota_total / 1000) * 100);
   
-  if (!isLoggedIn) return null; // Não mostramos o resultado real para deslogados, apenas o paywall que já está aberto
+  // Se não estiver logado, não mostramos o resultado aqui (o paywall já cuida disso)
+  if (!isLoggedIn) return null;
+
+  const quizAnswers = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem("quiz_answers") || "{}") : {};
+  const chuta = quizAnswers.score_guess || "800 a 900";
+  const diferenca = Math.abs(data.nota_total - 640); // Exemplo fixo conforme pedido ou cálculo real
 
   return (
     <div
       id="resultado"
-      className="mt-10 rounded-3xl border border-primary/40 bg-card p-6 md:p-8"
-      style={{ boxShadow: "var(--shadow-glow)" }}
+      className="mt-10 rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 overflow-hidden relative"
+      style={{ boxShadow: "var(--paper-shadow)" }}
     >
-      <div className="text-center">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">
-          Sua nota estimada
+      <div className="text-center mb-10">
+        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--ink-3)] mb-2">
+          Resultado da Análise
         </div>
-        <div
-          className="mt-2 text-6xl md:text-7xl font-black"
-          style={{
-            background: "var(--gradient-cta)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
+        <p className="text-sm font-medium text-[var(--ink-2)] mb-4">
+          Você chutou {chuta}. Sua nota real é:
+        </p>
+        <div className="text-7xl md:text-8xl font-black text-[var(--red)] font-['Fraunces'] leading-none">
           {data.nota_total}
+          <span className="text-xl text-[var(--ink-3)] ml-2 tracking-tighter">/1000</span>
         </div>
-        <div className="text-sm text-muted-foreground">
-          de 1000 pontos ({pct}%)
-        </div>
+        <p className="mt-6 text-sm font-bold text-[var(--ink)] max-w-md mx-auto leading-relaxed">
+          {data.nota_total < 700 
+            ? `São ${1000 - data.nota_total} pontos de diferença entre o que você achava e o que a banca veria.`
+            : `Você está no caminho, mas ainda restam ${1000 - data.nota_total} pontos para a perfeição.`}
+        </p>
       </div>
 
-      <p className="mt-6 text-center italic text-card-foreground">"{data.resumo}"</p>
-
-      <div className="mt-8 space-y-3">
-        {data.competencias.map((c) => (
-          <div key={c.numero} className="rounded-xl border border-border bg-input/50 p-4">
-            <div className="flex items-baseline justify-between gap-2">
-              <div className="font-bold">
+      <div className="space-y-4 relative">
+        {data.competencias.map((c, idx) => (
+          <div 
+            key={c.numero} 
+            className={`rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-5 transition-all duration-500 ${showPaywall && idx > 0 ? "blur-md select-none opacity-40" : ""}`}
+          >
+            <div className="flex items-center justify-between gap-4 mb-2">
+              <div className="font-bold text-[var(--ink)] text-sm md:text-base">
                 C{c.numero} — {c.titulo}
               </div>
-              <div className="text-xl font-black text-primary">
+              <div className="text-xl font-black text-[var(--red)] font-['Fraunces']">
                 {c.nota}
-                <span className="text-xs text-muted-foreground">/200</span>
+                <span className="text-[10px] text-[var(--ink-3)] ml-1">/200</span>
               </div>
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">{c.analise}</p>
+            <p className="text-xs md:text-sm text-[var(--ink-2)] leading-relaxed font-medium">
+              {showPaywall && idx > 0 ? "Conteúdo bloqueado. Adquira um plano para ver a análise completa desta competência." : c.analise}
+            </p>
           </div>
         ))}
+
+        {showPaywall && (
+          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[var(--paper)] to-transparent pointer-events-none" />
+        )}
       </div>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-3">
-        <Bloco titulo="✅ Pontos fortes" itens={data.pontos_fortes} cor="text-primary" />
-        <Bloco titulo="⚠️ Pontos fracos" itens={data.pontos_fracos} cor="text-white font-bold" extraItemClass="text-white font-bold" />
-        <Bloco titulo="💡 Sugestões" itens={data.sugestoes} cor="text-white font-bold" extraItemClass="text-white font-bold" />
-      </div>
-      
-      {!isLoggedIn && (
-        <div className="mt-10 rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center">
-          <Sparkles className="mx-auto mb-4 h-10 w-10 text-primary animate-pulse" />
-          <h3 className="text-2xl font-black mb-2 tracking-tight">Análise Pronta! 🚀</h3>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto font-medium text-white/90 leading-relaxed">
-            Sua correção detalhada e nota oficial já foram geradas! <br />
-            Para garantir sua vaga na faculdade, você precisa de <span className="text-primary font-bold">constância e prática diária</span>. Crie sua conta agora para salvar esse resultado, acessar novos temas e treinar até alcançar o curso dos seus sonhos.
-          </p>
-          <Link
-            to="/auth"
-            className="inline-flex items-center gap-2 rounded-xl px-8 py-4 font-black text-primary-foreground transition-all hover:scale-105 active:scale-95"
-            style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
+      {showPaywall && (
+        <div className="mt-8 flex justify-center relative z-10">
+          <button
+            onClick={onShowAll}
+            className="group relative inline-flex items-center justify-center rounded-2xl bg-[var(--red)] px-8 py-5 text-sm font-black text-white transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_-12px_rgba(196,50,42,0.3)]"
           >
-            CRIAR MINHA CONTA AGORA <ArrowRight className="w-5 h-5" />
-          </Link>
-          <p className="mt-4 text-xs text-muted-foreground flex items-center justify-center gap-2 font-bold">
-            Acesso instantâneo • Comece a evoluir hoje
-          </p>
+            VER TODAS AS COMPETÊNCIAS
+            <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-1" />
+          </button>
+        </div>
+      )}
+
+      {!showPaywall && (
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-5">
+            <div className="text-[10px] font-black uppercase tracking-widest text-green-600 mb-3 flex items-center gap-2">
+              <CheckCircle2 className="w-3 h-3" /> Pontos Fortes
+            </div>
+            <ul className="space-y-2">
+              {data.pontos_fortes.map((item, i) => (
+                <li key={i} className="text-xs font-medium text-[var(--ink-2)] leading-tight flex gap-2">
+                  <span className="text-[var(--red)]">•</span> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-5">
+            <div className="text-[10px] font-black uppercase tracking-widest text-[var(--red)] mb-3 flex items-center gap-2">
+              <Zap className="w-3 h-3" /> Sugestões de Melhoria
+            </div>
+            <ul className="space-y-2">
+              {data.sugestoes.map((item, i) => (
+                <li key={i} className="text-xs font-medium text-[var(--ink-2)] leading-tight flex gap-2">
+                  <span className="text-[var(--red)]">•</span> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
     </div>

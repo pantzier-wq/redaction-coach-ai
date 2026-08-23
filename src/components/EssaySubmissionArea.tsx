@@ -190,6 +190,10 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       // A primeira correção agora é "bloqueada" até o pagamento.
       if (!isLoggedIn || !stillAllowed) {
         setShowPaywall(true);
+        setTimeout(
+          () => document.getElementById("paywall-anchor")?.scrollIntoView({ behavior: "smooth" }),
+          100,
+        );
       } else {
         setShowPaywall(false);
       }

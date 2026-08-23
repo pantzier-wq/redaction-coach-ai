@@ -652,7 +652,7 @@ function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correca
   const quizAnswers = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem("quiz_answers") || "{}") : {};
   const chuta = quizAnswers.score_guess || "800 a 900";
   const notaTotal = data.nota_total;
-  const diff = Math.abs(notaTotal - 640); // Exemplo visual conforme pedido
+  const diff = Math.abs(notaTotal - parseInt(chuta.split(' ')[0]) || 0);
 
   return (
     <div
@@ -672,7 +672,7 @@ function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correca
           <span className="text-xl text-[var(--ink-3)] ml-2 tracking-tighter">/1000</span>
         </div>
         <p className="mt-6 text-sm font-bold text-[var(--ink)] max-w-md mx-auto leading-relaxed">
-          São {1000 - data.nota_total} pontos de diferença entre o que você achava e o que a banca veria.
+          São {diff} pontos de diferença entre o que você achava e o que a banca veria.
         </p>
       </div>
 

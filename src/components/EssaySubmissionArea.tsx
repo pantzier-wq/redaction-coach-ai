@@ -415,12 +415,16 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
                               <>Você já escreveu <span className="text-[var(--ink)] font-bold">{quiz.essays_written.toLowerCase()}</span> redações, mas <span className="text-[var(--ink)] font-bold">{quiz.essays_corrected?.toLowerCase() === "nenhuma" ? "nenhuma delas foi corrigida de verdade" : "poucas receberam uma correção de verdade"}</span>. Sem feedback real, você pode estar repetindo os mesmos erros.</>
                             )}
                           </p>
-                          <p>
-                            Faltam <span className="text-[var(--red)] font-black italic">{days} dias</span> para o ENEM. É hora de parar de chutar e começar a agir com estratégia.
-                          </p>
-                          <p className="text-[var(--ink)] font-bold italic border-l-4 border-[var(--red)] pl-4 py-2 bg-[var(--red)]/5">
-                            "Cole sua redação abaixo para descobrir exatamente onde você está perdendo ponto."
-                          </p>
+                          {showEssayForm && (
+                            <>
+                              <p>
+                                Faltam <span className="text-[var(--red)] font-black italic">{days} dias</span> para o ENEM. É hora de parar de chutar e começar a agir com estratégia.
+                              </p>
+                              <p className="text-[var(--ink)] font-bold italic border-l-4 border-[var(--red)] pl-4 py-2 bg-[var(--red)]/5">
+                                "Cole sua redação abaixo para descobrir exatamente onde você está perdendo ponto."
+                              </p>
+                            </>
+                          )}
                         </>
                       );
                     } catch (e) {

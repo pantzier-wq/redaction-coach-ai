@@ -1193,11 +1193,11 @@ function ConectivosTraining() {
               onClick={() => handleOptionClick(i)}
               disabled={showFeedback}
               className={cn(
-                "w-full p-4 rounded-xl border-2 transition-all text-left text-sm font-black flex items-center justify-between",
-                !showFeedback && "border-border bg-card hover:border-[#22c55e] hover:bg-[#22c55e]/5",
-                showFeedback && isCorrect && "border-[#22c55e] bg-[#22c55e]/10 text-[#22c55e]",
-                showFeedback && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
-                showFeedback && !isSelected && !isCorrect && "opacity-50 border-border bg-card"
+                "w-full p-5 rounded-2xl border transition-all text-left text-sm font-black flex items-center justify-between shadow-sm",
+                !showFeedback && "border-[var(--line)] bg-[var(--paper)] text-[var(--ink)] hover:border-green-600/50 hover:bg-green-50",
+                showFeedback && isCorrect && "border-green-600 bg-green-50 text-green-700",
+                showFeedback && isSelected && !isCorrect && "border-[var(--red)] bg-[var(--red)]/5 text-[var(--red)]",
+                showFeedback && !isSelected && !isCorrect && "opacity-40 border-[var(--line)] bg-[var(--paper-2)]"
               )}
             >
               {opt}

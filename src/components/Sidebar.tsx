@@ -32,44 +32,43 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
       id: "dashboard", 
       label: "Início", 
       icon: LayoutDashboard,
-      color: "text-blue-400"
+      color: "text-[var(--ink-3)]"
     },
     { 
       id: "correcao", 
       label: "Nova Correção", 
       icon: PenTool,
-      color: "text-primary"
+      color: "text-[var(--red)]"
     },
     { 
       id: "historico", 
       label: "Minhas Redações", 
       icon: History,
-      color: "text-cyan-400"
+      color: "text-[var(--ink-2)]"
     },
     { 
       id: "progresso", 
       label: "Meu Progresso", 
       icon: TrendingUp,
-      color: "text-emerald-400"
+      color: "text-green-600"
     },
-
     { 
       id: "repertorios", 
       label: "Biblioteca de Repertórios", 
       icon: BookOpen,
-      color: "text-amber-400"
+      color: "text-amber-600"
     },
     { 
       id: "conectivos", 
       label: "Biblioteca de Conectivos", 
       icon: Zap,
-      color: "text-rose-400"
+      color: "text-[var(--red)]"
     },
     { 
       id: "upgrade", 
       label: "Plano PRO", 
       icon: Sparkles,
-      color: "text-yellow-400"
+      color: "text-amber-500"
     },
   ];
 

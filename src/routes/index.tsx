@@ -162,7 +162,7 @@ function Landing() {
             )}
             <p className="mt-6 text-sm font-bold text-[var(--ink-3)] uppercase tracking-widest flex items-center justify-center gap-2">
               <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              1.247 alunos corrigindo agora
+              {activeStudents} alunos corrigindo agora
             </p>
           </div>
         </div>

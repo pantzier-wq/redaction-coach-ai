@@ -1737,15 +1737,15 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
               </div>
 
               <div className="space-y-6">
-                <div className="p-8 rounded-[2rem] bg-muted/30 border-2 border-primary/20 relative group">
+                <div className="p-8 rounded-[2rem] bg-[var(--paper)] border-2 border-[var(--red)]/20 relative group shadow-sm">
                   <div className="flex justify-between items-start mb-6">
                     <div>
-                      <h4 className="text-2xl font-black text-primary tracking-tight">{currentResponse.repertorio.titulo}</h4>
-                      <p className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">{currentResponse.repertorio.autor}</p>
+                      <h4 className="font-['Fraunces'] text-2xl font-black text-[var(--red)] tracking-tight italic">{currentResponse.repertorio.titulo}</h4>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--ink-3)]">{currentResponse.repertorio.autor}</p>
                     </div>
                     <button 
                       onClick={() => navigator.clipboard.writeText(`${currentResponse.repertorio!.titulo} - ${currentResponse.repertorio!.autor}\n\n${currentResponse.repertorio!.exemplo}`)}
-                      className="p-3 rounded-xl bg-background border border-border text-muted-foreground hover:text-primary transition-all"
+                      className="p-3 rounded-xl bg-[var(--paper-2)] border border-[var(--line)] text-[var(--ink-2)] hover:text-[var(--red)] transition-all shadow-sm"
                     >
                       <Copy className="w-5 h-5" />
                     </button>
@@ -1753,16 +1753,16 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
 
                   <div className="space-y-6">
                     <div>
-                      <span className="text-[10px] font-black uppercase text-primary tracking-widest block mb-1">Conceito Chave</span>
-                      <p className="text-sm font-bold text-foreground leading-relaxed">{currentResponse.repertorio.ideia}</p>
+                      <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-[0.2em] block mb-1">Conceito Chave</span>
+                      <p className="text-sm font-bold text-[var(--ink)] leading-relaxed">{currentResponse.repertorio.ideia}</p>
                     </div>
                     <div>
-                      <span className="text-[10px] font-black uppercase text-primary tracking-widest block mb-1">Uso Produtivo</span>
-                      <p className="text-sm font-bold text-foreground leading-relaxed">{currentResponse.repertorio.relacao}</p>
+                      <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-[0.2em] block mb-1">Uso Produtivo</span>
+                      <p className="text-sm font-bold text-[var(--ink)] leading-relaxed">{currentResponse.repertorio.relacao}</p>
                     </div>
-                    <div className="p-5 rounded-2xl bg-primary/5 border border-primary/10">
-                      <span className="text-[10px] font-black uppercase text-primary tracking-widest block mb-2">Exemplo no Texto</span>
-                      <p className="text-sm font-medium italic text-foreground/90 leading-relaxed">"{currentResponse.repertorio.exemplo}"</p>
+                    <div className="p-6 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] shadow-inner italic">
+                      <span className="text-[9px] font-black uppercase text-[var(--red)] tracking-[0.2em] block mb-2 not-italic">Exemplo no Texto</span>
+                      <p className="text-sm font-medium text-[var(--ink)] leading-relaxed">"{currentResponse.repertorio.exemplo}"</p>
                     </div>
                   </div>
                 </div>

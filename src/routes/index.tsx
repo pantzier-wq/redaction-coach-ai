@@ -45,6 +45,7 @@ export const Route = createFileRoute("/")({
 function Landing() {
   const [session, setSession] = useState<any>(null);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [quizResult, setQuizResult] = useState<any>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -53,6 +54,15 @@ function Landing() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
+    
+    // Check if quiz was already taken
+    const saved = localStorage.getItem("quiz_answers");
+    if (saved) {
+      try {
+        setQuizResult(JSON.parse(saved));
+      } catch (e) {}
+    }
+
     return () => subscription.unsubscribe();
   }, []);
 
@@ -118,6 +128,57 @@ function Landing() {
             </p>
           </div>
         </div>
+      </section>
+
+      {quizResult && (
+        <section id="diagnostico" className="py-20 px-4 bg-[var(--paper)]">
+          <div className="mx-auto max-w-2xl bg-[var(--paper-2)] border border-[var(--line)] rounded-[2.5rem] p-8 md:p-12 shadow-[var(--paper-shadow)] animate-in fade-in slide-in-from-bottom-8 duration-700">
+            <h2 className="font-['Fraunces'] text-4xl md:text-5xl font-black mb-8 text-[var(--ink)] italic text-center underline decoration-[var(--red-soft)] underline-offset-8">
+              Seu diagnóstico
+            </h2>
+            
+            <div className="space-y-6 text-xl md:text-2xl font-medium text-[var(--ink-2)] leading-relaxed text-center">
+              <p>
+                Você escreveu <span className="font-black text-[var(--ink)]">
+                  {quizResult.essays_written || "algumas"} redações
+                </span> e <span className="font-black text-[var(--ink)]">
+                  {quizResult.essays_corrected?.toLowerCase() === "nenhuma" ? "nenhuma" : "quase nenhuma"}
+                </span> foi corrigida de verdade.
+              </p>
+              
+              <p>
+                Isso significa que você está treinando há meses sem saber se está melhorando ou repetindo o mesmo erro.
+              </p>
+              
+              <p className="text-[var(--red)] font-black italic">
+                Faltam {Math.max(0, Math.floor((new Date("2026-11-01").getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)))} dias para a sua prova.
+              </p>
+              
+              <div className="pt-8">
+                <p className="text-sm font-black uppercase tracking-[0.2em] text-[var(--ink-3)] mb-6">
+                  PRÓXIMO PASSO
+                </p>
+                <h3 className="text-[var(--ink)] font-black text-2xl mb-8">
+                  Cole sua redação abaixo e veja onde você está perdendo ponto.
+                </h3>
+                
+                <button
+                  onClick={() => {
+                    const el = document.getElementById("corrigir");
+                    if (el) el.scrollIntoView({ behavior: "smooth" });
+                  }}
+                  className="w-full rounded-2xl bg-[var(--ink)] py-5 text-lg font-black text-[var(--paper)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg"
+                >
+                  ACESSAR ÁREA DE REDAÇÃO <ArrowRight className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section id="corrigir" className="py-20 px-4 max-w-4xl mx-auto">
+        <EssaySubmissionArea isLoggedIn={!!session} isPro={false} />
       </section>
 
       <footer className="border-t border-[var(--line)] py-16 bg-[var(--paper-2)]">

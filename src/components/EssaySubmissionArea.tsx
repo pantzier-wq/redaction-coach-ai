@@ -88,9 +88,25 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
     setResult(null);
     setShowPaywall(false);
 
-    // Usuário logado sem plano ativo ou sem créditos:
-    // mostramos o carregamento (mesma experiência da primeira correção) e,
-    // ao final, exibimos as ofertas em vez do resultado.
+    // Salva a redação para processar depois do diagnóstico (se necessário)
+    localStorage.setItem("pending_submission", JSON.stringify({ tema, redacao }));
+
+    // Se o usuário não estiver logado e ainda não viu o diagnóstico do quiz, 
+    // ou se estamos seguindo o novo fluxo de "Quiz -> Diagnóstico -> Redação -> Paywall"
+    const quizAnswers = localStorage.getItem("quiz_answers");
+    if (!isLoggedIn && quizAnswers) {
+      // Mostra o carregamento antes do paywall/resultado
+      setLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 25000));
+      setLoading(false);
+      setShowPaywall(true);
+      setTimeout(
+        () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
+        100,
+      );
+      return;
+    }
+
     if (isLoggedIn && !canCorrect) {
       setLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 25000));

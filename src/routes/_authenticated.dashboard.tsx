@@ -422,69 +422,53 @@ function Dashboard() {
 
 
                   {/* COMBO NOTA 1000 - Premium */}
-                  <div className="flex flex-col rounded-3xl border-2 border-primary bg-primary/10 p-8 relative overflow-hidden group shadow-[0_0_60px_rgba(var(--primary-rgb),0.3)] scale-[1.05]">
+                   <div className="flex flex-col rounded-3xl border-2 border-[var(--red)] bg-[var(--red)]/5 p-8 relative overflow-hidden group shadow-[0_20px_40px_-12px_rgba(196,50,42,0.15)] scale-[1.05]">
                     
                     <div className="mb-6 flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-[#22c55e] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(34,197,94,0.5)]">
+                      <div className="h-12 w-12 rounded-2xl bg-[var(--red)] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(196,50,42,0.4)]">
                         <Sparkles className="w-6 h-6 text-white animate-pulse" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-black text-white leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
-                        <p className="text-xs font-bold text-primary leading-tight">Acesso Total + Bônus</p>
+                        <h3 className="text-xl font-black text-[var(--ink)] leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
+                        <p className="text-xs font-bold text-[var(--red)] leading-tight uppercase tracking-[0.1em]">Acesso Total + Bônus</p>
                       </div>
                     </div>
 
-                    <div className="mb-6 grid grid-cols-3 gap-3">
+                    <ul className="space-y-4 mb-8 flex-1">
                       {[
-                        { n: "∞", l: "Correções" },
-                        { n: "70+", l: "Repertórios" },
-                        { n: "2", l: "IAs Bônus" },
-                      ].map((s) => (
-                        <div key={s.l} className="rounded-2xl bg-[#22c55e]/10 border border-[#22c55e]/20 py-3 text-center">
-                          <div className="text-2xl font-black text-[#22c55e] leading-none">{s.n}</div>
-                          <div className="text-[9px] font-bold uppercase tracking-widest text-white/60 mt-1">{s.l}</div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <ul className="space-y-3.5 mb-8 flex-1">
-                      {[
-                        { t: "Correções ILIMITADAS para sempre", d: "Sem créditos e sem o limite de 20 do plano básico." },
-                        { t: "IA de Repertório Sociocultural", d: "Cria repertório legitimado e pertinente para qualquer tema." },
-                        { t: "Laboratório de Conectivos (IA)", d: "Analisa suas frases e blinda sua Competência 4." },
-                        { t: "70+ Repertórios Coringas", d: "Biblioteca validada que encaixa em qualquer proposta." },
-                        { t: "Biblioteca de Conectivos + Treino", d: "Quiz e flashcards para nunca mais repetir palavras." },
-                        { t: "Histórico de até 50 redações", d: "Gráfico de evolução por competência, nota a nota." },
+                        { t: "Correções ILIMITADAS Vitalícias", d: "Treine sem limites até o dia da prova." },
+                        { t: "Laboratório de Conectivos IA", d: "Analise sua coesão textual instantaneamente." },
+                        { t: "Gerador de Repertório Coringa", d: "Repertórios que encaixam em qualquer tema." },
+                        { t: "70+ Repertórios Legitimados", d: "Biblioteca exclusiva validada por corretores." },
+                        { t: "Histórico Completo", d: "Gráfico de evolução e acompanhamento nota a nota." },
                       ].map((b) => (
                         <li key={b.t} className="flex items-start gap-3">
-                          <div className="h-5 w-5 rounded-full bg-[#22c55e] flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_15px_rgba(34,197,94,0.4)]">
-                            <span className="text-white text-[10px] font-black">✓</span>
-                          </div>
-                          <div className="flex flex-col leading-tight">
-                            <span className="text-[#22c55e] font-black uppercase text-[11px] tracking-wide">{b.t}</span>
-                            <p className="text-[12px] text-white/70 font-semibold leading-snug">{b.d}</p>
+                          <span className="mt-0.5 h-6 w-6 shrink-0 rounded-full bg-[var(--red)] text-white text-xs font-black flex items-center justify-center shadow-sm">✓</span>
+                          <div className="leading-tight">
+                            <div className="text-sm font-black text-[var(--ink)]">{b.t}</div>
+                            <div className="text-[11px] font-medium text-[var(--ink-2)] mt-0.5">{b.d}</div>
                           </div>
                         </li>
                       ))}
                     </ul>
 
                     <div className="mt-auto">
-                      <div className="mb-4 rounded-2xl border border-[#22c55e]/20 bg-[#22c55e]/5 p-4">
-                        <div className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-                          <span className="whitespace-nowrap text-sm font-bold text-[#22c55e]/60 line-through italic uppercase tracking-widest">R$ 59,00</span>
-                          <span className="whitespace-nowrap text-4xl font-black text-[#22c55e] drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">R$ 39,00</span>
-                        </div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mt-1">
-                          Pagamento único • Acesso vitalício • Desconto de R$ 20,00
-                        </p>
+                      <div className="flex items-baseline gap-2 mb-6 justify-center">
+                        <span className="text-lg font-bold text-[var(--ink-3)] line-through italic">R$ 59,00</span>
+                        <span className="text-4xl font-black text-[var(--ink)] drop-shadow-sm">R$ 39,00</span>
                       </div>
                       <button
                         onClick={() => handleTestPurchase('full')}
-                        className="w-full py-4 rounded-xl bg-[#22c55e] text-white font-black text-sm uppercase tracking-[0.2em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_12px_40px_rgba(34,197,94,0.4)] relative overflow-hidden"
+                        disabled={(profile as any)?.has_full_access}
+                        className="w-full py-5 rounded-xl bg-[var(--red)] text-white font-black text-sm uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-[0_10px_25px_rgba(196,50,42,0.4)] disabled:opacity-40 disabled:cursor-not-allowed"
                       >
-                        <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
-                        GARANTIR COMBO COMPLETO →
+                        {(profile as any)?.has_full_access ? "COMBO ATIVO" : "GARANTIR MEU COMBO →"}
                       </button>
+                    </div>
+
+                    {/* Badge de destaque */}
+                    <div className="absolute top-4 right-[-40px] rotate-45 bg-[var(--red)] text-white text-[10px] font-black py-1.5 px-12 uppercase tracking-[0.2em] shadow-md">
+                      RECOMENDADO
                     </div>
                   </div>
                 </div>

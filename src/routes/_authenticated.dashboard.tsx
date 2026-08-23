@@ -680,7 +680,7 @@ function ConectivosIA() {
             value={frase}
             onChange={(e) => setFrase(e.target.value)}
             placeholder="Ex: No entanto, é necessário que o governo invista em educação..."
-            className="w-full min-h-[120px] p-5 rounded-2xl bg-background border-2 border-border focus:border-primary outline-none transition-all font-bold text-sm"
+            className="w-full min-h-[120px] p-5 rounded-2xl bg-[var(--paper)] border-2 border-[var(--line)] focus:border-[var(--red)] outline-none transition-all font-bold text-sm text-[var(--ink)] placeholder:text-[var(--ink-3)]/40 shadow-inner"
           />
           <button
             type="button"
@@ -690,10 +690,10 @@ function ConectivosIA() {
             }}
             disabled={isAnalyzing || frase.length < 10}
             className={cn(
-              "absolute bottom-4 right-4 px-6 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all z-20",
+              "absolute bottom-4 right-4 px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all z-20 shadow-md",
               isAnalyzing || frase.length < 10 
-                ? "bg-muted text-muted-foreground cursor-not-allowed" 
-                : "bg-primary text-primary-foreground hover:scale-105 shadow-lg active:scale-95"
+                ? "bg-[var(--line)] text-[var(--ink-3)] cursor-not-allowed" 
+                : "bg-[var(--ink)] text-[var(--paper)] hover:scale-105 active:scale-95"
             )}
           >
             Analisar Frase
@@ -702,23 +702,23 @@ function ConectivosIA() {
       )}
 
       {isAnalyzing && (
-        <div className="py-12 flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-500 bg-primary/5 rounded-3xl border-2 border-dashed border-primary/20">
+        <div className="py-12 flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-500 bg-[var(--red)]/5 rounded-3xl border-2 border-dashed border-[var(--red)]/20 shadow-sm">
           <div className="relative">
-            <div className="w-16 h-16 rounded-full border-4 border-primary/10 border-t-primary animate-spin" />
-            <Sparkles className="w-6 h-6 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+            <div className="w-16 h-16 rounded-full border-4 border-[var(--red)]/10 border-t-[var(--red)] animate-spin" />
+            <Sparkles className="w-6 h-6 text-[var(--red)] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
           </div>
           <div className="w-full max-w-md px-8 space-y-2">
-            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-primary">
+            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-[var(--red)]">
               <span>IA Analisando conectivos</span>
               <span>{progress}%</span>
             </div>
-            <div className="h-3 w-full bg-primary/10 rounded-full overflow-hidden border border-primary/20">
+            <div className="h-3 w-full bg-[var(--red)]/10 rounded-full overflow-hidden border border-[var(--red)]/20 shadow-inner">
               <div 
-                className="h-full bg-gradient-to-r from-primary/80 to-primary transition-all duration-300 ease-out" 
+                className="h-full bg-[var(--red)] transition-all duration-300 ease-out shadow-[0_0_10px_rgba(196,50,42,0.3)]" 
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <p className="text-center text-xs text-muted-foreground font-bold animate-pulse mt-4">
+            <p className="text-center text-xs text-[var(--ink-2)] font-bold animate-pulse mt-4 italic">
               Avaliando a coesão e buscando melhorias...
             </p>
           </div>

@@ -393,7 +393,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
                   {semCreditos && (
                     <div className="mb-8">
-                      <p className="text-[11px] font-black uppercase tracking-widest text-white/50 mb-3 text-center">
+                      <p className="text-[11px] font-black uppercase tracking-widest text-[var(--ink-3)] mb-3 text-center">
                         Recarregue seus créditos
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -405,17 +405,17 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                           <button
                             key={pack.qtd}
                             onClick={() => handleBuyCredits(pack.qtd)}
-                            className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center hover:border-[#22c55e]/50 hover:bg-white/10 transition-all"
+                            className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-4 text-center hover:border-[var(--red)] hover:bg-[var(--paper-2)]/80 transition-all shadow-sm"
                           >
-                            <div className="text-lg font-black text-white">{pack.qtd} correções</div>
-                            <div className="text-sm font-black text-[#22c55e]">{pack.preco}</div>
-                            <div className="mt-2 rounded-lg bg-[#22c55e]/15 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-[#22c55e]">
+                            <div className="text-lg font-black text-[var(--ink)]">{pack.qtd} correções</div>
+                            <div className="text-sm font-black text-[var(--red)]">{pack.preco}</div>
+                            <div className="mt-2 rounded-lg bg-[var(--red)]/10 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-[var(--red)]">
                               Obtenha clicando aqui
                             </div>
                           </button>
                         ))}
                       </div>
-                      <p className="mt-3 text-center text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                      <p className="mt-3 text-center text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-widest">
                         Créditos disponíveis apenas para quem tem o Plano Essencial
                       </p>
                     </div>

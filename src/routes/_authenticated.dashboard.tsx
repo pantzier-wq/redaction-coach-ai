@@ -1648,26 +1648,26 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
                 <div className="w-16 h-16 bg-[var(--red)]/10 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
                   <Sparkles className="w-8 h-8 text-[var(--red)]" />
                 </div>
-                <h3 className="text-3xl font-black mb-2">Gerador de Repertório IA</h3>
-                <p className="text-muted-foreground font-medium">Vamos criar o repertório perfeito para o seu texto.</p>
+                <h3 className="font-['Fraunces'] text-3xl font-black mb-2 text-[var(--ink)] italic">Gerador de Repertório IA</h3>
+                <p className="text-[var(--ink-2)] font-medium italic">Vamos criar o repertório perfeito para o seu texto.</p>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <label className="text-[10px] font-black uppercase text-primary tracking-widest block mb-2 ml-1">Sobre o que é seu texto? (Tema)</label>
+                  <label className="text-[9px] font-black uppercase text-[var(--red)] tracking-widest block mb-2 ml-1">Sobre o que é seu texto? (Tema)</label>
                   <input 
                     value={tema}
                     onChange={e => setTema(e.target.value)}
                     placeholder="Ex: O impacto das redes sociais na saúde mental dos jovens"
-                    className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-border focus:border-primary outline-none transition-all font-bold"
+                    className="w-full px-6 py-4 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] focus:border-[var(--red)] outline-none transition-all font-bold text-[var(--ink)] placeholder:text-[var(--ink-3)]/40 shadow-inner"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-black uppercase text-primary tracking-widest block mb-2 ml-1">Alguma preferência de gênero?</label>
+                  <label className="text-[9px] font-black uppercase text-[var(--red)] tracking-widest block mb-2 ml-1">Alguma preferência de gênero?</label>
                   <select 
                     value={genero}
                     onChange={e => setGenero(e.target.value)}
-                    className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-border focus:border-primary outline-none transition-all font-black uppercase text-xs tracking-widest"
+                    className="w-full px-6 py-4 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] focus:border-[var(--red)] outline-none transition-all font-black uppercase text-xs tracking-widest text-[var(--ink)] cursor-pointer shadow-sm"
                   >
                     <option value="">Nenhuma (IA escolhe)</option>
                     <option value="filosofia">Filosofia/Sociologia</option>
@@ -1683,9 +1683,9 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
                     console.log("Clique detectado no COMEÇAR FUNIL");
                     handleGenerate();
                   }}
-                  className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-black text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
+                  className="w-full py-5 rounded-2xl bg-[var(--ink)] text-[var(--paper)] font-black text-[10px] uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-lg disabled:opacity-50 flex items-center justify-center gap-3"
                 >
-                  {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" /> : <><Zap className="w-5 h-5" /> COMEÇAR FUNIL</>}
+                  {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-[var(--paper)]/30 border-t-[var(--paper)]" /> : <><Zap className="w-5 h-5 text-[var(--red)]" /> COMEÇAR FUNIL</>}
                 </button>
               </div>
             </div>

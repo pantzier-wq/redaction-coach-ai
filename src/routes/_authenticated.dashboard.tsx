@@ -1347,31 +1347,31 @@ function RepertoriosLibrary() {
 
       {/* Search and Filters */}
 
-      <div className="flex flex-col gap-6 p-4 md:p-8 rounded-[2rem] bg-card border border-border">
+      <div className="flex flex-col gap-6 p-6 md:p-10 rounded-[2.5rem] bg-[var(--paper)] border border-[var(--line)] shadow-sm">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-[var(--ink-3)]" />
           <input 
             type="text" 
             placeholder="Pesquise por autor, obra, tema ou argumento..."
-            className="w-full pl-14 pr-4 py-5 rounded-2xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold text-lg"
+            className="w-full pl-14 pr-4 py-5 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] focus:border-[var(--red)] focus:ring-1 focus:ring-[var(--red)] outline-none transition-all font-bold text-lg text-[var(--ink)] placeholder:text-[var(--ink-3)]/40 shadow-inner"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
-            <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] block mb-3 ml-1">Filtrar por Tipo</span>
+            <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-[0.2em] block mb-3 ml-1">Filtrar por Tipo</span>
             <div className="flex flex-wrap gap-2">
               {types.map(t => (
                 <button
                   key={t.id}
                   onClick={() => setActiveType(t.id)}
                   className={cn(
-                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm",
                     activeType === t.id 
-                      ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]" 
-                      : "bg-muted text-muted-foreground hover:text-foreground border border-transparent"
+                      ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)]" 
+                      : "bg-[var(--paper-2)] text-[var(--ink-3)] hover:text-[var(--ink)] border border-[var(--line)]"
                   )}
                 >
                   {t.label}
@@ -1381,7 +1381,7 @@ function RepertoriosLibrary() {
           </div>
 
           <div>
-            <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] block mb-3 ml-1">Filtrar por Eixo Temático</span>
+            <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-[0.2em] block mb-3 ml-1">Filtrar por Eixo Temático</span>
             <div className="flex flex-wrap gap-2">
               {eixos.map(e => (
                 <button

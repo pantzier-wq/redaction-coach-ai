@@ -1163,20 +1163,20 @@ function ConectivosTraining() {
   const q = questions[currentStep];
 
   return (
-    <div className="p-8 rounded-[2rem] border-2 border-[#22c55e]/20 bg-[#22c55e]/5">
+    <div className="p-8 rounded-[2.5rem] border border-[var(--line)] bg-[var(--paper)] shadow-sm">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-black text-[#22c55e] flex items-center gap-2">
+        <h3 className="font-['Fraunces'] text-xl font-black text-green-700 flex items-center gap-2 italic">
           <Play className="w-6 h-6" /> Treino de Conectivos ({currentStep + 1}/{questions.length})
         </h3>
-        <div className="px-3 py-1 rounded-full bg-[#22c55e]/10 text-[#22c55e] text-[10px] font-black uppercase">
+        <div className="px-3 py-1 rounded-full bg-green-50 text-green-700 text-[9px] font-black uppercase tracking-widest border border-green-100 shadow-inner">
           Score: {score}
         </div>
       </div>
 
       <div className="mb-8">
-        <p className="text-lg font-bold text-foreground leading-relaxed">
+        <p className="text-lg font-bold text-[var(--ink)] leading-relaxed">
           Qual conectivo melhor preenche a lacuna? <br/>
-          <span className="text-muted-foreground mt-4 block italic bg-background/30 p-4 rounded-xl border border-border/50">
+          <span className="text-[var(--ink-2)] mt-4 block italic bg-[var(--paper-2)] p-6 rounded-2xl border border-[var(--line)]/50 shadow-inner">
             "{q.text}"
           </span>
         </p>

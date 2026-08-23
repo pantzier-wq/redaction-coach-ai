@@ -64,8 +64,9 @@ function Landing() {
       {showQuiz && (
         <Quiz 
           onClose={() => setShowQuiz(false)} 
-          onComplete={() => {
+          onComplete={(answers) => {
             setShowQuiz(false);
+            localStorage.setItem("quiz_answers", JSON.stringify(answers));
             const el = document.getElementById("corrigir");
             if (el) el.scrollIntoView({ behavior: "smooth" });
           }}

@@ -13,40 +13,40 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
 
   const questions = [
     {
-      id: "curso",
-      question: "Qual curso você quer passar?",
-      type: "text",
-      placeholder: "Ex: Medicina, Direito, Engenharia...",
-    },
-    {
-      id: "dificuldade",
-      question: "Qual sua maior dificuldade hoje na redação?",
+      id: "enem_date",
+      question: "Quando você faz o ENEM?",
       type: "options",
-      options: ["Introdução", "Desenvolvimento", "Proposta de Intervenção", "Gramática e Norma Culta"],
+      options: ["Esse ano", "Ano que vem", "Ainda vou decidir"],
     },
     {
-      id: "frequencia",
-      question: "Quantas redações você faz por mês?",
+      id: "essays_written",
+      question: "Quantas redações você já escreveu treinando?",
       type: "options",
-      options: ["0 (Ainda não comecei)", "1 a 2", "3 a 4", "Mais de 4"],
+      options: ["Nenhuma ainda", "Menos de 5", "Entre 5 e 15", "Mais de 15"],
     },
     {
-      id: "nota",
-      question: "Qual foi sua última nota no simulado ou ENEM?",
+      id: "essays_corrected",
+      question: "E dessas, quantas alguém corrigiu de verdade?",
       type: "options",
-      options: ["Menos de 600", "Entre 600 e 800", "Acima de 800", "Nunca fiz"],
+      options: ["Todas", "Algumas", "Quase nenhuma", "Nenhuma"],
     },
     {
-      id: "tempo",
-      question: "Você sente que o tempo é seu maior inimigo agora?",
+      id: "understand_grade",
+      question: "Quando você recebe uma nota, você entende por que tirou aquela nota?",
       type: "options",
-      options: ["Sim, estou desesperado(a)", "Um pouco", "Não, estou tranquilo(a)"],
+      options: ["Sim, sempre me explicam", "Mais ou menos", "Não, só recebo o número"],
     },
     {
-      id: "pronto",
-      question: "Pronto para descobrir sua nota real e o que falta para o 1000?",
-      type: "final",
-      cta: "SIM, QUERO MINHA NOTA AGORA!",
+      id: "score_increase",
+      question: "Se você soubesse exatamente onde perde ponto, quanto acha que sua nota subiria?",
+      type: "options",
+      options: ["Uns 50 pontos", "Entre 100 e 200", "Mais de 200"],
+    },
+    {
+      id: "current_estimate",
+      question: "Chuta: de 0 a 1000, quanto sua redação tira hoje?",
+      type: "options",
+      options: ["Menos de 600", "600 a 800", "800 a 900", "Mais de 900"],
     },
   ];
 
@@ -117,16 +117,16 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
             )}
 
             {current.type === "options" && (
-              <div className="grid gap-3">
+              <div className="grid gap-4">
                 {current.options?.map((opt) => (
                   <button
                     key={opt}
                     onClick={() => next(opt)}
-                    className="w-full rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 px-6 py-5 text-left text-lg font-bold text-[var(--ink-2)] hover:bg-[var(--paper-2)] hover:border-[var(--red)] hover:text-[var(--red)] transition-all flex items-center justify-between group"
+                    className="w-full rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 px-8 py-6 text-left text-xl font-black text-[var(--ink)] hover:bg-[var(--paper-2)] hover:border-[var(--red)] hover:text-[var(--red)] transition-all flex items-center justify-between group shadow-sm"
                   >
                     {opt}
-                    <div className="w-6 h-6 rounded-full border-2 border-[var(--line)] group-hover:border-[var(--red)] group-hover:bg-[var(--red)] flex items-center justify-center transition-all">
-                      <CheckCircle2 className="w-4 h-4 text-[var(--paper)] opacity-0 group-hover:opacity-100" />
+                    <div className="w-8 h-8 rounded-full border-2 border-[var(--line)] group-hover:border-[var(--red)] group-hover:bg-[var(--red)] flex items-center justify-center transition-all">
+                      <CheckCircle2 className="w-5 h-5 text-[var(--paper)] opacity-0 group-hover:opacity-100" />
                     </div>
                   </button>
                 ))}

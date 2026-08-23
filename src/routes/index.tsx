@@ -76,9 +76,12 @@ function Landing() {
           onClose={() => setShowQuiz(false)} 
           onComplete={(answers) => {
             setShowQuiz(false);
+            setQuizResult(answers);
             localStorage.setItem("quiz_answers", JSON.stringify(answers));
-            const el = document.getElementById("corrigir");
-            if (el) el.scrollIntoView({ behavior: "smooth" });
+            setTimeout(() => {
+              const el = document.getElementById("diagnostico");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }, 100);
           }}
         />
       )}

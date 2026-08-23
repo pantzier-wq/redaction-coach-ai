@@ -82,7 +82,7 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
               />
             ))}
           </div>
-          <button onClick={onClose} className="text-[var(--ink-3)] hover:text-[var(--red)] transition-colors">
+          <button onClick={onClose} className="text-[var(--ink-3)] hover:text-[var(--red)] transition-colors p-2 hover:bg-[var(--line)]/10 rounded-full">
             <X className="w-6 h-6" />
           </button>
         </div>

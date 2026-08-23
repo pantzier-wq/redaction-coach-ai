@@ -1817,29 +1817,33 @@ interface LockedLibraryOfferProps {
 function LockedLibraryOffer({ titulo, descricao, itens, onBuy, onSeePlans }: LockedLibraryOfferProps) {
   return (
     <div className="relative -mt-2">
-      <div className="rounded-[2rem] border-2 border-secondary/40 bg-card p-6 md:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/25 border border-secondary/60 text-foreground text-[11px] font-black uppercase tracking-widest mb-4">
-          <Sparkles className="w-3.5 h-3.5 text-secondary" /> Acesso liberado no Combo Nota 1000
+      <div className="rounded-[2.5rem] border-2 border-[var(--red)]/40 bg-[var(--paper)] p-6 md:p-10 shadow-[0_30px_60px_-15px_rgba(196,50,42,0.15)] relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+          <Sparkles className="w-64 h-64 text-[var(--red)]" />
+        </div>
+        
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--red)] text-white text-[10px] font-black uppercase tracking-widest mb-6 shadow-sm">
+          <Sparkles className="w-3.5 h-3.5 text-white animate-pulse" /> Acesso liberado no Combo Nota 1000
         </div>
 
 
-        <h3 className="text-2xl md:text-3xl font-black tracking-tight mb-3">{titulo}</h3>
-        <p className="text-base text-muted-foreground leading-relaxed mb-8 max-w-2xl">{descricao}</p>
+        <h3 className="font-['Fraunces'] text-2xl md:text-4xl font-black tracking-tight mb-3 text-[var(--ink)] italic">{titulo}</h3>
+        <p className="text-base text-[var(--ink-2)] font-medium leading-relaxed mb-8 max-w-2xl">{descricao}</p>
 
-        <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
           {itens.map((item) => (
-            <li key={item} className="flex items-start gap-3 text-sm md:text-base font-bold text-foreground">
-              <Check className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+            <li key={item} className="flex items-start gap-3 text-sm md:text-base font-bold text-[var(--ink)]">
+              <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-green-600 text-white text-[10px] font-black flex items-center justify-center shadow-sm">✓</span>
               <span>{item}</span>
             </li>
           ))}
         </ul>
 
-        <div className="flex flex-col md:flex-row md:items-center gap-6 pt-6 border-t border-border">
+        <div className="flex flex-col md:flex-row md:items-center gap-8 pt-8 border-t border-[var(--line)]">
           <div>
-            <p className="whitespace-nowrap text-sm text-foreground/70 line-through font-bold">De R$ 59,90</p>
-            <p className="whitespace-nowrap text-4xl font-black text-foreground leading-none drop-shadow-[0_0_12px_rgba(255,255,255,0.15)]">R$ 39,00</p>
-            <p className="text-sm text-foreground/90 font-bold mt-1">Pagamento único • acesso vitalício</p>
+            <p className="whitespace-nowrap text-sm text-[var(--ink-3)] line-through font-bold italic">De R$ 59,90</p>
+            <p className="whitespace-nowrap text-5xl font-black text-[var(--ink)] leading-none mt-1 tracking-tight">R$ 39,00</p>
+            <p className="text-[10px] text-[var(--red)] font-black uppercase tracking-[0.2em] mt-3">Pagamento único • acesso vitalício</p>
           </div>
 
           <div className="flex-1 flex flex-col sm:flex-row gap-3 md:justify-end">

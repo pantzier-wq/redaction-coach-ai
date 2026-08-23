@@ -198,12 +198,6 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         setShowPaywall(false);
       }
       
-      if (!isLoggedIn) {
-        setTimeout(
-          () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
-          100,
-        );
-      }
       
       if (onSuccess) {
         onSuccess(correctionData);

@@ -76,7 +76,7 @@ function Landing() {
 
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-['Public_Sans'] selection:bg-[var(--red-soft)] selection:text-[var(--red)]">
-      teste
+       Atualmente o fluxo, é, que o lead ele tá ali na página, ele clica no botão, ele responde todas as perguntas do quiz. Após ele responder, tem aquela análise visual, é, aquela co-- é aquela barra de progresso, né? Quando passa isso, aparece a headline, aparece subheadline, tá aparecendo essa área de redação, tá aparecendo a parte lá de baixo de suporte. Eu não quero na-- que apareça nada disso. Eu só quero que apareça o diagnóstico, somente isso
       {showQuiz && (
         <Quiz
           onClose={() => setShowQuiz(false)}

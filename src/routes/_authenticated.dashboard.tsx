@@ -1730,11 +1730,11 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
           {!loading && step === 3 && currentResponse?.repertorio && (
             <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
               <div className="text-center">
-                <div className="w-16 h-16 bg-[#22c55e]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Check className="w-8 h-8 text-[#22c55e]" />
+                <div className="w-16 h-16 bg-green-50 border border-green-200 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <Check className="w-8 h-8 text-green-700" />
                 </div>
-                <h3 className="text-2xl font-black">Repertório Finalizado!</h3>
-                <p className="text-muted-foreground font-medium italic">"{currentResponse.message}"</p>
+                <h3 className="font-['Fraunces'] text-2xl font-black text-[var(--ink)] italic">Repertório Finalizado!</h3>
+                <p className="text-[var(--ink-2)] font-medium italic">"{currentResponse.message}"</p>
               </div>
 
               <div className="space-y-6">

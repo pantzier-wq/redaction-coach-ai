@@ -47,6 +47,7 @@ function Landing() {
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizResult, setQuizResult] = useState<Record<string, string> | null>(null);
   const [isAnalyzingQuiz, setIsAnalyzingQuiz] = useState(false);
+  const [showEssayForm, setShowEssayForm] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {

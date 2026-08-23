@@ -321,7 +321,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
             `}</style>
           </div>
         ) : (
-          <div className="relative w-full space-y-8">
+          <div id="corrigir" className="relative w-full space-y-8">
             {typeof window !== 'undefined' && localStorage.getItem("quiz_answers") && (
               <div className="bg-[var(--paper-2)] border border-[var(--line)] rounded-3xl p-6 shadow-sm mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div className="flex items-center gap-2 text-[var(--red)] font-black uppercase tracking-widest text-xs mb-4">

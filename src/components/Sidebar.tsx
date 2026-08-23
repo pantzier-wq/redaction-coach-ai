@@ -79,38 +79,38 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
       {/* Mobile Toggle */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed top-6 left-6 z-[60] md:hidden p-3 bg-card/90 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl hover:bg-muted transition-all active:scale-95 group"
+        className="fixed top-6 left-6 z-[60] md:hidden p-3 bg-[var(--paper)]/90 backdrop-blur-md border border-[var(--line)] rounded-2xl shadow-xl hover:bg-[var(--paper-2)] transition-all active:scale-95 group"
       >
-        {isOpen ? <X className="w-6 h-6 text-primary" /> : <Menu className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />}
+        {isOpen ? <X className="w-6 h-6 text-[var(--red)]" /> : <Menu className="w-6 h-6 text-[var(--red)] group-hover:scale-110 transition-transform" />}
       </button>
 
       {/* Overlay for mobile */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-background/80 backdrop-blur-sm z-[50] md:hidden"
+          className="fixed inset-0 bg-[var(--paper)]/80 backdrop-blur-sm z-[50] md:hidden"
           onClick={closeSidebar}
         />
       )}
 
       {/* Sidebar Container */}
       <aside className={cn(
-        "fixed top-0 left-0 z-[55] h-screen w-64 bg-card border-r border-border transition-transform duration-300 md:translate-x-0 flex flex-col",
+        "fixed top-0 left-0 z-[55] h-screen w-64 bg-[var(--paper)] border-r border-[var(--line)] transition-transform duration-300 md:translate-x-0 flex flex-col shadow-sm",
         isOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         {/* Logo Section */}
-        <div className="p-6 border-b border-border">
+        <div className="p-6 border-b border-[var(--line)]">
           <Link to="/" className="flex items-center gap-2" onClick={closeSidebar}>
-            <span className="text-2xl font-black italic tracking-tighter">
-              CORRIGE<span className="text-primary">AI</span>
+            <span className="font-['Fraunces'] text-2xl font-black italic tracking-tighter text-[var(--ink)]">
+              CORRIGE<span className="text-[var(--red)]">AI</span>
             </span>
           </Link>
-          <div className="mt-4 flex items-center gap-3 p-3 rounded-xl bg-muted/50 border border-border/50">
-            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold shrink-0">
+          <div className="mt-4 flex items-center gap-3 p-3 rounded-xl bg-[var(--paper-2)] border border-[var(--line)] shadow-inner">
+            <div className="h-8 w-8 rounded-full bg-[var(--red)]/10 border border-[var(--red)]/20 flex items-center justify-center text-[var(--red)] font-bold shrink-0">
               <User className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-black truncate">{profile?.full_name?.split(' ')[0] || 'Estudante'}</p>
-              <p className="text-[10px] text-primary font-black uppercase tracking-tighter">
+              <p className="text-xs font-black truncate text-[var(--ink)]">{profile?.full_name?.split(' ')[0] || 'Estudante'}</p>
+              <p className="text-[10px] text-[var(--red)] font-black uppercase tracking-widest">
                 {profile?.has_full_access ? "PRO COMPLETO" : profile?.is_pro ? "PRO BÁSICO" : "VIP FREE"}
               </p>
             </div>

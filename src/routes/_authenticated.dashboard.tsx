@@ -256,21 +256,21 @@ function Dashboard() {
                           localStorage.setItem("viewing_essay", JSON.stringify(essay));
                         }
                       }}
-                      className="rounded-2xl border border-border bg-card p-4 md:p-6 hover:border-primary/50 transition-all hover:scale-[1.01] cursor-pointer group w-full box-border overflow-hidden"
+                      className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 p-4 md:p-6 hover:border-[var(--red)]/50 transition-all hover:scale-[1.01] cursor-pointer group w-full box-border overflow-hidden shadow-sm"
                     >
                       <div className="flex justify-between items-center gap-4">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="h-10 w-10 shrink-0 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black">
+                          <div className="h-10 w-10 shrink-0 rounded-xl bg-[var(--paper-2)] border border-[var(--line)] flex items-center justify-center text-[var(--red)] font-black shadow-inner">
                             {new Date(essay.created_at).getDate()}
                           </div>
                           <div className="min-w-0">
-                            <h3 className="font-bold truncate group-hover:text-primary transition-colors pr-2">{essay.tema}</h3>
-                            <p className="text-[10px] md:text-xs text-muted-foreground">
+                            <h3 className="font-bold truncate group-hover:text-[var(--red)] transition-colors pr-2 text-[var(--ink)]">{essay.tema}</h3>
+                            <p className="text-[10px] md:text-xs text-[var(--ink-3)] font-medium">
                               {new Date(essay.created_at).toLocaleDateString('pt-BR')} • {essay.redacao.length} caracteres
                             </p>
                           </div>
                         </div>
-                        <div className="text-2xl md:text-3xl font-black text-primary shrink-0">
+                        <div className="text-2xl md:text-3xl font-black text-[var(--red)] shrink-0">
                           {(essay.resultado as Correcao).nota_total}
                         </div>
                       </div>

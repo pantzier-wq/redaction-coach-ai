@@ -1933,9 +1933,9 @@ function ProgressSection({ essays, onGoToCorrection }: ProgressSectionProps) {
         ))}
       </div>
 
-      <div className="rounded-[2rem] border border-border bg-card p-4 md:p-8 mb-8">
-        <h3 className="text-xl font-black mb-1">Evolução das notas</h3>
-        <p className="text-sm text-muted-foreground font-bold mb-6">
+      <div className="rounded-[2rem] border border-[var(--line)] bg-[var(--paper)] p-4 md:p-8 mb-8 shadow-sm">
+        <h3 className="font-['Fraunces'] text-xl font-black mb-1 text-[var(--ink)]">Evolução das notas</h3>
+        <p className="text-sm text-[var(--ink-2)] font-bold mb-6 italic">
           {evolucao >= 0
             ? `Você subiu ${evolucao} pontos desde a primeira correção.`
             : `Você caiu ${Math.abs(evolucao)} pontos desde a primeira correção. Bora treinar.`}
@@ -1943,22 +1943,22 @@ function ProgressSection({ essays, onGoToCorrection }: ProgressSectionProps) {
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" />
-              <XAxis dataKey="nome" stroke="#ffffff" tick={{ fill: "#ffffff", fontWeight: 700 }} fontSize={12} />
-              <YAxis domain={[0, 1000]} stroke="#ffffff" tick={{ fill: "#ffffff", fontWeight: 700 }} fontSize={12} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" />
+              <XAxis dataKey="nome" stroke="var(--ink-3)" tick={{ fill: "var(--ink-3)", fontWeight: 700 }} fontSize={12} />
+              <YAxis domain={[0, 1000]} stroke="var(--ink-3)" tick={{ fill: "var(--ink-3)", fontWeight: 700 }} fontSize={12} />
               <Tooltip
                 contentStyle={{
-                  background: "#0f172a",
-                  border: "1px solid rgba(255,255,255,0.2)",
+                  background: "var(--paper)",
+                  border: "1px solid var(--line)",
                   borderRadius: "12px",
-                  color: "#ffffff",
+                  color: "var(--ink)",
                 }}
-                itemStyle={{ color: "#ffffff", fontWeight: 700 }}
-                labelStyle={{ color: "#ffffff", fontWeight: 700 }}
+                itemStyle={{ color: "var(--ink)", fontWeight: 700 }}
+                labelStyle={{ color: "var(--ink)", fontWeight: 700 }}
                 formatter={(value: any) => [`${value} pontos`, "Nota"]}
                 labelFormatter={(label: any, payload: any) => payload?.[0]?.payload?.data || label}
               />
-              <Line type="monotone" dataKey="nota" stroke="#ffffff" strokeWidth={3} dot={{ r: 4, fill: "#ffffff", stroke: "#ffffff" }} activeDot={{ r: 6, fill: "#ffffff" }} />
+              <Line type="monotone" dataKey="nota" stroke="var(--red)" strokeWidth={3} dot={{ r: 4, fill: "var(--red)", stroke: "var(--red)" }} activeDot={{ r: 6, fill: "var(--red)" }} />
 
             </LineChart>
           </ResponsiveContainer>

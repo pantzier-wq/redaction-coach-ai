@@ -726,23 +726,23 @@ function ConectivosIA() {
       )}
 
       {analise && (
-        <div className="animate-in fade-in slide-in-from-top-4 duration-500 p-8 rounded-3xl border-2 border-border bg-card relative overflow-hidden">
+        <div className="animate-in fade-in slide-in-from-top-4 duration-500 p-8 rounded-3xl border border-[var(--line)] bg-[var(--paper)] relative overflow-hidden shadow-sm">
           <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <div className={cn(
                 "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm",
-                analise.status === 'bom' && "bg-[#22c55e]/10 text-[#22c55e] border-[#22c55e]/20",
-                analise.status === 'regular' && "bg-amber-500/10 text-amber-500 border-amber-500/20",
-                analise.status === 'ruim' && "bg-destructive/10 text-destructive border-destructive/20",
+                analise.status === 'bom' && "bg-green-50 text-green-700 border-green-200",
+                analise.status === 'regular' && "bg-amber-50 text-amber-700 border-amber-200",
+                analise.status === 'ruim' && "bg-[var(--red)]/5 text-[var(--red)] border-[var(--red)]/20",
               )}>
                 Avaliação: {analise.status === 'bom' ? 'Excelente' : analise.status === 'regular' ? 'Pode Melhorar' : 'Necessita Ajuste'}
               </div>
               <button 
                 onClick={handleReset}
-                className="px-4 py-2 rounded-lg text-xs font-black text-primary hover:bg-primary/10 border-2 border-primary/40 hover:border-primary/60 transition-all uppercase tracking-widest flex items-center gap-2 bg-primary/5"
+                className="px-5 py-2.5 rounded-xl text-[10px] font-black text-[var(--paper)] bg-[var(--ink)] hover:scale-105 transition-all uppercase tracking-[0.2em] flex items-center gap-2 shadow-md"
               >
                 <PenTool className="w-3 h-3" />
-                Analisar outra frase
+                Nova Frase
               </button>
             </div>
 

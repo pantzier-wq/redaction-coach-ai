@@ -404,7 +404,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
                   {(() => {
                     try {
                       const quiz = JSON.parse(localStorage.getItem("quiz_answers") || "{}");
-                      const days = Math.max(0, Math.floor((new Date("2026-11-08").getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
+                      
                       
                       return (
                         <>
@@ -418,7 +418,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
                           {showEssayForm && (
                             <>
                               <p>
-                                Faltam <span className="text-[var(--red)] font-black italic">{days} dias</span> para o ENEM. É hora de parar de chutar e começar a agir com estratégia.
+                                É hora de parar de chutar e começar a agir com estratégia.
                               </p>
                               <p className="text-[var(--ink)] font-bold italic border-l-4 border-[var(--red)] pl-4 py-2 bg-[var(--red)]/5">
                                 "Cole sua redação abaixo para descobrir exatamente onde você está perdendo ponto."

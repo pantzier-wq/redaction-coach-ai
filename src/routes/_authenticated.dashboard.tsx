@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { analisarConectivos, criarRepertorio } from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { type Correcao, type RespostaRepertorio } from "@/lib/correct-essay.functions";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
 import { Sidebar } from "@/components/Sidebar";
@@ -107,14 +108,14 @@ function Dashboard() {
 
   if (loading) {
     return (
-      <div className="dark min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-primary" />
+      <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-[var(--red)]" />
       </div>
     );
   }
 
   return (
-    <div className="dark min-h-screen bg-background text-foreground flex">
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] flex">
       <Sidebar 
         profile={profile} 
         activeSection={activeSection} 
@@ -127,13 +128,13 @@ function Dashboard() {
           {activeSection === "dashboard" && (
             <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="text-center">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-black uppercase tracking-widest mb-4">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--paper-2)] border border-[var(--line)] text-[var(--red)] text-xs font-black uppercase tracking-[0.2em] mb-6 shadow-sm">
                   <Trophy className="w-3 h-3" /> Dashboard Estudante
                 </div>
-                <h1 className="text-4xl md:text-5xl font-black mb-4 tracking-tight">
-                  Olá, <span className="text-primary">{profile?.full_name?.split(' ')[0] || 'Estudante'}</span>! ✍️
+                <h1 className="font-['Fraunces'] text-5xl md:text-6xl font-black mb-6 tracking-tight text-[var(--ink)] leading-tight">
+                  Olá, <span className="text-[var(--red)] italic">{profile?.full_name?.split(' ')[0] || 'Estudante'}</span>! ✍️
                 </h1>
-                <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-8">
+                <p className="text-lg md:text-xl text-[var(--ink-2)] max-w-xl mx-auto mb-10 font-medium">
                   Pronto para a nota 1000 hoje? Cole seu texto abaixo para começar a correção.
                 </p>
 
@@ -256,21 +257,21 @@ function Dashboard() {
                           localStorage.setItem("viewing_essay", JSON.stringify(essay));
                         }
                       }}
-                      className="rounded-2xl border border-border bg-card p-4 md:p-6 hover:border-primary/50 transition-all hover:scale-[1.01] cursor-pointer group w-full box-border overflow-hidden"
+                      className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 p-4 md:p-6 hover:border-[var(--red)]/50 transition-all hover:scale-[1.01] cursor-pointer group w-full box-border overflow-hidden shadow-sm"
                     >
                       <div className="flex justify-between items-center gap-4">
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="h-10 w-10 shrink-0 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-black">
+                          <div className="h-10 w-10 shrink-0 rounded-xl bg-[var(--paper-2)] border border-[var(--line)] flex items-center justify-center text-[var(--red)] font-black shadow-inner">
                             {new Date(essay.created_at).getDate()}
                           </div>
                           <div className="min-w-0">
-                            <h3 className="font-bold truncate group-hover:text-primary transition-colors pr-2">{essay.tema}</h3>
-                            <p className="text-[10px] md:text-xs text-muted-foreground">
+                            <h3 className="font-bold truncate group-hover:text-[var(--red)] transition-colors pr-2 text-[var(--ink)]">{essay.tema}</h3>
+                            <p className="text-[10px] md:text-xs text-[var(--ink-3)] font-medium">
                               {new Date(essay.created_at).toLocaleDateString('pt-BR')} • {essay.redacao.length} caracteres
                             </p>
                           </div>
                         </div>
-                        <div className="text-2xl md:text-3xl font-black text-primary shrink-0">
+                        <div className="text-2xl md:text-3xl font-black text-[var(--red)] shrink-0">
                           {(essay.resultado as Correcao).nota_total}
                         </div>
                       </div>
@@ -321,25 +322,25 @@ function Dashboard() {
           {activeSection === "upgrade" && (
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="max-w-2xl mx-auto text-center py-12">
-                <div className="p-6 rounded-3xl bg-secondary/10 border-2 border-secondary/20 mb-8 inline-block">
-                  <Sparkles className="w-16 h-16 text-secondary animate-pulse" />
+                <div className="p-6 rounded-3xl bg-[var(--paper-2)] border-2 border-[var(--line)] mb-8 inline-block shadow-sm">
+                  <Sparkles className="w-16 h-16 text-[var(--red)] animate-pulse" />
                 </div>
-                <h2 className="text-4xl font-black mb-4 tracking-tight">Garanta seu Futuro 🚀</h2>
-                <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+                <h2 className="font-['Fraunces'] text-4xl font-black mb-4 tracking-tight text-[var(--ink)] italic">Garanta seu Futuro 🚀</h2>
+                <p className="text-xl text-[var(--ink-2)] mb-8 leading-relaxed font-medium">
                   Escolha entre o Plano Essencial (15 correções) ou o Combo Nota 1000 com correções ilimitadas.
                 </p>
 
                 {/* CRÉDITOS EXTRAS — exclusivo para quem tem o Plano Essencial */}
                 {profile?.is_pro && !(profile as any)?.has_full_access && (
-                  <div className="mb-12 rounded-3xl border border-border bg-card p-6 text-left">
+                  <div className="mb-12 rounded-3xl border border-[var(--line)] bg-[var(--paper-2)]/50 p-6 text-left shadow-sm">
                     <div className="flex items-center justify-between gap-4 mb-4">
                       <div>
-                        <h3 className="text-lg font-black uppercase tracking-tight">Créditos de Correção</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Saldo atual: <strong className="text-primary">{(profile as any)?.credits ?? 0}</strong> correções
+                        <h3 className="text-lg font-black uppercase tracking-tight text-[var(--ink)]">Créditos de Correção</h3>
+                        <p className="text-sm text-[var(--ink-2)] font-medium">
+                          Saldo atual: <strong className="text-[var(--red)]">{(profile as any)?.credits ?? 0}</strong> correções
                         </p>
                       </div>
-                      <Zap className="w-8 h-8 text-primary shrink-0" />
+                      <Zap className="w-8 h-8 text-[var(--red)] shrink-0" />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       {[
@@ -350,11 +351,11 @@ function Dashboard() {
                         <button
                           key={pack.qtd}
                           onClick={() => handleBuyCredits(pack.qtd)}
-                          className="rounded-2xl border border-border bg-background p-4 text-center hover:border-primary/60 transition-all"
+                          className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-4 text-center hover:border-[var(--red)]/60 transition-all shadow-sm"
                         >
-                          <div className="text-lg font-black">{pack.qtd} correções</div>
-                          <div className="text-sm font-black text-[#22c55e]">{pack.preco}</div>
-                          <div className="mt-2 rounded-lg bg-[#22c55e]/15 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-[#22c55e]">
+                          <div className="text-lg font-black text-[var(--ink)]">{pack.qtd} correções</div>
+                          <div className="text-sm font-black text-green-600">{pack.preco}</div>
+                          <div className="mt-2 rounded-lg bg-green-50 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-green-600 border border-green-100">
                             Obtenha clicando aqui
                           </div>
                         </button>
@@ -366,58 +367,54 @@ function Dashboard() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-12">
                    {/* PLANO ESSENCIAL */}
-                  <div className="flex flex-col rounded-3xl border-2 border-white/20 bg-white/10 p-8 relative overflow-hidden group hover:opacity-100 transition-opacity">
+                   <div className="flex flex-col rounded-3xl border border-[var(--line)] bg-[var(--paper-2)]/50 p-8 relative overflow-hidden group shadow-sm transition-all hover:bg-[var(--paper-2)]">
                     
                     <div className="mb-6 flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
-                        <Zap className="w-6 h-6 text-[#22c55e]" />
+                      <div className="h-12 w-12 rounded-2xl bg-[var(--line)]/30 flex items-center justify-center shrink-0">
+                        <Zap className="w-6 h-6 text-[var(--ink-3)]" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-black text-[#22c55e] leading-tight uppercase tracking-tight">Plano Essencial</h3>
-                        <p className="text-xs font-bold text-[#22c55e]/60 leading-tight">Vitalício • 15 correções</p>
+                        <h3 className="text-xl font-black text-[var(--ink)] leading-tight uppercase tracking-tight">Plano Essencial</h3>
+                        <p className="text-xs font-bold text-[var(--ink-3)] leading-tight uppercase tracking-[0.1em]">Vitalício • 15 correções</p>
                       </div>
                     </div>
 
                     <ul className="space-y-3 mb-8 flex-1">
-                      <li className="flex items-start gap-3 text-sm font-bold text-[#22c55e]">
-                        <span className="shrink-0">✓</span>
+                      <li className="flex items-start gap-3 text-sm font-medium text-[var(--ink-2)]">
+                        <span className="text-green-600 shrink-0 font-bold">✓</span>
                         <span>15 correções de redação com IA</span>
                       </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-[#22c55e]">
-                        <span className="shrink-0">✓</span>
+                      <li className="flex items-start gap-3 text-sm font-medium text-[var(--ink-2)]">
+                        <span className="text-green-600 shrink-0 font-bold">✓</span>
                         <span>Histórico completo de evolução</span>
                       </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-[#22c55e]">
-                        <span className="shrink-0">✓</span>
+                      <li className="flex items-start gap-3 text-sm font-medium text-[var(--ink-2)]">
+                        <span className="text-green-600 shrink-0 font-bold">✓</span>
                         <span>Pode comprar créditos extras depois</span>
                       </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-white/40">
-                        <span className="text-destructive shrink-0">✕</span>
-                        <span className="line-through">Correções ilimitadas</span>
+                      <li className="flex items-start gap-3 text-sm font-medium text-[var(--ink-3)]">
+                        <span className="text-[var(--red)] shrink-0 font-bold">✕</span>
+                        <span className="line-through italic">Correções ilimitadas</span>
                       </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-white/40">
-                        <span className="text-destructive shrink-0">✕</span>
-                        <span className="line-through">70+ Repertórios Universais</span>
+                      <li className="flex items-start gap-3 text-sm font-medium text-[var(--ink-3)]">
+                        <span className="text-[var(--red)] shrink-0 font-bold">✕</span>
+                        <span className="line-through italic">70+ Repertórios Universais</span>
                       </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-white/40">
-                        <span className="text-destructive shrink-0">✕</span>
-                        <span className="line-through">Flashcards de Conectivos</span>
-                      </li>
-                      <li className="flex items-start gap-3 text-sm font-bold text-white/40">
-                        <span className="text-destructive shrink-0">✕</span>
-                        <span className="line-through">Manual Proposta Nota 200</span>
+                      <li className="flex items-start gap-3 text-sm font-medium text-[var(--ink-3)]">
+                        <span className="text-[var(--red)] shrink-0 font-bold">✕</span>
+                        <span className="line-through italic">Laboratório de Conectivos</span>
                       </li>
                     </ul>
 
                     <div className="mt-auto">
                       <div className="flex items-baseline gap-2 mb-6">
-                        <span className="text-lg font-bold text-white/30 line-through italic">R$ 29,90</span>
-                        <span className="text-3xl font-black text-[#22c55e]">R$ 19,90</span>
+                        <span className="text-lg font-bold text-[var(--ink-3)] line-through italic">R$ 29,90</span>
+                        <span className="text-3xl font-black text-[var(--ink)]">R$ 19,90</span>
                       </div>
                       <button
                         onClick={() => handleTestPurchase('pro')}
                         disabled={!!profile?.is_pro}
-                        className="w-full py-4 rounded-xl bg-[#22c55e]/10 text-[#22c55e] font-black text-sm uppercase tracking-widest hover:bg-[#22c55e]/20 transition-all border border-[#22c55e]/20 disabled:opacity-40 disabled:cursor-not-allowed"
+                        className="w-full py-4 rounded-xl bg-[var(--ink)] text-[var(--paper)] font-black text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg disabled:opacity-40 disabled:cursor-not-allowed"
                       >
                         {profile?.is_pro ? "PLANO ATIVO" : "LIBERAR ESSENCIAL"}
                       </button>
@@ -426,69 +423,53 @@ function Dashboard() {
 
 
                   {/* COMBO NOTA 1000 - Premium */}
-                  <div className="flex flex-col rounded-3xl border-2 border-primary bg-primary/10 p-8 relative overflow-hidden group shadow-[0_0_60px_rgba(var(--primary-rgb),0.3)] scale-[1.05]">
+                   <div className="flex flex-col rounded-3xl border-2 border-[var(--red)] bg-[var(--red)]/5 p-8 relative overflow-hidden group shadow-[0_20px_40px_-12px_rgba(196,50,42,0.15)] scale-[1.05]">
                     
                     <div className="mb-6 flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-[#22c55e] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(34,197,94,0.5)]">
+                      <div className="h-12 w-12 rounded-2xl bg-[var(--red)] flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(196,50,42,0.4)]">
                         <Sparkles className="w-6 h-6 text-white animate-pulse" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-black text-white leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
-                        <p className="text-xs font-bold text-primary leading-tight">Acesso Total + Bônus</p>
+                        <h3 className="text-xl font-black text-[var(--ink)] leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
+                        <p className="text-xs font-bold text-[var(--red)] leading-tight uppercase tracking-[0.1em]">Acesso Total + Bônus</p>
                       </div>
                     </div>
 
-                    <div className="mb-6 grid grid-cols-3 gap-3">
+                    <ul className="space-y-4 mb-8 flex-1">
                       {[
-                        { n: "∞", l: "Correções" },
-                        { n: "70+", l: "Repertórios" },
-                        { n: "2", l: "IAs Bônus" },
-                      ].map((s) => (
-                        <div key={s.l} className="rounded-2xl bg-[#22c55e]/10 border border-[#22c55e]/20 py-3 text-center">
-                          <div className="text-2xl font-black text-[#22c55e] leading-none">{s.n}</div>
-                          <div className="text-[9px] font-bold uppercase tracking-widest text-white/60 mt-1">{s.l}</div>
-                        </div>
-                      ))}
-                    </div>
-
-                    <ul className="space-y-3.5 mb-8 flex-1">
-                      {[
-                        { t: "Correções ILIMITADAS para sempre", d: "Sem créditos e sem o limite de 20 do plano básico." },
-                        { t: "IA de Repertório Sociocultural", d: "Cria repertório legitimado e pertinente para qualquer tema." },
-                        { t: "Laboratório de Conectivos (IA)", d: "Analisa suas frases e blinda sua Competência 4." },
-                        { t: "70+ Repertórios Coringas", d: "Biblioteca validada que encaixa em qualquer proposta." },
-                        { t: "Biblioteca de Conectivos + Treino", d: "Quiz e flashcards para nunca mais repetir palavras." },
-                        { t: "Histórico de até 50 redações", d: "Gráfico de evolução por competência, nota a nota." },
+                        { t: "Correções ILIMITADAS Vitalícias", d: "Treine sem limites até o dia da prova." },
+                        { t: "Laboratório de Conectivos IA", d: "Analise sua coesão textual instantaneamente." },
+                        { t: "Gerador de Repertório Coringa", d: "Repertórios que encaixam em qualquer tema." },
+                        { t: "70+ Repertórios Legitimados", d: "Biblioteca exclusiva validada por corretores." },
+                        { t: "Histórico Completo", d: "Gráfico de evolução e acompanhamento nota a nota." },
                       ].map((b) => (
                         <li key={b.t} className="flex items-start gap-3">
-                          <div className="h-5 w-5 rounded-full bg-[#22c55e] flex items-center justify-center shrink-0 mt-0.5 shadow-[0_0_15px_rgba(34,197,94,0.4)]">
-                            <span className="text-white text-[10px] font-black">✓</span>
-                          </div>
-                          <div className="flex flex-col leading-tight">
-                            <span className="text-[#22c55e] font-black uppercase text-[11px] tracking-wide">{b.t}</span>
-                            <p className="text-[12px] text-white/70 font-semibold leading-snug">{b.d}</p>
+                          <span className="mt-0.5 h-6 w-6 shrink-0 rounded-full bg-[var(--red)] text-white text-xs font-black flex items-center justify-center shadow-sm">✓</span>
+                          <div className="leading-tight">
+                            <div className="text-sm font-black text-[var(--ink)]">{b.t}</div>
+                            <div className="text-[11px] font-medium text-[var(--ink-2)] mt-0.5">{b.d}</div>
                           </div>
                         </li>
                       ))}
                     </ul>
 
                     <div className="mt-auto">
-                      <div className="mb-4 rounded-2xl border border-[#22c55e]/20 bg-[#22c55e]/5 p-4">
-                        <div className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-                          <span className="whitespace-nowrap text-sm font-bold text-[#22c55e]/60 line-through italic uppercase tracking-widest">R$ 59,00</span>
-                          <span className="whitespace-nowrap text-4xl font-black text-[#22c55e] drop-shadow-[0_0_15px_rgba(34,197,94,0.5)]">R$ 39,00</span>
-                        </div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-white/50 mt-1">
-                          Pagamento único • Acesso vitalício • Desconto de R$ 20,00
-                        </p>
+                      <div className="flex items-baseline gap-2 mb-6">
+                        <span className="text-lg font-bold text-[var(--ink-3)] line-through italic">R$ 59,00</span>
+                        <span className="text-3xl font-black text-[var(--ink)]">R$ 39,00</span>
                       </div>
                       <button
                         onClick={() => handleTestPurchase('full')}
-                        className="w-full py-4 rounded-xl bg-[#22c55e] text-white font-black text-sm uppercase tracking-[0.2em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_12px_40px_rgba(34,197,94,0.4)] relative overflow-hidden"
+                        className="w-full py-5 rounded-xl bg-[var(--red)] text-white font-black text-sm uppercase tracking-[0.15em] hover:scale-[1.02] active:scale-95 transition-all shadow-[0_10px_20px_-5px_rgba(196,50,42,0.4)]"
                       >
-                        <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
-                        GARANTIR COMBO COMPLETO →
+                        LIBERAR TUDO AGORA
                       </button>
+                      <p className="mt-4 text-center text-[10px] font-black text-[var(--red)] uppercase tracking-[0.2em]">Desconto de R$ 20,00</p>
+                    </div>
+
+                    {/* Badge de destaque */}
+                    <div className="absolute top-4 right-[-40px] rotate-45 bg-[var(--red)] text-white text-[10px] font-black py-1.5 px-12 uppercase tracking-[0.2em] shadow-md">
+                      RECOMENDADO
                     </div>
                   </div>
                 </div>
@@ -515,7 +496,7 @@ function Dashboard() {
                     <Lightbulb className="w-8 h-8" />
                   </div>
                   <div>
-                    <p className="text-foreground font-medium italic">
+                    <p className="text-[var(--ink)] font-medium italic leading-relaxed">
                       “Um bom repertório não serve apenas para deixar a redação mais bonita. Ele deve ajudar a explicar o problema, comprovar seu argumento ou aprofundar sua análise.”
                     </p>
                   </div>
@@ -523,25 +504,25 @@ function Dashboard() {
               </div>
 
               {/* 3. Aviso pedagógico inicial */}
-              <div className="mb-12 p-8 rounded-[2rem] border-2 border-primary/20 bg-primary/5">
-                <h2 className="text-2xl font-black mb-6 flex items-center gap-2">
-                  <AlertTriangle className="w-6 h-6 text-amber-500" /> Antes de usar um repertório
+              <div className="mb-12 p-8 rounded-[2rem] border-2 border-[var(--red)]/20 bg-[var(--red)]/5 shadow-sm">
+                <h2 className="font-['Fraunces'] text-2xl font-black mb-6 flex items-center gap-2 text-[var(--ink)]">
+                  <AlertTriangle className="w-6 h-6 text-amber-600" /> Antes de usar um repertório
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <h3 className="font-black text-foreground">Ele é verdadeiro?</h3>
-                    <p className="text-sm text-muted-foreground">Não invente autores, frases, leis, filmes, pesquisas ou acontecimentos históricos.</p>
+                    <h3 className="font-black text-[var(--ink)] uppercase text-xs tracking-widest">Ele é verdadeiro?</h3>
+                    <p className="text-sm text-[var(--ink-2)] font-medium">Não invente autores, frases, leis, filmes, pesquisas ou acontecimentos históricos.</p>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-black text-foreground">Ele combina com o tema?</h3>
-                    <p className="text-sm text-muted-foreground">A referência precisa estar claramente relacionada ao problema discutido.</p>
+                    <h3 className="font-black text-[var(--ink)] uppercase text-xs tracking-widest">Ele combina com o tema?</h3>
+                    <p className="text-sm text-[var(--ink-2)] font-medium">A referência precisa estar claramente relacionada ao problema discutido.</p>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-black text-foreground">Ele fortalece seu argumento?</h3>
-                    <p className="text-sm text-muted-foreground">Não basta citar. Depois de apresentar o repertório, explique o que ele demonstra e como se conecta à sua tese.</p>
+                    <h3 className="font-black text-[var(--ink)] uppercase text-xs tracking-widest">Ele fortalece seu argumento?</h3>
+                    <p className="text-sm text-[var(--ink-2)] font-medium">Não basta citar. Depois de apresentar o repertório, explique o que ele demonstra e como se conecta à sua tese.</p>
                   </div>
                 </div>
-                <div className="mt-6 p-4 rounded-xl bg-background/50 border border-border text-sm italic text-muted-foreground">
+                <div className="mt-8 p-6 rounded-2xl bg-[var(--paper)] border border-[var(--line)] text-sm italic text-[var(--ink-3)] font-medium shadow-inner">
                   Repertório coringa não significa repertório automático. A referência precisa ser adaptada ao tema e explicada dentro da argumentação.
                 </div>
               </div>
@@ -700,7 +681,7 @@ function ConectivosIA() {
             value={frase}
             onChange={(e) => setFrase(e.target.value)}
             placeholder="Ex: No entanto, é necessário que o governo invista em educação..."
-            className="w-full min-h-[120px] p-5 rounded-2xl bg-background border-2 border-border focus:border-primary outline-none transition-all font-bold text-sm"
+            className="w-full min-h-[120px] p-5 rounded-2xl bg-[var(--paper)] border-2 border-[var(--line)] focus:border-[var(--red)] outline-none transition-all font-bold text-sm text-[var(--ink)] placeholder:text-[var(--ink-3)]/40 shadow-inner"
           />
           <button
             type="button"
@@ -710,10 +691,10 @@ function ConectivosIA() {
             }}
             disabled={isAnalyzing || frase.length < 10}
             className={cn(
-              "absolute bottom-4 right-4 px-6 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all z-20",
+              "absolute bottom-4 right-4 px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all z-20 shadow-md",
               isAnalyzing || frase.length < 10 
-                ? "bg-muted text-muted-foreground cursor-not-allowed" 
-                : "bg-primary text-primary-foreground hover:scale-105 shadow-lg active:scale-95"
+                ? "bg-[var(--line)] text-[var(--ink-3)] cursor-not-allowed" 
+                : "bg-[var(--ink)] text-[var(--paper)] hover:scale-105 active:scale-95"
             )}
           >
             Analisar Frase
@@ -722,23 +703,23 @@ function ConectivosIA() {
       )}
 
       {isAnalyzing && (
-        <div className="py-12 flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-500 bg-primary/5 rounded-3xl border-2 border-dashed border-primary/20">
+        <div className="py-12 flex flex-col items-center justify-center space-y-6 animate-in fade-in duration-500 bg-[var(--red)]/5 rounded-3xl border-2 border-dashed border-[var(--red)]/20 shadow-sm">
           <div className="relative">
-            <div className="w-16 h-16 rounded-full border-4 border-primary/10 border-t-primary animate-spin" />
-            <Sparkles className="w-6 h-6 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
+            <div className="w-16 h-16 rounded-full border-4 border-[var(--red)]/10 border-t-[var(--red)] animate-spin" />
+            <Sparkles className="w-6 h-6 text-[var(--red)] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
           </div>
           <div className="w-full max-w-md px-8 space-y-2">
-            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-primary">
+            <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-[var(--red)]">
               <span>IA Analisando conectivos</span>
               <span>{progress}%</span>
             </div>
-            <div className="h-3 w-full bg-primary/10 rounded-full overflow-hidden border border-primary/20">
+            <div className="h-3 w-full bg-[var(--red)]/10 rounded-full overflow-hidden border border-[var(--red)]/20 shadow-inner">
               <div 
-                className="h-full bg-gradient-to-r from-primary/80 to-primary transition-all duration-300 ease-out" 
+                className="h-full bg-[var(--red)] transition-all duration-300 ease-out shadow-[0_0_10px_rgba(196,50,42,0.3)]" 
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <p className="text-center text-xs text-muted-foreground font-bold animate-pulse mt-4">
+            <p className="text-center text-xs text-[var(--ink-2)] font-bold animate-pulse mt-4 italic">
               Avaliando a coesão e buscando melhorias...
             </p>
           </div>
@@ -746,41 +727,41 @@ function ConectivosIA() {
       )}
 
       {analise && (
-        <div className="animate-in fade-in slide-in-from-top-4 duration-500 p-8 rounded-3xl border-2 border-border bg-card relative overflow-hidden">
+        <div className="animate-in fade-in slide-in-from-top-4 duration-500 p-8 rounded-3xl border border-[var(--line)] bg-[var(--paper)] relative overflow-hidden shadow-sm">
           <div className="flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <div className={cn(
                 "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-sm",
-                analise.status === 'bom' && "bg-[#22c55e]/10 text-[#22c55e] border-[#22c55e]/20",
-                analise.status === 'regular' && "bg-amber-500/10 text-amber-500 border-amber-500/20",
-                analise.status === 'ruim' && "bg-destructive/10 text-destructive border-destructive/20",
+                analise.status === 'bom' && "bg-green-50 text-green-700 border-green-200",
+                analise.status === 'regular' && "bg-amber-50 text-amber-700 border-amber-200",
+                analise.status === 'ruim' && "bg-[var(--red)]/5 text-[var(--red)] border-[var(--red)]/20",
               )}>
                 Avaliação: {analise.status === 'bom' ? 'Excelente' : analise.status === 'regular' ? 'Pode Melhorar' : 'Necessita Ajuste'}
               </div>
               <button 
                 onClick={handleReset}
-                className="px-4 py-2 rounded-lg text-xs font-black text-primary hover:bg-primary/10 border-2 border-primary/40 hover:border-primary/60 transition-all uppercase tracking-widest flex items-center gap-2 bg-primary/5"
+                className="px-5 py-2.5 rounded-xl text-[10px] font-black text-[var(--paper)] bg-[var(--ink)] hover:scale-105 transition-all uppercase tracking-[0.2em] flex items-center gap-2 shadow-md"
               >
                 <PenTool className="w-3 h-3" />
-                Analisar outra frase
+                Nova Frase
               </button>
             </div>
 
             <div className="space-y-4">
               <div>
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Análise Técnica</h4>
-                <p className="text-base font-bold text-foreground leading-relaxed">
+                <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--ink-3)] mb-1">Análise Técnica</h4>
+                <p className="text-base font-bold text-[var(--ink)] leading-relaxed">
                   {analise.analise}
                 </p>
               </div>
 
               {analise.sugestao && (
-                <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 relative">
+                <div className="p-6 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] relative shadow-inner">
                   <div className="absolute top-4 right-4">
-                    <Sparkles className="w-4 h-4 text-primary opacity-50" />
+                    <Sparkles className="w-4 h-4 text-[var(--red)] opacity-50" />
                   </div>
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Sugestão de Upgrade</h4>
-                  <p className="text-sm text-foreground font-bold">
+                  <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--red)] mb-2">Sugestão de Upgrade</h4>
+                  <p className="text-sm text-[var(--ink)] font-bold italic leading-relaxed">
                     {analise.sugestao}
                   </p>
                 </div>
@@ -903,13 +884,13 @@ function ConectivosLibrary() {
   return (
     <div className="space-y-8 pb-20">
       {/* Search and Filters */}
-      <div className="sticky top-2 z-30 flex flex-col gap-4 p-4 rounded-3xl bg-card/80 backdrop-blur-md border border-border shadow-xl">
+      <div className="sticky top-2 z-30 flex flex-col gap-4 p-4 rounded-3xl bg-[var(--paper)]/90 backdrop-blur-md border border-[var(--line)] shadow-xl">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--ink-3)]" />
           <input 
             type="text" 
             placeholder="Pesquisar conectivo ou exemplo..."
-            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold"
+            className="w-full pl-12 pr-4 py-4 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] focus:border-[var(--red)] focus:ring-1 focus:ring-[var(--red)] outline-none transition-all font-bold text-[var(--ink)] placeholder:text-[var(--ink-3)]/40 shadow-inner"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -920,10 +901,10 @@ function ConectivosLibrary() {
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
               className={cn(
-                "px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all",
+                "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] whitespace-nowrap transition-all",
                 activeCategory === cat.id 
-                  ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]" 
-                  : "bg-muted text-muted-foreground hover:text-foreground"
+                  ? "bg-[var(--ink)] text-[var(--paper)] shadow-md" 
+                  : "bg-[var(--paper-2)] text-[var(--ink-3)] hover:text-[var(--ink)] border border-[var(--line)]"
               )}
             >
               {cat.label}
@@ -937,30 +918,30 @@ function ConectivosLibrary() {
         {filtered.map((c, i) => (
           <div 
             key={i} 
-            className="group p-6 rounded-3xl border border-border bg-card hover:border-primary/40 transition-all hover:scale-[1.02] flex flex-col"
+            className="group p-6 rounded-3xl border border-[var(--line)] bg-[var(--paper)] hover:border-[var(--red)]/40 transition-all hover:scale-[1.02] flex flex-col shadow-sm"
           >
             <div className="flex justify-between items-start mb-4">
-              <h4 className="text-xl font-black text-primary tracking-tight">{c.termo}</h4>
-              <span className="text-[10px] font-black uppercase px-2 py-1 rounded-md bg-primary/10 text-primary border border-primary/20">
+              <h4 className="font-['Fraunces'] text-xl font-black text-[var(--red)] tracking-tight italic">{c.termo}</h4>
+              <span className="text-[9px] font-black uppercase px-2 py-1 rounded-md bg-[var(--paper-2)] text-[var(--ink-2)] border border-[var(--line)] tracking-widest">
                 {c.cat}
               </span>
             </div>
             
             <div className="space-y-4 flex-1">
-              <div className="p-4 rounded-2xl bg-muted/30 border border-border/50">
-                <p className="text-sm font-medium italic text-foreground leading-relaxed">
+              <div className="p-4 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)]/50 shadow-inner">
+                <p className="text-sm font-medium italic text-[var(--ink)] leading-relaxed">
                   "{c.ex}"
                 </p>
               </div>
               
               <div className="grid grid-cols-1 gap-3">
                 <div className="flex items-start gap-2">
-                  <div className="mt-1 shrink-0"><Check className="w-3 h-3 text-[#22c55e]" /></div>
-                  <p className="text-xs text-muted-foreground font-bold"><span className="text-foreground">Uso:</span> {c.uso}</p>
+                  <div className="mt-1 shrink-0"><Check className="w-3 h-3 text-green-600" /></div>
+                  <p className="text-[11px] text-[var(--ink-2)] font-bold italic"><span className="text-[var(--ink)] not-italic font-black uppercase text-[9px] tracking-widest mr-1">Uso:</span> {c.uso}</p>
                 </div>
                 <div className="flex items-start gap-2">
-                  <div className="mt-1 shrink-0"><Lightbulb className="w-3 h-3 text-amber-500" /></div>
-                  <p className="text-xs text-muted-foreground font-bold"><span className="text-foreground">Dica:</span> {c.dica}</p>
+                  <div className="mt-1 shrink-0"><Lightbulb className="w-3 h-3 text-amber-600" /></div>
+                  <p className="text-[11px] text-[var(--ink-2)] font-bold italic"><span className="text-[var(--ink)] not-italic font-black uppercase text-[9px] tracking-widest mr-1">Dica:</span> {c.dica}</p>
                 </div>
               </div>
             </div>
@@ -968,9 +949,9 @@ function ConectivosLibrary() {
             <button 
               onClick={() => {
                 navigator.clipboard.writeText(c.termo);
-                // Simple feedback would be nice here
+                toast.success("Copiado!");
               }}
-              className="mt-6 w-full py-3 rounded-xl bg-muted hover:bg-primary/10 hover:text-primary text-xs font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+              className="mt-6 w-full py-3 rounded-xl bg-[var(--ink)] text-[var(--paper)] font-black text-[10px] uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-all shadow-md active:scale-95 flex items-center justify-center gap-2"
             >
               <Copy className="w-3 h-3" /> Copiar Termo
             </button>
@@ -980,21 +961,21 @@ function ConectivosLibrary() {
 
       {/* Bonus Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
-        <div className="p-8 rounded-[2rem] border-2 border-destructive/20 bg-destructive/5">
-          <h3 className="text-xl font-black text-destructive mb-6 flex items-center gap-2">
+        <div className="p-8 rounded-[2rem] border-2 border-[var(--red)]/20 bg-[var(--paper)] shadow-sm">
+          <h3 className="font-['Fraunces'] text-xl font-black text-[var(--red)] mb-6 flex items-center gap-2 italic">
             <X className="w-6 h-6" /> Erros Comuns
           </h3>
           <ul className="space-y-4">
             <li className="flex gap-3 items-start">
-              <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center shrink-0 mt-0.5 text-destructive font-black text-xs">1</div>
-              <p className="text-sm font-bold text-muted-foreground">
-                <strong className="text-foreground">Usar "mesmo" como pronome:</strong> "O aluno entregou a redação e o mesmo saiu." (Errado). Prefira: "ele".
+              <div className="w-6 h-6 rounded-full bg-[var(--red)]/10 flex items-center justify-center shrink-0 mt-0.5 text-[var(--red)] font-black text-xs border border-[var(--red)]/20">1</div>
+              <p className="text-sm font-bold text-[var(--ink-2)]">
+                <strong className="text-[var(--ink)]">Usar "mesmo" como pronome:</strong> "O aluno entregou a redação e o mesmo saiu." (Errado). Prefira: "ele".
               </p>
             </li>
             <li className="flex gap-3 items-start">
-              <div className="w-6 h-6 rounded-full bg-destructive/20 flex items-center justify-center shrink-0 mt-0.5 text-destructive font-black text-xs">2</div>
-              <p className="text-sm font-bold text-muted-foreground">
-                <strong className="text-foreground">Onde vs Aonde:</strong> "Onde" indica lugar fixo. "Aonde" indica movimento. Não use "onde" para substituir "no qual" em ideias abstratas.
+              <div className="w-6 h-6 rounded-full bg-[var(--red)]/10 flex items-center justify-center shrink-0 mt-0.5 text-[var(--red)] font-black text-xs border border-[var(--red)]/20">2</div>
+              <p className="text-sm font-bold text-[var(--ink-2)]">
+                <strong className="text-[var(--ink)]">Onde vs Aonde:</strong> "Onde" indica lugar fixo. "Aonde" indica movimento. Não use "onde" para substituir "no qual" em ideias abstratas.
               </p>
             </li>
           </ul>
@@ -1161,17 +1142,17 @@ function ConectivosTraining() {
 
   if (currentStep >= questions.length) {
     return (
-      <div className="p-8 rounded-[2rem] border-2 border-[#22c55e]/20 bg-[#22c55e]/5 text-center">
-        <div className="w-20 h-20 rounded-full bg-[#22c55e]/20 flex items-center justify-center mx-auto mb-6">
-          <Trophy className="w-10 h-10 text-[#22c55e]" />
+      <div className="p-8 rounded-[2.5rem] border-2 border-green-600/20 bg-[var(--paper)] text-center shadow-sm">
+        <div className="w-20 h-20 rounded-2xl bg-green-50 flex items-center justify-center mx-auto mb-6 shadow-sm border border-green-100">
+          <Trophy className="w-10 h-10 text-green-600" />
         </div>
-        <h3 className="text-3xl font-black text-[#22c55e] mb-2">Treinamento Concluído!</h3>
-        <p className="text-muted-foreground font-bold mb-8">
+        <h3 className="font-['Fraunces'] text-3xl font-black text-green-700 mb-2 italic">Treinamento Concluído!</h3>
+        <p className="text-[var(--ink-2)] font-bold mb-8">
           Você acertou {score} de {questions.length} questões.
         </p>
         <button 
           onClick={resetQuiz}
-          className="px-8 py-4 rounded-xl bg-[#22c55e] text-white font-black hover:scale-105 transition-all"
+          className="px-8 py-5 rounded-2xl bg-green-600 text-white font-black text-[10px] uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-lg"
         >
           TREINAR NOVAMENTE
         </button>
@@ -1182,20 +1163,20 @@ function ConectivosTraining() {
   const q = questions[currentStep];
 
   return (
-    <div className="p-8 rounded-[2rem] border-2 border-[#22c55e]/20 bg-[#22c55e]/5">
+    <div className="p-8 rounded-[2.5rem] border border-[var(--line)] bg-[var(--paper)] shadow-sm">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-black text-[#22c55e] flex items-center gap-2">
+        <h3 className="font-['Fraunces'] text-xl font-black text-green-700 flex items-center gap-2 italic">
           <Play className="w-6 h-6" /> Treino de Conectivos ({currentStep + 1}/{questions.length})
         </h3>
-        <div className="px-3 py-1 rounded-full bg-[#22c55e]/10 text-[#22c55e] text-[10px] font-black uppercase">
+        <div className="px-3 py-1 rounded-full bg-green-50 text-green-700 text-[9px] font-black uppercase tracking-widest border border-green-100 shadow-inner">
           Score: {score}
         </div>
       </div>
 
       <div className="mb-8">
-        <p className="text-lg font-bold text-foreground leading-relaxed">
+        <p className="text-lg font-bold text-[var(--ink)] leading-relaxed">
           Qual conectivo melhor preenche a lacuna? <br/>
-          <span className="text-muted-foreground mt-4 block italic bg-background/30 p-4 rounded-xl border border-border/50">
+          <span className="text-[var(--ink-2)] mt-4 block italic bg-[var(--paper-2)] p-6 rounded-2xl border border-[var(--line)]/50 shadow-inner">
             "{q.text}"
           </span>
         </p>
@@ -1212,11 +1193,11 @@ function ConectivosTraining() {
               onClick={() => handleOptionClick(i)}
               disabled={showFeedback}
               className={cn(
-                "w-full p-4 rounded-xl border-2 transition-all text-left text-sm font-black flex items-center justify-between",
-                !showFeedback && "border-border bg-card hover:border-[#22c55e] hover:bg-[#22c55e]/5",
-                showFeedback && isCorrect && "border-[#22c55e] bg-[#22c55e]/10 text-[#22c55e]",
-                showFeedback && isSelected && !isCorrect && "border-destructive bg-destructive/10 text-destructive",
-                showFeedback && !isSelected && !isCorrect && "opacity-50 border-border bg-card"
+                "w-full p-5 rounded-2xl border transition-all text-left text-sm font-black flex items-center justify-between shadow-sm",
+                !showFeedback && "border-[var(--line)] bg-[var(--paper)] text-[var(--ink)] hover:border-green-600/50 hover:bg-green-50",
+                showFeedback && isCorrect && "border-green-600 bg-green-50 text-green-700",
+                showFeedback && isSelected && !isCorrect && "border-[var(--red)] bg-[var(--red)]/5 text-[var(--red)]",
+                showFeedback && !isSelected && !isCorrect && "opacity-40 border-[var(--line)] bg-[var(--paper-2)]"
               )}
             >
               {opt}
@@ -1230,26 +1211,26 @@ function ConectivosTraining() {
       {showFeedback && (
         <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
           <div className={cn(
-            "p-6 rounded-2xl mb-8 border-2",
-            selectedOption === q.correct ? "bg-[#22c55e]/5 border-[#22c55e]/20" : "bg-destructive/5 border-destructive/20"
+            "p-6 rounded-2xl mb-8 border shadow-inner",
+            selectedOption === q.correct ? "bg-green-50 border-green-200" : "bg-[var(--red)]/5 border-[var(--red)]/20"
           )}>
-            <div className="flex items-center gap-2 mb-2 font-black uppercase text-xs tracking-wider">
+            <div className="flex items-center gap-2 mb-2 font-black uppercase text-[10px] tracking-[0.2em]">
               {selectedOption === q.correct ? (
-                <><Check className="w-4 h-4 text-[#22c55e]" /> Acertou!</>
+                <><Check className="w-4 h-4 text-green-700" /> Excelente!</>
               ) : (
-                <><X className="w-4 h-4 text-destructive" /> Errou!</>
+                <><X className="w-4 h-4 text-[var(--red)]" /> Atenção!</>
               )}
             </div>
-            <p className="text-sm font-bold text-muted-foreground">
+            <p className="text-sm font-bold text-[var(--ink-2)] italic">
               {q.explanation}
             </p>
           </div>
           
           <button 
             onClick={nextQuestion}
-            className="w-full py-4 rounded-xl bg-[#22c55e] text-white font-black hover:scale-[1.02] active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2"
+            className="w-full py-5 rounded-2xl bg-[var(--ink)] text-[var(--paper)] font-black text-[10px] uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2"
           >
-            {currentStep === questions.length - 1 ? "VER RESULTADO" : "PRÓXIMA QUESTÃO"} <ArrowRight className="w-5 h-5" />
+            {currentStep === questions.length - 1 ? "VER RESULTADO" : "PRÓXIMA QUESTÃO"} <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       )}
@@ -1348,16 +1329,16 @@ function RepertoriosLibrary() {
   return (
     <div className="space-y-8 pb-20">
       {/* Header com Botão do Gerador */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-card p-8 rounded-[2rem] border border-border">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-[var(--paper)] p-8 rounded-[2.5rem] border border-[var(--line)] shadow-sm">
         <div>
-          <h2 className="text-3xl font-black text-foreground">Biblioteca de Repertórios</h2>
-          <p className="text-muted-foreground mt-2 font-medium">Use modelos prontos ou crie um exclusivo com nossa IA.</p>
+          <h2 className="font-['Fraunces'] text-3xl font-black text-[var(--ink)] italic">Biblioteca de Repertórios</h2>
+          <p className="text-[var(--ink-2)] mt-2 font-medium">Use modelos prontos ou crie um exclusivo com nossa IA.</p>
         </div>
         <button 
           onClick={() => setShowGenerator(true)}
-          className="flex items-center gap-2 px-6 py-4 rounded-xl bg-primary text-primary-foreground font-black hover:scale-105 transition-all shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]"
+          className="flex items-center gap-2 px-6 py-4 rounded-xl bg-[var(--ink)] text-[var(--paper)] font-black text-[10px] uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-lg"
         >
-          <Sparkles className="w-5 h-5" />
+          <Sparkles className="w-5 h-5 text-[var(--red)]" />
           CRIAR COM IA
         </button>
       </div>
@@ -1366,31 +1347,31 @@ function RepertoriosLibrary() {
 
       {/* Search and Filters */}
 
-      <div className="flex flex-col gap-6 p-4 md:p-8 rounded-[2rem] bg-card border border-border">
+      <div className="flex flex-col gap-6 p-6 md:p-10 rounded-[2.5rem] bg-[var(--paper)] border border-[var(--line)] shadow-sm">
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-[var(--ink-3)]" />
           <input 
             type="text" 
             placeholder="Pesquise por autor, obra, tema ou argumento..."
-            className="w-full pl-14 pr-4 py-5 rounded-2xl bg-background border border-border focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-bold text-lg"
+            className="w-full pl-14 pr-4 py-5 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] focus:border-[var(--red)] focus:ring-1 focus:ring-[var(--red)] outline-none transition-all font-bold text-lg text-[var(--ink)] placeholder:text-[var(--ink-3)]/40 shadow-inner"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
-            <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] block mb-3 ml-1">Filtrar por Tipo</span>
+            <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-[0.2em] block mb-3 ml-1">Filtrar por Tipo</span>
             <div className="flex flex-wrap gap-2">
               {types.map(t => (
                 <button
                   key={t.id}
                   onClick={() => setActiveType(t.id)}
                   className={cn(
-                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-sm",
                     activeType === t.id 
-                      ? "bg-primary text-primary-foreground shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]" 
-                      : "bg-muted text-muted-foreground hover:text-foreground border border-transparent"
+                      ? "bg-[var(--ink)] text-[var(--paper)] border border-[var(--ink)]" 
+                      : "bg-[var(--paper-2)] text-[var(--ink-3)] hover:text-[var(--ink)] border border-[var(--line)]"
                   )}
                 >
                   {t.label}
@@ -1400,17 +1381,17 @@ function RepertoriosLibrary() {
           </div>
 
           <div>
-            <span className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] block mb-3 ml-1">Filtrar por Eixo Temático</span>
+            <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-[0.2em] block mb-3 ml-1">Filtrar por Eixo Temático</span>
             <div className="flex flex-wrap gap-2">
               {eixos.map(e => (
                 <button
                   key={e.id}
                   onClick={() => setActiveEixo(e.id)}
                   className={cn(
-                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border",
+                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border shadow-sm",
                     activeEixo === e.id 
-                      ? "bg-secondary text-secondary-foreground border-secondary shadow-[0_0_15px_rgba(var(--secondary-rgb),0.4)]" 
-                      : "bg-transparent border-border text-muted-foreground hover:text-foreground hover:border-muted-foreground"
+                      ? "bg-[var(--red)] text-white border-[var(--red)]" 
+                      : "bg-[var(--paper-2)] border-[var(--line)] text-[var(--ink-3)] hover:text-[var(--ink)]"
                   )}
                 >
                   {e.label}
@@ -1424,46 +1405,46 @@ function RepertoriosLibrary() {
       {/* Repertórios Grid */}
       <div className="grid grid-cols-1 gap-6">
         {filtered.map((r) => (
-          <div key={r.id} className="p-8 rounded-[2rem] border border-border bg-card hover:border-primary/40 transition-all flex flex-col md:flex-row gap-8">
+          <div key={r.id} className="p-8 rounded-[2.5rem] border border-[var(--line)] bg-[var(--paper)] hover:border-[var(--red)]/40 transition-all flex flex-col md:flex-row gap-8 shadow-sm group/card">
             <div className="flex-1 space-y-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="text-2xl font-black text-foreground tracking-tight">{r.titulo}</h3>
-                  <p className="text-sm font-bold text-primary uppercase tracking-widest">{r.autorOuOrigem}</p>
+                  <h3 className="font-['Fraunces'] text-2xl font-black text-[var(--ink)] tracking-tight italic">{r.titulo}</h3>
+                  <p className="text-[10px] font-black text-[var(--red)] uppercase tracking-[0.2em]">{r.autorOuOrigem}</p>
                 </div>
-                <div className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-[10px] font-black uppercase tracking-widest">
+                <div className="px-3 py-1 rounded-full bg-[var(--paper-2)] border border-[var(--line)] text-[var(--ink-3)] text-[9px] font-black uppercase tracking-widest shadow-inner">
                   {r.tipo}
                 </div>
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-1">Ideia Central</span>
-                  <p className="text-foreground font-medium leading-relaxed">{r.ideiaCentral}</p>
+                  <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-widest block mb-1">Ideia Central</span>
+                  <p className="text-[var(--ink)] font-medium leading-relaxed">{r.ideiaCentral}</p>
                 </div>
 
                 <div>
-                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-1">Como relacionar à redação</span>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{r.comoUsar}</p>
+                  <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-widest block mb-1">Como relacionar à redação</span>
+                  <p className="text-sm text-[var(--ink-2)] leading-relaxed">{r.comoUsar}</p>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-muted/30 border border-border/50 relative group">
-                  <span className="text-[10px] font-black uppercase text-primary tracking-widest block mb-3">Modelo Adaptável</span>
-                  <p className="text-sm font-medium italic text-foreground leading-relaxed whitespace-pre-wrap">
+                <div className="p-6 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] relative group shadow-inner">
+                  <span className="text-[9px] font-black uppercase text-[var(--red)] tracking-widest block mb-3">Modelo Adaptável</span>
+                  <p className="text-sm font-bold italic text-[var(--ink)] leading-relaxed whitespace-pre-wrap">
                     "{r.modeloAdaptavel.split(/(\[.*?\])/).map((part, i) => 
-                      part.startsWith('[') ? <span key={i} className="text-primary font-black bg-primary/10 px-1 rounded">{part}</span> : part
+                      part.startsWith('[') ? <span key={i} className="text-[var(--red)] font-black bg-[var(--red)]/10 px-1 rounded">{part}</span> : part
                     )}"
                   </p>
                   <button 
                     onClick={() => navigator.clipboard.writeText(r.modeloAdaptavel)}
-                    className="absolute top-4 right-4 p-2 rounded-lg bg-background border border-border text-muted-foreground hover:text-primary transition-colors"
+                    className="absolute top-4 right-4 p-2 rounded-lg bg-[var(--paper)] border border-[var(--line)] text-[var(--ink-3)] hover:text-[var(--red)] transition-colors shadow-sm"
                   >
                     <Copy className="w-4 h-4" />
                   </button>
                 </div>
 
                 {r.alerta && (
-                  <div className="flex items-start gap-2 text-amber-500 text-xs font-bold p-3 rounded-xl bg-amber-500/5 border border-amber-500/20">
+                  <div className="flex items-start gap-2 text-amber-600 text-[10px] font-black uppercase tracking-tight p-3 rounded-xl bg-amber-50 border border-amber-200 shadow-sm">
                     <AlertTriangle className="w-4 h-4 shrink-0" />
                     <span>Atenção: {r.alerta}</span>
                   </div>
@@ -1472,11 +1453,11 @@ function RepertoriosLibrary() {
             </div>
             
             <div className="w-full md:w-64 space-y-4">
-              <div className="p-6 rounded-2xl bg-muted/50 border border-border">
-                <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-3">Eixos Temáticos</span>
+              <div className="p-6 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] shadow-inner">
+                <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-widest block mb-3">Eixos Temáticos</span>
                 <div className="flex flex-wrap gap-2">
                   {r.eixosTematicos.map(e => (
-                    <span key={e} className="px-2 py-1 rounded-md bg-background border border-border text-[9px] font-black uppercase tracking-tighter text-foreground">
+                    <span key={e} className="px-2 py-1 rounded-md bg-[var(--paper)] border border-[var(--line)] text-[9px] font-black uppercase tracking-tighter text-[var(--ink)] shadow-sm">
                       {e}
                     </span>
                   ))}
@@ -1543,24 +1524,24 @@ function RepertorioAnalyzing() {
     <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300 py-4">
       <div className="text-center">
         <div className="relative w-24 h-24 mx-auto mb-6">
-          <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
-          <div className="absolute inset-2 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+          <div className="absolute inset-0 rounded-full bg-[var(--red)]/10 animate-ping" />
+          <div className="absolute inset-2 rounded-full border-2 border-[var(--red)]/20 border-t-[var(--red)] animate-spin" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <Sparkles className="w-9 h-9 text-primary animate-pulse" />
+            <Sparkles className="w-9 h-9 text-[var(--red)] animate-pulse" />
           </div>
         </div>
-        <h3 className="text-2xl font-black tracking-tight">IA analisando seu tema</h3>
-        <p className="text-sm font-bold text-muted-foreground mt-1">Isso leva só alguns segundos. Não feche esta janela.</p>
+        <h3 className="font-['Fraunces'] text-2xl font-black text-[var(--ink)] italic">IA analisando seu tema</h3>
+        <p className="text-sm font-bold text-[var(--ink-3)] mt-1">Isso leva só alguns segundos. Não feche esta janela.</p>
       </div>
 
       <div className="space-y-3">
-        <div className="h-3 w-full rounded-full bg-muted/40 overflow-hidden border border-border/50">
+        <div className="h-3 w-full rounded-full bg-[var(--paper-2)] overflow-hidden border border-[var(--line)] shadow-inner">
           <div
-            className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+            className="h-full rounded-full bg-[var(--ink)] transition-all duration-500 ease-out"
             style={{ width: `${Math.min(progress, 95)}%` }}
           />
         </div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-primary text-center">
+        <p className="text-[10px] font-black uppercase tracking-widest text-[var(--ink)] text-center">
           {Math.round(Math.min(progress, 95))}% concluído
         </p>
       </div>
@@ -1570,20 +1551,20 @@ function RepertorioAnalyzing() {
           <div
             key={label}
             className={cn(
-              "flex items-center gap-3 px-5 py-3 rounded-2xl border transition-all duration-300",
+              "flex items-center gap-3 px-5 py-3 rounded-2xl border transition-all duration-300 shadow-sm",
               i < index
-                ? "bg-[#22c55e]/10 border-[#22c55e]/30 text-foreground"
+                ? "bg-green-50 border-green-200 text-[var(--ink)]"
                 : i === index
-                  ? "bg-primary/10 border-primary/30 text-foreground"
-                  : "bg-muted/20 border-border/40 text-muted-foreground opacity-60",
+                  ? "bg-[var(--red)]/5 border-[var(--red)]/20 text-[var(--ink)]"
+                  : "bg-[var(--paper-2)] border-[var(--line)] text-[var(--ink-3)] opacity-60",
             )}
           >
             {i < index ? (
-              <Check className="w-4 h-4 text-[#22c55e] shrink-0" />
+              <Check className="w-4 h-4 text-green-700 shrink-0" />
             ) : i === index ? (
-              <div className="w-4 h-4 shrink-0 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+              <div className="w-4 h-4 shrink-0 rounded-full border-2 border-[var(--red)]/20 border-t-[var(--red)] animate-spin" />
             ) : (
-              <div className="w-4 h-4 shrink-0 rounded-full border border-border" />
+              <div className="w-4 h-4 shrink-0 rounded-full border border-[var(--line)]" />
             )}
             <span className="text-xs font-bold leading-tight">{label}</span>
           </div>
@@ -1653,9 +1634,9 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-xl flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl bg-card border-2 border-primary/20 rounded-[2.5rem] shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]">
-        <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-xl bg-muted/50 hover:bg-muted transition-colors z-10">
+    <div className="fixed inset-0 z-[100] bg-[var(--paper)]/95 backdrop-blur-xl flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl bg-[var(--paper)] border-2 border-[var(--line)] rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]">
+        <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-xl bg-[var(--paper-2)] border border-[var(--line)] hover:bg-[var(--line)] transition-colors z-10 shadow-sm text-[var(--ink)]">
           <X className="w-6 h-6" />
         </button>
 
@@ -1664,29 +1645,29 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
           {!loading && step === 1 && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
               <div className="text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Sparkles className="w-8 h-8 text-primary" />
+                <div className="w-16 h-16 bg-[var(--red)]/10 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                  <Sparkles className="w-8 h-8 text-[var(--red)]" />
                 </div>
-                <h3 className="text-3xl font-black mb-2">Gerador de Repertório IA</h3>
-                <p className="text-muted-foreground font-medium">Vamos criar o repertório perfeito para o seu texto.</p>
+                <h3 className="font-['Fraunces'] text-3xl font-black mb-2 text-[var(--ink)] italic">Gerador de Repertório IA</h3>
+                <p className="text-[var(--ink-2)] font-medium italic">Vamos criar o repertório perfeito para o seu texto.</p>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <label className="text-[10px] font-black uppercase text-primary tracking-widest block mb-2 ml-1">Sobre o que é seu texto? (Tema)</label>
+                  <label className="text-[9px] font-black uppercase text-[var(--red)] tracking-widest block mb-2 ml-1">Sobre o que é seu texto? (Tema)</label>
                   <input 
                     value={tema}
                     onChange={e => setTema(e.target.value)}
                     placeholder="Ex: O impacto das redes sociais na saúde mental dos jovens"
-                    className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-border focus:border-primary outline-none transition-all font-bold"
+                    className="w-full px-6 py-4 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] focus:border-[var(--red)] outline-none transition-all font-bold text-[var(--ink)] placeholder:text-[var(--ink-3)]/40 shadow-inner"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-black uppercase text-primary tracking-widest block mb-2 ml-1">Alguma preferência de gênero?</label>
+                  <label className="text-[9px] font-black uppercase text-[var(--red)] tracking-widest block mb-2 ml-1">Alguma preferência de gênero?</label>
                   <select 
                     value={genero}
                     onChange={e => setGenero(e.target.value)}
-                    className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-border focus:border-primary outline-none transition-all font-black uppercase text-xs tracking-widest"
+                    className="w-full px-6 py-4 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] focus:border-[var(--red)] outline-none transition-all font-black uppercase text-xs tracking-widest text-[var(--ink)] cursor-pointer shadow-sm"
                   >
                     <option value="">Nenhuma (IA escolhe)</option>
                     <option value="filosofia">Filosofia/Sociologia</option>
@@ -1702,9 +1683,9 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
                     console.log("Clique detectado no COMEÇAR FUNIL");
                     handleGenerate();
                   }}
-                  className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-black text-lg hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
+                  className="w-full py-5 rounded-2xl bg-[var(--ink)] text-[var(--paper)] font-black text-[10px] uppercase tracking-[0.2em] hover:scale-[1.02] active:scale-95 transition-all shadow-lg disabled:opacity-50 flex items-center justify-center gap-3"
                 >
-                  {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" /> : <><Zap className="w-5 h-5" /> COMEÇAR FUNIL</>}
+                  {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-[var(--paper)]/30 border-t-[var(--paper)]" /> : <><Zap className="w-5 h-5 text-[var(--red)]" /> COMEÇAR FUNIL</>}
                 </button>
               </div>
             </div>
@@ -1712,12 +1693,12 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
 
           {!loading && step === 2 && currentResponse && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
-              <div className="flex items-start gap-4 p-6 rounded-3xl bg-primary/5 border border-primary/20">
-                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shrink-0">
-                  <MessageSquare className="w-5 h-5 text-white" />
+              <div className="flex items-start gap-4 p-6 rounded-3xl bg-[var(--paper-2)] border border-[var(--line)] shadow-inner">
+                <div className="w-10 h-10 bg-[var(--red)]/10 border border-[var(--red)]/20 rounded-xl flex items-center justify-center shrink-0">
+                  <MessageSquare className="w-5 h-5 text-[var(--red)]" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-foreground leading-relaxed">
+                  <p className="text-sm font-bold text-[var(--ink)] leading-relaxed italic">
                     {currentResponse.message}
                   </p>
                 </div>
@@ -1729,7 +1710,7 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
                     value={detalhes}
                     onChange={e => setDetalhes(e.target.value)}
                     placeholder="Sua resposta aqui..."
-                    className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-border focus:border-primary outline-none transition-all font-bold min-h-[120px] resize-none"
+                    className="w-full px-6 py-4 rounded-2xl bg-[var(--paper-2)]/50 border border-[var(--line)] focus:border-[var(--red)] outline-none transition-all font-bold min-h-[120px] resize-none text-[var(--ink)] placeholder:text-[var(--ink-3)]/40 shadow-inner"
                   />
                   <button 
                     disabled={!detalhes || loading}
@@ -1737,9 +1718,9 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
                       console.log("Clique detectado no CONTINUAR ANÁLISE");
                       handleGenerate();
                     }}
-                    className="w-full py-5 rounded-2xl bg-primary text-primary-foreground font-black hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3"
+                    className="w-full py-5 rounded-2xl bg-[var(--ink)] text-[var(--paper)] font-black hover:scale-[1.02] active:scale-95 transition-all shadow-xl disabled:opacity-50 flex items-center justify-center gap-3 uppercase tracking-widest text-xs"
                   >
-                    {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white" /> : "CONTINUAR ANÁLISE"}
+                    {loading ? <div className="animate-spin rounded-full h-5 w-5 border-2 border-[var(--paper)]/30 border-t-[var(--paper)]" /> : "CONTINUAR ANÁLISE"}
                   </button>
                 </div>
               )}
@@ -1749,23 +1730,23 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
           {!loading && step === 3 && currentResponse?.repertorio && (
             <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500">
               <div className="text-center">
-                <div className="w-16 h-16 bg-[#22c55e]/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Check className="w-8 h-8 text-[#22c55e]" />
+                <div className="w-16 h-16 bg-green-50 border border-green-200 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                  <Check className="w-8 h-8 text-green-700" />
                 </div>
-                <h3 className="text-2xl font-black">Repertório Finalizado!</h3>
-                <p className="text-muted-foreground font-medium italic">"{currentResponse.message}"</p>
+                <h3 className="font-['Fraunces'] text-2xl font-black text-[var(--ink)] italic">Repertório Finalizado!</h3>
+                <p className="text-[var(--ink-2)] font-medium italic">"{currentResponse.message}"</p>
               </div>
 
               <div className="space-y-6">
-                <div className="p-8 rounded-[2rem] bg-muted/30 border-2 border-primary/20 relative group">
+                <div className="p-8 rounded-[2rem] bg-[var(--paper)] border-2 border-[var(--red)]/20 relative group shadow-sm">
                   <div className="flex justify-between items-start mb-6">
                     <div>
-                      <h4 className="text-2xl font-black text-primary tracking-tight">{currentResponse.repertorio.titulo}</h4>
-                      <p className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">{currentResponse.repertorio.autor}</p>
+                      <h4 className="font-['Fraunces'] text-2xl font-black text-[var(--red)] tracking-tight italic">{currentResponse.repertorio.titulo}</h4>
+                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--ink-3)]">{currentResponse.repertorio.autor}</p>
                     </div>
                     <button 
                       onClick={() => navigator.clipboard.writeText(`${currentResponse.repertorio!.titulo} - ${currentResponse.repertorio!.autor}\n\n${currentResponse.repertorio!.exemplo}`)}
-                      className="p-3 rounded-xl bg-background border border-border text-muted-foreground hover:text-primary transition-all"
+                      className="p-3 rounded-xl bg-[var(--paper-2)] border border-[var(--line)] text-[var(--ink-2)] hover:text-[var(--red)] transition-all shadow-sm"
                     >
                       <Copy className="w-5 h-5" />
                     </button>
@@ -1773,16 +1754,16 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
 
                   <div className="space-y-6">
                     <div>
-                      <span className="text-[10px] font-black uppercase text-primary tracking-widest block mb-1">Conceito Chave</span>
-                      <p className="text-sm font-bold text-foreground leading-relaxed">{currentResponse.repertorio.ideia}</p>
+                      <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-[0.2em] block mb-1">Conceito Chave</span>
+                      <p className="text-sm font-bold text-[var(--ink)] leading-relaxed">{currentResponse.repertorio.ideia}</p>
                     </div>
                     <div>
-                      <span className="text-[10px] font-black uppercase text-primary tracking-widest block mb-1">Uso Produtivo</span>
-                      <p className="text-sm font-bold text-foreground leading-relaxed">{currentResponse.repertorio.relacao}</p>
+                      <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-[0.2em] block mb-1">Uso Produtivo</span>
+                      <p className="text-sm font-bold text-[var(--ink)] leading-relaxed">{currentResponse.repertorio.relacao}</p>
                     </div>
-                    <div className="p-5 rounded-2xl bg-primary/5 border border-primary/10">
-                      <span className="text-[10px] font-black uppercase text-primary tracking-widest block mb-2">Exemplo no Texto</span>
-                      <p className="text-sm font-medium italic text-foreground/90 leading-relaxed">"{currentResponse.repertorio.exemplo}"</p>
+                    <div className="p-6 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] shadow-inner italic">
+                      <span className="text-[9px] font-black uppercase text-[var(--red)] tracking-[0.2em] block mb-2 not-italic">Exemplo no Texto</span>
+                      <p className="text-sm font-medium text-[var(--ink)] leading-relaxed">"{currentResponse.repertorio.exemplo}"</p>
                     </div>
                   </div>
                 </div>
@@ -1790,13 +1771,13 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
                 <div className="flex gap-4">
                   <button 
                     onClick={reset}
-                    className="flex-1 py-4 rounded-xl bg-muted font-black text-xs uppercase tracking-widest hover:bg-muted/80 transition-all border-2 border-primary/10 hover:border-primary/30"
+                    className="flex-1 py-4 rounded-xl bg-[var(--paper-2)] font-black text-[10px] uppercase tracking-[0.2em] text-[var(--ink-2)] hover:bg-[var(--line)] transition-all border border-[var(--line)] shadow-sm"
                   >
                     CRIAR OUTRO
                   </button>
                   <button 
                     onClick={onClose}
-                    className="flex-1 py-4 rounded-xl bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg"
+                    className="flex-1 py-4 rounded-xl bg-[var(--red)] text-white font-black text-[10px] uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-lg"
                   >
                     FECHAR
                   </button>
@@ -1815,13 +1796,13 @@ function StatCard({ icon: Icon, label, value, onClick, color }: any) {
   return (
     <button 
       onClick={onClick}
-      className="flex flex-col items-center justify-center p-6 rounded-3xl border border-border bg-card hover:border-primary/50 transition-all hover:scale-105 group"
+      className="flex flex-col items-center justify-center p-6 rounded-3xl border border-[var(--line)] bg-[var(--paper-2)]/30 hover:bg-[var(--paper-2)] hover:border-[var(--red)]/30 transition-all hover:scale-105 group shadow-sm"
     >
-      <div className={`p-4 rounded-2xl ${color}/10 ${color.replace('bg-', 'text-')} mb-4 group-hover:scale-110 transition-transform`}>
+      <div className={`p-4 rounded-2xl ${color} mb-4 group-hover:scale-110 transition-transform shadow-sm`}>
         <Icon className="w-8 h-8" />
       </div>
-      <span className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-1">{label}</span>
-      <span className="text-2xl font-black tracking-tight">{value}</span>
+      <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--ink-3)] mb-1">{label}</span>
+      <span className="text-2xl font-black tracking-tight text-[var(--ink)]">{value}</span>
     </button>
   );
 }
@@ -1837,41 +1818,45 @@ interface LockedLibraryOfferProps {
 function LockedLibraryOffer({ titulo, descricao, itens, onBuy, onSeePlans }: LockedLibraryOfferProps) {
   return (
     <div className="relative -mt-2">
-      <div className="rounded-[2rem] border-2 border-secondary/40 bg-card p-6 md:p-10 shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
-        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/25 border border-secondary/60 text-foreground text-[11px] font-black uppercase tracking-widest mb-4">
-          <Sparkles className="w-3.5 h-3.5 text-secondary" /> Acesso liberado no Combo Nota 1000
+      <div className="rounded-[2.5rem] border-2 border-[var(--red)]/40 bg-[var(--paper)] p-6 md:p-10 shadow-[0_30px_60px_-15px_rgba(196,50,42,0.15)] relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-[0.03] pointer-events-none">
+          <Sparkles className="w-64 h-64 text-[var(--red)]" />
+        </div>
+        
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--red)] text-white text-[10px] font-black uppercase tracking-widest mb-6 shadow-sm">
+          <Sparkles className="w-3.5 h-3.5 text-white animate-pulse" /> Acesso liberado no Combo Nota 1000
         </div>
 
 
-        <h3 className="text-2xl md:text-3xl font-black tracking-tight mb-3">{titulo}</h3>
-        <p className="text-base text-muted-foreground leading-relaxed mb-8 max-w-2xl">{descricao}</p>
+        <h3 className="font-['Fraunces'] text-2xl md:text-4xl font-black tracking-tight mb-3 text-[var(--ink)] italic">{titulo}</h3>
+        <p className="text-base text-[var(--ink-2)] font-medium leading-relaxed mb-8 max-w-2xl">{descricao}</p>
 
-        <ul className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
           {itens.map((item) => (
-            <li key={item} className="flex items-start gap-3 text-sm md:text-base font-bold text-foreground">
-              <Check className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+            <li key={item} className="flex items-start gap-3 text-sm md:text-base font-bold text-[var(--ink)]">
+              <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-green-600 text-white text-[10px] font-black flex items-center justify-center shadow-sm">✓</span>
               <span>{item}</span>
             </li>
           ))}
         </ul>
 
-        <div className="flex flex-col md:flex-row md:items-center gap-6 pt-6 border-t border-border">
+        <div className="flex flex-col md:flex-row md:items-center gap-8 pt-8 border-t border-[var(--line)]">
           <div>
-            <p className="whitespace-nowrap text-sm text-foreground/70 line-through font-bold">De R$ 59,90</p>
-            <p className="whitespace-nowrap text-4xl font-black text-foreground leading-none drop-shadow-[0_0_12px_rgba(255,255,255,0.15)]">R$ 39,00</p>
-            <p className="text-sm text-foreground/90 font-bold mt-1">Pagamento único • acesso vitalício</p>
+            <p className="whitespace-nowrap text-sm text-[var(--ink-3)] line-through font-bold italic">De R$ 59,90</p>
+            <p className="whitespace-nowrap text-5xl font-black text-[var(--ink)] leading-none mt-1 tracking-tight">R$ 39,00</p>
+            <p className="text-[10px] text-[var(--red)] font-black uppercase tracking-[0.2em] mt-3">Pagamento único • acesso vitalício</p>
           </div>
 
           <div className="flex-1 flex flex-col sm:flex-row gap-3 md:justify-end">
             <button
               onClick={onBuy}
-              className="px-6 py-4 rounded-xl bg-secondary text-secondary-foreground font-black text-base uppercase tracking-tight hover:scale-[1.02] transition-transform animate-pulse"
+              className="px-8 py-5 rounded-2xl bg-[var(--red)] text-white font-black text-sm uppercase tracking-[0.15em] hover:scale-[1.02] active:scale-95 transition-all shadow-[0_20px_40px_-10px_rgba(196,50,42,0.4)]"
             >
               Liberar acesso agora
             </button>
             <button
               onClick={onSeePlans}
-              className="px-6 py-4 rounded-xl border border-border text-muted-foreground font-bold text-sm hover:text-foreground hover:border-primary/40 transition-colors"
+              className="px-6 py-4 rounded-xl border border-[var(--line)] text-[var(--ink-3)] font-bold text-sm hover:text-[var(--ink)] hover:border-[var(--ink-3)] transition-colors shadow-sm bg-[var(--paper-2)]"
             >
               Ver todos os planos
             </button>
@@ -1895,10 +1880,10 @@ function ProgressSection({ essays, onGoToCorrection }: ProgressSectionProps) {
   if (ordenadas.length === 0) {
     return (
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div className="text-center py-20 border-2 border-dashed border-border rounded-3xl">
-          <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground font-bold">Ainda não há dados de progresso.</p>
-          <button onClick={onGoToCorrection} className="mt-4 text-primary font-black hover:underline">
+        <div className="text-center py-20 border-2 border-dashed border-[var(--line)] rounded-[2.5rem] bg-[var(--paper-2)]/30">
+          <TrendingUp className="w-12 h-12 text-[var(--ink-3)] mx-auto mb-4" />
+          <p className="text-[var(--ink-2)] font-bold italic">Ainda não há dados de progresso.</p>
+          <button onClick={onGoToCorrection} className="mt-4 text-[var(--red)] font-black hover:underline underline-offset-4">
             Enviar minha primeira redação →
           </button>
         </div>
@@ -1928,34 +1913,34 @@ function ProgressSection({ essays, onGoToCorrection }: ProgressSectionProps) {
   });
 
   const cards = [
-    { label: "Média geral", valor: media, cor: "text-primary" },
-    { label: "Melhor nota", valor: melhor, cor: "text-emerald-400" },
-    { label: "Última nota", valor: ultima, cor: "text-secondary" },
-    { label: "Redações corrigidas", valor: ordenadas.length, cor: "text-foreground" },
+    { label: "Média geral", valor: media, cor: "text-[var(--red)]" },
+    { label: "Melhor nota", valor: melhor, cor: "text-green-600" },
+    { label: "Última nota", valor: ultima, cor: "text-[var(--ink)]" },
+    { label: "Redações corrigidas", valor: ordenadas.length, cor: "text-[var(--ink-2)]" },
   ];
 
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-8">
-        <h2 className="text-3xl font-black flex items-center gap-3">
-          <TrendingUp className="w-8 h-8 text-emerald-400" />
+        <h2 className="font-['Fraunces'] text-3xl font-black flex items-center gap-3 text-[var(--ink)] italic">
+          <TrendingUp className="w-8 h-8 text-green-600" />
           Meu Progresso
         </h2>
-        <p className="text-muted-foreground mt-2">Acompanhe a evolução das suas notas e onde você mais precisa treinar.</p>
+        <p className="text-[var(--ink-2)] mt-2 font-medium">Acompanhe a evolução das suas notas e onde você mais precisa treinar.</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {cards.map((c) => (
-          <div key={c.label} className="rounded-2xl border border-border bg-card p-5">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground font-black mb-2">{c.label}</p>
+          <div key={c.label} className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 p-5 shadow-sm">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink-3)] font-black mb-2">{c.label}</p>
             <p className={cn("text-3xl font-black tabular-nums", c.cor)}>{c.valor}</p>
           </div>
         ))}
       </div>
 
-      <div className="rounded-[2rem] border border-border bg-card p-4 md:p-8 mb-8">
-        <h3 className="text-xl font-black mb-1">Evolução das notas</h3>
-        <p className="text-sm text-muted-foreground font-bold mb-6">
+      <div className="rounded-[2rem] border border-[var(--line)] bg-[var(--paper)] p-4 md:p-8 mb-8 shadow-sm">
+        <h3 className="font-['Fraunces'] text-xl font-black mb-1 text-[var(--ink)]">Evolução das notas</h3>
+        <p className="text-sm text-[var(--ink-2)] font-bold mb-6 italic">
           {evolucao >= 0
             ? `Você subiu ${evolucao} pontos desde a primeira correção.`
             : `Você caiu ${Math.abs(evolucao)} pontos desde a primeira correção. Bora treinar.`}
@@ -1963,50 +1948,50 @@ function ProgressSection({ essays, onGoToCorrection }: ProgressSectionProps) {
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" />
-              <XAxis dataKey="nome" stroke="#ffffff" tick={{ fill: "#ffffff", fontWeight: 700 }} fontSize={12} />
-              <YAxis domain={[0, 1000]} stroke="#ffffff" tick={{ fill: "#ffffff", fontWeight: 700 }} fontSize={12} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" />
+              <XAxis dataKey="nome" stroke="var(--ink-3)" tick={{ fill: "var(--ink-3)", fontWeight: 700 }} fontSize={12} />
+              <YAxis domain={[0, 1000]} stroke="var(--ink-3)" tick={{ fill: "var(--ink-3)", fontWeight: 700 }} fontSize={12} />
               <Tooltip
                 contentStyle={{
-                  background: "#0f172a",
-                  border: "1px solid rgba(255,255,255,0.2)",
+                  background: "var(--paper)",
+                  border: "1px solid var(--line)",
                   borderRadius: "12px",
-                  color: "#ffffff",
+                  color: "var(--ink)",
                 }}
-                itemStyle={{ color: "#ffffff", fontWeight: 700 }}
-                labelStyle={{ color: "#ffffff", fontWeight: 700 }}
+                itemStyle={{ color: "var(--ink)", fontWeight: 700 }}
+                labelStyle={{ color: "var(--ink)", fontWeight: 700 }}
                 formatter={(value: any) => [`${value} pontos`, "Nota"]}
                 labelFormatter={(label: any, payload: any) => payload?.[0]?.payload?.data || label}
               />
-              <Line type="monotone" dataKey="nota" stroke="#ffffff" strokeWidth={3} dot={{ r: 4, fill: "#ffffff", stroke: "#ffffff" }} activeDot={{ r: 6, fill: "#ffffff" }} />
+              <Line type="monotone" dataKey="nota" stroke="var(--red)" strokeWidth={3} dot={{ r: 4, fill: "var(--red)", stroke: "var(--red)" }} activeDot={{ r: 6, fill: "var(--red)" }} />
 
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-      <div className="rounded-[2rem] border border-border bg-card p-4 md:p-8">
-        <h3 className="text-xl font-black mb-1">Média por competência</h3>
-        <p className="text-sm text-muted-foreground font-bold mb-6">Cada competência vale até 200 pontos no ENEM.</p>
+      <div className="rounded-[2rem] border border-[var(--line)] bg-[var(--paper)] p-4 md:p-8 shadow-sm">
+        <h3 className="font-['Fraunces'] text-xl font-black mb-1 text-[var(--ink)]">Média por competência</h3>
+        <p className="text-sm text-[var(--ink-2)] font-bold mb-6 italic">Cada competência vale até 200 pontos no ENEM.</p>
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={competencias} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" />
-              <XAxis dataKey="nome" stroke="#ffffff" tick={{ fill: "#ffffff", fontWeight: 700 }} fontSize={12} />
-              <YAxis domain={[0, 200]} stroke="#ffffff" tick={{ fill: "#ffffff", fontWeight: 700 }} fontSize={12} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" />
+              <XAxis dataKey="nome" stroke="var(--ink-3)" tick={{ fill: "var(--ink-3)", fontWeight: 700 }} fontSize={12} />
+              <YAxis domain={[0, 200]} stroke="var(--ink-3)" tick={{ fill: "var(--ink-3)", fontWeight: 700 }} fontSize={12} />
               <Tooltip
-                cursor={{ fill: "rgba(255,255,255,0.1)" }}
+                cursor={{ fill: "var(--paper-2)" }}
                 contentStyle={{
-                  background: "#0f172a",
-                  border: "1px solid rgba(255,255,255,0.2)",
+                  background: "var(--paper)",
+                  border: "1px solid var(--line)",
                   borderRadius: "12px",
-                  color: "#ffffff",
+                  color: "var(--ink)",
                 }}
-                itemStyle={{ color: "#ffffff", fontWeight: 700 }}
-                labelStyle={{ color: "#ffffff", fontWeight: 700 }}
+                itemStyle={{ color: "var(--ink)", fontWeight: 700 }}
+                labelStyle={{ color: "var(--ink)", fontWeight: 700 }}
                 formatter={(value: any) => [`${value} / 200`, "Média"]}
               />
-              <Bar dataKey="media" fill="#ffffff" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="media" fill="var(--red)" radius={[8, 8, 0, 0]} />
 
             </BarChart>
           </ResponsiveContainer>

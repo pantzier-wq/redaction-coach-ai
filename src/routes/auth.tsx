@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
@@ -135,28 +135,29 @@ function AuthPage() {
 
 
   return (
-    <div className="dark min-h-screen bg-background text-foreground flex items-center justify-center px-4">
-      <div className="w-full max-w-md space-y-6 rounded-3xl border border-border bg-card p-8 shadow-[0_0_50px_rgba(var(--primary-rgb),0.1)]">
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] flex items-center justify-center px-4 font-['Public_Sans']">
+      <div className="w-full max-w-md space-y-8 rounded-3xl border border-[var(--line)] bg-[var(--paper-2)]/80 backdrop-blur-sm p-8 shadow-[0_20px_40px_-12px_rgba(22,33,58,0.1)]">
         <div className="text-center">
-          <h1 className="text-3xl font-black tracking-tight">
-            CorrigeAI <span className="text-primary">VIP</span>
+          <h1 className="font-['Fraunces'] text-4xl font-black italic tracking-tighter text-[var(--ink)]">
+            CORRIGE<span className="text-[var(--red)]">AI</span>
           </h1>
+          <p className="mt-2 text-xs font-black uppercase tracking-[0.2em] text-[var(--ink-3)]">Acesso VIP Estudante</p>
         </div>
 
         {/* Seletor Cadastrar / Entrar */}
-        <div className="grid grid-cols-2 gap-1 rounded-2xl border border-border bg-muted/40 p-1">
+        <div className="grid grid-cols-2 gap-1 rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-1.5 shadow-inner">
           <button
             type="button"
             onClick={() => {
               setView("signup");
               setError(null);
             }}
-            className={
+            className={cn(
+              "rounded-xl py-3 text-sm font-black transition-all uppercase tracking-widest",
               view === "signup"
-                ? "rounded-xl py-2.5 text-sm font-black text-primary-foreground transition-all"
-                : "rounded-xl py-2.5 text-sm font-bold text-muted-foreground transition-all hover:text-foreground"
-            }
-            style={view === "signup" ? { background: "var(--gradient-cta)" } : undefined}
+                ? "bg-[var(--ink)] text-[var(--paper)] shadow-md"
+                : "text-[var(--ink-3)] hover:text-[var(--ink)]"
+            )}
           >
             Cadastrar
           </button>
@@ -166,46 +167,48 @@ function AuthPage() {
               setView("login");
               setError(null);
             }}
-            className={
+            className={cn(
+              "rounded-xl py-3 text-sm font-black transition-all uppercase tracking-widest",
               view === "login"
-                ? "rounded-xl py-2.5 text-sm font-black text-primary-foreground transition-all"
-                : "rounded-xl py-2.5 text-sm font-bold text-muted-foreground transition-all hover:text-foreground"
-            }
-            style={view === "login" ? { background: "var(--gradient-cta)" } : undefined}
+                ? "bg-[var(--ink)] text-[var(--paper)] shadow-md"
+                : "text-[var(--ink-3)] hover:text-[var(--ink)]"
+            )}
           >
             Entrar
           </button>
         </div>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-[var(--ink-2)] font-medium italic">
           {view === "login"
             ? "Entre para acessar sua área exclusiva"
-            : "Crie sua conta e decole sua nota"}
+            : "Crie sua conta gratuita agora"}
         </p>
 
-          <form onSubmit={handleEmailAuth} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full rounded-xl border border-border bg-input px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
-              placeholder="seu@email.com"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Senha</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={6}
-              className="w-full rounded-xl border border-border bg-input px-4 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
-              placeholder="••••••••"
-            />
+        <form onSubmit={handleEmailAuth} className="space-y-6">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--ink-3)] mb-2">E-mail Estudante</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full rounded-xl border border-[var(--line)] bg-[var(--paper)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--red)] transition-all placeholder:text-[var(--ink-3)]/40 shadow-sm"
+                placeholder="seu@email.com"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--ink-3)] mb-2">Sua Senha</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                className="w-full rounded-xl border border-[var(--line)] bg-[var(--paper)] px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--red)] transition-all placeholder:text-[var(--ink-3)]/40 shadow-sm"
+                placeholder="••••••••"
+              />
+            </div>
           </div>
 
           {view === "login" && (
@@ -214,16 +217,20 @@ function AuthPage() {
                 href="https://wa.me/5548996736743?text=Olá! Esqueci minha senha do CorrigeAI e preciso de ajuda para recuperar."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
+                className="text-[10px] font-black uppercase tracking-widest text-[var(--ink-3)] hover:text-[var(--red)] transition-colors"
               >
                 Esqueci minha senha
               </a>
             </div>
           )}
 
-
           {error && (
-            <div className="text-xs text-destructive bg-destructive/10 p-3 rounded-lg border border-destructive/20">
+            <div className={cn(
+              "text-xs font-bold p-4 rounded-xl border leading-relaxed shadow-sm",
+              error.includes("✅") 
+                ? "bg-green-50 border-green-200 text-green-700" 
+                : "bg-[var(--red)]/5 border-[var(--red)]/20 text-[var(--red)]"
+            )}>
               {error}
             </div>
           )}
@@ -231,15 +238,19 @@ function AuthPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-xl py-3 font-bold text-primary-foreground transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50"
-            style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
+            className="w-full rounded-2xl py-5 font-black text-[var(--paper)] bg-[var(--ink)] text-xs uppercase tracking-[0.2em] transition-all hover:scale-[1.02] active:scale-95 disabled:opacity-50 shadow-[0_10px_20px_-5px_rgba(22,33,58,0.2)]"
           >
-            {loading ? "Processando..." : view === "login" ? "Entrar" : "Criar Conta"}
+            {loading ? "PROCESSANDO..." : view === "login" ? "ENTRAR NO SISTEMA" : "CRIAR CONTA AGORA"}
           </button>
         </form>
+
+        <p className="text-center text-[10px] font-black uppercase tracking-[0.15em] text-[var(--ink-3)]">
+          Ambiente Seguro • Criptografia SSL
+        </p>
       </div>
     </div>
   );
 }
+
 
 

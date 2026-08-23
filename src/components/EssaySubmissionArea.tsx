@@ -310,8 +310,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
           <div className="relative w-full">
             <form
               onSubmit={onSubmit}
-              className={`rounded-3xl border border-border bg-card p-6 md:p-8 transition-all duration-500 overflow-hidden ${(result || (isLoggedIn && !isPro)) && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
-              style={{ boxShadow: "var(--shadow-glow)" }}
+              className={`rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 transition-all duration-500 overflow-hidden ${(result || (isLoggedIn && !isPro)) && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
+              style={{ boxShadow: "var(--paper-shadow)" }}
             >
               <label className="mb-2 block text-sm font-bold text-primary">Tema da redação</label>
               <input
@@ -365,25 +365,25 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
             </form>
 
             {isLoggedIn && ((result && showPaywall) || (!canCorrect && showPaywall)) && (
-              <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-background/80 backdrop-blur-sm flex items-start justify-center p-4 md:p-6 pt-20 md:pt-24 pb-10">
+              <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-[var(--paper)]/80 backdrop-blur-sm flex items-start justify-center p-4 md:p-6 pt-20 md:pt-24 pb-10 font-['Public_Sans']">
                 <div 
-                  className="w-full max-w-lg md:max-w-4xl rounded-3xl border border-[#22c55e]/50 bg-card/95 p-6 md:p-10 shadow-[0_0_100px_rgba(34,197,94,0.4)] backdrop-blur-2xl relative animate-in fade-in zoom-in duration-500"
+                  className="w-full max-w-lg md:max-w-4xl rounded-3xl border border-[var(--red)]/30 bg-[var(--paper)] p-6 md:p-10 shadow-[var(--paper-shadow)] backdrop-blur-2xl relative animate-in fade-in zoom-in duration-500"
                 >
 
                   <div className="absolute -top-12 md:-top-16 left-1/2 -translate-x-1/2 z-10">
                     <div className="relative">
-                      <div className="absolute inset-0 animate-ping rounded-full bg-[#22c55e]/20" />
-                      <div className="relative p-5 rounded-full bg-card text-[#22c55e] border-4 border-[#22c55e] shadow-[0_0_30px_rgba(34,197,94,0.6)]">
+                      <div className="absolute inset-0 animate-ping rounded-full bg-[var(--red)]/10" />
+                      <div className="relative p-5 rounded-full bg-[var(--paper)] text-[var(--red)] border-4 border-[var(--red)] shadow-[0_0_30px_rgba(196,50,42,0.2)]">
                         <Trophy className="w-10 h-10 md:w-12 md:h-12" />
                       </div>
                     </div>
                   </div>
                   
-                  <h2 className="text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-white">
+                  <h2 className="font-['Fraunces'] text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-[var(--ink)]">
                     {semCreditos ? "Seus créditos acabaram" : result ? "Análise Pronta! 🎯" : "Quase lá..."}
                   </h2>
                   
-                  <p className="text-sm md:text-base text-white/90 font-semibold mb-6 md:mb-8 leading-relaxed text-center">
+                  <p className="text-sm md:text-base text-[var(--ink-2)] font-semibold mb-6 md:mb-8 leading-relaxed text-center">
                     {semCreditos
                       ? "Você já usou as 15 correções do Plano Essencial. Recarregue créditos ou faça o upgrade para o Combo Nota 1000 e corrija sem limite nenhum."
                       : result 
@@ -393,7 +393,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
                   {semCreditos && (
                     <div className="mb-8">
-                      <p className="text-[11px] font-black uppercase tracking-widest text-white/50 mb-3 text-center">
+                      <p className="text-[11px] font-black uppercase tracking-widest text-[var(--ink-3)] mb-3 text-center">
                         Recarregue seus créditos
                       </p>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -405,17 +405,17 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                           <button
                             key={pack.qtd}
                             onClick={() => handleBuyCredits(pack.qtd)}
-                            className="rounded-2xl border border-white/10 bg-white/5 p-4 text-center hover:border-[#22c55e]/50 hover:bg-white/10 transition-all"
+                            className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-4 text-center hover:border-[var(--red)] hover:bg-[var(--paper-2)]/80 transition-all shadow-sm"
                           >
-                            <div className="text-lg font-black text-white">{pack.qtd} correções</div>
-                            <div className="text-sm font-black text-[#22c55e]">{pack.preco}</div>
-                            <div className="mt-2 rounded-lg bg-[#22c55e]/15 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-[#22c55e]">
+                            <div className="text-lg font-black text-[var(--ink)]">{pack.qtd} correções</div>
+                            <div className="text-sm font-black text-[var(--red)]">{pack.preco}</div>
+                            <div className="mt-2 rounded-lg bg-[var(--red)]/10 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-[var(--red)]">
                               Obtenha clicando aqui
                             </div>
                           </button>
                         ))}
                       </div>
-                      <p className="mt-3 text-center text-[10px] font-bold text-white/40 uppercase tracking-widest">
+                      <p className="mt-3 text-center text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-widest">
                         Créditos disponíveis apenas para quem tem o Plano Essencial
                       </p>
                     </div>
@@ -426,134 +426,115 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
                       {/* PLANO ESSENCIAL - escondido para quem já comprou */}
                       {!semCreditos && (
-                      <div className="flex flex-col rounded-2xl border border-white/10 bg-white/5 p-5 relative overflow-hidden group transition-all hover:bg-white/10">
+                      <div className="flex flex-col rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 p-5 relative overflow-hidden group transition-all hover:bg-[var(--paper-2)] shadow-sm">
                         
                         <div className="mb-4 flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
-                            <Zap className="w-5 h-5 text-white/60" />
+                          <div className="h-10 w-10 rounded-xl bg-[var(--line)]/30 flex items-center justify-center shrink-0">
+                            <Zap className="w-5 h-5 text-[var(--ink-3)]" />
                           </div>
                           <div>
-                            <h3 className="text-lg font-black text-white/90 leading-tight uppercase tracking-tight">Plano Essencial</h3>
-                            <p className="text-[11px] font-bold text-white/40 leading-tight">ACESSO VITALÍCIO • 20 CORREÇÕES</p>
+                            <h3 className="text-lg font-black text-[var(--ink)] leading-tight uppercase tracking-tight">Plano Essencial</h3>
+                            <p className="text-[11px] font-bold text-[var(--ink-3)] leading-tight uppercase tracking-widest">ACESSO VITALÍCIO • 15 CORREÇÕES</p>
                           </div>
                         </div>
                         
                         <ul className="space-y-2 mb-6 flex-1">
-                          <li className="flex items-start gap-2 text-sm font-medium text-white/80">
-                            <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
-                            <span><strong>20 correções</strong> de IA (limite do plano)</span>
+                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-2)]">
+                            <span className="text-green-600 shrink-0 font-bold">✓</span>
+                            <span><strong>15 correções</strong> de IA (limite do plano)</span>
                           </li>
-                          <li className="flex items-start gap-2 text-sm font-medium text-white/80">
-                            <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
+                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-2)]">
+                            <span className="text-green-600 shrink-0 font-bold">✓</span>
                             <span>Histórico com <strong>gráfico de evolução</strong></span>
                           </li>
-                          <li className="flex items-start gap-2 text-sm font-medium text-white/80">
-                            <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
+                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-2)]">
+                            <span className="text-green-600 shrink-0 font-bold">✓</span>
                             <span>Feedback oficial padrão <strong>INEP</strong></span>
                           </li>
-                          <li className="flex items-start gap-2 text-sm font-medium text-white/80">
-                            <span className="text-[#22c55e] shrink-0 font-bold">✓</span>
+                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-2)]">
+                            <span className="text-green-600 shrink-0 font-bold">✓</span>
                             <span>Pode comprar <strong>créditos extras</strong> depois</span>
                           </li>
-                          <li className="flex items-start gap-2 text-sm font-medium text-white/35">
-                            <span className="text-destructive shrink-0 font-bold">✕</span>
+                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-3)]">
+                            <span className="text-[var(--red)] shrink-0 font-bold">✕</span>
                             <span className="line-through italic">Correções ilimitadas</span>
                           </li>
-                          <li className="flex items-start gap-2 text-sm font-medium text-white/35">
-                            <span className="text-destructive shrink-0 font-bold">✕</span>
+                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-3)]">
+                            <span className="text-[var(--red)] shrink-0 font-bold">✕</span>
                             <span className="line-through italic">Laboratório de Conectivos IA</span>
                           </li>
-                          <li className="flex items-start gap-2 text-sm font-medium text-white/35">
-                            <span className="text-destructive shrink-0 font-bold">✕</span>
+                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-3)]">
+                            <span className="text-[var(--red)] shrink-0 font-bold">✕</span>
                             <span className="line-through italic">Gerador de Repertório Coringa</span>
                           </li>
                         </ul>
 
-                        <div className="mt-auto">
-                          <div className="flex items-baseline gap-2 mb-3">
-                             <span className="text-sm font-bold text-white/30 line-through italic">R$ 29,90</span>
-                             <span className="text-3xl font-black text-white/90">R$ 19,90</span>
-                             <span className="text-xs font-bold text-white/40 uppercase">Taxa única</span>
+                        <div className="mt-auto pt-4 border-t border-[var(--line)]">
+                          <div className="flex items-baseline gap-2 mb-4">
+                             <span className="text-sm font-bold text-[var(--ink-3)] line-through italic">R$ 29,90</span>
+                             <span className="text-3xl font-black text-[var(--ink)]">R$ 19,90</span>
                           </div>
                           <button
                             onClick={() => handleTestPurchase("basic")}
-                            className="w-full py-2.5 rounded-xl bg-white/5 text-white/60 font-black text-sm uppercase tracking-widest hover:bg-white/10 transition-all border border-white/10"
+                            className="w-full py-4 rounded-xl bg-[var(--ink)] text-[var(--paper)] font-black text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg"
                           >
-                            LIBERAR ACESSO BÁSICO
+                            LIBERAR AGORA
                           </button>
+                          <p className="mt-3 text-center text-[9px] font-bold text-[var(--ink-3)] uppercase tracking-[0.2em]">Desconto de R$ 10,00</p>
                         </div>
                       </div>
                       )}
 
 
                       {/* COMBO NOTA 1000 */}
-                      <div className="flex flex-col rounded-2xl border-2 border-[#22c55e] bg-[#22c55e]/5 p-5 relative overflow-hidden group shadow-[0_0_40px_rgba(34,197,94,0.15)] scale-[1.02]">
+                      <div className="flex flex-col rounded-2xl border-2 border-[var(--red)] bg-[var(--red)]/5 p-5 relative overflow-hidden group shadow-[0_20px_40px_-12px_rgba(196,50,42,0.15)] scale-[1.02]">
                         
                         <div className="mb-4 flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-xl bg-[#22c55e] flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(34,197,94,0.4)]">
+                          <div className="h-10 w-10 rounded-xl bg-[var(--red)] flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(196,50,42,0.4)]">
                             <Sparkles className="w-5 h-5 text-white animate-pulse" />
                           </div>
                           <div>
-                            <h3 className="text-lg font-black text-white leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
-                            <p className="text-[11px] font-bold text-[#22c55e] leading-tight">O PODER DA APROVAÇÃO</p>
+                            <h3 className="text-lg font-black text-[var(--ink)] leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
+                            <p className="text-[11px] font-bold text-[var(--red)] leading-tight uppercase tracking-widest">O PODER DA APROVAÇÃO</p>
                           </div>
                         </div>
 
-                        <div className="mb-4 grid grid-cols-3 gap-2">
+                        <ul className="space-y-3 mb-6 flex-1">
                           {[
-                            { n: "∞", l: "Correções" },
-                            { n: "70+", l: "Repertórios" },
-                            { n: "2", l: "IAs Bônus" },
-                          ].map((s) => (
-                            <div key={s.l} className="rounded-xl bg-[#22c55e]/10 border border-[#22c55e]/20 py-2 text-center">
-                              <div className="text-2xl font-black text-[#22c55e] leading-none">{s.n}</div>
-                              <div className="text-[10px] font-bold uppercase tracking-widest text-white/60 mt-1">{s.l}</div>
-                            </div>
-                          ))}
-                        </div>
-
-                        <ul className="space-y-2.5 mb-5 flex-1">
-                          {[
-                            { t: "Correções ILIMITADAS para sempre", d: "Sem créditos, sem limite de 20. Treine até fechar a nota." },
-                            { t: "IA de Repertório Sociocultural", d: "Gera repertório legitimado e pronto pra usar em qualquer tema." },
-                            { t: "Laboratório de Conectivos (IA)", d: "Analisa suas frases e corrige a Competência 4 em segundos." },
-                            { t: "70+ Repertórios Coringas", d: "Biblioteca validada que encaixa em qualquer proposta do ENEM." },
-                            { t: "Biblioteca de Conectivos + Treino", d: "Quiz e flashcards pra nunca mais repetir palavra." },
-                            { t: "Histórico de até 50 redações", d: "Gráfico de evolução por competência, nota a nota." },
+                            { t: "Correções ILIMITADAS para sempre", d: "Sem créditos, sem limite. Treine até fechar a nota." },
+                            { t: "IA de Repertório Sociocultural", d: "Gera repertório legitimado para qualquer tema." },
+                            { t: "Laboratório de Conectivos (IA)", d: "Corrige sua Competência 4 em segundos." },
+                            { t: "70+ Repertórios Coringas", d: "Biblioteca validada que encaixa em tudo." },
+                            { t: "Suporte priorizado via WhatsApp", d: "Atendimento humano e rápido." },
                           ].map((b) => (
                             <li key={b.t} className="flex items-start gap-2">
-                              <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-[#22c55e] text-white text-[11px] font-black flex items-center justify-center">✓</span>
+                              <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-[var(--red)] text-white text-[11px] font-black flex items-center justify-center">✓</span>
                               <div className="leading-tight">
-                                <div className="text-sm font-black text-white">{b.t}</div>
-                                <div className="text-xs font-medium text-white/60 mt-0.5">{b.d}</div>
+                                <div className="text-sm font-black text-[var(--ink)]">{b.t}</div>
+                                <div className="text-xs font-medium text-[var(--ink-2)] mt-0.5">{b.d}</div>
                               </div>
                             </li>
                           ))}
                         </ul>
 
-                        <div className="mt-auto">
-                          <div className="mb-3 rounded-xl border border-[#22c55e]/20 bg-[#22c55e]/5 p-3">
-                            <div className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-1">
-                              <span className="whitespace-nowrap text-sm font-bold text-white/40 line-through italic">R$ 59,00</span>
-                              <span className="whitespace-nowrap text-4xl font-black text-[#22c55e] drop-shadow-[0_0_10px_rgba(34,197,94,0.5)]">R$ 39,00</span>
-                            </div>
-                            <p className="text-[11px] font-bold uppercase tracking-widest text-white/50 mt-2 leading-relaxed">
-                              Pagamento único • Acesso vitalício • Cupom de R$ 20,00 aplicado!
-                            </p>
+                        <div className="mt-auto pt-4 border-t border-[var(--line)]">
+                          <div className="flex items-baseline gap-2 mb-4">
+                             <span className="text-sm font-bold text-[var(--ink-3)] line-through italic">R$ 59,00</span>
+                             <span className="text-3xl font-black text-[var(--ink)]">R$ 39,00</span>
                           </div>
                           <button
                             onClick={() => handleTestPurchase("combo")}
-                            className="w-full py-3.5 rounded-xl bg-[#22c55e] text-white font-black text-sm uppercase tracking-[0.15em] hover:scale-[1.03] active:scale-95 transition-all shadow-[0_8px_25px_rgba(34,197,94,0.4)] relative overflow-hidden border border-[#22c55e]/20"
+                            className="w-full py-5 rounded-xl bg-[var(--red)] text-white font-black text-sm uppercase tracking-[0.15em] hover:scale-[1.02] active:scale-95 transition-all shadow-[0_10px_20px_-5px_rgba(196,50,42,0.4)]"
                           >
-                            <span className="relative z-10">GARANTIR MEU COMBO AGORA →</span>
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer" />
+                            LIBERAR TUDO AGORA
                           </button>
+                          <p className="mt-3 text-center text-[9px] font-bold text-[var(--red)] uppercase tracking-[0.2em]">Desconto de R$ 20,00</p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-2 text-center pt-2">
-                      <p className="text-xs text-white font-black uppercase tracking-widest bg-white/5 py-1.5 rounded-lg border border-white/10">
+                    <div className="flex flex-col gap-2 text-center pt-4">
+                      <p className="text-xs text-[var(--ink)] font-black uppercase tracking-widest bg-[var(--paper-2)] py-2 rounded-lg border border-[var(--line)] shadow-sm">
                         ⚡ Liberação Imediata • Pagamento Único
                       </p>
                     </div>

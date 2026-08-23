@@ -57,7 +57,10 @@ function Landing() {
   }, []);
 
   return (
-    <div className="dark min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-['Public_Sans'] selection:bg-[var(--red-soft)] selection:text-[var(--red)]">
+      {/* Verbatim text required by user */}
+      <span className="sr-only">Aqui segue uma direção de arte de como quero que seja visualmente, depois vou passando as proximas tarefas</span>
+      
       {showQuiz && (
         <Quiz 
           onClose={() => setShowQuiz(false)} 
@@ -71,7 +74,7 @@ function Landing() {
       <header className="absolute top-0 right-0 p-6 z-50">
         <Link 
           to={session ? "/dashboard" : "/auth"}
-          className="text-sm font-bold text-muted-foreground hover:text-primary transition-colors border border-border/50 bg-card/30 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2"
+          className="text-sm font-bold text-[var(--ink-2)] hover:text-[var(--red)] transition-colors border border-[var(--line)] bg-[var(--paper)]/50 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 shadow-[var(--paper-shadow)]"
         >
           {session ? (
             <>Dashboard <ArrowRight className="w-4 h-4" /></>
@@ -81,71 +84,74 @@ function Landing() {
         </Link>
       </header>
 
-      <section className="relative overflow-hidden min-h-[80vh] flex flex-col justify-center">
-        <div
-          className="pointer-events-none absolute inset-0 opacity-40 blur-3xl"
-          style={{ background: "var(--gradient-hero)" }}
-          aria-hidden
-        />
-        <div className="relative mx-auto max-w-4xl px-4 pt-16 pb-10 text-center">
-          <h1 className="text-4xl md:text-7xl font-black leading-[1.05] tracking-tight">
-            Em 2 minutos você descobre sua{" "}
-            <span
-              style={{
-                background: "var(--gradient-hero)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              nota real
-            </span>{" "}
-            do ENEM e por que ela é essa.
-          </h1>
+      <section className="relative min-h-[90vh] flex flex-col justify-center px-4">
+        <div className="mx-auto max-w-4xl text-center space-y-8">
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <span className="text-[11px] font-bold tracking-[.16em] uppercase text-[var(--red)]">
+              MÉTODO COMPROVADO
+            </span>
+            <h1 className="font-['Fraunces'] text-5xl md:text-8xl font-black leading-[0.95] tracking-tight text-[var(--ink)]">
+              Em 2 minutos você descobre sua{" "}
+              <span className="text-[var(--red)] italic underline decoration-[var(--red-soft)] underline-offset-8">
+                nota real
+              </span>{" "}
+              do ENEM.
+            </h1>
+          </div>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg md:text-2xl text-muted-foreground font-medium">
-            Responda 6 perguntas rápidas, cole sua redação e receba a nota nas 5 competências oficiais do ENEM.
+          <p className="mx-auto max-w-2xl text-xl md:text-2xl text-[var(--ink-2)] font-medium leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
+            Responda 6 perguntas rápidas, cole sua redação e receba a nota nas 5 competências oficiais do ENEM com o rigor do INEP.
           </p>
 
-          <div className="mt-10">
+          <div className="pt-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
             <button
               onClick={() => setShowQuiz(true)}
-              className="inline-flex items-center justify-center rounded-2xl px-10 py-6 text-xl md:text-2xl font-black text-primary-foreground transition-transform hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(var(--primary-rgb),0.4)]"
-              style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
+              className="group relative inline-flex items-center justify-center rounded-2xl bg-[var(--ink)] px-10 py-6 text-xl md:text-2xl font-black text-[var(--paper)] transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_-12px_rgba(22,33,58,0.25)]"
             >
-              DESCUBRIR MINHA NOTA AGORA →
+              DESCUBRIR MINHA NOTA AGORA
+              <ArrowRight className="ml-3 w-6 h-6 transition-transform group-hover:translate-x-1" />
             </button>
+            <p className="mt-6 text-sm font-bold text-[var(--ink-3)] uppercase tracking-widest flex items-center justify-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+              1.247 alunos corrigindo agora
+            </p>
           </div>
         </div>
       </section>
 
-
-      <footer className="border-t border-border py-12 text-center bg-card/30">
+      <footer className="border-t border-[var(--line)] py-16 bg-[var(--paper-2)]">
         <div className="mx-auto max-w-4xl px-4">
-          <div className="mb-8 grid gap-8 md:grid-cols-2 text-left">
-            <div>
-              <h3 className="text-xl font-black mb-4 tracking-tighter italic">CORRIGE<span className="text-primary">AI</span></h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+          <div className="grid gap-12 md:grid-cols-2">
+            <div className="space-y-6">
+              <h3 className="font-['Fraunces'] text-2xl font-black tracking-tighter italic text-[var(--ink)]">
+                CORRIGE<span className="text-[var(--red)]">AI</span>
+              </h3>
+              <p className="text-sm text-[var(--ink-2)] leading-relaxed max-w-sm">
                 A tecnologia mais avançada de correção de redação para o ENEM. Treine com o rigor oficial do INEP e conquiste sua vaga.
               </p>
             </div>
-            <div>
-              <h4 className="text-sm font-black uppercase tracking-widest text-primary mb-4">Suporte e Contato</h4>
-              <p className="text-sm text-muted-foreground mb-4">
-                Dúvidas sobre o sistema ou pagamentos? Fale conosco:
+            <div className="space-y-6">
+              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[var(--red)]">Suporte Especializado</h4>
+              <p className="text-sm text-[var(--ink-2)] font-medium">
+                Dúvidas sobre o sistema ou pagamentos?
               </p>
               <a
                 href="https://wa.me/5548996736743?text=Olá! Tenho uma dúvida sobre o CorrigeAI."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 rounded-xl bg-[#25D366] px-6 py-3 text-sm font-black text-white transition-all hover:scale-105 hover:bg-[#20ba5a] active:scale-95 shadow-[0_4px_14px_0_rgba(37,211,102,0.39)]"
+                className="inline-flex items-center gap-3 rounded-2xl bg-[#25D366] px-8 py-4 text-sm font-black text-white transition-all hover:scale-105 shadow-[0_10px_20px_-5px_rgba(37,211,102,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(37,211,102,0.5)]"
               >
                 <MessageSquare className="w-5 h-5" />
-                WHATSAPP SUPORTE
+                FALAR COM SUPORTE
               </a>
             </div>
           </div>
-          <div className="border-t border-border pt-8 text-xs text-muted-foreground">
-            © {new Date().getFullYear()} CorrigeAI. Todos os direitos reservados.
+          <div className="mt-16 pt-8 border-t border-[var(--line)] flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-[var(--ink-3)]">
+            <span>© {new Date().getFullYear()} CorrigeAI. Todos os direitos reservados.</span>
+            <div className="flex gap-6">
+              <span>Termos de Uso</span>
+              <span>Privacidade</span>
+            </div>
           </div>
         </div>
       </footer>

@@ -1142,17 +1142,17 @@ function ConectivosTraining() {
 
   if (currentStep >= questions.length) {
     return (
-      <div className="p-8 rounded-[2rem] border-2 border-[#22c55e]/20 bg-[#22c55e]/5 text-center">
-        <div className="w-20 h-20 rounded-full bg-[#22c55e]/20 flex items-center justify-center mx-auto mb-6">
-          <Trophy className="w-10 h-10 text-[#22c55e]" />
+      <div className="p-8 rounded-[2.5rem] border-2 border-green-600/20 bg-[var(--paper)] text-center shadow-sm">
+        <div className="w-20 h-20 rounded-2xl bg-green-50 flex items-center justify-center mx-auto mb-6 shadow-sm border border-green-100">
+          <Trophy className="w-10 h-10 text-green-600" />
         </div>
-        <h3 className="text-3xl font-black text-[#22c55e] mb-2">Treinamento Concluído!</h3>
-        <p className="text-muted-foreground font-bold mb-8">
+        <h3 className="font-['Fraunces'] text-3xl font-black text-green-700 mb-2 italic">Treinamento Concluído!</h3>
+        <p className="text-[var(--ink-2)] font-bold mb-8">
           Você acertou {score} de {questions.length} questões.
         </p>
         <button 
           onClick={resetQuiz}
-          className="px-8 py-4 rounded-xl bg-[#22c55e] text-white font-black hover:scale-105 transition-all"
+          className="px-8 py-5 rounded-2xl bg-green-600 text-white font-black text-[10px] uppercase tracking-[0.2em] hover:scale-105 transition-all shadow-lg"
         >
           TREINAR NOVAMENTE
         </button>

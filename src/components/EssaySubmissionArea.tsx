@@ -676,22 +676,26 @@ function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correca
         </p>
       </div>
 
-      <div className="space-y-4 relative">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 relative">
         {data.competencias.map((c, idx) => (
           <div 
             key={c.numero} 
-            className={`rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-5 transition-all duration-500 ${showPaywall && idx > 0 ? "blur-md select-none opacity-40" : ""}`}
+            className={`rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-5 transition-all duration-500 flex flex-col ${showPaywall && idx > 0 ? "blur-md select-none opacity-40" : ""}`}
           >
-            <div className="flex items-center justify-between gap-4 mb-2">
-              <div className="font-bold text-[var(--ink)] text-sm md:text-base">
-                C{c.numero} — {c.titulo}
+            <div className="flex items-center justify-between gap-4 mb-3">
+              <div className="flex items-center gap-2 font-bold text-[var(--ink)] text-xs md:text-sm">
+                <span className="flex h-5 w-5 shrink-0 rounded-full bg-[var(--red)] text-white text-[10px] font-black items-center justify-center">✓</span>
+                C{c.numero}
               </div>
-              <div className="text-xl font-black text-[var(--red)] font-['Fraunces']">
+              <div className="text-lg font-black text-[var(--red)] font-['Fraunces']">
                 {c.nota}
                 <span className="text-[10px] text-[var(--ink-3)] ml-1">/200</span>
               </div>
             </div>
-            <p className="text-xs md:text-sm text-[var(--ink-2)] leading-relaxed font-medium">
+            <p className="text-[11px] font-bold text-[var(--ink-3)] uppercase tracking-widest mb-2 truncate">
+              {c.titulo}
+            </p>
+            <p className="text-xs text-[var(--ink-2)] leading-relaxed font-medium line-clamp-3">
               {showPaywall && idx > 0 ? "Conteúdo bloqueado. Adquira um plano para ver a análise completa desta competência." : c.analise}
             </p>
           </div>

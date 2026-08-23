@@ -640,6 +640,9 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
 
 function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }) {
   const pct = Math.round((data.nota_total / 1000) * 100);
+  
+  if (!isLoggedIn) return null; // Não mostramos o resultado real para deslogados, apenas o paywall que já está aberto
+
   return (
     <div
       id="resultado"

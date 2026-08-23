@@ -495,7 +495,7 @@ function Dashboard() {
                     <Lightbulb className="w-8 h-8" />
                   </div>
                   <div>
-                    <p className="text-foreground font-medium italic">
+                    <p className="text-[var(--ink)] font-medium italic leading-relaxed">
                       “Um bom repertório não serve apenas para deixar a redação mais bonita. Ele deve ajudar a explicar o problema, comprovar seu argumento ou aprofundar sua análise.”
                     </p>
                   </div>
@@ -503,25 +503,25 @@ function Dashboard() {
               </div>
 
               {/* 3. Aviso pedagógico inicial */}
-              <div className="mb-12 p-8 rounded-[2rem] border-2 border-primary/20 bg-primary/5">
-                <h2 className="text-2xl font-black mb-6 flex items-center gap-2">
-                  <AlertTriangle className="w-6 h-6 text-amber-500" /> Antes de usar um repertório
+              <div className="mb-12 p-8 rounded-[2rem] border-2 border-[var(--red)]/20 bg-[var(--red)]/5 shadow-sm">
+                <h2 className="font-['Fraunces'] text-2xl font-black mb-6 flex items-center gap-2 text-[var(--ink)]">
+                  <AlertTriangle className="w-6 h-6 text-amber-600" /> Antes de usar um repertório
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-2">
-                    <h3 className="font-black text-foreground">Ele é verdadeiro?</h3>
-                    <p className="text-sm text-muted-foreground">Não invente autores, frases, leis, filmes, pesquisas ou acontecimentos históricos.</p>
+                    <h3 className="font-black text-[var(--ink)] uppercase text-xs tracking-widest">Ele é verdadeiro?</h3>
+                    <p className="text-sm text-[var(--ink-2)] font-medium">Não invente autores, frases, leis, filmes, pesquisas ou acontecimentos históricos.</p>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-black text-foreground">Ele combina com o tema?</h3>
-                    <p className="text-sm text-muted-foreground">A referência precisa estar claramente relacionada ao problema discutido.</p>
+                    <h3 className="font-black text-[var(--ink)] uppercase text-xs tracking-widest">Ele combina com o tema?</h3>
+                    <p className="text-sm text-[var(--ink-2)] font-medium">A referência precisa estar claramente relacionada ao problema discutido.</p>
                   </div>
                   <div className="space-y-2">
-                    <h3 className="font-black text-foreground">Ele fortalece seu argumento?</h3>
-                    <p className="text-sm text-muted-foreground">Não basta citar. Depois de apresentar o repertório, explique o que ele demonstra e como se conecta à sua tese.</p>
+                    <h3 className="font-black text-[var(--ink)] uppercase text-xs tracking-widest">Ele fortalece seu argumento?</h3>
+                    <p className="text-sm text-[var(--ink-2)] font-medium">Não basta citar. Depois de apresentar o repertório, explique o que ele demonstra e como se conecta à sua tese.</p>
                   </div>
                 </div>
-                <div className="mt-6 p-4 rounded-xl bg-background/50 border border-border text-sm italic text-muted-foreground">
+                <div className="mt-8 p-6 rounded-2xl bg-[var(--paper)] border border-[var(--line)] text-sm italic text-[var(--ink-3)] font-medium shadow-inner">
                   Repertório coringa não significa repertório automático. A referência precisa ser adaptada ao tema e explicada dentro da argumentação.
                 </div>
               </div>

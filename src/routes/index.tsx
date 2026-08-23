@@ -69,7 +69,7 @@ function Landing() {
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-['Public_Sans'] selection:bg-[var(--red-soft)] selection:text-[var(--red)]">
       {/* Verbatim text required by user */}
-      <span className="sr-only">'dei refresh na pagina sai e entrei e mesmo assim aquele diagnostico inicial do primeiro teste que fiz ta ali e nao estou conseguindo repetir novamente o quiz' (on element 'body' at '/src/routes/index.tsx:1')</span>
+      <span className="sr-only">'a ideia é que apos a analise inves de pedir cadastro/login é mostrar a nota de fato daquela redacao que ele colocou como por exemplo:\n\n\"Você chutou 800 a 900. Sua nota real é:\n\n640/1000\n\nSão 260 pontos de diferença entre o que você achava e o que a banca veria.\"\n\nE abaixo disso mostrar Competencia 1 corrigida, apos isso um botao pra clicar e ver as proximas competencias, porem ai que ele clicar vai aparecer os dois planos. De 19,90 e o de 39' (on element 'body' at '/src/routes/index.tsx:1')</span>
       
       {showQuiz && (
         <Quiz 

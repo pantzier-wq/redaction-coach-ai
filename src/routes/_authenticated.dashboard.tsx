@@ -1709,7 +1709,7 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
                     value={detalhes}
                     onChange={e => setDetalhes(e.target.value)}
                     placeholder="Sua resposta aqui..."
-                    className="w-full px-6 py-4 rounded-2xl bg-muted/30 border border-border focus:border-primary outline-none transition-all font-bold min-h-[120px] resize-none"
+                    className="w-full px-6 py-4 rounded-2xl bg-[var(--paper-2)]/50 border border-[var(--line)] focus:border-[var(--red)] outline-none transition-all font-bold min-h-[120px] resize-none text-[var(--ink)] placeholder:text-[var(--ink-3)]/40 shadow-inner"
                   />
                   <button 
                     disabled={!detalhes || loading}

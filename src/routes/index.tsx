@@ -45,7 +45,8 @@ export const Route = createFileRoute("/")({
 function Landing() {
   const [session, setSession] = useState<any>(null);
   const [showQuiz, setShowQuiz] = useState(false);
-  const [quizResult, setQuizResult] = useState<any>(null);
+  const [quizResult, setQuizResult] = useState<Record<string, string> | null>(null);
+  const [isAnalyzingQuiz, setIsAnalyzingQuiz] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -54,13 +55,14 @@ function Landing() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
-    
-    // Check if quiz was already taken
+
     const saved = localStorage.getItem("quiz_answers");
     if (saved) {
       try {
-        setQuizResult(JSON.parse(saved));
-      } catch (e) {}
+        setQuizResult(JSON.parse(saved) as Record<string, string>);
+      } catch {
+        localStorage.removeItem("quiz_answers");
+      }
     }
 
     return () => subscription.unsubscribe();
@@ -68,22 +70,36 @@ function Landing() {
 
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-['Public_Sans'] selection:bg-[var(--red-soft)] selection:text-[var(--red)]">
-      {/* Verbatim text required by user */}
-      <span className="sr-only">'repetindo novamente olha no print como tem erro em questao  de ortografia pro contexto, corrija assim que possivel.\n\nMais uma questao, apos a analise voce precisa liberar antes pra pessoa a nota e a C1 como eu ja comentei das outras vezes' (on element 'body' at '/src/routes/index.tsx:1')</span>
-      
       {showQuiz && (
-        <Quiz 
-          onClose={() => setShowQuiz(false)} 
+        <Quiz
+          onClose={() => setShowQuiz(false)}
           onComplete={(answers) => {
             setShowQuiz(false);
+            setIsAnalyzingQuiz(true);
             setQuizResult(answers);
             localStorage.setItem("quiz_answers", JSON.stringify(answers));
-            setTimeout(() => {
-              const el = document.getElementById("corrigir");
-              if (el) el.scrollIntoView({ behavior: "smooth" });
-            }, 100);
+            window.setTimeout(() => {
+              setIsAnalyzingQuiz(false);
+              window.setTimeout(() => {
+                document.getElementById("corrigir")?.scrollIntoView({ behavior: "smooth" });
+              }, 100);
+            }, 5600);
           }}
         />
+      )}
+      {isAnalyzingQuiz && (
+        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-[var(--paper)]/95 p-6 backdrop-blur-md">
+          <div className="w-full max-w-md text-center">
+            <div className="mx-auto mb-8 h-16 w-16 animate-spin rounded-full border-4 border-[var(--line)] border-t-[var(--red)]" />
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-[var(--red)]">Analisando suas respostas</p>
+            <h2 className="font-['Fraunces'] text-3xl font-black text-[var(--ink)]">Montando seu diagnóstico personalizado...</h2>
+            <div className="mx-auto mt-8 h-2 max-w-sm overflow-hidden rounded-full bg-[var(--line)]">
+              <div className="h-full w-full origin-left animate-[quiz-analysis_5.6s_linear] bg-[var(--red)]" />
+            </div>
+            <p className="mt-4 text-sm font-medium text-[var(--ink-3)]">Cruzando seus hábitos de treino com as competências do ENEM.</p>
+          </div>
+          <style>{`@keyframes quiz-analysis { from { transform: scaleX(0); } to { transform: scaleX(1); } }`}</style>
+        </div>
       )}
       <header className="absolute top-0 right-0 p-6 z-50">
         <Link 

@@ -79,7 +79,7 @@ function Landing() {
             setQuizResult(answers);
             localStorage.setItem("quiz_answers", JSON.stringify(answers));
             setTimeout(() => {
-              const el = document.getElementById("diagnostico");
+              const el = document.getElementById("corrigir");
               if (el) el.scrollIntoView({ behavior: "smooth" });
             }, 100);
           }}

@@ -162,7 +162,7 @@ function Landing() {
       </section>
 
       <section id="corrigir" className="py-20 px-4 max-w-4xl mx-auto">
-        <EssaySubmissionArea isLoggedIn={!!session} isPro={false} />
+        <EssaySubmissionArea isLoggedIn={!!session} isPro={false} showEssayForm={showEssayForm} onContinue={() => setShowEssayForm(true)} />
       </section>
 
       <footer className="border-t border-[var(--line)] py-16 bg-[var(--paper-2)]">

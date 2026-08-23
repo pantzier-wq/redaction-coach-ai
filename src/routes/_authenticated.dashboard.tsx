@@ -1795,13 +1795,13 @@ function StatCard({ icon: Icon, label, value, onClick, color }: any) {
   return (
     <button 
       onClick={onClick}
-      className="flex flex-col items-center justify-center p-6 rounded-3xl border border-border bg-card hover:border-primary/50 transition-all hover:scale-105 group"
+      className="flex flex-col items-center justify-center p-6 rounded-3xl border border-[var(--line)] bg-[var(--paper-2)]/30 hover:bg-[var(--paper-2)] hover:border-[var(--red)]/30 transition-all hover:scale-105 group shadow-sm"
     >
-      <div className={`p-4 rounded-2xl ${color}/10 ${color.replace('bg-', 'text-')} mb-4 group-hover:scale-110 transition-transform`}>
+      <div className={`p-4 rounded-2xl ${color} mb-4 group-hover:scale-110 transition-transform shadow-sm`}>
         <Icon className="w-8 h-8" />
       </div>
-      <span className="text-xs font-black uppercase tracking-widest text-muted-foreground mb-1">{label}</span>
-      <span className="text-2xl font-black tracking-tight">{value}</span>
+      <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--ink-3)] mb-1">{label}</span>
+      <span className="text-2xl font-black tracking-tight text-[var(--ink)]">{value}</span>
     </button>
   );
 }

@@ -1524,24 +1524,24 @@ function RepertorioAnalyzing() {
     <div className="space-y-8 animate-in fade-in zoom-in-95 duration-300 py-4">
       <div className="text-center">
         <div className="relative w-24 h-24 mx-auto mb-6">
-          <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
-          <div className="absolute inset-2 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+          <div className="absolute inset-0 rounded-full bg-[var(--red)]/10 animate-ping" />
+          <div className="absolute inset-2 rounded-full border-2 border-[var(--red)]/20 border-t-[var(--red)] animate-spin" />
           <div className="absolute inset-0 flex items-center justify-center">
-            <Sparkles className="w-9 h-9 text-primary animate-pulse" />
+            <Sparkles className="w-9 h-9 text-[var(--red)] animate-pulse" />
           </div>
         </div>
-        <h3 className="text-2xl font-black tracking-tight">IA analisando seu tema</h3>
-        <p className="text-sm font-bold text-muted-foreground mt-1">Isso leva só alguns segundos. Não feche esta janela.</p>
+        <h3 className="font-['Fraunces'] text-2xl font-black text-[var(--ink)] italic">IA analisando seu tema</h3>
+        <p className="text-sm font-bold text-[var(--ink-3)] mt-1">Isso leva só alguns segundos. Não feche esta janela.</p>
       </div>
 
       <div className="space-y-3">
-        <div className="h-3 w-full rounded-full bg-muted/40 overflow-hidden border border-border/50">
+        <div className="h-3 w-full rounded-full bg-[var(--paper-2)] overflow-hidden border border-[var(--line)] shadow-inner">
           <div
-            className="h-full rounded-full bg-primary transition-all duration-500 ease-out"
+            className="h-full rounded-full bg-[var(--ink)] transition-all duration-500 ease-out"
             style={{ width: `${Math.min(progress, 95)}%` }}
           />
         </div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-primary text-center">
+        <p className="text-[10px] font-black uppercase tracking-widest text-[var(--ink)] text-center">
           {Math.round(Math.min(progress, 95))}% concluído
         </p>
       </div>

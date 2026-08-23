@@ -88,16 +88,32 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
     setResult(null);
     setShowPaywall(false);
 
-    // Usuário logado sem plano ativo ou sem créditos:
-    // mostramos o carregamento (mesma experiência da primeira correção) e,
-    // ao final, exibimos as ofertas em vez do resultado.
+    // Salva a redação para processar depois do diagnóstico (se necessário)
+    localStorage.setItem("pending_submission", JSON.stringify({ tema, redacao }));
+
+    // Se o usuário não estiver logado e ainda não viu o diagnóstico do quiz, 
+    // ou se estamos seguindo o novo fluxo de "Quiz -> Diagnóstico -> Redação -> Paywall"
+    const quizAnswers = localStorage.getItem("quiz_answers");
+    if (!isLoggedIn && quizAnswers) {
+      // Mostra o carregamento antes do paywall/resultado
+      setLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 25000));
+      setLoading(false);
+      setShowPaywall(true);
+      setTimeout(
+        () => document.getElementById("paywall-anchor")?.scrollIntoView({ behavior: "smooth" }),
+        100,
+      );
+      return;
+    }
+
     if (isLoggedIn && !canCorrect) {
       setLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 25000));
       setLoading(false);
       setShowPaywall(true);
       setTimeout(
-        () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
+        () => document.getElementById("paywall-anchor")?.scrollIntoView({ behavior: "smooth" }),
         100,
       );
       return;
@@ -174,16 +190,14 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       // A primeira correção agora é "bloqueada" até o pagamento.
       if (!isLoggedIn || !stillAllowed) {
         setShowPaywall(true);
+        setTimeout(
+          () => document.getElementById("paywall-anchor")?.scrollIntoView({ behavior: "smooth" }),
+          100,
+        );
       } else {
         setShowPaywall(false);
       }
       
-      if (!isLoggedIn) {
-        setTimeout(
-          () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
-          100,
-        );
-      }
       
       if (onSuccess) {
         onSuccess(correctionData);
@@ -307,13 +321,48 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
             `}</style>
           </div>
         ) : (
-          <div className="relative w-full">
+          <div id="corrigir" className="relative w-full space-y-8">
+            {typeof window !== 'undefined' && localStorage.getItem("quiz_answers") && (
+              <div className="bg-[var(--paper-2)] border border-[var(--line)] rounded-3xl p-6 shadow-sm mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="flex items-center gap-2 text-[var(--red)] font-black uppercase tracking-widest text-xs mb-4">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--red)] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--red)]"></span>
+                  </span>
+                  Diagnóstico Personalizado
+                </div>
+                <div className="space-y-4 text-[var(--ink-2)] font-medium leading-relaxed">
+                  {(() => {
+                    try {
+                      const quiz = JSON.parse(localStorage.getItem("quiz_answers") || "{}");
+                      const days = Math.max(0, Math.floor((new Date("2026-11-01").getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
+                      
+                      return (
+                        <>
+                          <p>
+                            Você treinou com <span className="text-[var(--ink)] font-bold">{quiz.essays_written || "algumas"} redações</span>, mas <span className="text-[var(--ink)] font-bold">{quiz.essays_corrected?.toLowerCase() === "nenhuma" ? "nenhuma" : "quase nenhuma"} foi corrigida de verdade</span>. Sem feedback real, você está apenas repetindo os mesmos erros.
+                          </p>
+                          <p>
+                            Faltam <span className="text-[var(--red)] font-black italic">{days} dias</span> para o ENEM. É hora de parar de chutar e começar a agir com estratégia.
+                          </p>
+                          <p className="text-[var(--ink)] font-bold italic border-l-4 border-[var(--red)] pl-4 py-2 bg-[var(--red)]/5">
+                            "Cole sua redação abaixo para descobrir exatamente onde você está perdendo ponto."
+                          </p>
+                        </>
+                      );
+                    } catch (e) {
+                      return <p>Analise sua redação agora com os critérios oficiais do INEP.</p>;
+                    }
+                  })()}
+                </div>
+              </div>
+            )}
             <form
               onSubmit={onSubmit}
               className={`rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 transition-all duration-500 overflow-hidden ${(result || (isLoggedIn && !isPro)) && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
               style={{ boxShadow: "var(--paper-shadow)" }}
             >
-              <label className="mb-2 block text-sm font-bold text-primary">Tema da redação</label>
+              <label className="mb-2 block text-sm font-bold text-[var(--red)] uppercase tracking-widest">Tema da redação</label>
               <input
                 value={tema}
                 onChange={(e) => setTema(e.target.value)}
@@ -323,7 +372,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                 className="w-full rounded-xl border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
               />
 
-              <label className="mt-5 mb-2 block text-sm font-bold text-primary">Cole sua redação aqui</label>
+              <label className="mt-5 mb-2 block text-sm font-bold text-[var(--red)] uppercase tracking-widest">Cole sua redação aqui</label>
               <textarea
                 value={redacao}
                 onChange={(e) => setRedacao(e.target.value)}
@@ -351,21 +400,41 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                 </div>
               )}
 
-              <button
-                type="submit"
-                disabled={loading || charCount < 200 || tema.trim().length < 3}
-                className="mt-6 w-full rounded-xl py-4 text-lg font-black text-white transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
-                style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)", boxShadow: "0 0 20px rgba(34, 197, 94, 0.4)" }}
-              >
-                CORRIGIR AGORA COM IA →
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4 mt-6">
+                <button
+                  type="submit"
+                  disabled={loading || charCount < 200 || tema.trim().length < 3 || (!isLoggedIn && showPaywall)}
+                  className="flex-1 rounded-xl py-4 text-lg font-black text-white transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+                  style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)", boxShadow: "0 0 20px rgba(34, 197, 94, 0.4)" }}
+                >
+                  CORRIGIR AGORA COM IA →
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTema("Desafios para a formação educacional de surdos no Brasil");
+                    setRedacao(`A Constituição Federal de 1988, norma de maior hierarquia no sistema jurídico brasileiro, garante a todos os cidadãos, sem distinção, o direito à educação de qualidade. Entretanto, a realidade vivenciada por indivíduos surdos no Brasil distancia-se desse ideal democrático. Nesse contexto, é fundamental analisar como a negligência governamental e o preconceito social corroboram a exclusão dessa parcela da população do ambiente acadêmico.
+
+Em primeira análise, a falta de infraestrutura e de profissionais capacitados nas instituições de ensino atua como um entrave à inclusão. Segundo o filósofo John Rawls, em sua teoria da justiça, uma sociedade é justa quando garante as mesmas oportunidades para todos. Contudo, o sistema educacional brasileiro falha ao não disponibilizar intérpretes de Libras em quantidade suficiente e ao não adaptar materiais pedagógicos para a necessidade dos surdos. Dessa forma, o acesso ao conhecimento é restrito, perpetuando um ciclo de desigualdade que impede o pleno desenvolvimento desses cidadãos.
+
+Além disso, o estigma social direcionado às pessoas com deficiência auditiva agrava a problemática. Para o sociólogo Erving Goffman, o estigma é um atributo que torna o indivíduo diferente e menos desejável, resultando em sua marginalização. Muitas vezes, a surdez é vista sob uma ótica de incapacidade, o que gera comportamentos discriminatórios tanto por parte de colegas quanto de professores. Essa barreira simbólica não apenas desestimula o estudante surdo a prosseguir com seus estudos, mas também o isola socialmente, comprometendo sua saúde mental e sua integração na coletividade.
+
+Portanto, medidas são necessárias para reverter esse cenário de exclusão. Cabe ao Ministério da Educação ampliar o investimento na formação de professores bilíngues e na contratação de intérpretes para todas as escolas da rede pública. Paralelamente, é dever do Governo Federal promover campanhas de conscientização nas mídias de grande alcance, com o intuito de desconstruir preconceitos e valorizar a cultura surda. Somente assim, o Brasil poderá assegurar a todos os seus cidadãos o direito constitucional à educação, construindo uma sociedade verdadeiramente inclusiva.`);
+                  }}
+                  className="px-6 rounded-xl border border-[var(--line)] bg-[var(--paper-2)] text-[var(--ink-2)] font-bold text-sm hover:bg-[var(--line)]/10 transition-colors"
+                >
+                  Usar um exemplo
+                </button>
+              </div>
+              
               <p className="mt-3 text-center text-xs font-bold text-muted-foreground">
                 100% privado
               </p>
             </form>
 
-            {isLoggedIn && ((result && showPaywall) || (!canCorrect && showPaywall)) && (
-              <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-[var(--paper)]/80 backdrop-blur-sm flex items-start justify-center p-4 md:p-6 pt-20 md:pt-24 pb-10 font-['Public_Sans']">
+            {((result && showPaywall) || (isLoggedIn && !canCorrect && showPaywall) || (!isLoggedIn && showPaywall)) && (
+              <div id="paywall-anchor" className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-[var(--paper)]/80 backdrop-blur-sm flex items-start justify-center p-4 md:p-6 pt-20 md:pt-24 pb-10 font-['Public_Sans']">
                 <div 
                   className="w-full max-w-lg md:max-w-4xl rounded-3xl border border-[var(--red)]/30 bg-[var(--paper)] p-6 md:p-10 shadow-[var(--paper-shadow)] backdrop-blur-2xl relative animate-in fade-in zoom-in duration-500"
                 >
@@ -380,16 +449,32 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                   </div>
                   
                   <h2 className="font-['Fraunces'] text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-[var(--ink)]">
-                    {semCreditos ? "Seus créditos acabaram" : result ? "Análise Pronta! 🎯" : "Quase lá..."}
+                    {semCreditos ? "Seus créditos acabaram" : (result || showPaywall) ? "Análise Pronta! 🎯" : "Quase lá..."}
                   </h2>
                   
                   <p className="text-sm md:text-base text-[var(--ink-2)] font-semibold mb-6 md:mb-8 leading-relaxed text-center">
-                    {semCreditos
-                      ? "Você já usou as 15 correções do Plano Essencial. Recarregue créditos ou faça o upgrade para o Combo Nota 1000 e corrija sem limite nenhum."
-                      : result 
-                        ? "Sua correção detalhada e nota oficial já foram geradas com precisão INEP."
-                        : "Você está a um passo de desbloquear seu potencial máximo e conquistar sua vaga no curso dos sonhos."}
+                    {!isLoggedIn 
+                      ? "Crie sua conta agora para salvar seu diagnóstico e desbloquear sua correção detalhada com nota oficial padrão INEP."
+                      : semCreditos
+                        ? "Você já usou as 15 correções do Plano Essencial. Recarregue créditos ou faça o upgrade para o Combo Nota 1000 e corrija sem limite nenhum."
+                        : (result || showPaywall)
+                          ? "Sua correção detalhada e nota oficial já foram geradas com precisão INEP."
+                          : "Você está a um passo de desbloquear seu potencial máximo e conquistar sua vaga no curso dos sonhos."}
                   </p>
+
+                  {!isLoggedIn && (
+                    <div className="mb-8 flex flex-col gap-4 items-center">
+                       <button
+                         onClick={() => window.location.href = "/auth"}
+                         className="w-full max-w-sm py-4 rounded-xl bg-[var(--red)] text-white font-black text-lg uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg"
+                       >
+                         CRIAR MINHA CONTA GRÁTIS
+                       </button>
+                       <p className="text-xs font-bold text-[var(--ink-3)] uppercase tracking-widest">
+                         Leve apenas 10 segundos
+                       </p>
+                    </div>
+                  )}
 
                   {semCreditos && (
                     <div className="mb-8">
@@ -421,6 +506,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                     </div>
                   )}
 
+                  {isLoggedIn && (
                   <div className="space-y-6">
                     <div className={`grid grid-cols-1 gap-4 ${semCreditos ? "" : "md:grid-cols-2"}`}>
 
@@ -539,9 +625,10 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                       </p>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
-            )}
+            </div>
+          )}
           </div>
         )}
       </div>
@@ -551,6 +638,9 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
 
 function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }) {
   const pct = Math.round((data.nota_total / 1000) * 100);
+  
+  if (!isLoggedIn) return null; // Não mostramos o resultado real para deslogados, apenas o paywall que já está aberto
+
   return (
     <div
       id="resultado"

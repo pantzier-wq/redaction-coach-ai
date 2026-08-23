@@ -45,6 +45,7 @@ export const Route = createFileRoute("/")({
 function Landing() {
   const [session, setSession] = useState<any>(null);
   const [showQuiz, setShowQuiz] = useState(false);
+  const [quizResult, setQuizResult] = useState<any>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -53,6 +54,15 @@ function Landing() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
+    
+    // Check if quiz was already taken
+    const saved = localStorage.getItem("quiz_answers");
+    if (saved) {
+      try {
+        setQuizResult(JSON.parse(saved));
+      } catch (e) {}
+    }
+
     return () => subscription.unsubscribe();
   }, []);
 
@@ -64,10 +74,14 @@ function Landing() {
       {showQuiz && (
         <Quiz 
           onClose={() => setShowQuiz(false)} 
-          onComplete={() => {
+          onComplete={(answers) => {
             setShowQuiz(false);
-            const el = document.getElementById("corrigir");
-            if (el) el.scrollIntoView({ behavior: "smooth" });
+            setQuizResult(answers);
+            localStorage.setItem("quiz_answers", JSON.stringify(answers));
+            setTimeout(() => {
+              const el = document.getElementById("corrigir");
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+            }, 100);
           }}
         />
       )}
@@ -104,19 +118,36 @@ function Landing() {
           </p>
 
           <div className="pt-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
-            <button
-              onClick={() => setShowQuiz(true)}
-              className="group relative inline-flex items-center justify-center rounded-2xl bg-[var(--ink)] px-10 py-6 text-xl md:text-2xl font-black text-[var(--paper)] transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_-12px_rgba(22,33,58,0.25)]"
-            >
-              DESCUBRIR MINHA NOTA AGORA
-              <ArrowRight className="ml-3 w-6 h-6 transition-transform group-hover:translate-x-1" />
-            </button>
+            {!quizResult ? (
+              <button
+                onClick={() => setShowQuiz(true)}
+                className="group relative inline-flex items-center justify-center rounded-2xl bg-[var(--ink)] px-10 py-6 text-xl md:text-2xl font-black text-[var(--paper)] transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_-12px_rgba(22,33,58,0.25)]"
+              >
+                DESCUBRIR MINHA NOTA AGORA
+                <ArrowRight className="ml-3 w-6 h-6 transition-transform group-hover:translate-x-1" />
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  const el = document.getElementById("corrigir");
+                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                }}
+                className="group relative inline-flex items-center justify-center rounded-2xl bg-[var(--red)] px-10 py-6 text-xl md:text-2xl font-black text-white transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_-12px_rgba(196,50,42,0.25)]"
+              >
+                ACESSAR ÁREA DE REDAÇÃO
+                <ArrowRight className="ml-3 w-6 h-6 transition-transform group-hover:translate-x-1" />
+              </button>
+            )}
             <p className="mt-6 text-sm font-bold text-[var(--ink-3)] uppercase tracking-widest flex items-center justify-center gap-2">
               <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse" />
               1.247 alunos corrigindo agora
             </p>
           </div>
         </div>
+      </section>
+
+      <section id="corrigir" className="py-20 px-4 max-w-4xl mx-auto">
+        <EssaySubmissionArea isLoggedIn={!!session} isPro={false} />
       </section>
 
       <footer className="border-t border-[var(--line)] py-16 bg-[var(--paper-2)]">

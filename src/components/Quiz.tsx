@@ -13,40 +13,40 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
 
   const questions = [
     {
-      id: "curso",
-      question: "Qual curso você quer passar?",
-      type: "text",
-      placeholder: "Ex: Medicina, Direito, Engenharia...",
-    },
-    {
-      id: "dificuldade",
-      question: "Qual sua maior dificuldade hoje na redação?",
+      id: "enem_date",
+      question: "Quando você faz o ENEM?",
       type: "options",
-      options: ["Introdução", "Desenvolvimento", "Proposta de Intervenção", "Gramática e Norma Culta"],
+      options: ["Esse ano", "Ano que vem", "Ainda vou decidir"],
     },
     {
-      id: "frequencia",
-      question: "Quantas redações você faz por mês?",
+      id: "essays_written",
+      question: "Quantas redações você já escreveu treinando?",
       type: "options",
-      options: ["0 (Ainda não comecei)", "1 a 2", "3 a 4", "Mais de 4"],
+      options: ["Nenhuma ainda", "Menos de 5", "Entre 5 e 15", "Mais de 15"],
     },
     {
-      id: "nota",
-      question: "Qual foi sua última nota no simulado ou ENEM?",
+      id: "essays_corrected",
+      question: "E dessas, quantas alguém corrigiu de verdade?",
       type: "options",
-      options: ["Menos de 600", "Entre 600 e 800", "Acima de 800", "Nunca fiz"],
+      options: ["Todas", "Algumas", "Quase nenhuma", "Nenhuma"],
     },
     {
-      id: "tempo",
-      question: "Você sente que o tempo é seu maior inimigo agora?",
+      id: "understand_grade",
+      question: "Quando você recebe uma nota, você entende por que tirou aquela nota?",
       type: "options",
-      options: ["Sim, estou desesperado(a)", "Um pouco", "Não, estou tranquilo(a)"],
+      options: ["Sim, sempre me explicam", "Mais ou menos", "Não, só recebo o número"],
     },
     {
-      id: "pronto",
-      question: "Pronto para descobrir sua nota real e o que falta para o 1000?",
-      type: "final",
-      cta: "SIM, QUERO MINHA NOTA AGORA!",
+      id: "score_increase",
+      question: "Se você soubesse exatamente onde perde ponto, quanto acha que sua nota subiria?",
+      type: "options",
+      options: ["Uns 50 pontos", "Entre 100 e 200", "Mais de 200"],
+    },
+    {
+      id: "current_estimate",
+      question: "Chuta: de 0 a 1000, quanto sua redação tira hoje?",
+      type: "options",
+      options: ["Menos de 600", "600 a 800", "800 a 900", "Mais de 900"],
     },
   ];
 
@@ -82,7 +82,7 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
               />
             ))}
           </div>
-          <button onClick={onClose} className="text-[var(--ink-3)] hover:text-[var(--red)] transition-colors">
+          <button onClick={onClose} className="text-[var(--ink-3)] hover:text-[var(--red)] transition-colors p-2 hover:bg-[var(--line)]/10 rounded-full">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -93,70 +93,27 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
           </h3>
 
           <div className="flex-1">
-            {current.type === "text" && (
-              <div className="space-y-4">
-                <input
-                  autoFocus
-                  type="text"
-                  placeholder={current.placeholder}
-                  className="w-full rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] px-6 py-5 text-lg text-[var(--ink)] placeholder:text-[var(--ink-3)] focus:outline-none focus:ring-2 focus:ring-[var(--red)]/20 focus:border-[var(--red)] transition-all"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && e.currentTarget.value) next(e.currentTarget.value);
-                  }}
-                />
-                <button
-                  onClick={(e) => {
-                    const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                    if (input.value) next(input.value);
-                  }}
-                  className="w-full rounded-2xl bg-[var(--ink)] py-5 text-lg font-black text-[var(--paper)] hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 shadow-lg"
-                >
-                  Continuar <ArrowRight className="w-5 h-5" />
-                </button>
-              </div>
-            )}
 
             {current.type === "options" && (
-              <div className="grid gap-3">
+              <div className="grid gap-4">
                 {current.options?.map((opt) => (
                   <button
                     key={opt}
                     onClick={() => next(opt)}
-                    className="w-full rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 px-6 py-5 text-left text-lg font-bold text-[var(--ink-2)] hover:bg-[var(--paper-2)] hover:border-[var(--red)] hover:text-[var(--red)] transition-all flex items-center justify-between group"
+                    className="w-full rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 px-8 py-6 text-left text-xl font-black text-[var(--ink)] hover:bg-[var(--paper-2)] hover:border-[var(--red)] hover:text-[var(--red)] transition-all flex items-center justify-between group shadow-sm"
                   >
                     {opt}
-                    <div className="w-6 h-6 rounded-full border-2 border-[var(--line)] group-hover:border-[var(--red)] group-hover:bg-[var(--red)] flex items-center justify-center transition-all">
-                      <CheckCircle2 className="w-4 h-4 text-[var(--paper)] opacity-0 group-hover:opacity-100" />
+                    <div className="w-8 h-8 rounded-full border-2 border-[var(--line)] group-hover:border-[var(--red)] group-hover:bg-[var(--red)] flex items-center justify-center transition-all">
+                      <CheckCircle2 className="w-5 h-5 text-[var(--paper)] opacity-0 group-hover:opacity-100" />
                     </div>
                   </button>
                 ))}
               </div>
             )}
 
-            {current.type === "final" && (
-              <div className="text-center py-4">
-                <div className="mb-8 flex justify-center">
-                  <div className="relative">
-                    <div className="absolute inset-0 animate-ping rounded-full bg-[var(--red)]/10" />
-                    <div className="relative p-6 rounded-full bg-[var(--paper-2)] border-2 border-[var(--red)] shadow-[0_0_30px_rgba(196,50,42,0.2)]">
-                      <Trophy className="w-12 h-12 text-[var(--red)]" />
-                    </div>
-                  </div>
-                </div>
-                <p className="text-[var(--ink-2)] mb-8 font-medium leading-relaxed">
-                  Identificamos exatamente o que está bloqueando sua nota 900+ e como resolver em tempo recorde.
-                </p>
-                <button
-                  onClick={() => next()}
-                  className="w-full rounded-2xl bg-[var(--red)] py-6 text-xl font-black text-white hover:scale-[1.02] active:scale-95 transition-all shadow-[0_20px_40px_-12px_rgba(196,50,42,0.3)]"
-                >
-                  {current.cta}
-                </button>
-              </div>
-            )}
           </div>
 
-          {step > 0 && current.type !== "final" && (
+          {step > 0 && (
             <button
               onClick={back}
               className="mt-8 flex items-center gap-2 text-sm font-bold text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"

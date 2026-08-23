@@ -323,7 +323,42 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
             `}</style>
           </div>
         ) : (
-          <div className="relative w-full">
+          <div className="relative w-full space-y-8">
+            {typeof window !== 'undefined' && localStorage.getItem("quiz_answers") && (
+              <div className="bg-[var(--paper-2)] border border-[var(--line)] rounded-3xl p-6 shadow-sm mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="flex items-center gap-2 text-[var(--red)] font-black uppercase tracking-widest text-xs mb-4">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--red)] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--red)]"></span>
+                  </span>
+                  Diagnóstico Personalizado
+                </div>
+                <div className="space-y-4 text-[var(--ink-2)] font-medium leading-relaxed">
+                  {(() => {
+                    try {
+                      const quiz = JSON.parse(localStorage.getItem("quiz_answers") || "{}");
+                      const days = Math.max(0, Math.floor((new Date("2026-11-01").getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
+                      
+                      return (
+                        <>
+                          <p>
+                            Você treinou com <span className="text-[var(--ink)] font-bold">{quiz.essays_written || "algumas"} redações</span>, mas <span className="text-[var(--ink)] font-bold">{quiz.essays_corrected?.toLowerCase() === "nenhuma" ? "nenhuma" : "quase nenhuma"} foi corrigida de verdade</span>. Sem feedback real, você está apenas repetindo os mesmos erros.
+                          </p>
+                          <p>
+                            Faltam <span className="text-[var(--red)] font-black italic">{days} dias</span> para o ENEM. É hora de parar de chutar e começar a agir com estratégia.
+                          </p>
+                          <p className="text-[var(--ink)] font-bold italic border-l-4 border-[var(--red)] pl-4 py-2 bg-[var(--red)]/5">
+                            "Cole sua redação abaixo para descobrir exatamente onde você está perdendo ponto."
+                          </p>
+                        </>
+                      );
+                    } catch (e) {
+                      return <p>Analise sua redação agora com os critérios oficiais do INEP.</p>;
+                    }
+                  })()}
+                </div>
+              </div>
+            )}
             <form
               onSubmit={onSubmit}
               className={`rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 transition-all duration-500 overflow-hidden ${(result || (isLoggedIn && !isPro)) && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}

@@ -101,7 +101,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       setLoading(false);
       setShowPaywall(true);
       setTimeout(
-        () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
+        () => document.getElementById("paywall-anchor")?.scrollIntoView({ behavior: "smooth" }),
         100,
       );
       return;
@@ -113,7 +113,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       setLoading(false);
       setShowPaywall(true);
       setTimeout(
-        () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
+        () => document.getElementById("paywall-anchor")?.scrollIntoView({ behavior: "smooth" }),
         100,
       );
       return;
@@ -436,7 +436,7 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
             </form>
 
             {((result && showPaywall) || (isLoggedIn && !canCorrect && showPaywall) || (!isLoggedIn && showPaywall)) && (
-              <div className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-[var(--paper)]/80 backdrop-blur-sm flex items-start justify-center p-4 md:p-6 pt-20 md:pt-24 pb-10 font-['Public_Sans']">
+              <div id="paywall-anchor" className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-[var(--paper)]/80 backdrop-blur-sm flex items-start justify-center p-4 md:p-6 pt-20 md:pt-24 pb-10 font-['Public_Sans']">
                 <div 
                   className="w-full max-w-lg md:max-w-4xl rounded-3xl border border-[var(--red)]/30 bg-[var(--paper)] p-6 md:p-10 shadow-[var(--paper-shadow)] backdrop-blur-2xl relative animate-in fade-in zoom-in duration-500"
                 >

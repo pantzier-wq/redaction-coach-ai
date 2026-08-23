@@ -310,8 +310,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
           <div className="relative w-full">
             <form
               onSubmit={onSubmit}
-              className={`rounded-3xl border border-border bg-card p-6 md:p-8 transition-all duration-500 overflow-hidden ${(result || (isLoggedIn && !isPro)) && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
-              style={{ boxShadow: "var(--shadow-glow)" }}
+              className={`rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 transition-all duration-500 overflow-hidden ${(result || (isLoggedIn && !isPro)) && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
+              style={{ boxShadow: "var(--paper-shadow)" }}
             >
               <label className="mb-2 block text-sm font-bold text-primary">Tema da redação</label>
               <input

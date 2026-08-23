@@ -1965,28 +1965,28 @@ function ProgressSection({ essays, onGoToCorrection }: ProgressSectionProps) {
         </div>
       </div>
 
-      <div className="rounded-[2rem] border border-border bg-card p-4 md:p-8">
-        <h3 className="text-xl font-black mb-1">Média por competência</h3>
-        <p className="text-sm text-muted-foreground font-bold mb-6">Cada competência vale até 200 pontos no ENEM.</p>
+      <div className="rounded-[2rem] border border-[var(--line)] bg-[var(--paper)] p-4 md:p-8 shadow-sm">
+        <h3 className="font-['Fraunces'] text-xl font-black mb-1 text-[var(--ink)]">Média por competência</h3>
+        <p className="text-sm text-[var(--ink-2)] font-bold mb-6 italic">Cada competência vale até 200 pontos no ENEM.</p>
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={competencias} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.15)" />
-              <XAxis dataKey="nome" stroke="#ffffff" tick={{ fill: "#ffffff", fontWeight: 700 }} fontSize={12} />
-              <YAxis domain={[0, 200]} stroke="#ffffff" tick={{ fill: "#ffffff", fontWeight: 700 }} fontSize={12} />
+              <CartesianGrid strokeDasharray="3 3" stroke="var(--line)" />
+              <XAxis dataKey="nome" stroke="var(--ink-3)" tick={{ fill: "var(--ink-3)", fontWeight: 700 }} fontSize={12} />
+              <YAxis domain={[0, 200]} stroke="var(--ink-3)" tick={{ fill: "var(--ink-3)", fontWeight: 700 }} fontSize={12} />
               <Tooltip
-                cursor={{ fill: "rgba(255,255,255,0.1)" }}
+                cursor={{ fill: "var(--paper-2)" }}
                 contentStyle={{
-                  background: "#0f172a",
-                  border: "1px solid rgba(255,255,255,0.2)",
+                  background: "var(--paper)",
+                  border: "1px solid var(--line)",
                   borderRadius: "12px",
-                  color: "#ffffff",
+                  color: "var(--ink)",
                 }}
-                itemStyle={{ color: "#ffffff", fontWeight: 700 }}
-                labelStyle={{ color: "#ffffff", fontWeight: 700 }}
+                itemStyle={{ color: "var(--ink)", fontWeight: 700 }}
+                labelStyle={{ color: "var(--ink)", fontWeight: 700 }}
                 formatter={(value: any) => [`${value} / 200`, "Média"]}
               />
-              <Bar dataKey="media" fill="#ffffff" radius={[8, 8, 0, 0]} />
+              <Bar dataKey="media" fill="var(--red)" radius={[8, 8, 0, 0]} />
 
             </BarChart>
           </ResponsiveContainer>

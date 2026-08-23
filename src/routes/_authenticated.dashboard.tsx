@@ -1419,20 +1419,20 @@ function RepertoriosLibrary() {
 
               <div className="space-y-4">
                 <div>
-                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-1">Ideia Central</span>
-                  <p className="text-foreground font-medium leading-relaxed">{r.ideiaCentral}</p>
+                  <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-widest block mb-1">Ideia Central</span>
+                  <p className="text-[var(--ink)] font-medium leading-relaxed">{r.ideiaCentral}</p>
                 </div>
 
                 <div>
-                  <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest block mb-1">Como relacionar à redação</span>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{r.comoUsar}</p>
+                  <span className="text-[9px] font-black uppercase text-[var(--ink-3)] tracking-widest block mb-1">Como relacionar à redação</span>
+                  <p className="text-sm text-[var(--ink-2)] leading-relaxed">{r.comoUsar}</p>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-muted/30 border border-border/50 relative group">
-                  <span className="text-[10px] font-black uppercase text-primary tracking-widest block mb-3">Modelo Adaptável</span>
-                  <p className="text-sm font-medium italic text-foreground leading-relaxed whitespace-pre-wrap">
+                <div className="p-6 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] relative group shadow-inner">
+                  <span className="text-[9px] font-black uppercase text-[var(--red)] tracking-widest block mb-3">Modelo Adaptável</span>
+                  <p className="text-sm font-bold italic text-[var(--ink)] leading-relaxed whitespace-pre-wrap">
                     "{r.modeloAdaptavel.split(/(\[.*?\])/).map((part, i) => 
-                      part.startsWith('[') ? <span key={i} className="text-primary font-black bg-primary/10 px-1 rounded">{part}</span> : part
+                      part.startsWith('[') ? <span key={i} className="text-[var(--red)] font-black bg-[var(--red)]/10 px-1 rounded">{part}</span> : part
                     )}"
                   </p>
                   <button 

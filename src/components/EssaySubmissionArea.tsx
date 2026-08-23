@@ -181,6 +181,11 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
       // r já vem como objeto se o servidor retornar direto
       const correctionData = r.correcao || r;
       setResult(correctionData);
+      
+      // Rola para o resultado após o delay de carregamento
+      setTimeout(() => {
+        document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" });
+      }, 100);
 
       // Sincroniza saldo e status após a correção
       let stillAllowed = false;
@@ -643,79 +648,104 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
   );
 }
 
-function Resultado({ data, isLoggedIn }: { data: Correcao; isLoggedIn: boolean }) {
+function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correcao; isLoggedIn: boolean; showPaywall?: boolean; onShowAll?: () => void }) {
   const pct = Math.round((data.nota_total / 1000) * 100);
   
-  if (!isLoggedIn) return null; // Não mostramos o resultado real para deslogados, apenas o paywall que já está aberto
+  // Se não estiver logado, não mostramos o resultado aqui (o paywall já cuida disso)
+  if (!isLoggedIn) return null;
+
+  const quizAnswers = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem("quiz_answers") || "{}") : {};
+  const chuta = quizAnswers.score_guess || "800 a 900";
+  const diferenca = Math.abs(data.nota_total - 640); // Exemplo fixo conforme pedido ou cálculo real
 
   return (
     <div
       id="resultado"
-      className="mt-10 rounded-3xl border border-primary/40 bg-card p-6 md:p-8"
-      style={{ boxShadow: "var(--shadow-glow)" }}
+      className="mt-10 rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 overflow-hidden relative"
+      style={{ boxShadow: "var(--paper-shadow)" }}
     >
-      <div className="text-center">
-        <div className="text-xs uppercase tracking-wider text-muted-foreground">
-          Sua nota estimada
+      <div className="text-center mb-10">
+        <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--ink-3)] mb-2">
+          Resultado da Análise
         </div>
-        <div
-          className="mt-2 text-6xl md:text-7xl font-black"
-          style={{
-            background: "var(--gradient-cta)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-          }}
-        >
+        <p className="text-sm font-medium text-[var(--ink-2)] mb-4">
+          Você chutou {chuta}. Sua nota real é:
+        </p>
+        <div className="text-7xl md:text-8xl font-black text-[var(--red)] font-['Fraunces'] leading-none">
           {data.nota_total}
+          <span className="text-xl text-[var(--ink-3)] ml-2 tracking-tighter">/1000</span>
         </div>
-        <div className="text-sm text-muted-foreground">
-          de 1000 pontos ({pct}%)
-        </div>
+        <p className="mt-6 text-sm font-bold text-[var(--ink)] max-w-md mx-auto leading-relaxed">
+          {data.nota_total < 700 
+            ? `São ${1000 - data.nota_total} pontos de diferença entre o que você achava e o que a banca veria.`
+            : `Você está no caminho, mas ainda restam ${1000 - data.nota_total} pontos para a perfeição.`}
+        </p>
       </div>
 
-      <p className="mt-6 text-center italic text-card-foreground">"{data.resumo}"</p>
-
-      <div className="mt-8 space-y-3">
-        {data.competencias.map((c) => (
-          <div key={c.numero} className="rounded-xl border border-border bg-input/50 p-4">
-            <div className="flex items-baseline justify-between gap-2">
-              <div className="font-bold">
+      <div className="space-y-4 relative">
+        {data.competencias.map((c, idx) => (
+          <div 
+            key={c.numero} 
+            className={`rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-5 transition-all duration-500 ${showPaywall && idx > 0 ? "blur-md select-none opacity-40" : ""}`}
+          >
+            <div className="flex items-center justify-between gap-4 mb-2">
+              <div className="font-bold text-[var(--ink)] text-sm md:text-base">
                 C{c.numero} — {c.titulo}
               </div>
-              <div className="text-xl font-black text-primary">
+              <div className="text-xl font-black text-[var(--red)] font-['Fraunces']">
                 {c.nota}
-                <span className="text-xs text-muted-foreground">/200</span>
+                <span className="text-[10px] text-[var(--ink-3)] ml-1">/200</span>
               </div>
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">{c.analise}</p>
+            <p className="text-xs md:text-sm text-[var(--ink-2)] leading-relaxed font-medium">
+              {showPaywall && idx > 0 ? "Conteúdo bloqueado. Adquira um plano para ver a análise completa desta competência." : c.analise}
+            </p>
           </div>
         ))}
+
+        {showPaywall && (
+          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[var(--paper)] to-transparent pointer-events-none" />
+        )}
       </div>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-3">
-        <Bloco titulo="✅ Pontos fortes" itens={data.pontos_fortes} cor="text-primary" />
-        <Bloco titulo="⚠️ Pontos fracos" itens={data.pontos_fracos} cor="text-white font-bold" extraItemClass="text-white font-bold" />
-        <Bloco titulo="💡 Sugestões" itens={data.sugestoes} cor="text-white font-bold" extraItemClass="text-white font-bold" />
-      </div>
-      
-      {!isLoggedIn && (
-        <div className="mt-10 rounded-2xl border border-primary/20 bg-primary/5 p-6 text-center">
-          <Sparkles className="mx-auto mb-4 h-10 w-10 text-primary animate-pulse" />
-          <h3 className="text-2xl font-black mb-2 tracking-tight">Análise Pronta! 🚀</h3>
-          <p className="text-muted-foreground mb-6 max-w-md mx-auto font-medium text-white/90 leading-relaxed">
-            Sua correção detalhada e nota oficial já foram geradas! <br />
-            Para garantir sua vaga na faculdade, você precisa de <span className="text-primary font-bold">constância e prática diária</span>. Crie sua conta agora para salvar esse resultado, acessar novos temas e treinar até alcançar o curso dos seus sonhos.
-          </p>
-          <Link
-            to="/auth"
-            className="inline-flex items-center gap-2 rounded-xl px-8 py-4 font-black text-primary-foreground transition-all hover:scale-105 active:scale-95"
-            style={{ background: "var(--gradient-cta)", boxShadow: "var(--shadow-cta)" }}
+      {showPaywall && (
+        <div className="mt-8 flex justify-center relative z-10">
+          <button
+            onClick={onShowAll}
+            className="group relative inline-flex items-center justify-center rounded-2xl bg-[var(--red)] px-8 py-5 text-sm font-black text-white transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_-12px_rgba(196,50,42,0.3)]"
           >
-            CRIAR MINHA CONTA AGORA <ArrowRight className="w-5 h-5" />
-          </Link>
-          <p className="mt-4 text-xs text-muted-foreground flex items-center justify-center gap-2 font-bold">
-            Acesso instantâneo • Comece a evoluir hoje
-          </p>
+            VER TODAS AS COMPETÊNCIAS
+            <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-1" />
+          </button>
+        </div>
+      )}
+
+      {!showPaywall && (
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-5">
+            <div className="text-[10px] font-black uppercase tracking-widest text-green-600 mb-3 flex items-center gap-2">
+              <CheckCircle2 className="w-3 h-3" /> Pontos Fortes
+            </div>
+            <ul className="space-y-2">
+              {data.pontos_fortes.map((item, i) => (
+                <li key={i} className="text-xs font-medium text-[var(--ink-2)] leading-tight flex gap-2">
+                  <span className="text-[var(--red)]">•</span> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-5">
+            <div className="text-[10px] font-black uppercase tracking-widest text-[var(--red)] mb-3 flex items-center gap-2">
+              <Zap className="w-3 h-3" /> Sugestões de Melhoria
+            </div>
+            <ul className="space-y-2">
+              {data.sugestoes.map((item, i) => (
+                <li key={i} className="text-xs font-medium text-[var(--ink-2)] leading-tight flex gap-2">
+                  <span className="text-[var(--red)]">•</span> {item}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       )}
     </div>

@@ -1634,9 +1634,9 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] bg-background/95 backdrop-blur-xl flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl bg-card border-2 border-primary/20 rounded-[2.5rem] shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]">
-        <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-xl bg-muted/50 hover:bg-muted transition-colors z-10">
+    <div className="fixed inset-0 z-[100] bg-[var(--paper)]/95 backdrop-blur-xl flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl bg-[var(--paper)] border-2 border-[var(--line)] rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col max-h-[90vh]">
+        <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-xl bg-[var(--paper-2)] border border-[var(--line)] hover:bg-[var(--line)] transition-colors z-10 shadow-sm text-[var(--ink)]">
           <X className="w-6 h-6" />
         </button>
 
@@ -1645,8 +1645,8 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
           {!loading && step === 1 && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
               <div className="text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <Sparkles className="w-8 h-8 text-primary" />
+                <div className="w-16 h-16 bg-[var(--red)]/10 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-sm">
+                  <Sparkles className="w-8 h-8 text-[var(--red)]" />
                 </div>
                 <h3 className="text-3xl font-black mb-2">Gerador de Repertório IA</h3>
                 <p className="text-muted-foreground font-medium">Vamos criar o repertório perfeito para o seu texto.</p>

@@ -274,7 +274,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
         <Resultado 
           data={result} 
           isLoggedIn={isLoggedIn} 
-          showPaywall={showPaywall && !isPro && !hasFullAccess}
+          showPaywall={showPaywall}
           onShowAll={() => {
             const el = document.getElementById("paywall-anchor");
             if (el) el.scrollIntoView({ behavior: "smooth" });
@@ -315,8 +315,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                 <Step text="✓ Competência 1 · domínio da norma culta" delay={5} />
                 <Step text="✓ Competência 2 · compreensão do tema" delay={9} />
                 <Step text="✓ Competência 3 · organização dos argumentos" delay={13} />
-                <Step text="○ Competência 4 · coesão e conectivos" delay={17} />
-                <Step text="○ Competência 5 · proposta de intervenção" delay={21} />
+                <Step text="✓ Competência 4 · coesão e conectivos" delay={17} />
+                <Step text="✓ Competência 5 · proposta de intervenção" delay={21} />
                 <Step text="Comparando com a matriz oficial do INEP…" delay={25} isLast />
               </div>
             </div>
@@ -352,7 +352,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                       return (
                         <>
                           <p>
-                            Você treinou com <span className="text-[var(--ink)] font-bold">{quiz.essays_written || "algumas"} redações</span>, mas <span className="text-[var(--ink)] font-bold">{quiz.essays_corrected?.toLowerCase() === "nenhuma" ? "nenhuma" : "quase nenhuma"} foi corrigida de verdade</span>. Sem feedback real, você está apenas repetindo os mesmos erros.
+                            Você já escreveu <span className="text-[var(--ink)] font-bold">{quiz.essays_written || "algumas"} redações</span>, mas <span className="text-[var(--ink)] font-bold">{quiz.essays_corrected?.toLowerCase() === "nenhuma" ? "nenhuma" : "quase nenhuma"} foi corrigida de verdade</span>. Sem feedback real, você está apenas repetindo os mesmos erros.
                           </p>
                           <p>
                             Faltam <span className="text-[var(--red)] font-black italic">{days} dias</span> para o ENEM. É hora de parar de chutar e começar a agir com estratégia.
@@ -649,14 +649,10 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
 }
 
 function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correcao; isLoggedIn: boolean; showPaywall?: boolean; onShowAll?: () => void }) {
-  const pct = Math.round((data.nota_total / 1000) * 100);
-  
-  // Se não estiver logado, não mostramos o resultado aqui (o paywall já cuida disso)
-  if (!isLoggedIn) return null;
-
   const quizAnswers = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem("quiz_answers") || "{}") : {};
   const chuta = quizAnswers.score_guess || "800 a 900";
-  const diferenca = Math.abs(data.nota_total - 640); // Exemplo fixo conforme pedido ou cálculo real
+  const notaTotal = data.nota_total;
+  const diff = Math.abs(notaTotal - 640); // Exemplo visual conforme pedido
 
   return (
     <div
@@ -676,9 +672,7 @@ function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correca
           <span className="text-xl text-[var(--ink-3)] ml-2 tracking-tighter">/1000</span>
         </div>
         <p className="mt-6 text-sm font-bold text-[var(--ink)] max-w-md mx-auto leading-relaxed">
-          {data.nota_total < 700 
-            ? `São ${1000 - data.nota_total} pontos de diferença entre o que você achava e o que a banca veria.`
-            : `Você está no caminho, mas ainda restam ${1000 - data.nota_total} pontos para a perfeição.`}
+          São {1000 - data.nota_total} pontos de diferença entre o que você achava e o que a banca veria.
         </p>
       </div>
 

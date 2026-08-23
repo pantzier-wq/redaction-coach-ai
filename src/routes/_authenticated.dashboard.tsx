@@ -1908,10 +1908,10 @@ function ProgressSection({ essays, onGoToCorrection }: ProgressSectionProps) {
   });
 
   const cards = [
-    { label: "Média geral", valor: media, cor: "text-primary" },
-    { label: "Melhor nota", valor: melhor, cor: "text-emerald-400" },
-    { label: "Última nota", valor: ultima, cor: "text-secondary" },
-    { label: "Redações corrigidas", valor: ordenadas.length, cor: "text-foreground" },
+    { label: "Média geral", valor: media, cor: "text-[var(--red)]" },
+    { label: "Melhor nota", valor: melhor, cor: "text-green-600" },
+    { label: "Última nota", valor: ultima, cor: "text-[var(--ink)]" },
+    { label: "Redações corrigidas", valor: ordenadas.length, cor: "text-[var(--ink-2)]" },
   ];
 
   return (

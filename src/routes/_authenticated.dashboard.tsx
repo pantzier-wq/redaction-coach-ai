@@ -748,19 +748,19 @@ function ConectivosIA() {
 
             <div className="space-y-4">
               <div>
-                <h4 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Análise Técnica</h4>
-                <p className="text-base font-bold text-foreground leading-relaxed">
+                <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--ink-3)] mb-1">Análise Técnica</h4>
+                <p className="text-base font-bold text-[var(--ink)] leading-relaxed">
                   {analise.analise}
                 </p>
               </div>
 
               {analise.sugestao && (
-                <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 relative">
+                <div className="p-6 rounded-2xl bg-[var(--paper-2)] border border-[var(--line)] relative shadow-inner">
                   <div className="absolute top-4 right-4">
-                    <Sparkles className="w-4 h-4 text-primary opacity-50" />
+                    <Sparkles className="w-4 h-4 text-[var(--red)] opacity-50" />
                   </div>
-                  <h4 className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Sugestão de Upgrade</h4>
-                  <p className="text-sm text-foreground font-bold">
+                  <h4 className="text-[9px] font-black uppercase tracking-[0.2em] text-[var(--red)] mb-2">Sugestão de Upgrade</h4>
+                  <p className="text-sm text-[var(--ink)] font-bold italic leading-relaxed">
                     {analise.sugestao}
                   </p>
                 </div>

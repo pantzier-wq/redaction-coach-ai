@@ -1693,12 +1693,12 @@ function RepertorioIA({ onClose }: { onClose: () => void }) {
 
           {!loading && step === 2 && currentResponse && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4">
-              <div className="flex items-start gap-4 p-6 rounded-3xl bg-primary/5 border border-primary/20">
-                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shrink-0">
-                  <MessageSquare className="w-5 h-5 text-white" />
+              <div className="flex items-start gap-4 p-6 rounded-3xl bg-[var(--paper-2)] border border-[var(--line)] shadow-inner">
+                <div className="w-10 h-10 bg-[var(--red)]/10 border border-[var(--red)]/20 rounded-xl flex items-center justify-center shrink-0">
+                  <MessageSquare className="w-5 h-5 text-[var(--red)]" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-foreground leading-relaxed">
+                  <p className="text-sm font-bold text-[var(--ink)] leading-relaxed italic">
                     {currentResponse.message}
                   </p>
                 </div>

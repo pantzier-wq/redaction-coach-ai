@@ -1917,17 +1917,17 @@ function ProgressSection({ essays, onGoToCorrection }: ProgressSectionProps) {
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="mb-8">
-        <h2 className="text-3xl font-black flex items-center gap-3">
-          <TrendingUp className="w-8 h-8 text-emerald-400" />
+        <h2 className="font-['Fraunces'] text-3xl font-black flex items-center gap-3 text-[var(--ink)] italic">
+          <TrendingUp className="w-8 h-8 text-green-600" />
           Meu Progresso
         </h2>
-        <p className="text-muted-foreground mt-2">Acompanhe a evolução das suas notas e onde você mais precisa treinar.</p>
+        <p className="text-[var(--ink-2)] mt-2 font-medium">Acompanhe a evolução das suas notas e onde você mais precisa treinar.</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {cards.map((c) => (
-          <div key={c.label} className="rounded-2xl border border-border bg-card p-5">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground font-black mb-2">{c.label}</p>
+          <div key={c.label} className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 p-5 shadow-sm">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--ink-3)] font-black mb-2">{c.label}</p>
             <p className={cn("text-3xl font-black tabular-nums", c.cor)}>{c.valor}</p>
           </div>
         ))}

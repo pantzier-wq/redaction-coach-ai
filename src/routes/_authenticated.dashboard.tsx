@@ -1880,10 +1880,10 @@ function ProgressSection({ essays, onGoToCorrection }: ProgressSectionProps) {
   if (ordenadas.length === 0) {
     return (
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div className="text-center py-20 border-2 border-dashed border-border rounded-3xl">
-          <TrendingUp className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground font-bold">Ainda não há dados de progresso.</p>
-          <button onClick={onGoToCorrection} className="mt-4 text-primary font-black hover:underline">
+        <div className="text-center py-20 border-2 border-dashed border-[var(--line)] rounded-[2.5rem] bg-[var(--paper-2)]/30">
+          <TrendingUp className="w-12 h-12 text-[var(--ink-3)] mx-auto mb-4" />
+          <p className="text-[var(--ink-2)] font-bold italic">Ainda não há dados de progresso.</p>
+          <button onClick={onGoToCorrection} className="mt-4 text-[var(--red)] font-black hover:underline underline-offset-4">
             Enviar minha primeira redação →
           </button>
         </div>

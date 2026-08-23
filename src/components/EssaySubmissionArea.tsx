@@ -432,6 +432,12 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
             )}
             {!showEssayForm && (
               <div className="rounded-3xl border border-[var(--red)] bg-[var(--paper-2)] p-8 text-center shadow-sm">
+                <p className="mx-auto mb-6 max-w-md text-sm font-medium text-[var(--ink-2)]">Sua análise inicial está pronta. Continue para colar sua redação e descobrir sua nota real.</p>
+                <button type="button" onClick={onContinue} className="inline-flex items-center justify-center rounded-2xl bg-[var(--red)] px-8 py-4 text-sm font-black text-[var(--paper)] transition-transform hover:scale-105">CONTINUAR PARA A REDAÇÃO <ArrowRight className="ml-2 h-4 w-4" /></button>
+              </div>
+            )}
+            {showEssayForm && (
+              <div className="rounded-3xl border border-[var(--red)] bg-[var(--paper-2)] p-8 text-center shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
                 <p className="text-xs font-black uppercase tracking-[0.2em] text-[var(--red)]">O ENEM está chegando</p>
                 <div className="my-4 grid grid-cols-4 gap-2 font-['Fraunces'] text-[var(--ink)]" aria-label="Contagem regressiva para o ENEM">
                   {Object.entries(timeUntilExam).map(([unit, value]) => (
@@ -441,8 +447,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
                     </div>
                   ))}
                 </div>
-                <p className="mx-auto mb-6 max-w-md text-sm font-medium text-[var(--ink-2)]">Cada dia sem feedback é uma oportunidade perdida de melhorar sua nota.</p>
-                <button type="button" onClick={onContinue} className="inline-flex items-center justify-center rounded-2xl bg-[var(--red)] px-8 py-4 text-sm font-black text-[var(--paper)] transition-transform hover:scale-105">CONTINUAR PARA A REDAÇÃO <ArrowRight className="ml-2 h-4 w-4" /></button>
+                <p className="mx-auto max-w-md text-sm font-medium text-[var(--ink-2)]">Cada dia sem feedback é uma oportunidade perdida de melhorar sua nota.</p>
               </div>
             )}
             <form

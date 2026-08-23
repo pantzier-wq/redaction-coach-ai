@@ -37,7 +37,7 @@ function Step({ text, delay, isLast }: { text: string; delay: number; isLast?: b
 
 const LIMITE_ESSENCIAL = 15;
 
-export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }: EssaySubmissionAreaProps) {
+export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, showEssayForm = true, onContinue }: EssaySubmissionAreaProps) {
   const [tema, setTema] = useState("");
   const [redacao, setRedacao] = useState("");
   const [loading, setLoading] = useState(false);

@@ -473,6 +473,7 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
                     </div>
                   )}
 
+                  {isLoggedIn && (
                   <div className="space-y-6">
                     <div className={`grid grid-cols-1 gap-4 ${semCreditos ? "" : "md:grid-cols-2"}`}>
 

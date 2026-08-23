@@ -47,7 +47,13 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
   const [isPro, setIsPro] = useState(propIsPro || false);
   const [hasFullAccess, setHasFullAccess] = useState(false);
   const [credits, setCredits] = useState(0);
+  const [daysUntilExam, setDaysUntilExam] = useState(0);
   const corrigir = useServerFn(corrigirRedacao);
+
+  useEffect(() => {
+    const examDate = new Date("2026-11-01T00:00:00").getTime();
+    setDaysUntilExam(Math.max(0, Math.ceil((examDate - Date.now()) / 86400000)));
+  }, []);
 
   // Carrega plano/créditos do usuário logado
   useEffect(() => {

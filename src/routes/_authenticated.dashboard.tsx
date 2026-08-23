@@ -458,7 +458,7 @@ function Dashboard() {
                         <span className="text-3xl font-black text-[var(--ink)]">R$ 39,00</span>
                       </div>
                       <button
-                        onClick={() => handleTestPurchase('combo')}
+                        onClick={() => handleTestPurchase('full')}
                         className="w-full py-5 rounded-xl bg-[var(--red)] text-white font-black text-sm uppercase tracking-[0.15em] hover:scale-[1.02] active:scale-95 transition-all shadow-[0_10px_20px_-5px_rgba(196,50,42,0.4)]"
                       >
                         LIBERAR TUDO AGORA

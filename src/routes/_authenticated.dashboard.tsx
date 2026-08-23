@@ -331,15 +331,15 @@ function Dashboard() {
 
                 {/* CRÉDITOS EXTRAS — exclusivo para quem tem o Plano Essencial */}
                 {profile?.is_pro && !(profile as any)?.has_full_access && (
-                  <div className="mb-12 rounded-3xl border border-border bg-card p-6 text-left">
+                  <div className="mb-12 rounded-3xl border border-[var(--line)] bg-[var(--paper-2)]/50 p-6 text-left shadow-sm">
                     <div className="flex items-center justify-between gap-4 mb-4">
                       <div>
-                        <h3 className="text-lg font-black uppercase tracking-tight">Créditos de Correção</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Saldo atual: <strong className="text-primary">{(profile as any)?.credits ?? 0}</strong> correções
+                        <h3 className="text-lg font-black uppercase tracking-tight text-[var(--ink)]">Créditos de Correção</h3>
+                        <p className="text-sm text-[var(--ink-2)] font-medium">
+                          Saldo atual: <strong className="text-[var(--red)]">{(profile as any)?.credits ?? 0}</strong> correções
                         </p>
                       </div>
-                      <Zap className="w-8 h-8 text-primary shrink-0" />
+                      <Zap className="w-8 h-8 text-[var(--red)] shrink-0" />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       {[

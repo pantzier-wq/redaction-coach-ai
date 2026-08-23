@@ -404,7 +404,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
                   {(() => {
                     try {
                       const quiz = JSON.parse(localStorage.getItem("quiz_answers") || "{}");
-                      const days = Math.max(0, Math.floor((new Date("2026-11-08").getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)));
+                      
                       
                       return (
                         <>

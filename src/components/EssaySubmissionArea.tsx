@@ -367,14 +367,34 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess }:
                 </div>
               )}
 
-              <button
-                type="submit"
-                disabled={loading || charCount < 200 || tema.trim().length < 3}
-                className="mt-6 w-full rounded-xl py-4 text-lg font-black text-white transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
-                style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)", boxShadow: "0 0 20px rgba(34, 197, 94, 0.4)" }}
-              >
-                CORRIGIR AGORA COM IA →
-              </button>
+              <div className="flex flex-col sm:flex-row gap-4 mt-6">
+                <button
+                  type="submit"
+                  disabled={loading || charCount < 200 || tema.trim().length < 3}
+                  className="flex-1 rounded-xl py-4 text-lg font-black text-white transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+                  style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)", boxShadow: "0 0 20px rgba(34, 197, 94, 0.4)" }}
+                >
+                  CORRIGIR AGORA COM IA →
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTema("Desafios para a formação educacional de surdos no Brasil");
+                    setRedacao(`A Constituição Federal de 1988, norma de maior hierarquia no sistema jurídico brasileiro, garante a todos os cidadãos, sem distinção, o direito à educação de qualidade. Entretanto, a realidade vivenciada por indivíduos surdos no Brasil distancia-se desse ideal democrático. Nesse contexto, é fundamental analisar como a negligência governamental e o preconceito social corroboram a exclusão dessa parcela da população do ambiente acadêmico.
+
+Em primeira análise, a falta de infraestrutura e de profissionais capacitados nas instituições de ensino atua como um entrave à inclusão. Segundo o filósofo John Rawls, em sua teoria da justiça, uma sociedade é justa quando garante as mesmas oportunidades para todos. Contudo, o sistema educacional brasileiro falha ao não disponibilizar intérpretes de Libras em quantidade suficiente e ao não adaptar materiais pedagógicos para a necessidade dos surdos. Dessa forma, o acesso ao conhecimento é restrito, perpetuando um ciclo de desigualdade que impede o pleno desenvolvimento desses cidadãos.
+
+Além disso, o estigma social direcionado às pessoas com deficiência auditiva agrava a problemática. Para o sociólogo Erving Goffman, o estigma é um atributo que torna o indivíduo diferente e menos desejável, resultando em sua marginalização. Muitas vezes, a surdez é vista sob uma ótica de incapacidade, o que gera comportamentos discriminatórios tanto por parte de colegas quanto de professores. Essa barreira simbólica não apenas desestimula o estudante surdo a prosseguir com seus estudos, mas também o isola socialmente, comprometendo sua saúde mental e sua integração na coletividade.
+
+Portanto, medidas são necessárias para reverter esse cenário de exclusão. Cabe ao Ministério da Educação ampliar o investimento na formação de professores bilíngues e na contratação de intérpretes para todas as escolas da rede pública. Paralelamente, é dever do Governo Federal promover campanhas de conscientização nas mídias de grande alcance, com o intuito de desconstruir preconceitos e valorizar a cultura surda. Somente assim, o Brasil poderá assegurar a todos os seus cidadãos o direito constitucional à educação, construindo uma sociedade verdadeiramente inclusiva.`);
+                  }}
+                  className="px-6 rounded-xl border border-[var(--line)] bg-[var(--paper-2)] text-[var(--ink-2)] font-bold text-sm hover:bg-[var(--line)]/10 transition-colors"
+                >
+                  Usar um exemplo
+                </button>
+              </div>
+              
               <p className="mt-3 text-center text-xs font-bold text-muted-foreground">
                 100% privado
               </p>

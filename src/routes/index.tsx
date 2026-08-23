@@ -56,14 +56,12 @@ function Landing() {
       setSession(session);
     });
 
-    const saved = localStorage.getItem("quiz_answers");
-    if (saved) {
-      try {
-        setQuizResult(JSON.parse(saved) as Record<string, string>);
-      } catch {
-        localStorage.removeItem("quiz_answers");
-      }
-    }
+    // Cada refresh começa um novo teste, sem reutilizar o progresso anterior.
+    localStorage.removeItem("quiz_answers");
+    localStorage.removeItem("pending_submission");
+    localStorage.removeItem("pending_essay_data");
+    localStorage.removeItem("viewing_essay");
+    setQuizResult(null);
 
     return () => subscription.unsubscribe();
   }, []);

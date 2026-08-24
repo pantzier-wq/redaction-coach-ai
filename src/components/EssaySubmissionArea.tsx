@@ -786,10 +786,11 @@ function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correca
               {c.titulo}
             </p>
             <p className="text-xs text-[var(--ink-2)] leading-relaxed font-medium line-clamp-3">
-              {showPaywall && idx > 0 ? "Conteúdo bloqueado. Adquira um plano para ver a análise completa desta competência." : c.analise}
+              {isLockedPreview ? "Conteúdo bloqueado. Adquira um plano para ver a análise completa desta competência." : c.analise}
             </p>
           </div>
-        ))}
+          );
+        })}
 
         {showPaywall && (
           <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[var(--paper)] to-transparent pointer-events-none" />

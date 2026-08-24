@@ -148,9 +148,10 @@ function mapAiGatewayError(error: any): string {
   const status = Number(error?.statusCode ?? error?.status ?? error?.response?.status ?? 0);
   const raw = String(error?.message || "");
 
-  if (status === 402 || /payment required/i.test(raw)) {
-    return "IA_INDISPONIVEL: nossa análise está temporariamente indisponível (limite de uso da IA atingido). Tente novamente em alguns minutos.";
+  if (status === 402 || /payment required|not enough credits/i.test(raw)) {
+    return "IA_INDISPONIVEL: a correção por IA está indisponível porque os créditos de IA da plataforma acabaram. O responsável pelo app precisa recarregar os créditos para reativar as correções.";
   }
+
   if (status === 429 || /rate limit|too many requests/i.test(raw)) {
     return "IA_OCUPADA: muitas correções acontecendo agora. Aguarde alguns segundos e tente novamente.";
   }

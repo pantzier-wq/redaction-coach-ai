@@ -762,10 +762,15 @@ function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correca
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 relative">
-        {data.competencias.map((c, idx) => (
+        {data.competencias.map((c, idx) => {
+          // A prévia sempre libera a nota total e a Competência 1.
+          // Apenas C2–C5 ficam borradas até o desbloqueio do resultado completo.
+          const isLockedPreview = showPaywall === true && idx > 0;
+
+          return (
           <div 
             key={c.numero} 
-            className={`rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-5 transition-all duration-500 flex flex-col ${showPaywall && idx > 0 ? "blur-md select-none opacity-40" : ""}`}
+            className={`rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-5 transition-all duration-500 flex flex-col ${isLockedPreview ? "blur-md select-none opacity-40" : ""}`}
           >
             <div className="flex items-center justify-between gap-4 mb-3">
               <div className="flex items-center gap-2 font-bold text-[var(--ink)] text-xs md:text-sm">
@@ -781,10 +786,11 @@ function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correca
               {c.titulo}
             </p>
             <p className="text-xs text-[var(--ink-2)] leading-relaxed font-medium line-clamp-3">
-              {showPaywall && idx > 0 ? "Conteúdo bloqueado. Adquira um plano para ver a análise completa desta competência." : c.analise}
+              {isLockedPreview ? "Conteúdo bloqueado. Adquira um plano para ver a análise completa desta competência." : c.analise}
             </p>
           </div>
-        ))}
+          );
+        })}
 
         {showPaywall && (
           <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[var(--paper)] to-transparent pointer-events-none" />

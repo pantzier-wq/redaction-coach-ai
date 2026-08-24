@@ -552,7 +552,7 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
                   
                   <p className="text-sm md:text-base text-[var(--ink-2)] font-semibold mb-6 md:mb-8 leading-relaxed text-center">
                     {!isLoggedIn 
-                      ? "Crie sua conta agora para salvar seu diagnóstico e desbloquear sua correção detalhada com nota oficial padrão INEP."
+                      ? "Vamos continuar com os créditos gratuitos para salvar seu diagnóstico e desbloquear sua correção detalhada com nota oficial padrão INEP."
                       : semCreditos
                         ? "Você já usou as 15 correções do Plano Essencial. Recarregue créditos ou faça o upgrade para o Combo Nota 1000 e corrija sem limite nenhum."
                         : (result || showPaywall)

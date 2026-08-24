@@ -140,6 +140,23 @@ function normalizeConnectivesAnalysis(value: unknown): AnaliseConectivos {
   };
 }
 
+/**
+ * Traduz falhas do gateway de IA em mensagens claras para o aluno.
+ * 402 = créditos de IA da plataforma esgotados; 429 = limite momentâneo.
+ */
+function mapAiGatewayError(error: any): string {
+  const status = Number(error?.statusCode ?? error?.status ?? error?.response?.status ?? 0);
+  const raw = String(error?.message || "");
+
+  if (status === 402 || /payment required/i.test(raw)) {
+    return "IA_INDISPONIVEL: nossa análise está temporariamente indisponível (limite de uso da IA atingido). Tente novamente em alguns minutos.";
+  }
+  if (status === 429 || /rate limit|too many requests/i.test(raw)) {
+    return "IA_OCUPADA: muitas correções acontecendo agora. Aguarde alguns segundos e tente novamente.";
+  }
+  return raw || "Falha na comunicação com a IA";
+}
+
 export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<typeof essayInputSchema>) {
   const gateway = createLovableAiGatewayProvider(lovableApiKey);
   
@@ -154,8 +171,8 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     const parsedJson = parseJsonFromText(text);
     return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
-    console.error("ERRO NO generateText (IA):", error.message);
-    throw error;
+    console.error("ERRO NO generateText (IA):", error?.message);
+    throw new Error(mapAiGatewayError(error));
   }
 }
 

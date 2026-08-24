@@ -301,7 +301,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
         setShowPaywall(true);
         setErro(null);
       } else {
-        setErro(errMsg);
+        // Remove prefixos técnicos (IA_INDISPONIVEL:, IA_OCUPADA:) antes de exibir
+        setErro(errMsg.replace(/^IA_(INDISPONIVEL|OCUPADA):\s*/, "") || "Não foi possível concluir a análise. Tente novamente.");
       }
 
     } finally {

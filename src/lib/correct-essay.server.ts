@@ -154,8 +154,8 @@ export async function correctEssayWithAi(lovableApiKey: string, input: z.infer<t
     const parsedJson = parseJsonFromText(text);
     return CorrectionSchema.parse(parsedJson);
   } catch (error: any) {
-    console.error("ERRO NO generateText (IA):", error.message);
-    throw error;
+    console.error("ERRO NO generateText (IA):", error?.message);
+    throw new Error(mapAiGatewayError(error));
   }
 }
 

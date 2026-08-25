@@ -734,11 +734,18 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
   );
 }
 
+function estimateGuessNumber(chuta: string): number {
+  const nums = chuta.match(/\d+/g)?.map(Number) || [];
+  if (nums.length === 0) return 800;
+  if (nums.length === 1) return nums[0];
+  return Math.round((nums[0] + nums[1]) / 2);
+}
+
 function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correcao; isLoggedIn: boolean; showPaywall?: boolean; onShowAll?: () => void }) {
   const quizAnswers = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem("quiz_answers") || "{}") : {};
-  const chuta = quizAnswers.score_guess || "800 a 900";
+  const chuta = quizAnswers.current_estimate || "800 a 900";
   const notaTotal = data.nota_total;
-  const diff = Math.abs(notaTotal - parseInt(chuta.split(' ')[0]) || 0);
+  const diff = Math.abs(notaTotal - estimateGuessNumber(chuta));
 
   return (
     <div

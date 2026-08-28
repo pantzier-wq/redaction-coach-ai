@@ -3,9 +3,9 @@
  * Centralizados aqui para que qualquer botão de plano use a mesma fonte de verdade.
  */
 export const CHECKOUT_LINKS = {
-  /** Plano Essencial — R$ 19,90 (15 correções) */
+  /** Plano Essencial — R$ 19,90 (+12 correções) */
   essencial: "https://pay.cakto.com.br/fmadxgn_1014212",
-  /** Combo Nota 1000 — R$ 39,00 (vitalício) */
+  /** Combo Nota 1000 — R$ 39,00 (+25 correções e ferramentas extras) */
   combo: "https://pay.cakto.com.br/3cvwxof_1014273",
   /** Recarga — 5 correções por R$ 7,90 */
   credits5: "https://pay.cakto.com.br/mayyqgk_1017733",
@@ -17,34 +17,79 @@ export const CHECKOUT_LINKS = {
 
 export type CheckoutPlan = keyof typeof CHECKOUT_LINKS;
 
+const ATTRIBUTION_STORAGE_KEY = "corrigeai_checkout_attribution";
+const ATTRIBUTION_PARAMS = [
+  "src",
+  "utm_source",
+  "utm_medium",
+  "utm_campaign",
+  "utm_term",
+  "utm_content",
+  "fbclid",
+  "gclid",
+  "ttclid",
+] as const;
+
+type Attribution = Partial<Record<(typeof ATTRIBUTION_PARAMS)[number], string>>;
+
+/** Guarda a origem do lead durante quiz, cadastro e login. */
+export function captureCheckoutAttribution(): Attribution {
+  if (typeof window === "undefined") return {};
+
+  let attribution: Attribution = {};
+  try {
+    attribution = JSON.parse(
+      sessionStorage.getItem(ATTRIBUTION_STORAGE_KEY) || "{}",
+    ) as Attribution;
+  } catch {
+    attribution = {};
+  }
+
+  const currentParams = new URLSearchParams(window.location.search);
+  for (const key of ATTRIBUTION_PARAMS) {
+    const value = currentParams.get(key)?.trim();
+    if (value) attribution[key] = value;
+  }
+
+  try {
+    sessionStorage.setItem(ATTRIBUTION_STORAGE_KEY, JSON.stringify(attribution));
+  } catch {
+    // O checkout ainda funciona quando o navegador bloqueia sessionStorage.
+  }
+
+  return attribution;
+}
+
 /**
  * Abre o checkout do plano informado.
  *
  * Quando há usuário logado, geramos antes um token único de compra e o
- * enviamos ao checkout (utm_content / ref). O webhook devolve esse token e o
+ * enviamos ao checkout (sck / ref). O webhook devolve esse token e o
  * app libera o acesso na conta correta, mesmo que o e-mail do pagamento
- * seja diferente do e-mail cadastrado.
+ * seja diferente do e-mail cadastrado. As UTMs originais permanecem intactas.
  */
 export async function goToCheckout(plan: CheckoutPlan) {
   const base = CHECKOUT_LINKS[plan];
   if (!base) return;
 
-  let url: string = base;
+  const checkoutUrl = new URL(base);
+  const attribution = captureCheckoutAttribution();
+  for (const [key, value] of Object.entries(attribution)) {
+    if (value) checkoutUrl.searchParams.set(key, value);
+  }
 
   try {
     const { createPurchaseToken } = await import("@/lib/purchase.functions");
     const { token, email } = await createPurchaseToken({ data: { plan } });
-    const u = new URL(base);
-    u.searchParams.set("utm_content", token);
-    u.searchParams.set("ref", token);
-    if (email) u.searchParams.set("email", email);
-    url = u.toString();
+    checkoutUrl.searchParams.set("sck", token);
+    checkoutUrl.searchParams.set("ref", token);
+    if (email) checkoutUrl.searchParams.set("email", email);
   } catch {
     // Usuário não logado (ou falha ao gerar token): segue para o checkout
     // normal. Nesse caso a liberação será feita pelo e-mail do pagamento.
   }
 
-  window.location.href = url;
+  window.location.href = checkoutUrl.toString();
 }
 
 /** Abre o checkout da recarga de créditos correspondente à quantidade. */

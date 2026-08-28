@@ -1,51 +1,39 @@
 import { createServerFn } from "@tanstack/react-start";
-import { z } from "zod";
 import {
   essayInputSchema,
   connectivesInputSchema,
   repertoryInputSchema,
   secureEssayCorrection,
-  resolveUserIdFromToken,
   analyzeConnectivesWithAi,
   createRepertoryWithAi,
 } from "@/lib/correct-essay.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
-import type { Correcao, RespostaRepertorio } from "@/lib/correct-essay.server";
+import type { Correcao, CorrectionResponse, RespostaRepertorio } from "@/lib/correct-essay.server";
 
-export type { Correcao, RespostaRepertorio };
+export type { Correcao, CorrectionResponse, RespostaRepertorio };
 
 export const corrigirRedacao = createServerFn({ method: "POST" })
-  .validator((data: any) => data)
-  .handler(async ({ data }): Promise<any> => {
-    console.log("Servidor recebeu pedido de correção...");
+  .middleware([requireSupabaseAuth])
+  .validator((data) => essayInputSchema.parse(data))
+  .handler(async ({ data, context }): Promise<CorrectionResponse> => {
     try {
-      // Usuário logado: valida o token no servidor para usar o fluxo de créditos.
-      // Visitante: userId null e uso do fingerprint (1 correção grátis).
-      const userId = await resolveUserIdFromToken(data?.accessToken);
-      const result = await secureEssayCorrection(userId, data);
-
-      // Retornamos o objeto diretamente, o TanStack cuida da serialização
-      return result;
-    } catch (error: any) {
+      return await secureEssayCorrection(context.userId, data);
+    } catch (error: unknown) {
       console.error("ERRO NO HANDLER DE CORREÇÃO:", error);
-      // Lançamos um erro com mensagem limpa
-      throw new Error(error.message || "Erro interno no servidor de correção");
+      throw new Error(error instanceof Error ? error.message : "AI_TEMPORARILY_UNAVAILABLE");
     }
   });
 
-
 export const analisarConectivos = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((data: any) => data)
-  .handler(async ({ data }) => {
-    const key = process.env.LOVABLE_API_KEY!;
-    return await analyzeConnectivesWithAi(key, data.frase);
+  .validator((data) => connectivesInputSchema.parse(data))
+  .handler(async ({ data, context }) => {
+    return await analyzeConnectivesWithAi(context.userId, data);
   });
 
 export const criarRepertorio = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .validator((data: any) => data)
-  .handler(async ({ data }) => {
-    const key = process.env.LOVABLE_API_KEY!;
-    return await createRepertoryWithAi(key, data);
+  .validator((data) => repertoryInputSchema.parse(data))
+  .handler(async ({ data, context }) => {
+    return await createRepertoryWithAi(context.userId, data);
   });

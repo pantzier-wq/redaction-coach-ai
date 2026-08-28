@@ -3,10 +3,10 @@ import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, ArrowRight, Trophy, Zap, CheckCircle2 } from "lucide-react";
+import { Sparkles, ArrowRight, Zap, CheckCircle2, LockKeyhole } from "lucide-react";
 import { goToCheckout, goToCreditsCheckout } from "@/lib/checkout";
 import { CouponUnlockedBanner } from "@/components/CouponUnlockedBanner";
-
+import { buildLocalPreview } from "@/lib/local-preview";
 
 interface EssaySubmissionAreaProps {
   isLoggedIn: boolean;
@@ -14,11 +14,12 @@ interface EssaySubmissionAreaProps {
   onSuccess?: (result: Correcao) => void;
   showEssayForm?: boolean;
   onContinue?: () => void;
+  hideTheme?: boolean;
 }
 
 function Step({ text, delay, isLast }: { text: string; delay: number; isLast?: boolean }) {
   const [visible, setVisible] = useState(false);
-  
+
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), delay * 1000);
     return () => clearTimeout(timer);
@@ -28,20 +29,39 @@ function Step({ text, delay, isLast }: { text: string; delay: number; isLast?: b
 
   return (
     <div className="flex items-center gap-3 animate-in fade-in slide-in-from-left-2 duration-500">
-      <span className={`text-sm font-medium ${isLast ? 'text-[var(--red)] font-bold italic' : 'text-[var(--ink-2)]'}`}>
+      <span
+        className={`text-sm font-medium ${isLast ? "text-[var(--red)] font-bold italic" : "text-[var(--ink-2)]"}`}
+      >
         {text}
       </span>
     </div>
   );
 }
 
-const LIMITE_ESSENCIAL = 15;
+const LIMITE_ESSENCIAL = 12;
+const ANALYSIS_DURATION_MS = 15000;
 
-export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, showEssayForm = true, onContinue }: EssaySubmissionAreaProps) {
+async function waitForAnalysisWindow(startedAt: number) {
+  const remaining = Math.max(0, ANALYSIS_DURATION_MS - (Date.now() - startedAt));
+  if (remaining > 0) {
+    await new Promise((resolve) => window.setTimeout(resolve, remaining));
+  }
+}
+
+export function EssaySubmissionArea({
+  isLoggedIn,
+  isPro: propIsPro,
+  onSuccess,
+  showEssayForm = true,
+  onContinue,
+  hideTheme = false,
+}: EssaySubmissionAreaProps) {
   const [tema, setTema] = useState("");
   const [redacao, setRedacao] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [showOfferModal, setShowOfferModal] = useState(false);
+  const [showUpsellOffer, setShowUpsellOffer] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [result, setResult] = useState<Correcao | null>(null);
   const [isPro, setIsPro] = useState(propIsPro || false);
@@ -72,7 +92,9 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
     if (!isLoggedIn) return;
     let active = true;
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
       const { data: profile } = await supabase
         .from("profiles")
@@ -81,19 +103,38 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
         .single();
       if (!active || !profile) return;
       setIsPro(!!profile.is_pro);
-      setHasFullAccess(!!(profile as any).has_full_access);
-      setCredits((profile as any).credits ?? 0);
+      setHasFullAccess(!!profile.has_full_access);
+      setCredits(profile.credits ?? 0);
     })();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [isLoggedIn]);
-  
+
   // Efeito para carregar redação do histórico se houver no localStorage
   useEffect(() => {
     if (typeof window === "undefined") return;
     const saved = window.localStorage.getItem("viewing_essay");
     const pendingData = window.localStorage.getItem("pending_essay_data");
-    
-    if (saved) {
+    const returnStage = window.localStorage.getItem("checkout_return_stage");
+    const pendingSubmission = window.localStorage.getItem("pending_submission");
+
+    if (window.location.pathname === "/" && returnStage && pendingSubmission) {
+      try {
+        const submission = JSON.parse(pendingSubmission) as { tema?: string; redacao?: string };
+        if (!submission.redacao?.trim()) throw new Error("missing_pending_essay");
+        const restoredTheme = submission.tema?.trim() || "Tema não informado na pré-análise";
+        setTema(submission.tema || "");
+        setRedacao(submission.redacao);
+        setResult(buildLocalPreview(restoredTheme, submission.redacao));
+        setShowPaywall(true);
+        setShowOfferModal(true);
+        setShowUpsellOffer(returnStage === "upsell");
+      } catch (e) {
+        window.localStorage.removeItem("checkout_return_stage");
+        console.error("Erro ao restaurar oferta do checkout", e);
+      }
+    } else if (saved) {
       try {
         const essay = JSON.parse(saved);
         setTema(essay.tema);
@@ -113,141 +154,94 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
         console.error("Erro ao carregar dados pendentes", e);
       }
     }
-  }, []);
+  }, [isLoggedIn]);
 
   const charCount = redacao.trim().length;
-  // Combo = ilimitado. Essencial = precisa de créditos disponíveis.
-  const canCorrect = hasFullAccess || (isPro && credits > 0);
-  const semCreditos = isPro && !hasFullAccess && credits <= 0;
+  // Ambos os planos consomem créditos; o Combo mantém acesso às ferramentas extras.
+  const canCorrect = (hasFullAccess || isPro) && credits > 0;
+  const semCreditos = (hasFullAccess || isPro) && credits <= 0;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
+    const analysisStartedAt = Date.now();
+    const effectiveTheme = hideTheme
+      ? "Tema não informado; considere o assunto desenvolvido na redação"
+      : tema.trim();
 
     setErro(null);
     setResult(null);
     setShowPaywall(false);
+    setShowOfferModal(false);
+    setShowUpsellOffer(false);
 
     // Salva a redação para processar depois do diagnóstico (se necessário)
-    localStorage.setItem("pending_submission", JSON.stringify({ tema, redacao }));
+    localStorage.setItem("pending_submission", JSON.stringify({ tema: effectiveTheme, redacao }));
 
-    // Se o usuário não estiver logado e ainda não viu o diagnóstico do quiz, 
-    // ou se estamos seguindo o novo fluxo de "Quiz -> Diagnóstico -> Redação -> Paywall"
-    const quizAnswers = localStorage.getItem("quiz_answers");
-    if (!isLoggedIn && quizAnswers) {
+    // A pre-analise publica e para contas sem saldo e 100% local: sem custo e sem armazenar a redacao.
+    if (!isLoggedIn || !canCorrect) {
       setLoading(true);
-      
-      // Simula a correção mas não faz a chamada pesada da IA se for apenas para mostrar o paywall parcial
-      // No fluxo anônimo, mostramos a nota (mockada ou real dependendo da necessidade de retenção)
-      // O usuário quer ver a Nota Total + C1. Para ser "real", precisamos da IA.
-      
       try {
-        const fingerprint = localStorage.getItem("visitor_fingerprint") || crypto.randomUUID();
-        localStorage.setItem("visitor_fingerprint", fingerprint);
-
-        const r = await corrigir({ 
-          data: { 
-            tema: tema.trim(), 
-            redacao: redacao.trim(),
-            fingerprint,
-            accessToken: undefined
-          } 
-        });
-        
-        const correctionData = r.correcao || r;
+        const correctionData = buildLocalPreview(effectiveTheme, redacao.trim());
+        await waitForAnalysisWindow(analysisStartedAt);
         setResult(correctionData);
         setShowPaywall(true);
       } catch (err) {
         console.error("Erro no fluxo anônimo:", err);
+        await waitForAnalysisWindow(analysisStartedAt);
+        setErro("Não foi possível concluir a análise. Tente novamente.");
       } finally {
         setLoading(false);
       }
-      
+
       setTimeout(
         () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
         100,
       );
       return;
     }
-
-    if (isLoggedIn && !canCorrect) {
-      setLoading(true);
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        const r = await corrigir({ 
-          data: { 
-            tema: tema.trim(), 
-            redacao: redacao.trim(),
-            accessToken: session?.access_token
-          } 
-        });
-        const correctionData = r.correcao || r;
-        setResult(correctionData);
-        setShowPaywall(true);
-      } catch (err) {
-        console.error("Erro no fluxo logado sem crédito:", err);
-      } finally {
-        setLoading(false);
-      }
-      setTimeout(
-        () => document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" }),
-        100,
-      );
-      return;
-    }
-
 
     setLoading(true);
 
     try {
-      const startTime = Date.now();
+      const submissionKey = `${effectiveTheme}\n${redacao.trim()}`;
+      const savedRequest = JSON.parse(localStorage.getItem("pending_ai_request") || "null") as {
+        key?: string;
+        id?: string;
+      } | null;
+      const requestId =
+        savedRequest?.key === submissionKey && savedRequest.id
+          ? savedRequest.id
+          : crypto.randomUUID();
+      localStorage.setItem(
+        "pending_ai_request",
+        JSON.stringify({ key: submissionKey, id: requestId }),
+      );
 
-
-      
-      // Gera ou recupera fingerprint para visitantes anônimos
-      let fingerprint = "";
-      let accessToken: string | undefined;
-      if (!isLoggedIn) {
-        fingerprint = localStorage.getItem("visitor_fingerprint") || "";
-        if (!fingerprint) {
-          fingerprint = crypto.randomUUID();
-          localStorage.setItem("visitor_fingerprint", fingerprint);
-        }
-      } else {
-        const { data: { session } } = await supabase.auth.getSession();
-        accessToken = session?.access_token;
-      }
-
-      // A lógica de créditos e IA agora está 100% centralizada no servidor (corrigirRedacao)
-      const r = await corrigir({ 
-        data: { 
-          tema: tema.trim(), 
+      const r = await corrigir({
+        data: {
+          tema: effectiveTheme,
           redacao: redacao.trim(),
-          fingerprint,
-          accessToken
-        } 
+          requestId,
+        },
       });
 
-      
-      const elapsed = Date.now() - startTime;
-      const wait = Math.max(0, 28000 - elapsed);
+      await waitForAnalysisWindow(analysisStartedAt);
 
-      if (wait > 0) {
-        await new Promise((resolve) => setTimeout(resolve, wait));
-      }
-
-      // r já vem como objeto se o servidor retornar direto
-      const correctionData = r.correcao || r;
+      const correctionData = r.correcao;
       setResult(correctionData);
-      
+      setCredits(r.remainingCredits);
+      localStorage.removeItem("pending_ai_request");
+
       // Rola para o resultado após o delay de carregamento
       setTimeout(() => {
         document.getElementById("resultado")?.scrollIntoView({ behavior: "smooth" });
       }, 100);
 
       // Sincroniza saldo e status após a correção
-      let stillAllowed = false;
       if (isLoggedIn) {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (user) {
           const { data: profile } = await supabase
             .from("profiles")
@@ -257,66 +251,57 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
 
           if (profile) {
             const pro = !!profile.is_pro;
-            const full = !!(profile as any).has_full_access;
-            const saldo = (profile as any).credits ?? 0;
+            const full = !!profile.has_full_access;
+            const saldo = profile.credits ?? 0;
             setIsPro(pro);
             setHasFullAccess(full);
             setCredits(saldo);
-            stillAllowed = full || (pro && saldo > 0);
           }
         }
       }
 
-      // NOVO FLUXO: Sempre mostra paywall se não for PRO, mesmo após a primeira correção.
-      // A primeira correção agora é "bloqueada" até o pagamento.
-      if (!isLoggedIn || !stillAllowed) {
-        setShowPaywall(true);
-        setTimeout(
-          () => document.getElementById("paywall-anchor")?.scrollIntoView({ behavior: "smooth" }),
-          100,
-        );
-      } else {
-        setShowPaywall(false);
-      }
-      
-      
+      // A correcao que consumiu o ultimo credito continua desbloqueada. O saldo
+      // zero bloqueia apenas a proxima submissao e apresenta as opcoes de recarga.
+      setShowPaywall(false);
+      setShowOfferModal(false);
+      setShowUpsellOffer(false);
+
       if (onSuccess) {
         onSuccess(correctionData);
       }
-
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Erro na submissão:", err);
-      
-      const errMsg = err.message || "";
+      await waitForAnalysisWindow(analysisStartedAt);
+
+      const errMsg = err instanceof Error ? err.message : String(err || "");
       console.error("DEBUG UI ERROR:", errMsg);
-      const semAcesso =
-        errMsg.includes("LIMITE_EXCEDIDO") ||
-        errMsg.includes("créditos suficientes") ||
-        errMsg.includes("CRÉDITOS_INSUFICIENTES") ||
-        errMsg.includes("insufficient_credits") ||
-        errMsg.includes("correção gratuita") ||
-        errMsg.includes("créditos");
+      const semAcesso = errMsg.includes("INSUFFICIENT_CREDITS");
       // Usuário logado sem plano/créditos deve ver as ofertas, nunca um erro genérico.
       if (semAcesso || (isLoggedIn && !canCorrect)) {
         setShowPaywall(true);
+        setShowOfferModal(false);
+        setShowUpsellOffer(false);
         setErro(null);
       } else {
-        // Remove prefixos técnicos (IA_INDISPONIVEL:, IA_OCUPADA:) antes de exibir
-        setErro(errMsg.replace(/^IA_(INDISPONIVEL|OCUPADA):\s*/, "") || "Não foi possível concluir a análise. Tente novamente.");
+        if (!errMsg.includes("REQUEST_IN_PROGRESS")) localStorage.removeItem("pending_ai_request");
+        const message = errMsg.includes("REQUEST_IN_PROGRESS")
+          ? "Sua correção já está sendo processada. Aguarde alguns segundos."
+          : "A IA está temporariamente indisponível. Seu crédito foi preservado; tente novamente em instantes.";
+        setErro(message);
       }
-
     } finally {
       setLoading(false);
     }
   }
 
-
-  // type: 'basic' = Plano Essencial (15 correções) | 'combo' = vitalício ilimitado
+  // type: 'basic' = Plano Essencial (+12 correções) | 'combo' = +25 correções e ferramentas extras
   async function handleTestPurchase(type: "basic" | "combo" = "basic") {
     // Redireciona para o checkout real (Cakto). A liberação acontece após o pagamento.
+    if (window.location.pathname === "/") {
+      localStorage.setItem("checkout_return_stage", showUpsellOffer ? "upsell" : "basic");
+    }
     await goToCheckout(type === "combo" ? "combo" : "essencial");
   }
-
 
   // Compra de créditos avulsos (somente para quem já tem o Plano Essencial)
   async function handleBuyCredits(qtd: number) {
@@ -324,26 +309,72 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
     await goToCreditsCheckout(qtd);
   }
 
-
-
   return (
     <div className="w-full space-y-8">
       {result && !loading && (
-        <Resultado 
-          data={result} 
-          isLoggedIn={isLoggedIn} 
-          showPaywall={showPaywall}
-          onShowAll={() => {
-            const el = document.getElementById("paywall-anchor");
-            if (el) el.scrollIntoView({ behavior: "smooth" });
-          }}
-        />
+        <>
+          <Resultado data={result} isLoggedIn={isLoggedIn} showPaywall={showPaywall} />
+
+          {showPaywall && (
+            <div className="corrige-soft-enter rounded-3xl border-2 border-[var(--red)] bg-[var(--paper-2)] p-5 text-center shadow-sm md:p-8">
+              <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[var(--red)] md:text-xs">
+                O tempo até o ENEM continua correndo
+              </p>
+              <h3 className="mx-auto mt-3 max-w-2xl font-['Fraunces'] text-2xl font-black leading-tight text-[var(--ink)] md:text-3xl">
+                Cada treino sem saber o que corrigir pode manter sua nota no mesmo lugar.
+              </h3>
+              <div
+                className="mx-auto my-6 grid max-w-2xl grid-cols-2 gap-2 font-['Fraunces'] text-[var(--ink)] sm:grid-cols-4"
+                aria-label="Contagem regressiva para o ENEM"
+              >
+                {Object.entries(timeUntilExam).map(([unit, value]) => (
+                  <div
+                    key={unit}
+                    className="rounded-2xl border-2 border-[var(--line)] bg-[var(--paper)] px-2 py-4 shadow-sm"
+                  >
+                    <div className="text-3xl font-black tabular-nums md:text-4xl">
+                      {String(value).padStart(2, "0")}
+                    </div>
+                    <div className="mt-1 text-[10px] font-bold uppercase tracking-wider text-[var(--ink-3)]">
+                      {unit === "days"
+                        ? "dias"
+                        : unit === "hours"
+                          ? "horas"
+                          : unit === "minutes"
+                            ? "min"
+                            : "seg"}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="mx-auto mb-6 max-w-xl text-sm font-semibold leading-relaxed text-[var(--ink-2)] md:text-base">
+                Você já fez a parte mais difícil: escreveu e enviou sua redação. Agora falta
+                descobrir onde concentrar seus estudos para não chegar à prova repetindo erros
+                invisíveis.
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowOfferModal(true);
+                  setShowUpsellOffer(false);
+                }}
+                className="group inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-[#16213A] px-6 py-4 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_14px_30px_-14px_rgba(22,33,58,0.5)] transition-all hover:scale-[1.01] hover:bg-[#24365F] active:scale-95 md:w-auto md:px-10"
+              >
+                DESBLOQUEAR MINHA CORREÇÃO AGORA
+                <ArrowRight className="ml-3 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </button>
+              <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--ink-3)]">
+                Acesso liberado logo após o pagamento
+              </p>
+            </div>
+          )}
+        </>
       )}
 
       <div className="w-full">
         {loading ? (
-          <div 
-            className="rounded-3xl border border-[var(--red)] bg-[var(--paper)] p-10 text-center animate-in fade-in zoom-in duration-500"
+          <div
+            className="corrige-soft-enter rounded-3xl border border-[var(--red)] bg-[var(--paper)] px-5 py-8 text-center md:p-10"
             style={{ boxShadow: "var(--paper-shadow)" }}
           >
             <div className="mb-6 flex justify-center">
@@ -354,33 +385,50 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
                 </div>
               </div>
             </div>
-            
-            <h3 className="text-2xl font-['Fraunces'] font-black mb-4 text-[var(--ink)]">Análise rodando...</h3>
-            
+
+            <p className="mb-2 text-[10px] font-black uppercase tracking-[0.22em] text-[var(--red)]">
+              Correção em andamento
+            </p>
+            <h3 className="mb-3 text-2xl font-['Fraunces'] font-black text-[var(--ink)] md:text-3xl">
+              Estamos examinando cada competência
+            </h3>
+            {(hideTheme || !isLoggedIn) && (
+              <p className="mx-auto mb-6 max-w-md text-sm font-medium leading-relaxed text-[var(--ink-2)]">
+                Sua análise leva alguns segundos porque a redação é verificada pelos cinco critérios
+                usados no ENEM.
+              </p>
+            )}
+
             <div className="mx-auto mb-6 h-3 w-full max-w-md overflow-hidden rounded-full bg-[var(--paper-2)] border border-[var(--line)]">
-              <div 
+              <div
                 className="h-full bg-[var(--red)] shadow-[0_0_15px_rgba(196,50,42,0.4)] transition-all duration-1000 ease-linear"
-                style={{ 
-                  width: '100%',
-                  animation: 'loading-bar 30s linear forwards'
-                }} 
+                style={{
+                  width: "100%",
+                  animation: "loading-bar 15s linear forwards",
+                }}
               />
             </div>
 
-            <div className="relative h-64 w-full max-w-sm mx-auto overflow-hidden text-left border border-[var(--line)] p-4 rounded-xl bg-[var(--paper-2)]/50">
-              <div className="space-y-3">
-                <Step text={`✓ Lendo sua redação — ${redacao.split(/\s+/).filter(Boolean).length} palavras`} delay={1} />
-                <Step text="✓ Competência 1 · domínio da norma culta" delay={5} />
-                <Step text="✓ Competência 2 · compreensão do tema" delay={9} />
-                <Step text="✓ Competência 3 · organização dos argumentos" delay={13} />
-                <Step text="✓ Competência 4 · coesão e conectivos" delay={17} />
-                <Step text="✓ Competência 5 · proposta de intervenção" delay={21} />
-                <Step text="Comparando com a matriz oficial do INEP…" delay={25} isLast />
+            {(hideTheme || !isLoggedIn) && (
+              <div className="relative min-h-[18rem] w-full max-w-md mx-auto overflow-hidden text-left border border-[var(--line)] p-5 rounded-2xl bg-[var(--paper-2)]/50">
+                <div className="space-y-3">
+                  <Step
+                    text={`✓ Lendo sua redação — ${redacao.split(/\s+/).filter(Boolean).length} palavras`}
+                    delay={1}
+                  />
+                  <Step text="✓ Competência 1 · domínio da escrita formal" delay={3} />
+                  <Step text="✓ Competência 2 · compreensão do tema" delay={5} />
+                  <Step text="✓ Competência 3 · organização dos argumentos" delay={7} />
+                  <Step text="✓ Competência 4 · coesão e conectivos" delay={9} />
+                  <Step text="✓ Competência 5 · proposta de intervenção" delay={11} />
+                  <Step text="✓ Cruzando os pontos que podem reduzir sua nota" delay={13} />
+                  <Step text="Finalizando seu diagnóstico estratégico…" delay={14} isLast />
+                </div>
               </div>
-            </div>
+            )}
 
-            <p className="mt-8 text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-[0.2em] animate-pulse">
-              O rigor da correção leva tempo. Não feche esta página.
+            <p className="mt-6 text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-[0.18em] animate-pulse">
+              Aguarde nesta página. Seu resultado está quase pronto.
             </p>
 
             <style>{`
@@ -392,85 +440,113 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
           </div>
         ) : (
           <div id="corrigir" className="relative w-full space-y-8">
-            {typeof window !== 'undefined' && localStorage.getItem("quiz_answers") && (
-              <div className="bg-[var(--paper-2)] border border-[var(--line)] rounded-3xl p-6 shadow-sm mb-8 animate-in fade-in slide-in-from-top-4 duration-500">
-                <div className="flex items-center gap-2 text-[var(--red)] font-black uppercase tracking-widest text-xs mb-4">
-                  <span className="relative flex h-3 w-3">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--red)] opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--red)]"></span>
-                  </span>
-                  Diagnóstico Personalizado
+            {(hideTheme || !isLoggedIn) &&
+              !result &&
+              typeof window !== "undefined" &&
+              localStorage.getItem("quiz_answers") && (
+                <div className="mb-6 rounded-3xl border border-[var(--line)] bg-[var(--paper-2)] p-5 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500 md:mb-8 md:p-6">
+                  <div className="mb-4 flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[var(--red)] md:text-xs">
+                    <span className="relative flex h-3 w-3">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--red)] opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--red)]"></span>
+                    </span>
+                    Diagnóstico Personalizado
+                  </div>
+                  <div className="space-y-4 text-base font-medium leading-relaxed text-[var(--ink-2)] md:text-[1.05rem]">
+                    {(() => {
+                      try {
+                        const quiz = JSON.parse(localStorage.getItem("quiz_answers") || "{}");
+
+                        return (
+                          <>
+                            <p>
+                              {quiz.essays_written === "Nenhuma ainda" ? (
+                                <>
+                                  Você ainda não escreveu nenhuma redação para treinar. Começar
+                                  agora é a forma mais rápida de descobrir e corrigir seus erros.
+                                </>
+                              ) : (
+                                <>
+                                  Você já escreveu{" "}
+                                  <span className="text-[var(--ink)] font-bold">
+                                    {quiz.essays_written.toLowerCase()}
+                                  </span>{" "}
+                                  redações, mas{" "}
+                                  <span className="text-[var(--ink)] font-bold">
+                                    {quiz.essays_corrected?.toLowerCase() === "nenhuma"
+                                      ? "nenhuma delas foi corrigida de verdade"
+                                      : "poucas receberam uma correção de verdade"}
+                                  </span>
+                                  . Sem feedback real, você pode estar repetindo os mesmos erros.
+                                </>
+                              )}
+                            </p>
+                          </>
+                        );
+                      } catch (e) {
+                        return <p>Analise sua redação agora com os critérios oficiais do INEP.</p>;
+                      }
+                    })()}
+                  </div>
                 </div>
-                <div className="space-y-4 text-[var(--ink-2)] font-medium leading-relaxed">
-                  {(() => {
-                    try {
-                      const quiz = JSON.parse(localStorage.getItem("quiz_answers") || "{}");
-                      
-                      
-                      return (
-                        <>
-                          <p>
-                            {quiz.essays_written === "Nenhuma ainda" ? (
-                              <>Você ainda não escreveu nenhuma redação para treinar. Começar agora é a forma mais rápida de descobrir e corrigir seus erros.</>
-                            ) : (
-                              <>Você já escreveu <span className="text-[var(--ink)] font-bold">{quiz.essays_written.toLowerCase()}</span> redações, mas <span className="text-[var(--ink)] font-bold">{quiz.essays_corrected?.toLowerCase() === "nenhuma" ? "nenhuma delas foi corrigida de verdade" : "poucas receberam uma correção de verdade"}</span>. Sem feedback real, você pode estar repetindo os mesmos erros.</>
-                            )}
-                          </p>
-                          {showEssayForm && (
-                            <>
-                              <p>
-                                É hora de parar de chutar e começar a agir com estratégia.
-                              </p>
-                              <p className="text-[var(--ink)] font-bold italic border-l-4 border-[var(--red)] pl-4 py-2 bg-[var(--red)]/5">
-                                "Cole sua redação abaixo para descobrir exatamente onde você está perdendo ponto."
-                              </p>
-                            </>
-                          )}
-                        </>
-                      );
-                    } catch (e) {
-                      return <p>Analise sua redação agora com os critérios oficiais do INEP.</p>;
-                    }
-                  })()}
-                </div>
+              )}
+            {!result && !showEssayForm && (
+              <div className="rounded-3xl border border-[var(--red)] bg-[var(--paper-2)] p-5 text-center shadow-sm md:p-8">
+                <p className="mx-auto mb-6 max-w-md text-base font-medium leading-relaxed text-[var(--ink-2)] md:text-lg">
+                  Sua análise inicial está pronta. Continue para colar sua redação e descobrir sua
+                  nota real.
+                </p>
+                <button
+                  type="button"
+                  onClick={onContinue}
+                  className="inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-[#16213A] px-6 py-4 text-sm font-black tracking-[0.08em] text-white shadow-[0_14px_30px_-14px_rgba(22,33,58,0.5)] transition-all hover:scale-[1.01] hover:bg-[#24365F] md:min-h-0 md:w-auto md:px-8"
+                >
+                  CONTINUAR PARA A REDAÇÃO
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </button>
               </div>
             )}
-            {!showEssayForm && (
-              <div className="rounded-3xl border border-[var(--red)] bg-[var(--paper-2)] p-8 text-center shadow-sm">
-                <p className="mx-auto mb-6 max-w-md text-sm font-medium text-[var(--ink-2)]">Sua análise inicial está pronta. Continue para colar sua redação e descobrir sua nota real.</p>
-                <button type="button" onClick={onContinue} className="inline-flex items-center justify-center rounded-2xl bg-[var(--red)] px-8 py-4 text-sm font-black text-[var(--paper)] transition-transform hover:scale-105">CONTINUAR PARA A REDAÇÃO <ArrowRight className="ml-2 h-4 w-4" /></button>
-              </div>
-            )}
-            {showEssayForm && (
-              <div className="rounded-3xl border border-[var(--red)] bg-[var(--paper-2)] p-8 text-center shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
-                <p className="text-xs font-black uppercase tracking-[0.2em] text-[var(--red)]">O ENEM está chegando</p>
-                <div className="my-4 grid grid-cols-4 gap-2 font-['Fraunces'] text-[var(--ink)]" aria-label="Contagem regressiva para o ENEM">
-                  {Object.entries(timeUntilExam).map(([unit, value]) => (
-                    <div key={unit} className="rounded-xl border border-[var(--line)] bg-[var(--paper)] px-2 py-3">
-                      <div className="text-2xl font-black tabular-nums md:text-3xl">{String(value).padStart(2, "0")}</div>
-                      <div className="mt-1 text-[9px] font-bold uppercase tracking-wider text-[var(--ink-3)]">{unit === "days" ? "dias" : unit === "hours" ? "horas" : unit === "minutes" ? "min" : "seg"}</div>
+            {!result && showEssayForm && (
+              <>
+                {!isLoggedIn && (
+                  <div className="rounded-3xl border border-[var(--line)] bg-[var(--paper-2)] p-5 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500 md:p-6">
+                    <div className="space-y-4 text-base font-medium leading-relaxed text-[var(--ink-2)] md:text-[1.05rem]">
+                      <p>É hora de parar de chutar e começar a agir com estratégia.</p>
+                      <p className="border-l-4 border-[var(--red)] bg-[var(--red)]/5 px-4 py-3 font-bold italic text-[var(--ink)]">
+                        "Cole sua redação abaixo para descobrir exatamente onde você está perdendo
+                        ponto."
+                      </p>
                     </div>
-                  ))}
-                </div>
-                <p className="mx-auto max-w-md text-sm font-medium text-[var(--ink-2)]">Cada dia sem feedback é uma oportunidade perdida de melhorar sua nota.</p>
-              </div>
+                  </div>
+                )}
+              </>
             )}
             <form
               onSubmit={onSubmit}
-              className={`rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 transition-all duration-500 overflow-hidden ${!showEssayForm ? "hidden" : ""} ${(result || (isLoggedIn && !isPro)) && showPaywall ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
+              className={`rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 transition-all duration-500 overflow-hidden ${!showEssayForm || result ? "hidden" : ""} ${showOfferModal ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
               style={{ boxShadow: "var(--paper-shadow)" }}
             >
-              <label className="mb-2 block text-sm font-bold text-[var(--red)] uppercase tracking-widest">Tema da redação</label>
-              <input
-                value={tema}
-                onChange={(e) => setTema(e.target.value)}
-                required
-                maxLength={300}
-                placeholder="Ex: Desafios para a valorização da comunidade indígena no Brasil"
-                className="w-full rounded-xl border border-border bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              />
+              {isLoggedIn && !hideTheme && (
+                <>
+                  <label className="mb-2 block text-sm font-bold text-[var(--red)] uppercase tracking-widest">
+                    Tema da redação
+                  </label>
+                  <input
+                    value={tema}
+                    onChange={(e) => setTema(e.target.value)}
+                    required
+                    maxLength={300}
+                    placeholder="Ex: Desafios para a valorização da comunidade indígena no Brasil"
+                    className="w-full rounded-xl border border-[var(--line)] bg-input px-4 py-3 text-foreground placeholder:text-muted-foreground focus:border-[var(--red)] focus:outline-none"
+                  />
+                </>
+              )}
 
-              <label className="mt-5 mb-2 block text-sm font-bold text-[var(--red)] uppercase tracking-widest">Cole sua redação aqui</label>
+              <label
+                className={`${isLoggedIn && !hideTheme ? "mt-5" : ""} mb-2 block text-sm font-bold text-[var(--red)] uppercase tracking-widest`}
+              >
+                Cole sua redação aqui
+              </label>
               <textarea
                 value={redacao}
                 onChange={(e) => setRedacao(e.target.value)}
@@ -478,7 +554,7 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
                 rows={12}
                 maxLength={8000}
                 placeholder="Cole o texto completo da sua redação..."
-                className="w-full resize-y rounded-xl border border-border bg-input px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                className="w-full resize-y rounded-xl border border-[var(--line)] bg-input px-4 py-3 font-mono text-sm text-foreground placeholder:text-muted-foreground focus:border-[var(--red)] focus:outline-none"
               />
               <div className="mt-1 text-right text-xs text-muted-foreground">
                 {charCount} caracteres {charCount < 200 && "• mínimo 200"}
@@ -488,8 +564,8 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
                 <div className="mt-4 rounded-xl border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive-foreground animate-in slide-in-from-top-2 duration-300">
                   <p className="font-bold mb-1">Ops! Algo deu errado:</p>
                   <p className="opacity-90">{erro}</p>
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => setErro(null)}
                     className="mt-2 text-[10px] uppercase tracking-wider font-black hover:underline"
                   >
@@ -501,232 +577,254 @@ export function EssaySubmissionArea({ isLoggedIn, isPro: propIsPro, onSuccess, s
               <div className="flex flex-col sm:flex-row gap-4 mt-6">
                 <button
                   type="submit"
-                  disabled={loading || charCount < 200 || tema.trim().length < 3 || (!isLoggedIn && showPaywall)}
+                  disabled={
+                    loading ||
+                    charCount < 200 ||
+                    (!hideTheme && tema.trim().length < 3) ||
+                    (!isLoggedIn && showPaywall)
+                  }
                   className="flex-1 rounded-xl py-4 text-lg font-black text-white transition-transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
-                  style={{ background: "linear-gradient(135deg, #22c55e 0%, #16a34a 100%)", boxShadow: "0 0 20px rgba(34, 197, 94, 0.4)" }}
+                  style={{
+                    background: "linear-gradient(135deg, #16213A 0%, #24365F 100%)",
+                    boxShadow: "0 12px 24px -12px rgba(22, 33, 58, 0.45)",
+                  }}
                 >
-                  CORRIGIR AGORA COM IA →
+                  CORRIGIR AGORA →
                 </button>
-                
-                <button
-                  type="button"
-                  onClick={() => {
-                    setTema("Desafios para a formação educacional de surdos no Brasil");
-                    setRedacao(`A Constituição Federal de 1988, norma de maior hierarquia no sistema jurídico brasileiro, garante a todos os cidadãos, sem distinção, o direito à educação de qualidade. Entretanto, a realidade vivenciada por indivíduos surdos no Brasil distancia-se desse ideal democrático. Nesse contexto, é fundamental analisar como a negligência governamental e o preconceito social corroboram a exclusão dessa parcela da população do ambiente acadêmico.
+
+                {!isLoggedIn && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTema("Desafios para a formação educacional de surdos no Brasil");
+                      setRedacao(`A Constituição Federal de 1988, norma de maior hierarquia no sistema jurídico brasileiro, garante a todos os cidadãos, sem distinção, o direito à educação de qualidade. Entretanto, a realidade vivenciada por indivíduos surdos no Brasil distancia-se desse ideal democrático. Nesse contexto, é fundamental analisar como a negligência governamental e o preconceito social corroboram a exclusão dessa parcela da população do ambiente acadêmico.
 
 Em primeira análise, a falta de infraestrutura e de profissionais capacitados nas instituições de ensino atua como um entrave à inclusão. Segundo o filósofo John Rawls, em sua teoria da justiça, uma sociedade é justa quando garante as mesmas oportunidades para todos. Contudo, o sistema educacional brasileiro falha ao não disponibilizar intérpretes de Libras em quantidade suficiente e ao não adaptar materiais pedagógicos para a necessidade dos surdos. Dessa forma, o acesso ao conhecimento é restrito, perpetuando um ciclo de desigualdade que impede o pleno desenvolvimento desses cidadãos.
 
 Além disso, o estigma social direcionado às pessoas com deficiência auditiva agrava a problemática. Para o sociólogo Erving Goffman, o estigma é um atributo que torna o indivíduo diferente e menos desejável, resultando em sua marginalização. Muitas vezes, a surdez é vista sob uma ótica de incapacidade, o que gera comportamentos discriminatórios tanto por parte de colegas quanto de professores. Essa barreira simbólica não apenas desestimula o estudante surdo a prosseguir com seus estudos, mas também o isola socialmente, comprometendo sua saúde mental e sua integração na coletividade.
 
 Portanto, medidas são necessárias para reverter esse cenário de exclusão. Cabe ao Ministério da Educação ampliar o investimento na formação de professores bilíngues e na contratação de intérpretes para todas as escolas da rede pública. Paralelamente, é dever do Governo Federal promover campanhas de conscientização nas mídias de grande alcance, com o intuito de desconstruir preconceitos e valorizar a cultura surda. Somente assim, o Brasil poderá assegurar a todos os seus cidadãos o direito constitucional à educação, construindo uma sociedade verdadeiramente inclusiva.`);
-                  }}
-                  className="px-6 rounded-xl border border-[var(--line)] bg-[var(--paper-2)] text-[var(--ink-2)] font-bold text-sm hover:bg-[var(--line)]/10 transition-colors"
-                >
-                  Usar um exemplo
-                </button>
-              </div>
-              
-              <p className="mt-3 text-center text-xs font-bold text-muted-foreground">
-                100% privado
-              </p>
-            </form>
-
-            {((result && showPaywall) || (isLoggedIn && !canCorrect && showPaywall) || (!isLoggedIn && showPaywall)) && (
-              <div id="paywall-anchor" className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-[var(--paper)]/80 backdrop-blur-sm flex items-start justify-center p-4 md:p-6 pt-20 md:pt-24 pb-10 font-['Public_Sans']">
-                <div 
-                  className="w-full max-w-lg md:max-w-4xl rounded-3xl border border-[var(--red)]/30 bg-[var(--paper)] p-6 md:p-10 shadow-[var(--paper-shadow)] backdrop-blur-2xl relative animate-in fade-in zoom-in duration-500"
-                >
-
-                  <div className="absolute -top-12 md:-top-16 left-1/2 -translate-x-1/2 z-10">
-                    <div className="relative">
-                      <div className="absolute inset-0 animate-ping rounded-full bg-[var(--red)]/10" />
-                      <div className="relative p-5 rounded-full bg-[var(--paper)] text-[var(--red)] border-4 border-[var(--red)] shadow-[0_0_30px_rgba(196,50,42,0.2)]">
-                        <Trophy className="w-10 h-10 md:w-12 md:h-12" />
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <h2 className="font-['Fraunces'] text-3xl md:text-4xl font-black mb-4 mt-4 tracking-tighter uppercase italic text-center text-[var(--ink)]">
-                    {semCreditos ? "Seus créditos acabaram" : (result || showPaywall) ? "Análise Pronta! 🎯" : "Quase lá..."}
-                  </h2>
-                  
-                  <p className="text-sm md:text-base text-[var(--ink-2)] font-semibold mb-6 md:mb-8 leading-relaxed text-center">
-                    {!isLoggedIn 
-                      ? "Vamos continuar com os créditos gratuitos para salvar seu diagnóstico e desbloquear sua correção detalhada com nota oficial padrão INEP."
-                      : semCreditos
-                        ? "Você já usou as 15 correções do Plano Essencial. Recarregue créditos ou faça o upgrade para o Combo Nota 1000 e corrija sem limite nenhum."
-                        : (result || showPaywall)
-                          ? "Sua correção detalhada e nota oficial já foram geradas com precisão INEP."
-                          : "Você está a um passo de desbloquear seu potencial máximo e conquistar sua vaga no curso dos sonhos."}
-                  </p>
-
-                  {!isLoggedIn && (
-                    <div className="mb-8 flex flex-col gap-4 items-center">
-                       <button
-                         onClick={() => window.location.href = "/auth"}
-                         className="w-full max-w-sm py-4 rounded-xl bg-[var(--red)] text-white font-black text-lg uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg"
-                       >
-                         CRIAR MINHA CONTA GRÁTIS
-                       </button>
-                       <p className="text-xs font-bold text-[var(--ink-3)] uppercase tracking-widest">
-                         Leve apenas 10 segundos
-                       </p>
-                    </div>
-                  )}
-
-                  {semCreditos && (
-                    <div className="mb-8">
-                      <p className="text-[11px] font-black uppercase tracking-widest text-[var(--ink-3)] mb-3 text-center">
-                        Recarregue seus créditos
-                      </p>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                        {[
-                          { qtd: 5, preco: "R$ 7,90" },
-                          { qtd: 10, preco: "R$ 9,90" },
-                          { qtd: 20, preco: "R$ 14,90" },
-                        ].map((pack) => (
-                          <button
-                            key={pack.qtd}
-                            onClick={() => handleBuyCredits(pack.qtd)}
-                            className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-4 text-center hover:border-[var(--red)] hover:bg-[var(--paper-2)]/80 transition-all shadow-sm"
-                          >
-                            <div className="text-lg font-black text-[var(--ink)]">{pack.qtd} correções</div>
-                            <div className="text-sm font-black text-[var(--red)]">{pack.preco}</div>
-                            <div className="mt-2 rounded-lg bg-[var(--red)]/10 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-[var(--red)]">
-                              Obtenha clicando aqui
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                      <p className="mt-3 text-center text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-widest">
-                        Créditos disponíveis apenas para quem tem o Plano Essencial
-                      </p>
-                    </div>
-                  )}
-
-                  {isLoggedIn && (
-                  <div className="space-y-6">
-                    <div className={`grid grid-cols-1 gap-4 ${semCreditos ? "" : "md:grid-cols-2"}`}>
-
-                      {/* PLANO ESSENCIAL - escondido para quem já comprou */}
-                      {!semCreditos && (
-                      <div className="flex flex-col rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 p-5 relative overflow-hidden group transition-all hover:bg-[var(--paper-2)] shadow-sm">
-                        
-                        <div className="mb-4 flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-xl bg-[var(--line)]/30 flex items-center justify-center shrink-0">
-                            <Zap className="w-5 h-5 text-[var(--ink-3)]" />
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-black text-[var(--ink)] leading-tight uppercase tracking-tight">Plano Essencial</h3>
-                            <p className="text-[11px] font-bold text-[var(--ink-3)] leading-tight uppercase tracking-widest">ACESSO VITALÍCIO • 15 CORREÇÕES</p>
-                          </div>
-                        </div>
-                        
-                        <ul className="space-y-2 mb-6 flex-1">
-                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-2)]">
-                            <span className="text-green-600 shrink-0 font-bold">✓</span>
-                            <span><strong>15 correções</strong> de IA (limite do plano)</span>
-                          </li>
-                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-2)]">
-                            <span className="text-green-600 shrink-0 font-bold">✓</span>
-                            <span>Histórico com <strong>gráfico de evolução</strong></span>
-                          </li>
-                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-2)]">
-                            <span className="text-green-600 shrink-0 font-bold">✓</span>
-                            <span>Feedback oficial padrão <strong>INEP</strong></span>
-                          </li>
-                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-2)]">
-                            <span className="text-green-600 shrink-0 font-bold">✓</span>
-                            <span>Pode comprar <strong>créditos extras</strong> depois</span>
-                          </li>
-                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-3)]">
-                            <span className="text-[var(--red)] shrink-0 font-bold">✕</span>
-                            <span className="line-through italic">Correções ilimitadas</span>
-                          </li>
-                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-3)]">
-                            <span className="text-[var(--red)] shrink-0 font-bold">✕</span>
-                            <span className="line-through italic">Laboratório de Conectivos IA</span>
-                          </li>
-                          <li className="flex items-start gap-2 text-sm font-medium text-[var(--ink-3)]">
-                            <span className="text-[var(--red)] shrink-0 font-bold">✕</span>
-                            <span className="line-through italic">Gerador de Repertório Coringa</span>
-                          </li>
-                        </ul>
-
-                        <div className="mt-auto pt-4 border-t border-[var(--line)]">
-                          <div className="flex items-baseline gap-2 mb-4">
-                             <span className="text-sm font-bold text-[var(--ink-3)] line-through italic">R$ 29,90</span>
-                             <span className="text-3xl font-black text-[var(--ink)]">R$ 19,90</span>
-                          </div>
-                          <button
-                            onClick={() => handleTestPurchase("basic")}
-                            className="w-full py-4 rounded-xl bg-[var(--ink)] text-[var(--paper)] font-black text-xs uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-lg"
-                          >
-                            LIBERAR AGORA
-                          </button>
-                          <p className="mt-3 text-center text-[9px] font-bold text-[var(--ink-3)] uppercase tracking-[0.2em]">Desconto de R$ 10,00</p>
-                        </div>
-                      </div>
-                      )}
-
-
-                      {/* COMBO NOTA 1000 */}
-                      <div className="flex flex-col rounded-2xl border-2 border-[var(--red)] bg-[var(--red)]/5 p-5 relative overflow-hidden group shadow-[0_20px_40px_-12px_rgba(196,50,42,0.15)] scale-[1.02]">
-                        
-                        <div className="mb-4 flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-xl bg-[var(--red)] flex items-center justify-center shrink-0 shadow-[0_0_15px_rgba(196,50,42,0.4)]">
-                            <Sparkles className="w-5 h-5 text-white animate-pulse" />
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-black text-[var(--ink)] leading-tight uppercase tracking-tight">Combo Nota 1000</h3>
-                            <p className="text-[11px] font-bold text-[var(--red)] leading-tight uppercase tracking-widest">O PODER DA APROVAÇÃO</p>
-                          </div>
-                        </div>
-
-                        <ul className="space-y-3 mb-6 flex-1">
-                          {[
-                            { t: "Correções ILIMITADAS para sempre", d: "Sem créditos, sem limite. Treine até fechar a nota." },
-                            { t: "IA de Repertório Sociocultural", d: "Gera repertório legitimado para qualquer tema." },
-                            { t: "Laboratório de Conectivos (IA)", d: "Corrige sua Competência 4 em segundos." },
-                            { t: "70+ Repertórios Coringas", d: "Biblioteca validada que encaixa em tudo." },
-                            { t: "Suporte priorizado via WhatsApp", d: "Atendimento humano e rápido." },
-                          ].map((b) => (
-                            <li key={b.t} className="flex items-start gap-2">
-                              <span className="mt-0.5 h-5 w-5 shrink-0 rounded-full bg-[var(--red)] text-white text-[11px] font-black flex items-center justify-center">✓</span>
-                              <div className="leading-tight">
-                                <div className="text-sm font-black text-[var(--ink)]">{b.t}</div>
-                                <div className="text-xs font-medium text-[var(--ink-2)] mt-0.5">{b.d}</div>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-
-                        <div className="mt-auto pt-4 border-t border-[var(--line)]">
-                          <div className="flex items-baseline gap-2 mb-4">
-                             <span className="text-sm font-bold text-[var(--ink-3)] line-through italic">R$ 59,00</span>
-                             <span className="text-3xl font-black text-[var(--ink)]">R$ 39,00</span>
-                          </div>
-                          <button
-                            onClick={() => handleTestPurchase("combo")}
-                            className="w-full py-5 rounded-xl bg-[var(--red)] text-white font-black text-sm uppercase tracking-[0.15em] hover:scale-[1.02] active:scale-95 transition-all shadow-[0_10px_20px_-5px_rgba(196,50,42,0.4)]"
-                          >
-                            LIBERAR TUDO AGORA
-                          </button>
-                          <p className="mt-3 text-center text-[9px] font-bold text-[var(--red)] uppercase tracking-[0.2em]">Desconto de R$ 20,00</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2 text-center pt-4">
-                      <p className="text-xs text-[var(--ink)] font-black uppercase tracking-widest bg-[var(--paper-2)] py-2 rounded-lg border border-[var(--line)] shadow-sm">
-                        ⚡ Liberação Imediata • Pagamento Único
-                      </p>
-                    </div>
-                  </div>
+                    }}
+                    className="px-6 rounded-xl border border-[var(--line)] bg-[var(--paper-2)] text-[var(--ink-2)] font-bold text-sm hover:bg-[var(--line)]/10 transition-colors"
+                  >
+                    Usar um exemplo
+                  </button>
                 )}
               </div>
-            </div>
-          )}
+
+              {!isLoggedIn && (
+                <p className="mt-3 text-center text-xs font-bold text-muted-foreground">
+                  100% privado
+                </p>
+              )}
+            </form>
+
+            {showOfferModal &&
+              ((result && showPaywall) ||
+                (isLoggedIn && !canCorrect && showPaywall) ||
+                (!isLoggedIn && showPaywall)) && (
+                <div
+                  id="paywall-anchor"
+                  className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-[var(--paper)]/80 backdrop-blur-sm flex items-start justify-center p-4 py-8 md:p-10 font-['Public_Sans']"
+                >
+                  <div className="corrige-soft-enter w-full max-w-lg md:max-w-4xl rounded-3xl border border-[var(--red)]/30 bg-[var(--paper)] p-6 md:p-10 shadow-[var(--paper-shadow)] backdrop-blur-2xl relative">
+                    <p className="text-sm md:text-base text-[var(--ink-2)] font-semibold mb-6 md:mb-8 leading-relaxed text-center">
+                      {!isLoggedIn
+                        ? "Desbloqueie sua estimativa de nota e a correção detalhada baseada nas cinco competências avaliadas no ENEM."
+                        : semCreditos
+                          ? "Seus créditos de correção acabaram. Recarregue ou escolha o Combo Nota 1000 para receber +25 correções e as ferramentas extras de estudo."
+                          : result || showPaywall
+                            ? "Sua estimativa de nota e a correção detalhada já foram geradas com base na matriz do ENEM."
+                            : "Você está a um passo de desbloquear seu potencial máximo e conquistar sua vaga no curso dos sonhos."}
+                    </p>
+
+                    {semCreditos && (
+                      <div className="mb-8">
+                        <p className="text-[11px] font-black uppercase tracking-widest text-[var(--ink-3)] mb-3 text-center">
+                          Recarregue seus créditos
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          {[
+                            { qtd: 5, preco: "R$ 7,90" },
+                            { qtd: 10, preco: "R$ 9,90" },
+                            { qtd: 20, preco: "R$ 14,90" },
+                          ].map((pack) => (
+                            <button
+                              key={pack.qtd}
+                              onClick={() => handleBuyCredits(pack.qtd)}
+                              className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-4 text-center hover:border-[var(--red)] hover:bg-[var(--paper-2)]/80 transition-all shadow-sm"
+                            >
+                              <div className="text-lg font-black text-[var(--ink)]">
+                                {pack.qtd} correções
+                              </div>
+                              <div className="text-sm font-black text-[var(--red)]">
+                                {pack.preco}
+                              </div>
+                              <div className="mt-2 rounded-lg bg-[var(--red)]/10 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-[var(--red)]">
+                                Obtenha clicando aqui
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                        <p className="mt-3 text-center text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-widest">
+                          Créditos disponíveis apenas para quem tem o Plano Essencial
+                        </p>
+                      </div>
+                    )}
+
+                    {!semCreditos && (
+                      <div className="space-y-6">
+                        <div className="mx-auto max-w-2xl rounded-[2rem] border border-[var(--line)] bg-[var(--paper-2)]/60 p-6 shadow-sm md:p-8">
+                          <div className="mb-6 flex items-center gap-3">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--paper)] text-[var(--red)] shadow-sm">
+                              <Zap className="h-6 w-6" />
+                            </div>
+                            <div>
+                              <h3 className="text-xl font-black uppercase tracking-tight text-[var(--ink)]">
+                                Plano Essencial
+                              </h3>
+                              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--ink-3)]">
+                                acesso vitalício • +12 correções
+                              </p>
+                            </div>
+                          </div>
+
+                          <ul className="mb-8 space-y-3">
+                            {[
+                              "+12 correções de redação com análise por competência.",
+                              "Nota total e leitura estratégica do que está derrubando sua média.",
+                              "Histórico para acompanhar a sua evolução ao longo dos treinos.",
+                              "Feedback no padrão da redação do ENEM.",
+                            ].map((item) => (
+                              <li
+                                key={item}
+                                className="flex items-start gap-3 text-sm font-medium text-[var(--ink-2)]"
+                              >
+                                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--red)] text-[10px] font-black text-white">
+                                  ✓
+                                </span>
+                                <span>{item}</span>
+                              </li>
+                            ))}
+                          </ul>
+
+                          <div className="border-t border-[var(--line)] pt-6">
+                            <div className="mb-4 flex items-baseline gap-2">
+                              <span className="text-sm font-bold italic text-[var(--ink-3)] line-through">
+                                R$ 29,90
+                              </span>
+                              <span className="text-4xl font-black text-[var(--ink)]">
+                                R$ 19,90
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => setShowUpsellOffer(true)}
+                              className="w-full rounded-2xl bg-[var(--ink)] py-4 text-xs font-black uppercase tracking-[0.2em] text-[var(--paper)] transition-all hover:scale-[1.02] active:scale-95 shadow-lg"
+                            >
+                              CONTINUAR COM ESSE PLANO
+                            </button>
+                            <p className="mt-3 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--ink-3)]">
+                              pagamento único • acesso imediato
+                            </p>
+                          </div>
+                        </div>
+
+                        {showUpsellOffer && (
+                          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[var(--ink)]/45 p-2 backdrop-blur-sm sm:p-4">
+                            <div className="corrige-soft-enter w-full max-w-2xl rounded-[1.5rem] border-2 border-[#24365F] bg-[var(--paper)] p-3 shadow-[0_28px_80px_-24px_rgba(22,33,58,0.5)] sm:rounded-[2rem] sm:p-6 md:p-8">
+                              <div className="mb-3 text-center sm:mb-6">
+                                <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#24365F] sm:text-[11px] sm:tracking-[0.2em]">
+                                  oferta mais vantajosa
+                                </p>
+                                <h3 className="mt-1 font-['Fraunces'] text-xl font-black italic leading-tight text-[var(--ink)] sm:mt-2 sm:text-3xl">
+                                  Antes de fechar o básico, veja o plano que mais compensa
+                                </h3>
+                                <p className="mt-3 hidden text-sm font-medium leading-relaxed text-[var(--ink-2)] sm:block">
+                                  Para intensificar os treinos até o ENEM, o Combo Nota 1000 entrega
+                                  mais que o dobro de correções do plano anterior e ferramentas
+                                  extras para evoluir sua escrita.
+                                </p>
+                              </div>
+
+                              <div className="rounded-[1.25rem] border border-[#24365F]/25 bg-[#EEF2F8] p-3 sm:rounded-[1.75rem] sm:p-6">
+                                <div className="mb-3 flex items-center gap-3 sm:mb-5">
+                                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#24365F] text-white shadow-[0_0_18px_rgba(36,54,95,0.3)] sm:h-12 sm:w-12 sm:rounded-2xl">
+                                    <Sparkles className="h-5 w-5 sm:h-6 sm:w-6" />
+                                  </div>
+                                  <div>
+                                    <h4 className="text-lg font-black uppercase leading-tight tracking-tight text-[var(--ink)] sm:text-xl">
+                                      Combo Nota 1000
+                                    </h4>
+                                    <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#24365F] sm:text-[11px] sm:tracking-[0.18em]">
+                                      o que mais vale a pena
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <ul className="mb-3 space-y-1.5 sm:mb-6 sm:space-y-3">
+                                  {[
+                                    "+25 correções para ampliar sua rotina de treinos.",
+                                    "IA de repertório sociocultural para fortalecer argumentação.",
+                                    "Laboratório de conectivos.",
+                                    "Biblioteca com repertórios coringas para vários temas.",
+                                    "Plano ideal para quem quer insistir até subir a nota de verdade.",
+                                  ].map((item) => (
+                                    <li
+                                      key={item}
+                                      className="flex items-start gap-2 text-xs font-medium leading-tight text-[var(--ink-2)] sm:gap-3 sm:text-sm sm:leading-normal"
+                                    >
+                                      <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#24365F] text-[8px] font-black text-white sm:mt-0.5 sm:h-5 sm:w-5 sm:text-[10px]">
+                                        ✓
+                                      </span>
+                                      <span>{item}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+
+                                <div className="mb-3 flex items-end justify-center gap-3 sm:mb-5 sm:justify-start">
+                                  <span className="whitespace-nowrap pb-1 text-xs font-bold italic text-[var(--ink-3)] line-through sm:text-sm">
+                                    R$ 59,00
+                                  </span>
+                                  <span className="whitespace-nowrap text-3xl font-black leading-none text-[var(--ink)] sm:text-4xl">
+                                    R$ 39,00
+                                  </span>
+                                </div>
+
+                                <div className="space-y-1.5 sm:space-y-3">
+                                  <button
+                                    onClick={() => handleTestPurchase("combo")}
+                                    className="w-full rounded-xl bg-[#16213A] px-3 py-3 text-xs font-black uppercase tracking-[0.1em] text-white transition-all hover:scale-[1.02] hover:bg-[#24365F] active:scale-95 shadow-[0_12px_28px_-10px_rgba(22,33,58,0.5)] sm:rounded-2xl sm:py-4 sm:text-sm sm:tracking-[0.16em]"
+                                  >
+                                    QUERO O PLANO QUE MAIS COMPENSA
+                                  </button>
+                                  <button
+                                    onClick={() => handleTestPurchase("basic")}
+                                    className="w-full rounded-xl border border-[#24365F]/25 bg-[var(--paper)] px-3 py-2.5 text-xs font-black uppercase tracking-[0.1em] text-[var(--ink)] transition-colors hover:border-[#24365F] hover:text-[#24365F] sm:rounded-2xl sm:py-4 sm:text-sm sm:tracking-[0.14em]"
+                                  >
+                                    quero adquirir o anterior
+                                  </button>
+                                  <button
+                                    onClick={() => setShowUpsellOffer(false)}
+                                    className="w-full py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-[var(--ink-3)] transition-colors hover:text-[var(--ink)] sm:py-2 sm:text-[11px] sm:tracking-[0.18em]"
+                                  >
+                                    voltar para a oferta anterior
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex flex-col gap-2 text-center pt-2">
+                          <p className="rounded-lg border border-[var(--line)] bg-[var(--paper-2)] py-2 text-xs font-black uppercase tracking-widest text-[var(--ink)] shadow-sm">
+                            acesso liberado logo após o pagamento
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
           </div>
         )}
       </div>
@@ -734,91 +832,216 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
   );
 }
 
-function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correcao; isLoggedIn: boolean; showPaywall?: boolean; onShowAll?: () => void }) {
-  const quizAnswers = typeof window !== 'undefined' ? JSON.parse(localStorage.getItem("quiz_answers") || "{}") : {};
+function Resultado({
+  data,
+  isLoggedIn,
+  showPaywall,
+}: {
+  data: Correcao;
+  isLoggedIn: boolean;
+  showPaywall?: boolean;
+}) {
+  const quizAnswers =
+    !isLoggedIn && typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("quiz_answers") || "{}")
+      : {};
   const chuta = quizAnswers.score_guess || "800 a 900";
   const notaTotal = data.nota_total;
-  const diff = Math.abs(notaTotal - parseInt(chuta.split(' ')[0]) || 0);
+  const diff = Math.abs(notaTotal - parseInt(chuta.split(" ")[0]) || 0);
 
   return (
     <div
       id="resultado"
-      className="mt-10 rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 overflow-hidden relative"
+      className="corrige-soft-enter mt-10 rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 overflow-hidden relative"
       style={{ boxShadow: "var(--paper-shadow)" }}
     >
       <div className="text-center mb-10">
         <div className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--ink-3)] mb-2">
           Resultado da Análise
         </div>
-        <p className="text-sm font-medium text-[var(--ink-2)] mb-4">
-          Você chutou {chuta}. Sua nota real é:
-        </p>
-        <div className="text-7xl md:text-8xl font-black text-[var(--red)] font-['Fraunces'] leading-none">
-          {data.nota_total}
-          <span className="text-xl text-[var(--ink-3)] ml-2 tracking-tighter">/1000</span>
-        </div>
-        <p className="mt-6 text-sm font-bold text-[var(--ink)] max-w-md mx-auto leading-relaxed">
-          São {diff} pontos de diferença entre o que você achava e o que a banca veria.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 relative">
-        {data.competencias.map((c, idx) => {
-          // A prévia sempre libera a nota total e a Competência 1.
-          // Apenas C2–C5 ficam borradas até o desbloqueio do resultado completo.
-          const isLockedPreview = showPaywall === true && idx > 0;
-
-          return (
-          <div 
-            key={c.numero} 
-            className={`rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-5 transition-all duration-500 flex flex-col ${isLockedPreview ? "blur-md select-none opacity-40" : ""}`}
+        {!isLoggedIn && (
+          <p className="text-sm font-medium text-[var(--ink-2)] mb-4">
+            Você estimou {chuta}. Sua análise calculou:
+          </p>
+        )}
+        <div className="relative mx-auto inline-flex">
+          <div
+            className={`text-7xl md:text-8xl font-black text-[var(--red)] font-['Fraunces'] leading-none transition-all ${showPaywall ? "select-none blur-sm" : ""}`}
           >
-            <div className="flex items-center justify-between gap-4 mb-3">
-              <div className="flex items-center gap-2 font-bold text-[var(--ink)] text-xs md:text-sm">
-                <span className="flex h-5 w-5 shrink-0 rounded-full bg-[var(--red)] text-white text-[10px] font-black items-center justify-center">✓</span>
-                C{c.numero}
-              </div>
-              <div className="text-lg font-black text-[var(--red)] font-['Fraunces']">
-                {c.nota}
-                <span className="text-[10px] text-[var(--ink-3)] ml-1">/200</span>
-              </div>
-            </div>
-            <p className="text-[11px] font-bold text-[var(--ink-3)] uppercase tracking-widest mb-2 truncate">
-              {c.titulo}
-            </p>
-            <p className="text-xs text-[var(--ink-2)] leading-relaxed font-medium line-clamp-3">
-              {isLockedPreview ? "Conteúdo bloqueado. Adquira um plano para ver a análise completa desta competência." : c.analise}
-            </p>
+            {data.nota_total}
+            <span className="text-xl text-[var(--ink-3)] ml-2 tracking-tighter">/1000</span>
           </div>
-          );
-        })}
-
-        {showPaywall && (
-          <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[var(--paper)] to-transparent pointer-events-none" />
+          {showPaywall && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="rounded-full border border-[var(--red)]/20 bg-[var(--paper)]/95 px-4 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--red)] shadow-sm">
+                Nota calculada e bloqueada
+              </span>
+            </div>
+          )}
+        </div>
+        {(showPaywall || !isLoggedIn) && (
+          <p className="mt-6 text-sm font-bold text-[var(--ink)] max-w-md mx-auto leading-relaxed">
+            {showPaywall
+              ? "Sua redação já foi examinada nas cinco competências. Agora você precisa ver o que a banca enxergaria antes de repetir os mesmos padrões no próximo treino."
+              : `São ${diff} pontos de diferença entre o que você achava e o que a banca veria.`}
+          </p>
         )}
       </div>
 
       {showPaywall && (
-        <div className="mt-8 flex justify-center relative z-10">
-          <button
-            onClick={onShowAll}
-            className="group relative inline-flex items-center justify-center rounded-2xl bg-[var(--red)] px-8 py-5 text-sm font-black text-white transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_-12px_rgba(196,50,42,0.3)]"
-          >
-            VER TODAS AS COMPETÊNCIAS
-            <ArrowRight className="ml-3 w-5 h-5 transition-transform group-hover:translate-x-1" />
-          </button>
+        <div className="mb-8 rounded-2xl border border-[var(--red)]/25 bg-[var(--red)]/5 p-5 md:p-6">
+          <p className="mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--red)]">
+            Atenção antes do próximo treino
+          </p>
+          <h3 className="font-['Fraunces'] text-xl font-black leading-tight text-[var(--ink)] md:text-2xl">
+            Escrever mais sem saber onde você perde pontos pode apenas reforçar os mesmos erros.
+          </h3>
+          <p className="mt-3 text-sm font-medium leading-relaxed text-[var(--ink-2)]">
+            A banca avalia critérios específicos, não apenas se o texto “parece bom”. Desbloqueie o
+            diagnóstico para entender suas cinco competências, priorizar o que corrigir e estudar
+            com direção até o ENEM.
+          </p>
         </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative">
+        {data.competencias.map((c, idx) => {
+          const isLockedPreview = showPaywall === true && idx > 0;
+          const isPartialPreview = showPaywall === true && idx === 0;
+          const analiseTexto = isLockedPreview
+            ? getLockedCompetencyTeaser(c.numero)
+            : isPartialPreview
+              ? "A análise da Competência 1 identificou pontos que merecem atenção na escrita formal. O detalhamento mostra como esse critério impacta sua nota e o que priorizar nos próximos treinos."
+              : c.analise;
+
+          return (
+            <div
+              key={c.numero}
+              className={`relative flex min-h-[13rem] flex-col overflow-hidden rounded-2xl border-2 p-5 transition-all duration-500 ${isLockedPreview ? "border-[var(--red)]/30 bg-[var(--paper-2)] shadow-[0_12px_30px_-22px_rgba(196,50,42,0.55)]" : "border-[var(--red)]/45 bg-[var(--paper-2)] shadow-sm"}`}
+            >
+              <div className="flex items-center justify-between gap-4 mb-3">
+                <div className="flex items-center gap-2 font-bold text-[var(--ink)] text-xs md:text-sm">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--red)] text-[10px] font-black text-white">
+                    {isLockedPreview ? <LockKeyhole className="h-3.5 w-3.5" /> : "✓"}
+                  </span>
+                  C{c.numero}
+                </div>
+                <div
+                  className={`text-lg font-black text-[var(--red)] font-['Fraunces'] ${isLockedPreview ? "select-none blur-[5px]" : ""}`}
+                >
+                  {c.nota}
+                  <span className="text-[10px] text-[var(--ink-3)] ml-1">/200</span>
+                </div>
+              </div>
+              <p className="mb-3 text-[11px] font-black uppercase tracking-[0.12em] text-[var(--ink)]">
+                {c.titulo}
+              </p>
+              <p
+                className={`text-sm font-medium leading-relaxed text-[var(--ink-2)] ${showPaywall ? "line-clamp-4" : ""} ${isLockedPreview ? "select-none blur-[4px]" : ""}`}
+              >
+                {analiseTexto}
+              </p>
+              {!showPaywall && (
+                <div className="mt-4 space-y-3 border-t border-[var(--line)] pt-4">
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-[0.16em] text-[var(--red)]">
+                      Evidência no seu texto
+                    </p>
+                    <blockquote className="mt-1 border-l-2 border-[var(--red)] pl-3 text-xs font-bold italic leading-relaxed text-[var(--ink)]">
+                      “{c.evidencia || "Trecho específico disponível nas novas correções."}”
+                    </blockquote>
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-[0.16em] text-[#24365F]">
+                      Como melhorar
+                    </p>
+                    <p className="mt-1 text-xs font-medium leading-relaxed text-[var(--ink-2)]">
+                      {c.como_melhorar || c.analise}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {isPartialPreview && (
+                <p className="mt-3 text-[10px] font-black uppercase tracking-[0.18em] text-[var(--red)]">
+                  Prévia da competência 1
+                </p>
+              )}
+              {isLockedPreview && (
+                <div className="mt-auto pt-4">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-[var(--red)]/25 bg-[var(--paper)] px-3 py-2 text-[9px] font-black uppercase tracking-[0.16em] text-[var(--red)] shadow-sm">
+                    <LockKeyhole className="h-3 w-3" /> Diagnóstico pronto e bloqueado
+                  </span>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {!showPaywall && data.analise_paragrafos?.length > 0 && (
+        <section className="mt-8 rounded-2xl border border-[#24365F]/20 bg-[#24365F]/[0.035] p-5 md:p-6">
+          <div className="mb-5">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#24365F]">
+              Leitura linha a linha
+            </p>
+            <h3 className="mt-1 font-['Fraunces'] text-2xl font-black text-[var(--ink)]">
+              Diagnóstico por parágrafo
+            </h3>
+            <p className="mt-2 text-xs font-medium leading-relaxed text-[var(--ink-2)]">
+              Cada apontamento abaixo está ligado a um trecho literal da sua redação.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {data.analise_paragrafos.map((paragrafo) => (
+              <article
+                key={paragrafo.numero}
+                className="rounded-xl border border-[var(--line)] bg-[var(--paper-2)] p-4 md:p-5"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#24365F] text-xs font-black text-white">
+                    {paragrafo.numero}
+                  </span>
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-[0.15em] text-[var(--ink-3)]">
+                      Função no projeto de texto
+                    </p>
+                    <p className="text-sm font-black text-[var(--ink)]">{paragrafo.funcao}</p>
+                  </div>
+                </div>
+
+                <p className="mt-4 text-sm font-medium leading-relaxed text-[var(--ink-2)]">
+                  {paragrafo.diagnostico}
+                </p>
+                <blockquote className="mt-4 border-l-2 border-[var(--red)] pl-3 text-xs font-bold italic leading-relaxed text-[var(--ink)]">
+                  “{paragrafo.evidencia}”
+                </blockquote>
+                <div className="mt-4 rounded-lg bg-[#24365F]/[0.06] p-3">
+                  <p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#24365F]">
+                    Próximo ajuste
+                  </p>
+                  <p className="mt-1 text-xs font-medium leading-relaxed text-[var(--ink-2)]">
+                    {paragrafo.como_melhorar}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
       )}
 
       {!showPaywall && (
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-5">
-            <div className="text-[10px] font-black uppercase tracking-widest text-green-600 mb-3 flex items-center gap-2">
+            <div className="text-[10px] font-black uppercase tracking-widest text-[#24365F] mb-3 flex items-center gap-2">
               <CheckCircle2 className="w-3 h-3" /> Pontos Fortes
             </div>
             <ul className="space-y-2">
               {data.pontos_fortes.map((item, i) => (
-                <li key={i} className="text-xs font-medium text-[var(--ink-2)] leading-tight flex gap-2">
+                <li
+                  key={i}
+                  className="text-xs font-medium text-[var(--ink-2)] leading-tight flex gap-2"
+                >
                   <span className="text-[var(--red)]">•</span> {item}
                 </li>
               ))}
@@ -830,7 +1053,10 @@ function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correca
             </div>
             <ul className="space-y-2">
               {data.sugestoes.map((item, i) => (
-                <li key={i} className="text-xs font-medium text-[var(--ink-2)] leading-tight flex gap-2">
+                <li
+                  key={i}
+                  className="text-xs font-medium text-[var(--ink-2)] leading-tight flex gap-2"
+                >
                   <span className="text-[var(--red)]">•</span> {item}
                 </li>
               ))}
@@ -842,7 +1068,31 @@ function Resultado({ data, isLoggedIn, showPaywall, onShowAll }: { data: Correca
   );
 }
 
-function Bloco({ titulo, itens, cor, extraItemClass = "" }: { titulo: string; itens: string[]; cor: string; extraItemClass?: string }) {
+function getLockedCompetencyTeaser(numero: number) {
+  const teasers: Record<number, string> = {
+    2: "A análise verificou se o tema foi desenvolvido por completo e se o repertório realmente fortalece a argumentação.",
+    3: "Seu projeto de texto foi examinado para revelar como os argumentos se conectam e sustentam o ponto de vista.",
+    4: "A progressão entre frases e parágrafos foi mapeada para identificar como a coesão influencia a leitura da banca.",
+    5: "Sua proposta de intervenção foi conferida nos elementos exigidos para descobrir se algum detalhe pode limitar a pontuação.",
+  };
+
+  return (
+    teasers[numero] ||
+    "Esta competência já foi analisada e possui um diagnóstico específico pronto para ser desbloqueado."
+  );
+}
+
+function Bloco({
+  titulo,
+  itens,
+  cor,
+  extraItemClass = "",
+}: {
+  titulo: string;
+  itens: string[];
+  cor: string;
+  extraItemClass?: string;
+}) {
   return (
     <div className="rounded-xl border border-border bg-input/40 p-4">
       <div className={`mb-2 text-sm font-bold ${cor}`}>{titulo}</div>

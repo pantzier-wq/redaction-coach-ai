@@ -22,3 +22,26 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+## IA e créditos
+
+A correção paga usa a API da OpenAI apenas no servidor. A pré-análise pública é local e não envia a redação para a OpenAI nem para o banco.
+
+1. Aplique as migrations de `supabase/migrations`, incluindo `20260825233000_ai_usage_controls.sql`.
+2. Configure no ambiente do servidor as variáveis de `.env.example`. Nunca use o prefixo `VITE_` na chave da OpenAI.
+3. Libere primeiro para contas internas e valide débito, idempotência, reembolso e limites diários.
+4. Depois da validação, publique para produção.
+
+```sh
+OPENAI_API_KEY=sk-...
+OPENAI_CORRECTION_MODEL=gpt-5.4-mini
+OPENAI_FAST_MODEL=gpt-5.4-nano
+AI_DAILY_BUDGET_USD=10
+```
+
+Comandos de verificação:
+
+```sh
+npm test
+npm run build
+```

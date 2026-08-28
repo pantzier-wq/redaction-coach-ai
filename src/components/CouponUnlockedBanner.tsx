@@ -42,14 +42,14 @@ export function CouponUnlockedBanner({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-[2.5rem] bg-[#e91e63] p-6 md:p-8 shadow-[0_20px_50px_rgba(233,30,99,0.3)]",
+        "relative overflow-hidden rounded-[2.5rem] bg-[#24365F] p-6 md:p-8 shadow-[0_20px_50px_rgba(36,54,95,0.24)]",
         className,
       )}
       {...props}
     >
       <div className="relative z-10">
         <div className="flex items-center gap-4">
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-yellow-400">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white/10 text-white">
             <Trophy className="h-8 w-8 fill-current" />
           </div>
           <div className="min-w-0">
@@ -67,7 +67,7 @@ export function CouponUnlockedBanner({
             <span className="font-mono text-sm md:text-base font-black uppercase tracking-widest text-white/90">
               {couponCode}
             </span>
-            <span className="ml-3 rounded-xl bg-yellow-400 px-3 py-1 text-[10px] md:text-xs font-black uppercase text-black shadow-lg">
+            <span className="ml-3 rounded-xl bg-[var(--red)] px-3 py-1 text-[10px] md:text-xs font-black uppercase text-white shadow-lg">
               aplicado
             </span>
           </div>

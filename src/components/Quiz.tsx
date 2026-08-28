@@ -72,8 +72,8 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--paper)]/95 backdrop-blur-md p-4 font-['Public_Sans']">
-      <div className="w-full max-w-xl rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-8 shadow-[var(--paper-shadow)] animate-in zoom-in-95 duration-300">
+    <div className="corrige-soft-overlay fixed inset-0 z-[100] flex items-center justify-center bg-[var(--paper)]/95 backdrop-blur-md p-4 font-['Public_Sans']">
+      <div className="corrige-soft-enter w-full max-w-xl rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-8 shadow-[var(--paper-shadow)]">
         <div className="mb-8 flex items-center justify-between">
           <div className="flex gap-2">
             {questions.map((_, i) => (
@@ -91,7 +91,7 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
           </button>
         </div>
 
-        <div className="min-h-[350px] flex flex-col">
+        <div key={step} className="corrige-soft-enter min-h-[350px] flex flex-col">
           <h3 className="font-['Fraunces'] text-2xl md:text-3xl font-black mb-8 leading-tight text-[var(--ink)]">
             {current.question}
           </h3>
@@ -104,10 +104,10 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
                   <button
                     key={opt}
                     onClick={() => next(opt)}
-                    className="w-full rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 px-8 py-6 text-left text-xl font-black text-[var(--ink)] hover:bg-[var(--paper-2)] hover:border-[var(--red)] hover:text-[var(--red)] transition-all flex items-center justify-between group shadow-sm"
+                    className="w-full rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 px-8 py-6 text-left text-xl font-black text-[var(--ink)] hover:bg-[var(--paper-2)] hover:border-[#24365F] hover:text-[#24365F] transition-all flex items-center justify-between group shadow-sm"
                   >
                     {opt}
-                    <div className="w-8 h-8 rounded-full border-2 border-[var(--line)] group-hover:border-[var(--red)] group-hover:bg-[var(--red)] flex items-center justify-center transition-all">
+                    <div className="w-8 h-8 rounded-full border-2 border-[var(--line)] group-hover:border-[#24365F] group-hover:bg-[#24365F] flex items-center justify-center transition-all">
                       <CheckCircle2 className="w-5 h-5 text-[var(--paper)] opacity-0 group-hover:opacity-100" />
                     </div>
                   </button>

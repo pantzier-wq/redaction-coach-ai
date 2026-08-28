@@ -1,39 +1,46 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Quiz } from "@/components/Quiz";
 import { supabase } from "@/integrations/supabase/client";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
-import depoimentoCarolina from "@/assets/depoimento-carolina.jpg";
-
-import { 
-  Trophy, 
-  Target, 
-  Zap, 
-  Star, 
-  Clock, 
-  CheckCircle2, 
-  ChevronDown, 
-  ChevronUp,
-  Flame,
-  Users,
-  MessageSquare,
-  Sparkles,
+import { FunnelSignup } from "@/components/FunnelSignup";
+import { captureCheckoutAttribution } from "@/lib/checkout";
+import alunoAvatar1 from "@/assets/aluno-avatar-1.png";
+import alunoAvatar2 from "@/assets/aluno-avatar-2.png";
+import alunoAvatar3 from "@/assets/aluno-avatar-3.png";
+import alunoAvatar4 from "@/assets/aluno-avatar-4.png";
+import alunoAvatar5 from "@/assets/aluno-avatar-5.png";
+import comparativoAntes from "@/assets/comparativo-antes-ia.png";
+import comparativoDepois from "@/assets/comparativo-depois-ia.png";
+import {
   ArrowRight,
+  CheckCircle2,
+  Clock3,
+  FilePenLine,
+  MessageSquare,
+  ShieldCheck,
+  Sparkles,
+  Target,
+  TrendingUp,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "CorrigeAI — Corrija sua redação do ENEM em 30 segundos com IA" },
+      { title: "CorrigeAI — Descubra sua nota real do ENEM antes da prova" },
       {
         name: "description",
         content:
-          "Faltam poucas semanas para o ENEM? A CorrigeAI corrige sua redação em segundos com o rigor de um corretor real do INEP. Descubra sua nota agora.",
+          "Cole sua redação e receba uma correção completa nas 5 competências do ENEM com nota, diagnóstico e plano de melhoria.",
       },
-      { property: "og:title", content: "CorrigeAI — Sua redação nota 1000 antes do ENEM" },
+      {
+        property: "og:title",
+        content: "CorrigeAI — Sua redação pode estar valendo menos do que você imagina",
+      },
       {
         property: "og:description",
-        content: "Cole sua redação e receba correção nas 5 competências do ENEM em segundos.",
+        content:
+          "Descubra onde você perde ponto no ENEM e veja sua nota real com feedback detalhado em poucos minutos.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -48,31 +55,67 @@ function Landing() {
   const [quizResult, setQuizResult] = useState<Record<string, string> | null>(null);
   const [isAnalyzingQuiz, setIsAnalyzingQuiz] = useState(false);
   const [showEssayForm, setShowEssayForm] = useState(false);
-  const [activeStudents] = useState(() => Math.floor(Math.random() * 101) + 150);
+
+  const daysUntilEnem = useMemo(() => {
+    const examDate = new Date("2026-11-08T00:00:00");
+    const now = new Date();
+    return Math.max(0, Math.ceil((examDate.getTime() - now.getTime()) / 86400000));
+  }, []);
 
   useEffect(() => {
+    captureCheckoutAttribution();
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setSession(nextSession);
     });
 
-    // Cada refresh começa um novo teste, sem reutilizar qualquer etapa do funil.
-    // A sessão de autenticação não é tocada: apenas dados temporários da experiência.
-    [
-      "quiz_answers",
-      "pending_submission",
-      "pending_essay_data",
-      "viewing_essay",
-    ].forEach((key) => localStorage.removeItem(key));
     setShowQuiz(false);
     setIsAnalyzingQuiz(false);
-    setQuizResult(null);
-    setShowEssayForm(false);
+
+    const navigationEntry = performance.getEntriesByType("navigation")[0] as
+      PerformanceNavigationTiming | undefined;
+    const isPageRefresh = navigationEntry?.type === "reload";
+    const returnStage = localStorage.getItem("checkout_return_stage");
+    const funnelAuthReturn = localStorage.getItem("funnel_auth_return");
+    const savedQuiz = localStorage.getItem("quiz_answers");
+    if (!isPageRefresh && (returnStage || funnelAuthReturn) && savedQuiz) {
+      try {
+        setQuizResult(JSON.parse(savedQuiz));
+        setShowEssayForm(funnelAuthReturn === "1" || !!returnStage);
+        localStorage.removeItem("funnel_auth_return");
+      } catch {
+        localStorage.removeItem("checkout_return_stage");
+        localStorage.removeItem("funnel_auth_return");
+        localStorage.removeItem("quiz_answers");
+        setQuizResult(null);
+        setShowEssayForm(false);
+      }
+    } else {
+      [
+        "checkout_return_stage",
+        "funnel_auth_return",
+        "quiz_answers",
+        "pending_submission",
+        "pending_essay_data",
+        "viewing_essay",
+      ].forEach((key) => localStorage.removeItem(key));
+      setQuizResult(null);
+      setShowEssayForm(false);
+    }
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const startQuiz = () => {
+    localStorage.removeItem("checkout_return_stage");
+    localStorage.removeItem("funnel_auth_return");
+    setShowQuiz(true);
+  };
 
   return (
     <div className="min-h-screen bg-[var(--paper)] text-[var(--ink)] font-['Public_Sans'] selection:bg-[var(--red-soft)] selection:text-[var(--red)]">
@@ -93,124 +136,412 @@ function Landing() {
           }}
         />
       )}
+
       {isAnalyzingQuiz && (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center bg-[var(--paper)]/95 p-6 backdrop-blur-md">
-          <div className="w-full max-w-md text-center">
+        <div className="corrige-soft-overlay fixed inset-0 z-[110] flex items-center justify-center bg-[var(--paper)]/95 p-6 backdrop-blur-md">
+          <div className="corrige-soft-enter w-full max-w-md text-center">
             <div className="mx-auto mb-8 h-16 w-16 animate-spin rounded-full border-4 border-[var(--line)] border-t-[var(--red)]" />
-            <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-[var(--red)]">Analisando suas respostas</p>
-            <h2 className="font-['Fraunces'] text-3xl font-black text-[var(--ink)]">Montando seu diagnóstico personalizado...</h2>
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.2em] text-[var(--red)]">
+              Analisando suas respostas
+            </p>
+            <h2 className="font-['Fraunces'] text-3xl font-black text-[var(--ink)]">
+              Montando seu diagnóstico personalizado...
+            </h2>
             <div className="mx-auto mt-8 h-2 max-w-sm overflow-hidden rounded-full bg-[var(--line)]">
               <div className="h-full w-full origin-left animate-[quiz-analysis_5.6s_linear] bg-[var(--red)]" />
             </div>
-            <p className="mt-4 text-sm font-medium text-[var(--ink-3)]">Cruzando seus hábitos de treino com as competências do ENEM.</p>
+            <p className="mt-4 text-sm font-medium text-[var(--ink-3)]">
+              Cruzando seus hábitos de treino com as competências do ENEM.
+            </p>
           </div>
           <style>{`@keyframes quiz-analysis { from { transform: scaleX(0); } to { transform: scaleX(1); } }`}</style>
         </div>
       )}
-      {!quizResult && <header className="absolute top-0 right-0 p-6 z-50">
-        <Link 
-          to={session ? "/dashboard" : "/auth"}
-          className="text-sm font-bold text-[var(--ink-2)] hover:text-[var(--red)] transition-colors border border-[var(--line)] bg-[var(--paper)]/50 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 shadow-[var(--paper-shadow)]"
-        >
-          {session ? (
-            <>Dashboard <ArrowRight className="w-4 h-4" /></>
-          ) : (
-            "Entrar"
-          )}
-        </Link>
-      </header>}
 
-      {!quizResult && <section className="relative min-h-[90vh] flex flex-col justify-center px-4">
-        <div className="mx-auto max-w-4xl text-center space-y-8">
-          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <span className="text-[11px] font-bold tracking-[.16em] uppercase text-[var(--red)]">
-              +12.000 REDAÇÕES CORRIGIDAS
-            </span>
-            <h1 className="font-['Fraunces'] text-5xl md:text-8xl font-black leading-[0.95] tracking-tight text-[var(--ink)]">
-              Em 2 minutos você descobre sua{" "}
-              <span className="text-[var(--red)] italic underline decoration-[var(--red-soft)] underline-offset-8">
-                nota real
-              </span>{" "}
-              do ENEM.
-            </h1>
-          </div>
+      {!quizResult && (
+        <>
+          <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--paper)]/90 backdrop-blur-xl">
+            <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 md:px-6">
+              <div>
+                <p className="font-['Fraunces'] text-2xl font-black italic tracking-tight text-[var(--ink)]">
+                  CORRIGE<span className="text-[var(--red)]">AI</span>
+                </p>
+                <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[var(--ink-3)]">
+                  Redação ENEM com rigor de prova
+                </p>
+              </div>
 
-          <p className="mx-auto max-w-2xl text-xl md:text-2xl text-[var(--ink-2)] font-medium leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-700 delay-200">
-            Responda 6 perguntas rápidas, cole sua redação e receba a nota nas 5 competências oficiais do ENEM com o rigor do INEP.
-          </p>
-
-          <div className="pt-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
-            {!quizResult ? (
-              <button
-                onClick={() => setShowQuiz(true)}
-                className="group relative inline-flex items-center justify-center rounded-2xl bg-[var(--ink)] px-10 py-6 text-xl md:text-2xl font-black text-[var(--paper)] transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_-12px_rgba(22,33,58,0.25)]"
-              >
-                DESCUBRIR MINHA NOTA AGORA
-                <ArrowRight className="ml-3 w-6 h-6 transition-transform group-hover:translate-x-1" />
-              </button>
-            ) : (
-              <button
-                onClick={() => {
-                  const el = document.getElementById("corrigir");
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
+              <Link
+                to={session ? "/dashboard" : "/auth"}
+                className="group relative isolate inline-flex min-h-11 shrink-0 items-center justify-center overflow-hidden rounded-full border border-white/80 bg-white/45 px-4 py-3 text-[10px] font-black uppercase tracking-[0.12em] text-[var(--ink)] backdrop-blur-2xl transition-all hover:-translate-y-0.5 hover:bg-white/60 active:translate-y-0 sm:px-5 sm:text-xs sm:tracking-[0.16em]"
+                style={{
+                  background:
+                    "linear-gradient(145deg, rgba(255,255,255,0.72) 0%, rgba(235,239,247,0.42) 54%, rgba(255,255,255,0.58) 100%)",
+                  boxShadow:
+                    "inset 0 1px 0 rgba(255,255,255,0.96), inset 0 -1px 0 rgba(22,33,58,0.08), 0 10px 28px -16px rgba(22,33,58,0.48)",
                 }}
-                className="group relative inline-flex items-center justify-center rounded-2xl bg-[var(--red)] px-10 py-6 text-xl md:text-2xl font-black text-white transition-all hover:scale-105 active:scale-95 shadow-[0_20px_40px_-12px_rgba(196,50,42,0.25)]"
               >
-                ACESSAR ÁREA DE REDAÇÃO
-                <ArrowRight className="ml-3 w-6 h-6 transition-transform group-hover:translate-x-1" />
-              </button>
-            )}
-            <p className="mt-6 text-sm font-bold text-[var(--ink-3)] uppercase tracking-widest flex items-center justify-center gap-2">
-              <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              {activeStudents} alunos corrigindo agora
-            </p>
-          </div>
-        </div>
-      </section>}
+                <span className="pointer-events-none absolute inset-x-3 top-0 h-px bg-white/95" />
+                <span className="relative whitespace-nowrap">
+                  {session ? "Meu painel" : "Entrar"}
+                </span>
+              </Link>
+            </div>
+          </header>
 
-      {quizResult && !isAnalyzingQuiz && (
-        <section id="corrigir" className="py-20 px-4 max-w-4xl mx-auto">
-          <EssaySubmissionArea isLoggedIn={!!session} isPro={false} showEssayForm={showEssayForm} onContinue={() => setShowEssayForm(true)} />
-        </section>
+          <section className="relative overflow-hidden px-4 pb-20 pt-10 md:px-6 md:pb-28 md:pt-16">
+            <div className="absolute left-1/2 top-0 h-[26rem] w-[26rem] -translate-x-1/2 rounded-full bg-[var(--red)]/8 blur-3xl" />
+            <div className="absolute right-0 top-24 h-56 w-56 rounded-full bg-[var(--red-soft)] blur-3xl" />
+
+            <div className="relative mx-auto grid max-w-6xl gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+              <div className="space-y-8">
+                <div className="space-y-4">
+                  <div className="inline-flex items-center gap-2 rounded-full border border-[var(--red)]/20 bg-[var(--red-soft)] px-4 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-[var(--red)]">
+                    <Clock3 className="h-4 w-4" />
+                    Faltam {daysUntilEnem} dias para o ENEM 2026
+                  </div>
+
+                  <h1 className="max-w-4xl font-['Fraunces'] text-5xl font-black leading-[0.92] tracking-tight text-[var(--ink)] md:text-7xl">
+                    Sua redação pode estar{" "}
+                    <span className="text-[var(--red)] italic">100 pontos abaixo</span> do que você
+                    imagina.
+                  </h1>
+
+                  <p className="max-w-2xl text-lg font-medium leading-relaxed text-[var(--ink-2)] md:text-2xl">
+                    Responda 6 perguntas rápidas, cole sua redação e veja sua nota real nas 5
+                    competências do ENEM com diagnóstico claro, direto e acionável.
+                  </p>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <ProofPill icon={ShieldCheck} text="Critérios alinhados ao INEP" />
+                  <ProofPill icon={TrendingUp} text="Feedback para subir nota" />
+                  <ProofPill icon={FilePenLine} text="Resultado em poucos minutos" />
+                </div>
+
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                  <button
+                    type="button"
+                    onClick={startQuiz}
+                    className="group inline-flex items-center justify-center rounded-2xl bg-[var(--ink)] px-8 py-5 text-lg font-black text-[var(--paper)] shadow-[0_20px_40px_-12px_rgba(22,33,58,0.25)] transition-all hover:scale-[1.02]"
+                  >
+                    RESPONDER PERGUNTAS AGORA
+                    <ArrowRight className="ml-3 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                  </button>
+
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="flex shrink-0 -space-x-3"
+                      aria-label="Estudantes usando o CorrigeAI"
+                    >
+                      {[
+                        { src: alunoAvatar1, position: "50% 34%" },
+                        { src: alunoAvatar2, position: "50% 30%" },
+                        { src: alunoAvatar3, position: "50% 28%" },
+                        { src: alunoAvatar4, position: "50% 18%" },
+                        { src: alunoAvatar5, position: "50% 28%" },
+                      ].map((avatar, index) => (
+                        <img
+                          key={avatar.src}
+                          src={avatar.src}
+                          alt={`Estudante ${index + 1}`}
+                          className="h-9 w-9 rounded-full border-2 border-[var(--paper)] object-cover shadow-sm transition-transform duration-300 hover:z-10 hover:-translate-y-1 sm:h-10 sm:w-10"
+                          style={{ objectPosition: avatar.position }}
+                        />
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px] font-bold uppercase leading-relaxed tracking-[0.1em] text-[var(--ink-3)] sm:text-sm sm:tracking-widest">
+                      <span className="inline-block h-2.5 w-2.5 shrink-0 animate-pulse rounded-full bg-green-500" />
+                      214 alunos analisando redação agora
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <StatCard value="+12 mil" label="Redações processadas" />
+                  <StatCard value="5/5" label="Competências avaliadas" />
+                  <StatCard value="23 segundos" label="Para gerar sua análise inicial" />
+                </div>
+              </div>
+
+              <div className="space-y-5 rounded-[2rem] border border-[var(--line)] bg-[linear-gradient(180deg,rgba(255,255,255,0.72),rgba(244,242,236,0.96))] p-6 shadow-[0_24px_70px_-24px_rgba(22,33,58,0.22)] md:p-8">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[var(--red)]">
+                      O que você vai descobrir
+                    </p>
+                    <h2 className="mt-2 font-['Fraunces'] text-3xl font-black text-[var(--ink)]">
+                      Sua nota sem achismo
+                    </h2>
+                  </div>
+                  <div className="rounded-2xl bg-[var(--red-soft)] p-3 text-[var(--red)]">
+                    <Sparkles className="h-6 w-6" />
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  {[
+                    "Nota total de 0 a 1000",
+                    "Notas separadas nas 5 competências",
+                    "Pontos fortes e pontos que derrubam sua nota",
+                    "Leitura simples para saber onde treinar primeiro",
+                  ].map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-start gap-3 rounded-2xl border border-[var(--line)] bg-[var(--paper)] px-4 py-4"
+                    >
+                      <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[var(--red)]" />
+                      <p className="text-sm font-bold leading-relaxed text-[var(--ink)]">{item}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="rounded-[1.75rem] border border-[var(--red)]/15 bg-[var(--red-soft)] p-5">
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[var(--red)]">
+                    Para quem é
+                  </p>
+                  <p className="mt-2 text-sm font-medium leading-relaxed text-[var(--ink)]">
+                    Ideal para quem está estudando em cima da hora, sente que a redação travou a
+                    nota e quer parar de adivinhar onde está errando.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="px-4 py-8 md:px-6">
+            <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-3">
+              <BenefitCard
+                icon={Target}
+                title="Você para de chutar"
+                description="Em vez de olhar uma nota solta, você entende exatamente em qual competência está deixando ponto na mesa."
+              />
+              <BenefitCard
+                icon={FilePenLine}
+                title="Você recebe correção com direção"
+                description="A plataforma mostra a falha, explica o impacto na nota e te entrega um norte claro para a próxima versão."
+              />
+              <BenefitCard
+                icon={TrendingUp}
+                title="Você treina com estratégia"
+                description="A ideia não é só corrigir uma redação. É criar um ciclo rápido de erro, ajuste e evolução até a prova."
+              />
+            </div>
+          </section>
+
+          <section className="px-4 py-10 md:px-6 md:py-14">
+            <div className="mx-auto grid max-w-5xl items-stretch gap-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-5">
+              <div className="overflow-hidden rounded-[2rem] border-2 border-[var(--red)]/30 bg-[linear-gradient(145deg,var(--red-soft),rgba(255,255,255,0.92))] shadow-[0_20px_50px_-30px_rgba(196,50,42,0.5)]">
+                <img
+                  src={comparativoAntes}
+                  alt="Estudante sem direção durante o treino de redação"
+                  className="aspect-[4/3] w-full object-cover"
+                />
+                <div className="p-6 md:p-8">
+                  <div className="mb-5 inline-flex rounded-full border border-[var(--red)]/25 bg-white/65 px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] text-[var(--red)]">
+                    Antes
+                  </div>
+                  <h2 className="font-['Fraunces'] text-2xl font-black leading-tight text-[var(--ink)] md:text-3xl">
+                    Treino sem direção
+                  </h2>
+                  <p className="mt-3 text-sm font-medium leading-relaxed text-[var(--ink-2)] md:text-base">
+                    O aluno escreve, acha que foi bem e continua repetindo os mesmos erros sem
+                    perceber onde perde pontos.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-center py-1 text-[var(--ink-3)]">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line)] bg-[var(--paper)] shadow-sm">
+                  <ArrowRight className="h-5 w-5 rotate-90 sm:rotate-0" />
+                </div>
+              </div>
+
+              <div className="overflow-hidden rounded-[2rem] border-2 border-[#24365F]/30 bg-[linear-gradient(145deg,#EEF2F8,rgba(255,255,255,0.94))] shadow-[0_20px_50px_-30px_rgba(22,33,58,0.5)]">
+                <img
+                  src={comparativoDepois}
+                  alt="Estudante organizada durante o treino estratégico de redação"
+                  className="aspect-[4/3] w-full object-cover"
+                />
+                <div className="p-6 md:p-8">
+                  <div className="mb-5 inline-flex rounded-full border border-[#24365F]/25 bg-white/65 px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] text-[#24365F]">
+                    Depois
+                  </div>
+                  <h2 className="font-['Fraunces'] text-2xl font-black leading-tight text-[var(--ink)] md:text-3xl">
+                    Estudo com estratégia
+                  </h2>
+                  <p className="mt-3 text-sm font-medium leading-relaxed text-[var(--ink-2)] md:text-base">
+                    O aluno entende as competências, identifica as prioridades e sabe exatamente o
+                    que revisar antes do próximo treino.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="px-4 py-6 md:px-6 md:py-10">
+            <div className="mx-auto max-w-6xl rounded-[2.5rem] border border-[var(--red)]/25 bg-[linear-gradient(135deg,rgba(251,237,235,0.92),rgba(255,255,255,0.96))] p-8 shadow-[0_28px_70px_-28px_rgba(196,50,42,0.35)] md:p-12">
+              <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
+                <div className="space-y-4">
+                  <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[var(--red)]">
+                    Hora de agir
+                  </p>
+                  <h2 className="font-['Fraunces'] text-4xl font-black leading-tight text-[var(--ink)]">
+                    Quanto mais perto da prova, mais caro fica continuar treinando no escuro.
+                  </h2>
+                  <p className="max-w-3xl text-base font-medium leading-relaxed text-[var(--ink-2)]">
+                    Se a redação está segurando sua aprovação, comece pelo diagnóstico. Você
+                    descobre sua nota, entende a falha e entra na prova com muito mais clareza do
+                    que tem hoje.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={startQuiz}
+                  className="group inline-flex items-center justify-center rounded-2xl bg-[#16213A] px-8 py-5 text-sm font-black uppercase tracking-[0.16em] text-white shadow-[0_18px_40px_-12px_rgba(22,33,58,0.48)] transition-all hover:scale-[1.02] hover:bg-[#24365F]"
+                >
+                  FAZER MEU DIAGNÓSTICO
+                  <ArrowRight className="ml-3 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <section className="px-4 py-12 md:px-6 md:py-16">
+            <div className="mx-auto max-w-4xl">
+              <div className="mb-8 text-center">
+                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[var(--red)]">
+                  Perguntas frequentes
+                </p>
+                <h2 className="mt-2 font-['Fraunces'] text-4xl font-black text-[var(--ink)]">
+                  O que o aluno quer saber antes de testar
+                </h2>
+              </div>
+
+              <div className="space-y-4">
+                <FaqItem
+                  question="A correção segue as 5 competências do ENEM?"
+                  answer="Sim. O foco do produto é mostrar nota total, nota por competência e um diagnóstico que faça sentido para quem treina redação no formato do ENEM."
+                />
+                <FaqItem
+                  question="Preciso já escrever bem para usar?"
+                  answer="Não. A proposta é justamente ajudar quem ainda não sabe onde está errando e precisa de direção para melhorar mais rápido."
+                />
+                <FaqItem
+                  question="O resultado vem só com a nota?"
+                  answer="Não. A nota é o começo. O valor real está em entender onde você perdeu ponto e qual parte precisa atacar primeiro."
+                />
+                <FaqItem
+                  question="Isso é útil para quem está perto da prova?"
+                  answer="É justamente o cenário mais urgente. Quando o tempo está curto, feedback rápido e objetivo vale mais do que continuar treinando sem referência."
+                />
+              </div>
+            </div>
+          </section>
+
+          <footer className="border-t border-[var(--line)] bg-[var(--paper-2)] py-16">
+            <div className="mx-auto grid max-w-6xl gap-12 px-4 md:grid-cols-[1fr_auto] md:px-6">
+              <div className="space-y-4">
+                <h3 className="font-['Fraunces'] text-2xl font-black italic tracking-tight text-[var(--ink)]">
+                  CORRIGE<span className="text-[var(--red)]">AI</span>
+                </h3>
+                <p className="max-w-md text-sm leading-relaxed text-[var(--ink-2)]">
+                  Correção de redação para quem quer clareza, velocidade e um plano melhor para
+                  subir nota no ENEM.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-[var(--red)]">
+                  Suporte
+                </p>
+                <a
+                  href="https://wa.me/5548996736743?text=Olá! Tenho uma dúvida sobre o CorrigeAI."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-3 rounded-2xl bg-[#25D366] px-6 py-4 text-sm font-black text-white shadow-[0_10px_20px_-5px_rgba(37,211,102,0.4)] transition-transform hover:scale-105"
+                >
+                  <MessageSquare className="h-5 w-5" />
+                  FALAR COM SUPORTE
+                </a>
+              </div>
+            </div>
+          </footer>
+        </>
       )}
 
-
-      {!quizResult && <footer className="border-t border-[var(--line)] py-16 bg-[var(--paper-2)]">
-        <div className="mx-auto max-w-4xl px-4">
-          <div className="grid gap-12 md:grid-cols-2">
-            <div className="space-y-6">
-              <h3 className="font-['Fraunces'] text-2xl font-black tracking-tighter italic text-[var(--ink)]">
-                CORRIGE<span className="text-[var(--red)]">AI</span>
-              </h3>
-              <p className="text-sm text-[var(--ink-2)] leading-relaxed max-w-sm">
-                A tecnologia mais avançada de correção de redação para o ENEM. Treine com o rigor oficial do INEP e conquiste sua vaga.
-              </p>
-            </div>
-            <div className="space-y-6">
-              <h4 className="text-xs font-black uppercase tracking-[0.2em] text-[var(--red)]">Suporte Especializado</h4>
-              <p className="text-sm text-[var(--ink-2)] font-medium">
-                Dúvidas sobre o sistema ou pagamentos?
-              </p>
-              <a
-                href="https://wa.me/5548996736743?text=Olá! Tenho uma dúvida sobre o CorrigeAI."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 rounded-2xl bg-[#25D366] px-8 py-4 text-sm font-black text-white transition-all hover:scale-105 shadow-[0_10px_20px_-5px_rgba(37,211,102,0.4)] hover:shadow-[0_15px_30px_-5px_rgba(37,211,102,0.5)]"
-              >
-                <MessageSquare className="w-5 h-5" />
-                FALAR COM SUPORTE
-              </a>
-            </div>
-          </div>
-          <div className="mt-16 pt-8 border-t border-[var(--line)] flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-[var(--ink-3)]">
-            <span>© {new Date().getFullYear()} CorrigeAI. Todos os direitos reservados.</span>
-            <div className="flex gap-6">
-              <span>Termos de Uso</span>
-              <span>Privacidade</span>
-            </div>
-          </div>
-        </div>
-      </footer>}
+      {quizResult && !isAnalyzingQuiz && (
+        <section id="corrigir" className="corrige-soft-enter mx-auto max-w-4xl px-4 py-20">
+          {session ? (
+            <EssaySubmissionArea
+              isLoggedIn
+              isPro={false}
+              hideTheme
+              showEssayForm={showEssayForm}
+              onContinue={() => setShowEssayForm(true)}
+            />
+          ) : (
+            <FunnelSignup answers={quizResult} onComplete={() => setShowEssayForm(true)} />
+          )}
+        </section>
+      )}
     </div>
+  );
+}
+
+function ProofPill({ icon: Icon, text }: { icon: typeof ShieldCheck; text: string }) {
+  return (
+    <div className="inline-flex items-center gap-3 rounded-2xl border border-[var(--line)] bg-[var(--paper)] px-4 py-3 shadow-[var(--paper-shadow)]">
+      <Icon className="h-4 w-4 text-[var(--red)]" />
+      <span className="text-sm font-bold text-[var(--ink)]">{text}</span>
+    </div>
+  );
+}
+
+function StatCard({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="rounded-2xl border border-[var(--line)] bg-[var(--paper)] p-5 shadow-[var(--paper-shadow)]">
+      <p className="font-['Fraunces'] text-3xl font-black text-[var(--red)]">{value}</p>
+      <p className="mt-1 text-[11px] font-black uppercase tracking-[0.16em] text-[var(--ink-3)]">
+        {label}
+      </p>
+    </div>
+  );
+}
+
+function BenefitCard({
+  icon: Icon,
+  title,
+  description,
+}: {
+  icon: typeof Target;
+  title: string;
+  description: string;
+}) {
+  return (
+    <div className="rounded-[2rem] border border-[var(--line)] bg-[var(--paper)] p-6 shadow-[var(--paper-shadow)]">
+      <div className="mb-4 inline-flex rounded-2xl bg-[var(--red-soft)] p-3 text-[var(--red)]">
+        <Icon className="h-6 w-6" />
+      </div>
+      <h3 className="font-['Fraunces'] text-2xl font-black text-[var(--ink)]">{title}</h3>
+      <p className="mt-3 text-sm font-medium leading-relaxed text-[var(--ink-2)]">{description}</p>
+    </div>
+  );
+}
+
+function FaqItem({ question, answer }: { question: string; answer: string }) {
+  return (
+    <details className="group rounded-[1.75rem] border border-[var(--line)] bg-[var(--paper)] p-6 shadow-[var(--paper-shadow)]">
+      <summary className="cursor-pointer list-none text-left font-['Fraunces'] text-2xl font-black text-[var(--ink)] marker:hidden">
+        <div className="flex items-center justify-between gap-4">
+          <span>{question}</span>
+          <span className="rounded-full bg-[var(--paper-2)] px-3 py-1 text-xs font-black uppercase tracking-[0.18em] text-[var(--red)] transition-transform group-open:rotate-180">
+            +
+          </span>
+        </div>
+      </summary>
+      <p className="pt-4 text-sm font-medium leading-relaxed text-[var(--ink-2)]">{answer}</p>
+    </details>
   );
 }

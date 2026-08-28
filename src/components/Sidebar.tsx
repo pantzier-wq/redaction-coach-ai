@@ -32,43 +32,43 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
       id: "dashboard", 
       label: "Início", 
       icon: LayoutDashboard,
-      color: "text-[var(--ink-3)]"
+      color: "text-[var(--red)]"
     },
     { 
       id: "correcao", 
       label: "Nova Correção", 
       icon: PenTool,
-      color: "text-[var(--red)]"
+      color: "text-[#24365F]"
     },
     { 
       id: "historico", 
       label: "Minhas Redações", 
       icon: History,
-      color: "text-[var(--ink-2)]"
+      color: "text-[var(--red)]"
     },
     { 
       id: "progresso", 
       label: "Meu Progresso", 
       icon: TrendingUp,
-      color: "text-green-600"
+      color: "text-[#24365F]"
     },
     { 
       id: "repertorios", 
       label: "Biblioteca de Repertórios", 
       icon: BookOpen,
-      color: "text-amber-600"
+      color: "text-[var(--red)]"
     },
     { 
       id: "conectivos", 
       label: "Biblioteca de Conectivos", 
       icon: Zap,
-      color: "text-[var(--red)]"
+      color: "text-[#24365F]"
     },
     { 
       id: "upgrade", 
       label: "Plano PRO", 
       icon: Sparkles,
-      color: "text-amber-500"
+      color: "text-[var(--red)]"
     },
   ];
 
@@ -81,7 +81,7 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
         onClick={() => setIsOpen(!isOpen)}
         className="fixed top-6 left-6 z-[60] md:hidden p-3 bg-[var(--paper)]/90 backdrop-blur-md border border-[var(--line)] rounded-2xl shadow-xl hover:bg-[var(--paper-2)] transition-all active:scale-95 group"
       >
-        {isOpen ? <X className="w-6 h-6 text-[var(--red)]" /> : <Menu className="w-6 h-6 text-[var(--red)] group-hover:scale-110 transition-transform" />}
+        {isOpen ? <X className="h-6 w-6 text-[#24365F]" /> : <Menu className="h-6 w-6 text-[#24365F] transition-transform group-hover:scale-110" />}
       </button>
 
       {/* Overlay for mobile */}
@@ -105,7 +105,7 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
             </span>
           </Link>
           <div className="mt-4 flex items-center gap-3 p-3 rounded-xl bg-[var(--paper-2)] border border-[var(--line)] shadow-inner">
-            <div className="h-8 w-8 rounded-full bg-[var(--red)]/10 border border-[var(--red)]/20 flex items-center justify-center text-[var(--red)] font-bold shrink-0">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#24365F]/20 bg-[#EEF2F8] font-bold text-[#24365F]">
               <User className="w-4 h-4" />
             </div>
             <div className="min-w-0">
@@ -135,11 +135,11 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all group",
                 activeSection === item.id 
-                  ? "bg-[var(--paper-2)] text-[var(--ink)] border border-[var(--line)] shadow-sm" 
+                  ? "border border-[#24365F]/15 bg-[#EEF2F8] text-[var(--ink)] shadow-sm" 
                   : "text-[var(--ink-3)] hover:bg-[var(--paper-2)] hover:text-[var(--ink)] border border-transparent"
               )}
             >
-              <item.icon className={cn("w-5 h-5 shrink-0", activeSection === item.id ? "text-[var(--red)]" : item.color)} />
+              <item.icon className={cn("h-5 w-5 shrink-0", item.color)} />
               <span className="text-left leading-tight tracking-tight">{item.label}</span>
             </button>
           ))}
@@ -151,9 +151,9 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
             href="https://wa.me/5548996736743"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-black text-[#25D366] hover:bg-[#25D366]/5 transition-colors border border-transparent hover:border-[#25D366]/20"
+            className="flex w-full items-center gap-3 rounded-xl border border-transparent px-4 py-3 text-sm font-black text-[#24365F] transition-colors hover:border-[#24365F]/15 hover:bg-[#EEF2F8]"
           >
-            <MessageCircle className="w-5 h-5 fill-[#25D366]/10" />
+            <MessageCircle className="h-5 w-5 fill-[#24365F]/10" />
             Suporte WhatsApp
           </a>
           <button 

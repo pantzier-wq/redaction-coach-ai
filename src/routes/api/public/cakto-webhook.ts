@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { normalizePaymentAmountToCents } from "@/lib/payment-validation";
 
 /**
  * Webhook público de pagamento (Cakto).
@@ -10,7 +11,7 @@ import { createFileRoute } from "@tanstack/react-router";
  * comparado em tempo constante. Sem segredo válido → 401.
  *
  * Como funciona a liberação:
- *  1) procura no payload o token de compra gerado pelo app (utm_content/ref);
+ *  1) procura no payload o token de compra gerado pelo app (sck/ref);
  *  2) se achar, chama `grant_purchase` que libera o plano correto e marca o
  *     token como pago (idempotente);
  *  3) se não achar token, tenta casar pelo e-mail do comprador;
@@ -59,7 +60,16 @@ function findValue(obj: unknown, keys: string[], depth = 0): string | null {
 
 /** Procura em todo o payload uma string com o formato do nosso token (ca_...). */
 function findToken(payload: unknown): string | null {
-  const direct = findValue(payload, ["utm_content", "ref", "reference", "custom_id", "token", "metadata", "external_id", "client_reference_id"]);
+  const direct = findValue(payload, [
+    "sck",
+    "ref",
+    "reference",
+    "custom_id",
+    "token",
+    "metadata",
+    "external_id",
+    "client_reference_id",
+  ]);
   if (direct?.startsWith("ca_")) return direct;
   const raw = JSON.stringify(payload ?? {});
   const match = raw.match(/ca_[a-z0-9]{6,}_[a-z0-9]{6,}/i);
@@ -82,10 +92,6 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
           url.searchParams.get("secret") ??
           "";
 
-        console.log("[Cakto Webhook] Provided Secret:", provided);
-        console.log("[Cakto Webhook] Expected Secret (masked):", expected.substring(0, 5) + "...");
-        console.log("[Cakto Webhook] Expected Secret Length:", expected.length);
-
         // Se o segredo começa com "https:", o usuário provavelmente configurou a URL inteira como segredo.
         // Vamos extrair o parâmetro secret da URL se for o caso.
         let finalExpected = expected;
@@ -95,7 +101,6 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
             const secretParam = expUrl.searchParams.get("secret");
             if (secretParam) {
               finalExpected = secretParam;
-              console.log("[Cakto Webhook] Extracted Secret from URL:", finalExpected);
             }
           } catch (e) {
             // Não é uma URL válida, mantém o original
@@ -111,8 +116,6 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
         }
 
         const body = await request.text();
-        console.log("[Cakto Webhook] Raw Body:", body);
-        
         if (!body || body.trim() === "") {
           console.error("[Cakto Webhook] Empty body received");
           return new Response("Empty Body", { status: 400 });
@@ -122,14 +125,13 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
         try {
           payload = JSON.parse(body);
         } catch (e: any) {
-          console.error("[Cakto Webhook] JSON Parse Error:", e.message, "| Raw Body:", body);
+          console.error("[Cakto Webhook] JSON Parse Error:", e.message);
           // Tenta sanitizar caso venha com caracteres estranhos (BOM, etc)
           try {
-             const sanitized = body.replace(/^\uFEFF/, "").trim();
-             payload = JSON.parse(sanitized);
-             console.log("[Cakto Webhook] Successfully parsed after sanitization");
+            const sanitized = body.replace(/^\uFEFF/, "").trim();
+            payload = JSON.parse(sanitized);
           } catch (e2) {
-             return new Response("Invalid JSON", { status: 400 });
+            return new Response("Invalid JSON", { status: 400 });
           }
         }
 
@@ -138,8 +140,15 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
         ).toLowerCase();
         const email = findValue(payload, ["email", "customer_email", "buyer_email"]);
         const externalId = findValue(payload, ["id", "transaction_id", "order_id", "checkout_id"]);
-        const amountRaw = findValue(payload, ["amount", "value", "price", "total"]);
-        const amount = amountRaw ? parseFloat(String(amountRaw).replace(",", ".")) : 0;
+        const amountRaw = findValue(payload, [
+          "amount",
+          "amount_cents",
+          "amount_in_cents",
+          "value",
+          "price",
+          "total",
+        ]);
+        const amountCents = normalizePaymentAmountToCents(amountRaw);
         const token = findToken(payload);
 
         const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -152,7 +161,7 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
         if (isApproved && token) {
           const { data, error } = await supabaseAdmin.rpc("grant_purchase", {
             _token: token,
-            _amount_cents: Math.round(amount * 100),
+            _amount_cents: amountCents,
           });
           const row = Array.isArray(data) ? data[0] : data;
           if (error) {
@@ -167,9 +176,7 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
         } else if (isApproved && email) {
           // Fallback: sem token, tenta o token pendente mais recente do e-mail.
           const { data: users } = await supabaseAdmin.auth.admin.listUsers();
-          const user = users?.users.find(
-            (u) => u.email?.toLowerCase() === email.toLowerCase(),
-          );
+          const user = users?.users.find((u) => u.email?.toLowerCase() === email.toLowerCase());
           if (user) {
             const { data: pend } = await supabaseAdmin
               .from("purchase_tokens")
@@ -182,7 +189,7 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
             if (pendingToken) {
               const { data } = await supabaseAdmin.rpc("grant_purchase", {
                 _token: pendingToken,
-                _amount_cents: Math.round(amount * 100),
+                _amount_cents: amountCents,
               });
               const row = Array.isArray(data) ? data[0] : data;
               applied = row?.note === "applied";
@@ -208,7 +215,7 @@ export const Route = createFileRoute("/api/public/cakto-webhook")({
           provider: "cakto",
           external_id: externalId,
           token,
-          email: email ? `${email.split('@')[0].slice(0, 3)}...@${email.split('@')[1]}` : null,
+          email: email ? `${email.split("@")[0].slice(0, 3)}...@${email.split("@")[1]}` : null,
           plan,
           status,
           applied,

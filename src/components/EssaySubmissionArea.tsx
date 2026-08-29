@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
 import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
@@ -69,6 +70,20 @@ export function EssaySubmissionArea({
   const [credits, setCredits] = useState(0);
   const [timeUntilExam, setTimeUntilExam] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const corrigir = useServerFn(corrigirRedacao);
+
+  useEffect(() => {
+    if (!showOfferModal) return;
+
+    const previousBodyOverflow = document.body.style.overflow;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousBodyOverflow;
+      document.documentElement.style.overflow = previousHtmlOverflow;
+    };
+  }, [showOfferModal]);
 
   useEffect(() => {
     const examDate = new Date("2026-11-08T00:00:00").getTime();
@@ -619,15 +634,22 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
               )}
             </form>
 
-            {showOfferModal &&
+            {typeof document !== "undefined" &&
+              showOfferModal &&
               ((result && showPaywall) ||
                 (isLoggedIn && !canCorrect && showPaywall) ||
                 (!isLoggedIn && showPaywall)) && (
-                <div
-                  id="paywall-anchor"
-                  className="fixed inset-0 z-50 overflow-y-auto overscroll-contain bg-[var(--paper)]/80 backdrop-blur-sm flex items-start justify-center p-4 py-8 md:p-10 font-['Public_Sans']"
-                >
-                  <div className="corrige-soft-enter w-full max-w-lg md:max-w-4xl rounded-3xl border border-[var(--red)]/30 bg-[var(--paper)] p-6 md:p-10 shadow-[var(--paper-shadow)] backdrop-blur-2xl relative">
+                createPortal(
+                  <div
+                    id="paywall-anchor"
+                    className="fixed inset-0 z-[100] h-[100dvh] overflow-y-auto overscroll-contain bg-[var(--paper)]/80 p-4 font-['Public_Sans'] backdrop-blur-sm md:p-10"
+                    style={{
+                      paddingTop: "max(1rem, env(safe-area-inset-top))",
+                      paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
+                    }}
+                  >
+                    <div className="mx-auto flex min-h-full w-full max-w-4xl items-start justify-center">
+                      <div className="corrige-soft-enter relative w-full max-w-lg rounded-3xl border border-[var(--red)]/30 bg-[var(--paper)] p-6 shadow-[var(--paper-shadow)] backdrop-blur-2xl md:max-w-4xl md:p-10">
                     <p className="text-sm md:text-base text-[var(--ink-2)] font-semibold mb-6 md:mb-8 leading-relaxed text-center">
                       {!isLoggedIn
                         ? "Desbloqueie sua estimativa de nota e a correção detalhada baseada nas cinco competências avaliadas no ENEM."
@@ -730,7 +752,7 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
                         </div>
 
                         {showUpsellOffer && (
-                          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-[var(--ink)]/45 p-2 backdrop-blur-sm sm:p-4">
+                          <div className="fixed inset-0 z-[110] flex h-[100dvh] items-start justify-center overflow-y-auto overscroll-contain bg-[var(--ink)]/45 p-2 backdrop-blur-sm sm:items-center sm:p-4">
                             <div className="corrige-soft-enter w-full max-w-2xl rounded-[1.5rem] border-2 border-[#24365F] bg-[var(--paper)] p-3 shadow-[0_28px_80px_-24px_rgba(22,33,58,0.5)] sm:rounded-[2rem] sm:p-6 md:p-8">
                               <div className="mb-3 text-center sm:mb-6">
                                 <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#24365F] sm:text-[11px] sm:tracking-[0.2em]">
@@ -822,8 +844,11 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
                         </div>
                       </div>
                     )}
-                  </div>
-                </div>
+                      </div>
+                    </div>
+                  </div>,
+                  document.body,
+                )
               )}
           </div>
         )}

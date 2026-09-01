@@ -1,10 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useServerFn } from "@tanstack/react-start";
 import { Link } from "@tanstack/react-router";
-import { corrigirRedacao, type Correcao } from "@/lib/correct-essay.functions";
+import {
+  corrigirRedacao,
+  transcreverFotoRedacao,
+  type Correcao,
+} from "@/lib/correct-essay.functions";
 import { supabase } from "@/integrations/supabase/client";
-import { Sparkles, ArrowRight, Zap, CheckCircle2, LockKeyhole } from "lucide-react";
+import {
+  Sparkles,
+  ArrowRight,
+  Zap,
+  CheckCircle2,
+  LockKeyhole,
+  Camera,
+  LoaderCircle,
+} from "lucide-react";
 import { goToCheckout, goToCreditsCheckout } from "@/lib/checkout";
 import { CouponUnlockedBanner } from "@/components/CouponUnlockedBanner";
 import { buildLocalPreview } from "@/lib/local-preview";
@@ -49,6 +61,43 @@ async function waitForAnalysisWindow(startedAt: number) {
   }
 }
 
+const PHOTO_MAX_FILE_BYTES = 15 * 1024 * 1024;
+const PHOTO_MAX_DATA_URL_LENGTH = 2_700_000;
+
+async function prepareEssayPhoto(file: File) {
+  if (!file.type.startsWith("image/")) throw new Error("PHOTO_INVALID_FORMAT");
+  if (file.size > PHOTO_MAX_FILE_BYTES) throw new Error("PHOTO_TOO_LARGE");
+
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const element = new Image();
+      element.onload = () => resolve(element);
+      element.onerror = () => reject(new Error("PHOTO_READ_FAILED"));
+      element.src = objectUrl;
+    });
+
+    const maxSide = 1800;
+    const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("PHOTO_READ_FAILED");
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    for (const quality of [0.88, 0.76, 0.64]) {
+      const dataUrl = canvas.toDataURL("image/jpeg", quality);
+      if (dataUrl.length <= PHOTO_MAX_DATA_URL_LENGTH) return dataUrl;
+    }
+    throw new Error("PHOTO_TOO_LARGE");
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
+}
+
 export function EssaySubmissionArea({
   isLoggedIn,
   isPro: propIsPro,
@@ -68,8 +117,12 @@ export function EssaySubmissionArea({
   const [isPro, setIsPro] = useState(propIsPro || false);
   const [hasFullAccess, setHasFullAccess] = useState(false);
   const [credits, setCredits] = useState(0);
+  const [photoLoading, setPhotoLoading] = useState(false);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
   const [timeUntilExam, setTimeUntilExam] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const corrigir = useServerFn(corrigirRedacao);
+  const transcreverFoto = useServerFn(transcreverFotoRedacao);
 
   useEffect(() => {
     if (!showOfferModal) return;
@@ -324,6 +377,47 @@ export function EssaySubmissionArea({
     await goToCreditsCheckout(qtd);
   }
 
+  async function handleEssayPhoto(file?: File) {
+    if (!file) return;
+    if (redacao.trim() && !window.confirm("Substituir o texto atual pela redação da foto?")) {
+      if (photoInputRef.current) photoInputRef.current.value = "";
+      return;
+    }
+
+    setPhotoLoading(true);
+    setPhotoError(null);
+    setErro(null);
+    try {
+      const imageDataUrl = await prepareEssayPhoto(file);
+      const response = await transcreverFoto({ data: { imageDataUrl } });
+      setRedacao(response.text);
+      window.setTimeout(() => {
+        document.getElementById("essay-textarea")?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        });
+      }, 100);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error || "");
+      setPhotoError(
+        message.includes("PHOTO_NO_TEXT")
+          ? "Não encontramos texto nessa foto. Fotografe uma página com a redação inteira."
+          : message.includes("PHOTO_NOT_ESSAY")
+            ? "A imagem não parece conter uma redação. Envie uma foto com texto contínuo e pelo menos alguns parágrafos."
+            : message.includes("PHOTO_UNREADABLE")
+              ? "Não conseguimos ler essa foto. Tente novamente com mais luz, foco e a página inteira visível."
+              : message.includes("PHOTO_TOO_LARGE")
+                ? "A imagem ficou muito grande. Tire outra foto mais próxima da folha."
+                : message.includes("PHOTO_INVALID_FORMAT") || message.includes("PHOTO_READ_FAILED")
+                  ? "Esse arquivo não pôde ser lido. Use uma foto em JPG, PNG ou WebP."
+                  : "Não foi possível ler a redação agora. Tente outra foto em instantes.",
+      );
+    } finally {
+      setPhotoLoading(false);
+      if (photoInputRef.current) photoInputRef.current.value = "";
+    }
+  }
+
   return (
     <div className="w-full space-y-8">
       {result && !loading && (
@@ -562,7 +656,51 @@ export function EssaySubmissionArea({
               >
                 Cole sua redação aqui
               </label>
+              {hideTheme && isLoggedIn && (
+                <div className="mb-4 rounded-2xl border border-[#24365F]/15 bg-[#EEF2F8] p-4">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm font-black text-[var(--ink)]">
+                        Sua redação está no caderno?
+                      </p>
+                      <p className="mt-1 text-xs font-medium leading-relaxed text-[var(--ink-2)]">
+                        Fotografe a página e nós colocamos o texto aqui para você revisar.
+                      </p>
+                      <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--ink-3)]">
+                        A imagem não é salva no histórico
+                      </p>
+                    </div>
+                    <input
+                      ref={photoInputRef}
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      className="sr-only"
+                      onChange={(event) => void handleEssayPhoto(event.target.files?.[0])}
+                    />
+                    <button
+                      type="button"
+                      disabled={photoLoading}
+                      onClick={() => photoInputRef.current?.click()}
+                      className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#24365F] px-4 py-3 text-xs font-black uppercase tracking-[0.1em] text-white transition-all hover:bg-[#16213A] disabled:cursor-wait disabled:opacity-70"
+                    >
+                      {photoLoading ? (
+                        <LoaderCircle className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Camera className="h-4 w-4" />
+                      )}
+                      {photoLoading ? "Lendo a foto..." : "Fotografar redação"}
+                    </button>
+                  </div>
+                  {photoError && (
+                    <p className="mt-3 rounded-xl border border-[var(--red)]/20 bg-[var(--red-soft)] px-3 py-2 text-xs font-bold leading-relaxed text-[var(--red)]">
+                      {photoError}
+                    </p>
+                  )}
+                </div>
+              )}
               <textarea
+                id="essay-textarea"
                 value={redacao}
                 onChange={(e) => setRedacao(e.target.value)}
                 required
@@ -594,6 +732,7 @@ export function EssaySubmissionArea({
                   type="submit"
                   disabled={
                     loading ||
+                    photoLoading ||
                     charCount < 200 ||
                     (!hideTheme && tema.trim().length < 3) ||
                     (!isLoggedIn && showPaywall)

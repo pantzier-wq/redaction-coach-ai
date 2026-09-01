@@ -3,9 +3,11 @@ import {
   essayInputSchema,
   connectivesInputSchema,
   repertoryInputSchema,
+  essayPhotoInputSchema,
   secureEssayCorrection,
   analyzeConnectivesWithAi,
   createRepertoryWithAi,
+  transcribeEssayPhotoWithAi,
 } from "@/lib/correct-essay.server";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Correcao, CorrectionResponse, RespostaRepertorio } from "@/lib/correct-essay.server";
@@ -36,4 +38,11 @@ export const criarRepertorio = createServerFn({ method: "POST" })
   .validator((data) => repertoryInputSchema.parse(data))
   .handler(async ({ data, context }) => {
     return await createRepertoryWithAi(context.userId, data);
+  });
+
+export const transcreverFotoRedacao = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data) => essayPhotoInputSchema.parse(data))
+  .handler(async ({ data, context }) => {
+    return await transcribeEssayPhotoWithAi(context.userId, data);
   });

@@ -39,6 +39,16 @@ export const repertoryInputSchema = z.object({
     .optional(),
 });
 
+export const essayPhotoInputSchema = z.object({
+  imageDataUrl: z
+    .string()
+    .max(2_800_000, "PHOTO_TOO_LARGE")
+    .refine(
+      (value) => /^data:image\/(jpeg|png|webp);base64,[a-z0-9+/=]+$/i.test(value),
+      "PHOTO_INVALID_FORMAT",
+    ),
+});
+
 export const CorrectionSchema = z.object({
   nota_total: z.number(),
   competencias: z
@@ -94,6 +104,11 @@ const ScoreAuditSchema = z.object({
     )
     .length(5),
   parecer_geral: z.string().min(20).max(500),
+});
+
+const EssayPhotoTranscriptionSchema = z.object({
+  kind: z.enum(["essay", "no_text", "not_essay", "unreadable"]),
+  text: z.string().max(8000),
 });
 
 export type Correcao = z.infer<typeof CorrectionSchema>;
@@ -158,6 +173,7 @@ const DAILY_BUDGET_MICROUSD = Math.max(
 );
 const CORRECTION_ESTIMATE_MICROUSD = 15_000;
 const FAST_ESTIMATE_MICROUSD = 700;
+const PHOTO_OCR_ESTIMATE_MICROUSD = 2_500;
 
 function getOpenAI() {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -465,6 +481,92 @@ export async function correctEssayWithAi(input: z.infer<typeof essayInputSchema>
     usage: mergeUsage(response.usage, auditResponse.usage),
     latencyMs: Date.now() - startedAt,
   };
+}
+
+export async function transcribeEssayPhotoWithAi(
+  userId: string,
+  input: z.infer<typeof essayPhotoInputSchema>,
+) {
+  const openai = getOpenAI();
+  const eventId = await reserveBudget(
+    userId,
+    "essay_correction",
+    FAST_MODEL,
+    PHOTO_OCR_ESTIMATE_MICROUSD,
+    false,
+  );
+  const startedAt = Date.now();
+  let usage: LanguageModelUsage | undefined;
+
+  try {
+    const response = await generateText({
+      model: openai(FAST_MODEL),
+      output: Output.object({
+        schema: EssayPhotoTranscriptionSchema,
+        name: "essay_photo_transcription",
+      }),
+      system:
+        "Voce transcreve fotos de redacoes manuscritas ou digitadas em portugues. Copie somente o texto realmente visivel, sem corrigir, completar, resumir ou inventar palavras. Preserve paragrafos com linhas em branco. Ignore cabecalhos de caderno, notas do professor, numeros de pagina e elementos fora da redacao. Classifique como essay apenas quando houver texto dissertativo ou narrativo continuo suficiente para uma redacao; use no_text quando nao houver texto, not_essay para objetos, documentos ou poucas palavras soltas, e unreadable quando a foto estiver desfocada, cortada ou ilegivel.",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "Verifique se esta imagem contem uma redacao legivel e, se contiver, transcreva-a fielmente.",
+            },
+            {
+              type: "file",
+              mediaType: "image",
+              data: input.imageDataUrl,
+            },
+          ],
+        },
+      ],
+      maxOutputTokens: 2_600,
+      maxRetries: 1,
+      timeout: 30_000,
+      providerOptions: {
+        openai: { reasoningEffort: "low", textVerbosity: "low", store: false },
+      },
+    });
+    usage = response.usage;
+
+    const parsed = EssayPhotoTranscriptionSchema.parse(response.output);
+    const text = parsed.text
+      .replace(/^```(?:text)?\s*/i, "")
+      .replace(/```\s*$/i, "")
+      .replace(/\r\n/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+    const wordCount = text.split(/\s+/).filter(Boolean).length;
+    const letterCount = (text.match(/[a-zA-ZÀ-ÿ]/g) || []).length;
+
+    if (parsed.kind === "no_text") throw new Error("PHOTO_NO_TEXT");
+    if (parsed.kind === "not_essay") throw new Error("PHOTO_NOT_ESSAY");
+    if (parsed.kind === "unreadable") throw new Error("PHOTO_UNREADABLE");
+    if (text.length < 200 || wordCount < 40 || letterCount < 150) {
+      throw new Error("PHOTO_NOT_ESSAY");
+    }
+
+    await finishUsage(eventId, "completed", FAST_MODEL, usage, Date.now() - startedAt);
+    return { text: text.slice(0, 8000) };
+  } catch (error) {
+    const raw = error instanceof Error ? error.message : String(error || "");
+    const photoCode = raw.match(
+      /PHOTO_NO_TEXT|PHOTO_NOT_ESSAY|PHOTO_UNREADABLE|PHOTO_TOO_LARGE|PHOTO_INVALID_FORMAT/,
+    )?.[0];
+    const code = photoCode || cleanErrorCode(error);
+    await finishUsage(
+      eventId,
+      photoCode && usage ? "completed" : "failed",
+      FAST_MODEL,
+      usage,
+      Date.now() - startedAt,
+      code,
+    );
+    throw new Error(code);
+  }
 }
 
 async function reserveTool(userId: string, tool: "connectives" | "repertory", sessionId: string) {

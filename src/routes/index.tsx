@@ -91,16 +91,26 @@ function Landing() {
     const navigationEntry = performance.getEntriesByType("navigation")[0] as
       PerformanceNavigationTiming | undefined;
     const isPageRefresh = navigationEntry?.type === "reload";
-    const returnStage = localStorage.getItem("checkout_return_stage");
+    const returnStage = sessionStorage.getItem("checkout_return_stage");
     const funnelAuthReturn = localStorage.getItem("funnel_auth_return");
     const savedQuiz = localStorage.getItem("quiz_answers");
-    if (!isPageRefresh && (returnStage || funnelAuthReturn) && savedQuiz) {
+    let returnedFromCakto = false;
+    try {
+      returnedFromCakto = new URL(document.referrer).hostname.endsWith("cakto.com.br");
+    } catch {
+      returnedFromCakto = false;
+    }
+    const isCheckoutReturn =
+      !!returnStage && (navigationEntry?.type === "back_forward" || returnedFromCakto);
+    // Remove marcas antigas que poderiam abrir uma oferta ao acessar o domínio diretamente.
+    localStorage.removeItem("checkout_return_stage");
+    if (!isPageRefresh && (isCheckoutReturn || funnelAuthReturn) && savedQuiz) {
       try {
         setQuizResult(JSON.parse(savedQuiz));
-        setShowEssayForm(funnelAuthReturn === "1" || !!returnStage);
+        setShowEssayForm(funnelAuthReturn === "1" || isCheckoutReturn);
         localStorage.removeItem("funnel_auth_return");
       } catch {
-        localStorage.removeItem("checkout_return_stage");
+        sessionStorage.removeItem("checkout_return_stage");
         localStorage.removeItem("funnel_auth_return");
         localStorage.removeItem("quiz_answers");
         setQuizResult(null);
@@ -108,7 +118,6 @@ function Landing() {
       }
     } else {
       [
-        "checkout_return_stage",
         "funnel_auth_return",
         "quiz_answers",
         "pending_submission",
@@ -117,6 +126,7 @@ function Landing() {
         "resume_submission_after_auth",
         "viewing_essay",
       ].forEach((key) => localStorage.removeItem(key));
+      sessionStorage.removeItem("checkout_return_stage");
       setQuizResult(null);
       setShowEssayForm(false);
     }
@@ -126,6 +136,7 @@ function Landing() {
 
   const startQuiz = () => {
     localStorage.removeItem("checkout_return_stage");
+    sessionStorage.removeItem("checkout_return_stage");
     localStorage.removeItem("funnel_auth_return");
     void loadEssaySubmissionArea();
     void loadFunnelSignup();

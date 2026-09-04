@@ -231,7 +231,7 @@ export function EssaySubmissionArea({
     if (typeof window === "undefined") return;
     const saved = window.localStorage.getItem("viewing_essay");
     const pendingData = window.localStorage.getItem("pending_essay_data");
-    const returnStage = window.localStorage.getItem("checkout_return_stage");
+    const returnStage = window.sessionStorage.getItem("checkout_return_stage");
     const pendingSubmission = window.localStorage.getItem("pending_submission");
 
     if (window.location.pathname === "/" && returnStage && pendingSubmission) {
@@ -245,8 +245,9 @@ export function EssaySubmissionArea({
         setShowPaywall(true);
         setShowOfferModal(true);
         setShowUpsellOffer(returnStage === "upsell");
+        window.sessionStorage.removeItem("checkout_return_stage");
       } catch (e) {
-        window.localStorage.removeItem("checkout_return_stage");
+        window.sessionStorage.removeItem("checkout_return_stage");
         console.error("Erro ao restaurar oferta do checkout", e);
       }
     } else if (saved) {
@@ -448,7 +449,7 @@ export function EssaySubmissionArea({
   async function handleTestPurchase(type: "basic" | "combo" = "basic") {
     // Redireciona para o checkout real (Cakto). A liberação acontece após o pagamento.
     if (window.location.pathname === "/") {
-      localStorage.setItem("checkout_return_stage", showUpsellOffer ? "upsell" : "basic");
+      sessionStorage.setItem("checkout_return_stage", showUpsellOffer ? "upsell" : "basic");
     }
     await goToCheckout(type === "combo" ? "combo" : "essencial");
   }

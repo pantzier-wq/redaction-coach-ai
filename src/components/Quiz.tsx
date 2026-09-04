@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowRight, ArrowLeft, CheckCircle2, Trophy, Sparkles } from "lucide-react";
+import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface QuizProps {
@@ -53,15 +53,13 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
   const current = questions[step];
 
   const next = (val?: string) => {
-    const nextAnswers = val
-      ? { ...answers, [current.id]: val }
-      : answers;
+    const nextAnswers = val ? { ...answers, [current.id]: val } : answers;
 
     if (val) {
       setAnswers(nextAnswers);
     }
     if (step < questions.length - 1) {
-      setStep(step + 1);
+      setStep((currentStep) => currentStep + 1);
     } else {
       onComplete(nextAnswers);
     }
@@ -72,21 +70,25 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
   };
 
   return (
-    <div className="corrige-soft-overlay fixed inset-0 z-[100] flex items-center justify-center bg-[var(--paper)]/95 backdrop-blur-md p-4 font-['Public_Sans']">
-      <div className="corrige-soft-enter w-full max-w-xl rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-8 shadow-[var(--paper-shadow)]">
+    <div className="corrige-soft-overlay fixed inset-0 z-[100] flex items-center justify-center bg-[var(--paper)]/95 p-4 font-['Public_Sans'] backdrop-blur-sm">
+      <div className="corrige-soft-enter w-full max-w-xl rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-5 shadow-[var(--paper-shadow)] md:p-8">
         <div className="mb-8 flex items-center justify-between">
           <div className="flex gap-2">
             {questions.map((_, i) => (
               <div
                 key={i}
                 className={cn(
-                  "h-1.5 w-8 rounded-full transition-all duration-500",
-                  i <= step ? "bg-[var(--red)]" : "bg-[var(--line)]"
+                  "h-1.5 w-8 rounded-full transition-colors duration-150",
+                  i <= step ? "bg-[var(--red)]" : "bg-[var(--line)]",
                 )}
               />
             ))}
           </div>
-          <button onClick={onClose} className="text-[var(--ink-3)] hover:text-[var(--red)] transition-colors p-2 hover:bg-[var(--line)]/10 rounded-full">
+          <button
+            type="button"
+            onClick={onClose}
+            className="touch-manipulation rounded-full p-2 text-[var(--ink-3)] transition-colors duration-150 hover:bg-[var(--line)]/10 hover:text-[var(--red)]"
+          >
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -97,14 +99,14 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
           </h3>
 
           <div className="flex-1">
-
             {current.type === "options" && (
               <div className="grid gap-4">
                 {current.options?.map((opt) => (
                   <button
+                    type="button"
                     key={opt}
                     onClick={() => next(opt)}
-                    className="w-full rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 px-8 py-6 text-left text-xl font-black text-[var(--ink)] hover:bg-[var(--paper-2)] hover:border-[#24365F] hover:text-[#24365F] transition-all flex items-center justify-between group shadow-sm"
+                    className="group flex w-full touch-manipulation items-center justify-between rounded-2xl border border-[var(--line)] bg-[var(--paper-2)]/50 px-5 py-4 text-left text-base font-black text-[var(--ink)] shadow-sm transition-[border-color,background-color,color,transform] duration-150 hover:border-[#24365F] hover:bg-[var(--paper-2)] hover:text-[#24365F] active:scale-[0.99] md:px-8 md:py-5 md:text-xl"
                   >
                     {opt}
                     <div className="w-8 h-8 rounded-full border-2 border-[var(--line)] group-hover:border-[#24365F] group-hover:bg-[#24365F] flex items-center justify-center transition-all">
@@ -114,11 +116,11 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
                 ))}
               </div>
             )}
-
           </div>
 
           {step > 0 && (
             <button
+              type="button"
               onClick={back}
               className="mt-8 flex items-center gap-2 text-sm font-bold text-[var(--ink-3)] hover:text-[var(--ink)] transition-colors"
             >
@@ -133,19 +135,20 @@ export function Quiz({ onComplete, onClose }: QuizProps) {
 
 function X({ className }: { className?: string }) {
   return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="24" 
-      height="24" 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round" 
-      strokeLinejoin="round" 
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
       className={className}
     >
-      <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+      <path d="M18 6 6 18" />
+      <path d="m6 6 12 12" />
     </svg>
   );
 }

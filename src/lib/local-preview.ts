@@ -42,7 +42,7 @@ export function buildLocalPreview(tema: string, redacao: string): Correcao {
     nota: allowedScore(base[index] + Math.min(words.length / 3000, 0.08)) as
       0 | 40 | 80 | 120 | 160 | 200,
     analise:
-      "A pré-análise identificou um ponto que merece revisão. A correção completa apresenta o diagnóstico específico desta competência.",
+      "A pré-análise identificou um ponto que merece revisão. A correção completa apresenta a leitura específica desta competência.",
     evidencia: evidence,
     como_melhorar:
       "Revise este trecho e confirme se ele cumpre claramente a função esperada na argumentação.",

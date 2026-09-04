@@ -27,6 +27,7 @@ interface EssaySubmissionAreaProps {
   onSuccess?: (result: Correcao) => void;
   showEssayForm?: boolean;
   onContinue?: () => void;
+  onRequireSignup?: () => void;
   hideTheme?: boolean;
 }
 
@@ -52,7 +53,7 @@ function Step({ text, delay, isLast }: { text: string; delay: number; isLast?: b
 }
 
 const LIMITE_ESSENCIAL = 12;
-const ANALYSIS_DURATION_MS = 15000;
+const ANALYSIS_DURATION_MS = 6000;
 
 async function waitForAnalysisWindow(startedAt: number) {
   const remaining = Math.max(0, ANALYSIS_DURATION_MS - (Date.now() - startedAt));
@@ -98,12 +99,27 @@ async function prepareEssayPhoto(file: File) {
   }
 }
 
+function getPhotoErrorMessage(message: string) {
+  return message.includes("PHOTO_NO_TEXT")
+    ? "Não encontramos texto nessa foto. Fotografe uma página com a redação inteira."
+    : message.includes("PHOTO_NOT_ESSAY")
+      ? "A imagem não parece conter uma redação. Envie uma foto com texto contínuo e pelo menos alguns parágrafos."
+      : message.includes("PHOTO_UNREADABLE")
+        ? "Não conseguimos ler essa foto. Tente novamente com mais luz, foco e a página inteira visível."
+        : message.includes("PHOTO_TOO_LARGE")
+          ? "A imagem ficou muito grande. Tire outra foto mais próxima da folha."
+          : message.includes("PHOTO_INVALID_FORMAT") || message.includes("PHOTO_READ_FAILED")
+            ? "Esse arquivo não pôde ser lido. Use uma foto em JPG, PNG ou WebP."
+            : "Não foi possível ler a redação agora. Tente outra foto em instantes.";
+}
+
 export function EssaySubmissionArea({
   isLoggedIn,
   isPro: propIsPro,
   onSuccess,
   showEssayForm = true,
   onContinue,
+  onRequireSignup,
   hideTheme = false,
 }: EssaySubmissionAreaProps) {
   const [tema, setTema] = useState("");
@@ -123,6 +139,23 @@ export function EssaySubmissionArea({
   const [timeUntilExam, setTimeUntilExam] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const corrigir = useServerFn(corrigirRedacao);
   const transcreverFoto = useServerFn(transcreverFotoRedacao);
+
+  useEffect(() => {
+    if (!isLoggedIn || typeof window === "undefined") return;
+    const pendingPhoto = window.localStorage.getItem("pending_essay_photo");
+    if (!pendingPhoto) return;
+
+    window.localStorage.removeItem("pending_essay_photo");
+    setPhotoLoading(true);
+    setPhotoError(null);
+    void transcreverFoto({ data: { imageDataUrl: pendingPhoto } })
+      .then((response) => setRedacao(response.text))
+      .catch((error) => {
+        const message = error instanceof Error ? error.message : String(error || "");
+        setPhotoError(getPhotoErrorMessage(message));
+      })
+      .finally(() => setPhotoLoading(false));
+  }, [isLoggedIn, transcreverFoto]);
 
   useEffect(() => {
     if (!showOfferModal) return;
@@ -242,8 +275,17 @@ export function EssaySubmissionArea({
     setShowOfferModal(false);
     setShowUpsellOffer(false);
 
-    // Salva a redação para processar depois do diagnóstico (se necessário)
+    // Mantém o texto preenchido ao atravessar cadastro, login ou checkout.
     localStorage.setItem("pending_submission", JSON.stringify({ tema: effectiveTheme, redacao }));
+
+    if (!isLoggedIn && onRequireSignup) {
+      localStorage.setItem(
+        "pending_essay_data",
+        JSON.stringify({ tema: effectiveTheme, redacao: redacao.trim() }),
+      );
+      onRequireSignup();
+      return;
+    }
 
     // A pre-analise publica e para contas sem saldo e 100% local: sem custo e sem armazenar a redacao.
     if (!isLoggedIn || !canCorrect) {
@@ -389,6 +431,11 @@ export function EssaySubmissionArea({
     setErro(null);
     try {
       const imageDataUrl = await prepareEssayPhoto(file);
+      if (!isLoggedIn && onRequireSignup) {
+        window.localStorage.setItem("pending_essay_photo", imageDataUrl);
+        onRequireSignup();
+        return;
+      }
       const response = await transcreverFoto({ data: { imageDataUrl } });
       setRedacao(response.text);
       window.setTimeout(() => {
@@ -399,19 +446,7 @@ export function EssaySubmissionArea({
       }, 100);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error || "");
-      setPhotoError(
-        message.includes("PHOTO_NO_TEXT")
-          ? "Não encontramos texto nessa foto. Fotografe uma página com a redação inteira."
-          : message.includes("PHOTO_NOT_ESSAY")
-            ? "A imagem não parece conter uma redação. Envie uma foto com texto contínuo e pelo menos alguns parágrafos."
-            : message.includes("PHOTO_UNREADABLE")
-              ? "Não conseguimos ler essa foto. Tente novamente com mais luz, foco e a página inteira visível."
-              : message.includes("PHOTO_TOO_LARGE")
-                ? "A imagem ficou muito grande. Tire outra foto mais próxima da folha."
-                : message.includes("PHOTO_INVALID_FORMAT") || message.includes("PHOTO_READ_FAILED")
-                  ? "Esse arquivo não pôde ser lido. Use uma foto em JPG, PNG ou WebP."
-                  : "Não foi possível ler a redação agora. Tente outra foto em instantes.",
-      );
+      setPhotoError(getPhotoErrorMessage(message));
     } finally {
       setPhotoLoading(false);
       if (photoInputRef.current) photoInputRef.current.value = "";
@@ -513,7 +548,7 @@ export function EssaySubmissionArea({
                 className="h-full bg-[var(--red)] shadow-[0_0_15px_rgba(196,50,42,0.4)] transition-all duration-1000 ease-linear"
                 style={{
                   width: "100%",
-                  animation: "loading-bar 15s linear forwards",
+                  animation: "loading-bar 6s linear forwards",
                 }}
               />
             </div>
@@ -523,15 +558,15 @@ export function EssaySubmissionArea({
                 <div className="space-y-3">
                   <Step
                     text={`✓ Lendo sua redação — ${redacao.split(/\s+/).filter(Boolean).length} palavras`}
-                    delay={1}
+                    delay={0.4}
                   />
-                  <Step text="✓ Competência 1 · domínio da escrita formal" delay={3} />
-                  <Step text="✓ Competência 2 · compreensão do tema" delay={5} />
-                  <Step text="✓ Competência 3 · organização dos argumentos" delay={7} />
-                  <Step text="✓ Competência 4 · coesão e conectivos" delay={9} />
-                  <Step text="✓ Competência 5 · proposta de intervenção" delay={11} />
-                  <Step text="✓ Cruzando os pontos que podem reduzir sua nota" delay={13} />
-                  <Step text="Finalizando seu diagnóstico estratégico…" delay={14} isLast />
+                  <Step text="✓ Competência 1 · domínio da escrita formal" delay={1.1} />
+                  <Step text="✓ Competência 2 · compreensão do tema" delay={1.8} />
+                  <Step text="✓ Competência 3 · organização dos argumentos" delay={2.5} />
+                  <Step text="✓ Competência 4 · coesão e conectivos" delay={3.2} />
+                  <Step text="✓ Competência 5 · proposta de intervenção" delay={3.9} />
+                  <Step text="✓ Cruzando os pontos que podem reduzir sua nota" delay={4.6} />
+                  <Step text="Finalizando sua análise personalizada…" delay={5.3} isLast />
                 </div>
               </div>
             )}
@@ -549,56 +584,12 @@ export function EssaySubmissionArea({
           </div>
         ) : (
           <div id="corrigir" className="relative w-full space-y-8">
-            {(hideTheme || !isLoggedIn) &&
-              !result &&
-              typeof window !== "undefined" &&
-              localStorage.getItem("quiz_answers") && (
-                <div className="mb-6 rounded-3xl border border-[var(--line)] bg-[var(--paper-2)] p-5 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500 md:mb-8 md:p-6">
-                  <div className="mb-4 flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[var(--red)] md:text-xs">
-                    <span className="relative flex h-3 w-3">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--red)] opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--red)]"></span>
-                    </span>
-                    Diagnóstico Personalizado
-                  </div>
-                  <div className="space-y-4 text-base font-medium leading-relaxed text-[var(--ink-2)] md:text-[1.05rem]">
-                    {(() => {
-                      try {
-                        const quiz = JSON.parse(localStorage.getItem("quiz_answers") || "{}");
-
-                        return (
-                          <>
-                            <p>
-                              {quiz.essays_written === "Nenhuma ainda" ? (
-                                <>
-                                  Você ainda não escreveu nenhuma redação para treinar. Começar
-                                  agora é a forma mais rápida de descobrir e corrigir seus erros.
-                                </>
-                              ) : (
-                                <>
-                                  Você já escreveu{" "}
-                                  <span className="text-[var(--ink)] font-bold">
-                                    {quiz.essays_written.toLowerCase()}
-                                  </span>{" "}
-                                  redações, mas{" "}
-                                  <span className="text-[var(--ink)] font-bold">
-                                    {quiz.essays_corrected?.toLowerCase() === "nenhuma"
-                                      ? "nenhuma delas foi corrigida de verdade"
-                                      : "poucas receberam uma correção de verdade"}
-                                  </span>
-                                  . Sem feedback real, você pode estar repetindo os mesmos erros.
-                                </>
-                              )}
-                            </p>
-                          </>
-                        );
-                      } catch (e) {
-                        return <p>Analise sua redação agora com os critérios oficiais do INEP.</p>;
-                      }
-                    })()}
-                  </div>
-                </div>
-              )}
+            {(hideTheme || !isLoggedIn) && !result && (
+              <div className="mb-6 rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] px-4 py-3 text-sm font-bold leading-relaxed text-[var(--ink-2)] md:mb-8">
+                Seu ponto de partida está pronto. Agora precisamos do seu texto para revelar o que
+                acontece nas cinco competências do ENEM.
+              </div>
+            )}
             {!result && !showEssayForm && (
               <div className="rounded-3xl border border-[var(--red)] bg-[var(--paper-2)] p-5 text-center shadow-sm md:p-8">
                 <p className="mx-auto mb-6 max-w-md text-base font-medium leading-relaxed text-[var(--ink-2)] md:text-lg">
@@ -656,7 +647,7 @@ export function EssaySubmissionArea({
               >
                 Cole sua redação aqui
               </label>
-              {hideTheme && isLoggedIn && (
+              {hideTheme && (
                 <div className="mb-4 rounded-2xl border border-[#24365F]/15 bg-[#EEF2F8] p-4">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
@@ -777,217 +768,216 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
               showOfferModal &&
               ((result && showPaywall) ||
                 (isLoggedIn && !canCorrect && showPaywall) ||
-                (!isLoggedIn && showPaywall)) && (
-                createPortal(
-                  <div
-                    id="paywall-anchor"
-                    className="fixed inset-0 z-[100] h-[100dvh] overflow-y-auto overscroll-contain bg-[var(--paper)]/80 p-4 font-['Public_Sans'] backdrop-blur-sm md:p-10"
-                    style={{
-                      paddingTop: "max(1rem, env(safe-area-inset-top))",
-                      paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
-                    }}
-                  >
-                    <div className="mx-auto flex min-h-full w-full max-w-4xl items-start justify-center">
-                      <div className="corrige-soft-enter relative w-full max-w-lg rounded-3xl border border-[var(--red)]/30 bg-[var(--paper)] p-6 shadow-[var(--paper-shadow)] backdrop-blur-2xl md:max-w-4xl md:p-10">
-                    <p className="text-sm md:text-base text-[var(--ink-2)] font-semibold mb-6 md:mb-8 leading-relaxed text-center">
-                      {!isLoggedIn
-                        ? "Desbloqueie sua estimativa de nota e a correção detalhada baseada nas cinco competências avaliadas no ENEM."
-                        : semCreditos
-                          ? "Seus créditos de correção acabaram. Recarregue ou escolha o Combo Nota 1000 para receber +25 correções e as ferramentas extras de estudo."
-                          : result || showPaywall
-                            ? "Sua estimativa de nota e a correção detalhada já foram geradas com base na matriz do ENEM."
-                            : "Você está a um passo de desbloquear seu potencial máximo e conquistar sua vaga no curso dos sonhos."}
-                    </p>
+                (!isLoggedIn && showPaywall)) &&
+              createPortal(
+                <div
+                  id="paywall-anchor"
+                  className="fixed inset-0 z-[100] h-[100dvh] overflow-y-auto overscroll-contain bg-[var(--paper)]/80 p-4 font-['Public_Sans'] backdrop-blur-sm md:p-10"
+                  style={{
+                    paddingTop: "max(1rem, env(safe-area-inset-top))",
+                    paddingBottom: "max(1rem, env(safe-area-inset-bottom))",
+                  }}
+                >
+                  <div className="mx-auto flex min-h-full w-full max-w-4xl items-start justify-center">
+                    <div className="corrige-soft-enter relative w-full max-w-lg rounded-3xl border border-[var(--red)]/30 bg-[var(--paper)] p-6 shadow-[var(--paper-shadow)] backdrop-blur-2xl md:max-w-4xl md:p-10">
+                      <p className="text-sm md:text-base text-[var(--ink-2)] font-semibold mb-6 md:mb-8 leading-relaxed text-center">
+                        {!isLoggedIn
+                          ? "Desbloqueie sua estimativa de nota e a correção detalhada baseada nas cinco competências avaliadas no ENEM."
+                          : semCreditos
+                            ? "Seus créditos de correção acabaram. Recarregue ou escolha o Combo Nota 1000 para receber +25 correções e as ferramentas extras de estudo."
+                            : result || showPaywall
+                              ? "Sua estimativa de nota e a correção detalhada já foram geradas com base na matriz do ENEM."
+                              : "Você está a um passo de desbloquear seu potencial máximo e conquistar sua vaga no curso dos sonhos."}
+                      </p>
 
-                    {semCreditos && (
-                      <div className="mb-8">
-                        <p className="text-[11px] font-black uppercase tracking-widest text-[var(--ink-3)] mb-3 text-center">
-                          Recarregue seus créditos
-                        </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                          {[
-                            { qtd: 5, preco: "R$ 7,90" },
-                            { qtd: 10, preco: "R$ 9,90" },
-                            { qtd: 20, preco: "R$ 14,90" },
-                          ].map((pack) => (
-                            <button
-                              key={pack.qtd}
-                              onClick={() => handleBuyCredits(pack.qtd)}
-                              className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-4 text-center hover:border-[var(--red)] hover:bg-[var(--paper-2)]/80 transition-all shadow-sm"
-                            >
-                              <div className="text-lg font-black text-[var(--ink)]">
-                                {pack.qtd} correções
-                              </div>
-                              <div className="text-sm font-black text-[var(--red)]">
-                                {pack.preco}
-                              </div>
-                              <div className="mt-2 rounded-lg bg-[var(--red)]/10 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-[var(--red)]">
-                                Obtenha clicando aqui
-                              </div>
-                            </button>
-                          ))}
+                      {semCreditos && (
+                        <div className="mb-8">
+                          <p className="text-[11px] font-black uppercase tracking-widest text-[var(--ink-3)] mb-3 text-center">
+                            Recarregue seus créditos
+                          </p>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            {[
+                              { qtd: 5, preco: "R$ 7,90" },
+                              { qtd: 10, preco: "R$ 9,90" },
+                              { qtd: 20, preco: "R$ 14,90" },
+                            ].map((pack) => (
+                              <button
+                                key={pack.qtd}
+                                onClick={() => handleBuyCredits(pack.qtd)}
+                                className="rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-4 text-center hover:border-[var(--red)] hover:bg-[var(--paper-2)]/80 transition-all shadow-sm"
+                              >
+                                <div className="text-lg font-black text-[var(--ink)]">
+                                  {pack.qtd} correções
+                                </div>
+                                <div className="text-sm font-black text-[var(--red)]">
+                                  {pack.preco}
+                                </div>
+                                <div className="mt-2 rounded-lg bg-[var(--red)]/10 px-2 py-1 text-[10px] font-black uppercase tracking-wide text-[var(--red)]">
+                                  Obtenha clicando aqui
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                          <p className="mt-3 text-center text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-widest">
+                            Créditos disponíveis apenas para quem tem o Plano Essencial
+                          </p>
                         </div>
-                        <p className="mt-3 text-center text-[10px] font-bold text-[var(--ink-3)] uppercase tracking-widest">
-                          Créditos disponíveis apenas para quem tem o Plano Essencial
-                        </p>
-                      </div>
-                    )}
+                      )}
 
-                    {!semCreditos && (
-                      <div className="space-y-6">
-                        <div className="mx-auto max-w-2xl rounded-[2rem] border border-[var(--line)] bg-[var(--paper-2)]/60 p-6 shadow-sm md:p-8">
-                          <div className="mb-6 flex items-center gap-3">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--paper)] text-[var(--red)] shadow-sm">
-                              <Zap className="h-6 w-6" />
+                      {!semCreditos && (
+                        <div className="space-y-6">
+                          <div className="mx-auto max-w-2xl rounded-[2rem] border border-[var(--line)] bg-[var(--paper-2)]/60 p-6 shadow-sm md:p-8">
+                            <div className="mb-6 flex items-center gap-3">
+                              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--paper)] text-[var(--red)] shadow-sm">
+                                <Zap className="h-6 w-6" />
+                              </div>
+                              <div>
+                                <h3 className="text-xl font-black uppercase tracking-tight text-[var(--ink)]">
+                                  Plano Essencial
+                                </h3>
+                                <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--ink-3)]">
+                                  acesso vitalício • +12 correções
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <h3 className="text-xl font-black uppercase tracking-tight text-[var(--ink)]">
-                                Plano Essencial
-                              </h3>
-                              <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--ink-3)]">
-                                acesso vitalício • +12 correções
+
+                            <ul className="mb-8 space-y-3">
+                              {[
+                                "+12 correções de redação com análise por competência.",
+                                "Nota total e leitura estratégica do que está derrubando sua média.",
+                                "Histórico para acompanhar a sua evolução ao longo dos treinos.",
+                                "Feedback no padrão da redação do ENEM.",
+                              ].map((item) => (
+                                <li
+                                  key={item}
+                                  className="flex items-start gap-3 text-sm font-medium text-[var(--ink-2)]"
+                                >
+                                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--red)] text-[10px] font-black text-white">
+                                    ✓
+                                  </span>
+                                  <span>{item}</span>
+                                </li>
+                              ))}
+                            </ul>
+
+                            <div className="border-t border-[var(--line)] pt-6">
+                              <div className="mb-4 flex items-baseline gap-2">
+                                <span className="text-sm font-bold italic text-[var(--ink-3)] line-through">
+                                  R$ 29,90
+                                </span>
+                                <span className="text-4xl font-black text-[var(--ink)]">
+                                  R$ 19,90
+                                </span>
+                              </div>
+                              <button
+                                onClick={() => setShowUpsellOffer(true)}
+                                className="w-full rounded-2xl bg-[var(--ink)] py-4 text-xs font-black uppercase tracking-[0.2em] text-[var(--paper)] transition-all hover:scale-[1.02] active:scale-95 shadow-lg"
+                              >
+                                CONTINUAR COM ESSE PLANO
+                              </button>
+                              <p className="mt-3 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--ink-3)]">
+                                pagamento único • acesso imediato
                               </p>
                             </div>
                           </div>
 
-                          <ul className="mb-8 space-y-3">
-                            {[
-                              "+12 correções de redação com análise por competência.",
-                              "Nota total e leitura estratégica do que está derrubando sua média.",
-                              "Histórico para acompanhar a sua evolução ao longo dos treinos.",
-                              "Feedback no padrão da redação do ENEM.",
-                            ].map((item) => (
-                              <li
-                                key={item}
-                                className="flex items-start gap-3 text-sm font-medium text-[var(--ink-2)]"
-                              >
-                                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--red)] text-[10px] font-black text-white">
-                                  ✓
-                                </span>
-                                <span>{item}</span>
-                              </li>
-                            ))}
-                          </ul>
+                          {showUpsellOffer && (
+                            <div className="fixed inset-0 z-[110] flex h-[100dvh] items-start justify-center overflow-y-auto overscroll-contain bg-[var(--ink)]/45 p-2 backdrop-blur-sm sm:items-center sm:p-4">
+                              <div className="corrige-soft-enter w-full max-w-2xl rounded-[1.5rem] border-2 border-[#24365F] bg-[var(--paper)] p-3 shadow-[0_28px_80px_-24px_rgba(22,33,58,0.5)] sm:rounded-[2rem] sm:p-6 md:p-8">
+                                <div className="mb-3 text-center sm:mb-6">
+                                  <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#24365F] sm:text-[11px] sm:tracking-[0.2em]">
+                                    oferta mais vantajosa
+                                  </p>
+                                  <h3 className="mt-1 font-['Fraunces'] text-xl font-black italic leading-tight text-[var(--ink)] sm:mt-2 sm:text-3xl">
+                                    Antes de fechar o básico, veja o plano que mais compensa
+                                  </h3>
+                                  <p className="mt-3 hidden text-sm font-medium leading-relaxed text-[var(--ink-2)] sm:block">
+                                    Para intensificar os treinos até o ENEM, o Combo Nota 1000
+                                    entrega mais que o dobro de correções do plano anterior e
+                                    ferramentas extras para evoluir sua escrita.
+                                  </p>
+                                </div>
 
-                          <div className="border-t border-[var(--line)] pt-6">
-                            <div className="mb-4 flex items-baseline gap-2">
-                              <span className="text-sm font-bold italic text-[var(--ink-3)] line-through">
-                                R$ 29,90
-                              </span>
-                              <span className="text-4xl font-black text-[var(--ink)]">
-                                R$ 19,90
-                              </span>
+                                <div className="rounded-[1.25rem] border border-[#24365F]/25 bg-[#EEF2F8] p-3 sm:rounded-[1.75rem] sm:p-6">
+                                  <div className="mb-3 flex items-center gap-3 sm:mb-5">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#24365F] text-white shadow-[0_0_18px_rgba(36,54,95,0.3)] sm:h-12 sm:w-12 sm:rounded-2xl">
+                                      <Sparkles className="h-5 w-5 sm:h-6 sm:w-6" />
+                                    </div>
+                                    <div>
+                                      <h4 className="text-lg font-black uppercase leading-tight tracking-tight text-[var(--ink)] sm:text-xl">
+                                        Combo Nota 1000
+                                      </h4>
+                                      <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#24365F] sm:text-[11px] sm:tracking-[0.18em]">
+                                        o que mais vale a pena
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  <ul className="mb-3 space-y-1.5 sm:mb-6 sm:space-y-3">
+                                    {[
+                                      "+25 correções para ampliar sua rotina de treinos.",
+                                      "IA de repertório sociocultural para fortalecer argumentação.",
+                                      "Laboratório de conectivos.",
+                                      "Biblioteca com repertórios coringas para vários temas.",
+                                      "Plano ideal para quem quer insistir até subir a nota de verdade.",
+                                    ].map((item) => (
+                                      <li
+                                        key={item}
+                                        className="flex items-start gap-2 text-xs font-medium leading-tight text-[var(--ink-2)] sm:gap-3 sm:text-sm sm:leading-normal"
+                                      >
+                                        <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#24365F] text-[8px] font-black text-white sm:mt-0.5 sm:h-5 sm:w-5 sm:text-[10px]">
+                                          ✓
+                                        </span>
+                                        <span>{item}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+
+                                  <div className="mb-3 flex items-end justify-center gap-3 sm:mb-5 sm:justify-start">
+                                    <span className="whitespace-nowrap pb-1 text-xs font-bold italic text-[var(--ink-3)] line-through sm:text-sm">
+                                      R$ 59,00
+                                    </span>
+                                    <span className="whitespace-nowrap text-3xl font-black leading-none text-[var(--ink)] sm:text-4xl">
+                                      R$ 39,00
+                                    </span>
+                                  </div>
+
+                                  <div className="space-y-1.5 sm:space-y-3">
+                                    <button
+                                      onClick={() => handleTestPurchase("combo")}
+                                      className="w-full rounded-xl bg-[#16213A] px-3 py-3 text-xs font-black uppercase tracking-[0.1em] text-white transition-all hover:scale-[1.02] hover:bg-[#24365F] active:scale-95 shadow-[0_12px_28px_-10px_rgba(22,33,58,0.5)] sm:rounded-2xl sm:py-4 sm:text-sm sm:tracking-[0.16em]"
+                                    >
+                                      QUERO O PLANO QUE MAIS COMPENSA
+                                    </button>
+                                    <button
+                                      onClick={() => handleTestPurchase("basic")}
+                                      className="w-full rounded-xl border border-[#24365F]/25 bg-[var(--paper)] px-3 py-2.5 text-xs font-black uppercase tracking-[0.1em] text-[var(--ink)] transition-colors hover:border-[#24365F] hover:text-[#24365F] sm:rounded-2xl sm:py-4 sm:text-sm sm:tracking-[0.14em]"
+                                    >
+                                      quero adquirir o anterior
+                                    </button>
+                                    <button
+                                      onClick={() => setShowUpsellOffer(false)}
+                                      className="w-full py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-[var(--ink-3)] transition-colors hover:text-[var(--ink)] sm:py-2 sm:text-[11px] sm:tracking-[0.18em]"
+                                    >
+                                      voltar para a oferta anterior
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
                             </div>
-                            <button
-                              onClick={() => setShowUpsellOffer(true)}
-                              className="w-full rounded-2xl bg-[var(--ink)] py-4 text-xs font-black uppercase tracking-[0.2em] text-[var(--paper)] transition-all hover:scale-[1.02] active:scale-95 shadow-lg"
-                            >
-                              CONTINUAR COM ESSE PLANO
-                            </button>
-                            <p className="mt-3 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--ink-3)]">
-                              pagamento único • acesso imediato
+                          )}
+
+                          <div className="flex flex-col gap-2 text-center pt-2">
+                            <p className="rounded-lg border border-[var(--line)] bg-[var(--paper-2)] py-2 text-xs font-black uppercase tracking-widest text-[var(--ink)] shadow-sm">
+                              acesso liberado logo após o pagamento
                             </p>
                           </div>
                         </div>
-
-                        {showUpsellOffer && (
-                          <div className="fixed inset-0 z-[110] flex h-[100dvh] items-start justify-center overflow-y-auto overscroll-contain bg-[var(--ink)]/45 p-2 backdrop-blur-sm sm:items-center sm:p-4">
-                            <div className="corrige-soft-enter w-full max-w-2xl rounded-[1.5rem] border-2 border-[#24365F] bg-[var(--paper)] p-3 shadow-[0_28px_80px_-24px_rgba(22,33,58,0.5)] sm:rounded-[2rem] sm:p-6 md:p-8">
-                              <div className="mb-3 text-center sm:mb-6">
-                                <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#24365F] sm:text-[11px] sm:tracking-[0.2em]">
-                                  oferta mais vantajosa
-                                </p>
-                                <h3 className="mt-1 font-['Fraunces'] text-xl font-black italic leading-tight text-[var(--ink)] sm:mt-2 sm:text-3xl">
-                                  Antes de fechar o básico, veja o plano que mais compensa
-                                </h3>
-                                <p className="mt-3 hidden text-sm font-medium leading-relaxed text-[var(--ink-2)] sm:block">
-                                  Para intensificar os treinos até o ENEM, o Combo Nota 1000 entrega
-                                  mais que o dobro de correções do plano anterior e ferramentas
-                                  extras para evoluir sua escrita.
-                                </p>
-                              </div>
-
-                              <div className="rounded-[1.25rem] border border-[#24365F]/25 bg-[#EEF2F8] p-3 sm:rounded-[1.75rem] sm:p-6">
-                                <div className="mb-3 flex items-center gap-3 sm:mb-5">
-                                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#24365F] text-white shadow-[0_0_18px_rgba(36,54,95,0.3)] sm:h-12 sm:w-12 sm:rounded-2xl">
-                                    <Sparkles className="h-5 w-5 sm:h-6 sm:w-6" />
-                                  </div>
-                                  <div>
-                                    <h4 className="text-lg font-black uppercase leading-tight tracking-tight text-[var(--ink)] sm:text-xl">
-                                      Combo Nota 1000
-                                    </h4>
-                                    <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-[#24365F] sm:text-[11px] sm:tracking-[0.18em]">
-                                      o que mais vale a pena
-                                    </p>
-                                  </div>
-                                </div>
-
-                                <ul className="mb-3 space-y-1.5 sm:mb-6 sm:space-y-3">
-                                  {[
-                                    "+25 correções para ampliar sua rotina de treinos.",
-                                    "IA de repertório sociocultural para fortalecer argumentação.",
-                                    "Laboratório de conectivos.",
-                                    "Biblioteca com repertórios coringas para vários temas.",
-                                    "Plano ideal para quem quer insistir até subir a nota de verdade.",
-                                  ].map((item) => (
-                                    <li
-                                      key={item}
-                                      className="flex items-start gap-2 text-xs font-medium leading-tight text-[var(--ink-2)] sm:gap-3 sm:text-sm sm:leading-normal"
-                                    >
-                                      <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[#24365F] text-[8px] font-black text-white sm:mt-0.5 sm:h-5 sm:w-5 sm:text-[10px]">
-                                        ✓
-                                      </span>
-                                      <span>{item}</span>
-                                    </li>
-                                  ))}
-                                </ul>
-
-                                <div className="mb-3 flex items-end justify-center gap-3 sm:mb-5 sm:justify-start">
-                                  <span className="whitespace-nowrap pb-1 text-xs font-bold italic text-[var(--ink-3)] line-through sm:text-sm">
-                                    R$ 59,00
-                                  </span>
-                                  <span className="whitespace-nowrap text-3xl font-black leading-none text-[var(--ink)] sm:text-4xl">
-                                    R$ 39,00
-                                  </span>
-                                </div>
-
-                                <div className="space-y-1.5 sm:space-y-3">
-                                  <button
-                                    onClick={() => handleTestPurchase("combo")}
-                                    className="w-full rounded-xl bg-[#16213A] px-3 py-3 text-xs font-black uppercase tracking-[0.1em] text-white transition-all hover:scale-[1.02] hover:bg-[#24365F] active:scale-95 shadow-[0_12px_28px_-10px_rgba(22,33,58,0.5)] sm:rounded-2xl sm:py-4 sm:text-sm sm:tracking-[0.16em]"
-                                  >
-                                    QUERO O PLANO QUE MAIS COMPENSA
-                                  </button>
-                                  <button
-                                    onClick={() => handleTestPurchase("basic")}
-                                    className="w-full rounded-xl border border-[#24365F]/25 bg-[var(--paper)] px-3 py-2.5 text-xs font-black uppercase tracking-[0.1em] text-[var(--ink)] transition-colors hover:border-[#24365F] hover:text-[#24365F] sm:rounded-2xl sm:py-4 sm:text-sm sm:tracking-[0.14em]"
-                                  >
-                                    quero adquirir o anterior
-                                  </button>
-                                  <button
-                                    onClick={() => setShowUpsellOffer(false)}
-                                    className="w-full py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-[var(--ink-3)] transition-colors hover:text-[var(--ink)] sm:py-2 sm:text-[11px] sm:tracking-[0.18em]"
-                                  >
-                                    voltar para a oferta anterior
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        <div className="flex flex-col gap-2 text-center pt-2">
-                          <p className="rounded-lg border border-[var(--line)] bg-[var(--paper-2)] py-2 text-xs font-black uppercase tracking-widest text-[var(--ink)] shadow-sm">
-                            acesso liberado logo após o pagamento
-                          </p>
-                        </div>
-                      </div>
-                    )}
-                      </div>
+                      )}
                     </div>
-                  </div>,
-                  document.body,
-                )
+                  </div>
+                </div>,
+                document.body,
               )}
           </div>
         )}
@@ -1062,8 +1052,8 @@ function Resultado({
           </h3>
           <p className="mt-3 text-sm font-medium leading-relaxed text-[var(--ink-2)]">
             A banca avalia critérios específicos, não apenas se o texto “parece bom”. Desbloqueie o
-            diagnóstico para entender suas cinco competências, priorizar o que corrigir e estudar
-            com direção até o ENEM.
+            análise para entender suas cinco competências, priorizar o que corrigir e estudar com
+            direção até o ENEM.
           </p>
         </div>
       )}
@@ -1133,7 +1123,7 @@ function Resultado({
               {isLockedPreview && (
                 <div className="mt-auto pt-4">
                   <span className="inline-flex items-center gap-2 rounded-full border border-[var(--red)]/25 bg-[var(--paper)] px-3 py-2 text-[9px] font-black uppercase tracking-[0.16em] text-[var(--red)] shadow-sm">
-                    <LockKeyhole className="h-3 w-3" /> Diagnóstico pronto e bloqueado
+                    <LockKeyhole className="h-3 w-3" /> Análise pronta e bloqueada
                   </span>
                 </div>
               )}
@@ -1149,7 +1139,7 @@ function Resultado({
               Leitura linha a linha
             </p>
             <h3 className="mt-1 font-['Fraunces'] text-2xl font-black text-[var(--ink)]">
-              Diagnóstico por parágrafo
+              Leitura por parágrafo
             </h3>
             <p className="mt-2 text-xs font-medium leading-relaxed text-[var(--ink-2)]">
               Cada apontamento abaixo está ligado a um trecho literal da sua redação.
@@ -1242,7 +1232,7 @@ function getLockedCompetencyTeaser(numero: number) {
 
   return (
     teasers[numero] ||
-    "Esta competência já foi analisada e possui um diagnóstico específico pronto para ser desbloqueado."
+    "Esta competência já foi analisada e possui uma leitura específica pronta para ser desbloqueada."
   );
 }
 

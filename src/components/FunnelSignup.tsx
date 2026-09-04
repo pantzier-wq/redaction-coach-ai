@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
 interface FunnelSignupProps {
-  answers: Record<string, string>;
   onComplete: () => void;
 }
 
@@ -26,19 +25,13 @@ function translateAuthError(message: string) {
   return "Não foi possível criar sua conta agora. Confira os dados e tente novamente.";
 }
 
-export function FunnelSignup({ answers, onComplete }: FunnelSignupProps) {
+export function FunnelSignup({ onComplete }: FunnelSignupProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmationSent, setConfirmationSent] = useState(false);
-
-  const hasNoEssays = answers.essays_written === "Nenhuma ainda";
-  const correctionGap =
-    answers.essays_corrected?.toLowerCase() === "nenhuma"
-      ? "nenhuma recebeu uma correção de verdade"
-      : "poucas receberam uma correção de verdade";
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -78,38 +71,20 @@ export function FunnelSignup({ answers, onComplete }: FunnelSignupProps) {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-3xl border border-[var(--line)] bg-[var(--paper-2)] p-5 shadow-sm md:p-7">
-        <div className="mb-4 flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.18em] text-[var(--red)] md:text-xs">
-          <span className="h-3 w-3 rounded-full bg-[var(--red)]" />
-          Diagnóstico personalizado
-        </div>
-        <p className="text-base font-medium leading-relaxed text-[var(--ink-2)] md:text-lg">
-          {hasNoEssays ? (
-            <>
-              Você ainda não escreveu uma redação para treinar. Sua primeira análise vai mostrar
-              exatamente por onde começar a evoluir.
-            </>
-          ) : (
-            <>
-              Você já escreveu{" "}
-              <strong className="text-[var(--ink)]">{answers.essays_written?.toLowerCase()}</strong>{" "}
-              redações, mas <strong className="text-[var(--ink)]">{correctionGap}</strong>. Sem um
-              diagnóstico claro, os mesmos erros podem continuar tirando pontos.
-            </>
-          )}
-        </p>
-      </div>
-
       <div className="rounded-3xl border border-[#24365F]/25 bg-[var(--paper)] p-5 shadow-[0_20px_50px_-28px_rgba(22,33,58,0.45)] md:p-8">
         <div className="mb-6 text-center">
+          <p className="mb-4 text-[10px] font-black uppercase tracking-[0.18em] text-[var(--red)]">
+            Sua redação já está pronta
+          </p>
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#16213A] text-white">
             <LockKeyhole className="h-5 w-5" />
           </div>
           <h2 className="font-['Fraunces'] text-2xl font-black italic text-[var(--ink)] md:text-3xl">
-            Salve seu diagnóstico
+            Falta só criar seu acesso
           </h2>
           <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-[var(--ink-2)] md:text-base">
-            Crie seu acesso para continuar daqui e enviar sua redação. Leva menos de um minuto.
+            Assim sua análise fica ligada à sua conta e você continua exatamente de onde parou. Os
+            dados da sua redação já estão preservados neste dispositivo.
           </p>
         </div>
 
@@ -176,7 +151,7 @@ export function FunnelSignup({ answers, onComplete }: FunnelSignupProps) {
           {confirmationSent && (
             <p className="rounded-xl border border-[#24365F]/25 bg-[#24365F]/5 p-4 text-sm font-bold leading-relaxed text-[#24365F]">
               Enviamos um link de confirmação para seu e-mail. Abra o link e você voltará para esta
-              etapa com seu diagnóstico salvo.
+              etapa com sua redação preservada.
             </p>
           )}
 
@@ -189,7 +164,7 @@ export function FunnelSignup({ answers, onComplete }: FunnelSignupProps) {
               ? "Criando seu acesso..."
               : confirmationSent
                 ? "Confira seu e-mail"
-                : "Criar conta e enviar redação"}
+                : "Criar conta e continuar"}
             {!loading && !confirmationSent && <ArrowRight className="ml-2 h-4 w-4" />}
           </button>
         </form>

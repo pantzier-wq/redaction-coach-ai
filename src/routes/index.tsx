@@ -1,17 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import type { Session } from "@supabase/supabase-js";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { Quiz } from "@/components/Quiz";
 import { supabase } from "@/integrations/supabase/client";
-import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
-import { FunnelSignup } from "@/components/FunnelSignup";
 import { captureCheckoutAttribution } from "@/lib/checkout";
-import alunoAvatar1 from "@/assets/aluno-avatar-1.png";
-import alunoAvatar2 from "@/assets/aluno-avatar-2.png";
-import alunoAvatar3 from "@/assets/aluno-avatar-3.png";
-import alunoAvatar4 from "@/assets/aluno-avatar-4.png";
-import alunoAvatar5 from "@/assets/aluno-avatar-5.png";
-import comparativoAntes from "@/assets/comparativo-antes-ia.png";
-import comparativoDepois from "@/assets/comparativo-depois-ia.png";
+import alunoAvatar1 from "@/assets/aluno-avatar-1.jpg";
+import alunoAvatar2 from "@/assets/aluno-avatar-2.jpg";
+import alunoAvatar3 from "@/assets/aluno-avatar-3.jpg";
+import alunoAvatar4 from "@/assets/aluno-avatar-4.jpg";
+import alunoAvatar5 from "@/assets/aluno-avatar-5.jpg";
+import comparativoAntes from "@/assets/comparativo-antes-ia.jpg";
+import comparativoDepois from "@/assets/comparativo-depois-ia.jpg";
 import {
   ArrowRight,
   CheckCircle2,
@@ -24,6 +23,16 @@ import {
   TrendingUp,
 } from "lucide-react";
 
+const QUIZ_ANALYSIS_DURATION_MS = 2600;
+const loadEssaySubmissionArea = () => import("@/components/EssaySubmissionArea");
+const loadFunnelSignup = () => import("@/components/FunnelSignup");
+const EssaySubmissionArea = lazy(() =>
+  loadEssaySubmissionArea().then((module) => ({ default: module.EssaySubmissionArea })),
+);
+const FunnelSignup = lazy(() =>
+  loadFunnelSignup().then((module) => ({ default: module.FunnelSignup })),
+);
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -31,7 +40,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Cole sua redação e receba uma correção completa nas 5 competências do ENEM com nota, diagnóstico e plano de melhoria.",
+          "Cole sua redação e receba uma correção completa nas 5 competências do ENEM com nota, análise e plano de melhoria.",
       },
       {
         property: "og:title",
@@ -50,11 +59,12 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [showQuiz, setShowQuiz] = useState(false);
   const [quizResult, setQuizResult] = useState<Record<string, string> | null>(null);
   const [isAnalyzingQuiz, setIsAnalyzingQuiz] = useState(false);
   const [showEssayForm, setShowEssayForm] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
 
   const daysUntilEnem = useMemo(() => {
     const examDate = new Date("2026-11-08T00:00:00");
@@ -76,6 +86,7 @@ function Landing() {
 
     setShowQuiz(false);
     setIsAnalyzingQuiz(false);
+    setShowSignup(false);
 
     const navigationEntry = performance.getEntriesByType("navigation")[0] as
       PerformanceNavigationTiming | undefined;
@@ -102,6 +113,7 @@ function Landing() {
         "quiz_answers",
         "pending_submission",
         "pending_essay_data",
+        "pending_essay_photo",
         "viewing_essay",
       ].forEach((key) => localStorage.removeItem(key));
       setQuizResult(null);
@@ -114,6 +126,8 @@ function Landing() {
   const startQuiz = () => {
     localStorage.removeItem("checkout_return_stage");
     localStorage.removeItem("funnel_auth_return");
+    void loadEssaySubmissionArea();
+    void loadFunnelSignup();
     setShowQuiz(true);
   };
 
@@ -131,8 +145,8 @@ function Landing() {
               setIsAnalyzingQuiz(false);
               window.setTimeout(() => {
                 document.getElementById("corrigir")?.scrollIntoView({ behavior: "smooth" });
-              }, 100);
-            }, 5600);
+              }, 50);
+            }, QUIZ_ANALYSIS_DURATION_MS);
           }}
         />
       )}
@@ -145,10 +159,10 @@ function Landing() {
               Analisando suas respostas
             </p>
             <h2 className="font-['Fraunces'] text-3xl font-black text-[var(--ink)]">
-              Montando seu diagnóstico personalizado...
+              Preparando seu ponto de partida...
             </h2>
             <div className="mx-auto mt-8 h-2 max-w-sm overflow-hidden rounded-full bg-[var(--line)]">
-              <div className="h-full w-full origin-left animate-[quiz-analysis_5.6s_linear] bg-[var(--red)]" />
+              <div className="h-full w-full origin-left animate-[quiz-analysis_2.6s_linear] bg-[var(--red)]" />
             </div>
             <p className="mt-4 text-sm font-medium text-[var(--ink-3)]">
               Cruzando seus hábitos de treino com as competências do ENEM.
@@ -209,7 +223,7 @@ function Landing() {
 
                   <p className="max-w-2xl text-lg font-medium leading-relaxed text-[var(--ink-2)] md:text-2xl">
                     Responda 6 perguntas rápidas, cole sua redação e veja sua nota real nas 5
-                    competências do ENEM com diagnóstico claro, direto e acionável.
+                    competências do ENEM com uma análise clara, direta e acionável.
                   </p>
                 </div>
 
@@ -245,6 +259,9 @@ function Landing() {
                           key={avatar.src}
                           src={avatar.src}
                           alt={`Estudante ${index + 1}`}
+                          width={40}
+                          height={40}
+                          decoding="async"
                           className="h-9 w-9 rounded-full border-2 border-[var(--paper)] object-cover shadow-sm transition-transform duration-300 hover:z-10 hover:-translate-y-1 sm:h-10 sm:w-10"
                           style={{ objectPosition: avatar.position }}
                         />
@@ -309,7 +326,7 @@ function Landing() {
             </div>
           </section>
 
-          <section className="px-4 py-8 md:px-6">
+          <section className="landing-deferred px-4 py-8 md:px-6">
             <div className="mx-auto grid max-w-6xl gap-5 md:grid-cols-3">
               <BenefitCard
                 icon={Target}
@@ -329,12 +346,16 @@ function Landing() {
             </div>
           </section>
 
-          <section className="px-4 py-10 md:px-6 md:py-14">
+          <section className="landing-deferred px-4 py-10 md:px-6 md:py-14">
             <div className="mx-auto grid max-w-5xl items-stretch gap-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-5">
               <div className="overflow-hidden rounded-[2rem] border-2 border-[var(--red)]/30 bg-[linear-gradient(145deg,var(--red-soft),rgba(255,255,255,0.92))] shadow-[0_20px_50px_-30px_rgba(196,50,42,0.5)]">
                 <img
                   src={comparativoAntes}
                   alt="Estudante sem direção durante o treino de redação"
+                  loading="lazy"
+                  decoding="async"
+                  width={1200}
+                  height={900}
                   className="aspect-[4/3] w-full object-cover"
                 />
                 <div className="p-6 md:p-8">
@@ -361,6 +382,10 @@ function Landing() {
                 <img
                   src={comparativoDepois}
                   alt="Estudante organizada durante o treino estratégico de redação"
+                  loading="lazy"
+                  decoding="async"
+                  width={1200}
+                  height={900}
                   className="aspect-[4/3] w-full object-cover"
                 />
                 <div className="p-6 md:p-8">
@@ -379,7 +404,7 @@ function Landing() {
             </div>
           </section>
 
-          <section className="px-4 py-6 md:px-6 md:py-10">
+          <section className="landing-deferred px-4 py-6 md:px-6 md:py-10">
             <div className="mx-auto max-w-6xl rounded-[2.5rem] border border-[var(--red)]/25 bg-[linear-gradient(135deg,rgba(251,237,235,0.92),rgba(255,255,255,0.96))] p-8 shadow-[0_28px_70px_-28px_rgba(196,50,42,0.35)] md:p-12">
               <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-center">
                 <div className="space-y-4">
@@ -390,9 +415,9 @@ function Landing() {
                     Quanto mais perto da prova, mais caro fica continuar treinando no escuro.
                   </h2>
                   <p className="max-w-3xl text-base font-medium leading-relaxed text-[var(--ink-2)]">
-                    Se a redação está segurando sua aprovação, comece pelo diagnóstico. Você
-                    descobre sua nota, entende a falha e entra na prova com muito mais clareza do
-                    que tem hoje.
+                    Se a redação está segurando sua aprovação, comece entendendo seu ponto de
+                    partida. Você descobre sua nota, entende a falha e entra na prova com muito mais
+                    clareza do que tem hoje.
                   </p>
                 </div>
 
@@ -401,14 +426,14 @@ function Landing() {
                   onClick={startQuiz}
                   className="group inline-flex items-center justify-center rounded-2xl bg-[#16213A] px-8 py-5 text-sm font-black uppercase tracking-[0.16em] text-white shadow-[0_18px_40px_-12px_rgba(22,33,58,0.48)] transition-all hover:scale-[1.02] hover:bg-[#24365F]"
                 >
-                  FAZER MEU DIAGNÓSTICO
+                  DESCOBRIR MEU PONTO DE PARTIDA
                   <ArrowRight className="ml-3 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </button>
               </div>
             </div>
           </section>
 
-          <section className="px-4 py-12 md:px-6 md:py-16">
+          <section className="landing-deferred px-4 py-12 md:px-6 md:py-16">
             <div className="mx-auto max-w-4xl">
               <div className="mb-8 text-center">
                 <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[var(--red)]">
@@ -422,7 +447,7 @@ function Landing() {
               <div className="space-y-4">
                 <FaqItem
                   question="A correção segue as 5 competências do ENEM?"
-                  answer="Sim. O foco do produto é mostrar nota total, nota por competência e um diagnóstico que faça sentido para quem treina redação no formato do ENEM."
+                  answer="Sim. O foco do produto é mostrar nota total, nota por competência e uma análise que faça sentido para quem treina redação no formato do ENEM."
                 />
                 <FaqItem
                   question="Preciso já escrever bem para usar?"
@@ -473,19 +498,142 @@ function Landing() {
 
       {quizResult && !isAnalyzingQuiz && (
         <section id="corrigir" className="corrige-soft-enter mx-auto max-w-4xl px-4 py-20">
-          {session ? (
-            <EssaySubmissionArea
-              isLoggedIn
-              isPro={false}
-              hideTheme
-              showEssayForm={showEssayForm}
-              onContinue={() => setShowEssayForm(true)}
-            />
-          ) : (
-            <FunnelSignup answers={quizResult} onComplete={() => setShowEssayForm(true)} />
-          )}
+          <Suspense fallback={<FlowLoading />}>
+            {!showEssayForm && (
+              <QuizStartingPoint
+                answers={quizResult}
+                onContinue={() => {
+                  setShowEssayForm(true);
+                  window.setTimeout(
+                    () =>
+                      document
+                        .getElementById("essay-stage")
+                        ?.scrollIntoView({ behavior: "smooth" }),
+                    50,
+                  );
+                }}
+              />
+            )}
+
+            {showEssayForm && !showSignup && (
+              <div id="essay-stage" className="corrige-soft-enter">
+                <EssaySubmissionArea
+                  isLoggedIn={!!session}
+                  isPro={false}
+                  hideTheme
+                  showEssayForm
+                  onRequireSignup={() => {
+                    setShowSignup(true);
+                    window.setTimeout(
+                      () =>
+                        document
+                          .getElementById("signup-stage")
+                          ?.scrollIntoView({ behavior: "smooth" }),
+                      50,
+                    );
+                  }}
+                />
+              </div>
+            )}
+
+            {showSignup && !session && (
+              <div id="signup-stage" className="corrige-soft-enter">
+                <FunnelSignup
+                  onComplete={() => {
+                    setShowSignup(false);
+                    setShowEssayForm(true);
+                  }}
+                />
+              </div>
+            )}
+          </Suspense>
         </section>
       )}
+    </div>
+  );
+}
+
+function FlowLoading() {
+  return (
+    <div className="rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-8 text-center text-sm font-bold text-[var(--ink-2)]">
+      Preparando a próxima etapa...
+    </div>
+  );
+}
+
+function QuizStartingPoint({
+  answers,
+  onContinue,
+}: {
+  answers: Record<string, string>;
+  onContinue: () => void;
+}) {
+  const hasPractice = answers.essays_written !== "Nenhuma ainda";
+  const hasLittleFeedback = ["Quase nenhuma", "Nenhuma"].includes(answers.essays_corrected || "");
+  const lacksClarity = answers.understand_grade !== "Sim, sempre me explicam";
+  const title = !hasPractice
+    ? "Sua evolução começa com uma primeira referência clara."
+    : hasLittleFeedback || lacksClarity
+      ? "Você treina. Agora falta transformar esforço em direção."
+      : "Você já tem prática. Agora é hora de encontrar os ajustes que elevam sua nota.";
+
+  return (
+    <div className="rounded-[2rem] border border-[var(--red)]/25 bg-[var(--paper)] p-5 shadow-[0_24px_70px_-30px_rgba(22,33,58,0.32)] md:p-8">
+      <div className="mb-5 inline-flex items-center gap-2 rounded-full bg-[var(--red-soft)] px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-[var(--red)]">
+        <Sparkles className="h-4 w-4" /> Seu ponto de partida
+      </div>
+
+      <h2 className="max-w-3xl font-['Fraunces'] text-2xl font-black leading-tight text-[var(--ink)] md:text-4xl">
+        {title}
+      </h2>
+      <p className="mt-4 max-w-3xl text-sm font-medium leading-relaxed text-[var(--ink-2)] md:text-base">
+        Pelas suas respostas, o próximo salto não depende apenas de escrever mais. Ele começa quando
+        você entende quais critérios já domina e quais ainda estão segurando sua pontuação.
+      </p>
+
+      <div className="mt-5 grid grid-cols-3 gap-2 md:mt-6 md:gap-3">
+        <StartingPointItem
+          label="Ritmo de treino"
+          value={answers.essays_written || "Não informado"}
+        />
+        <StartingPointItem
+          label="Correções recebidas"
+          value={answers.essays_corrected || "Não informado"}
+        />
+        <StartingPointItem
+          label="Evolução que você percebe"
+          value={answers.score_increase || "Ainda não estimada"}
+        />
+      </div>
+
+      <div className="mt-5 rounded-2xl border-l-4 border-[var(--red)] bg-[var(--red-soft)] p-3 md:mt-6 md:p-5">
+        <p className="text-sm font-bold leading-relaxed text-[var(--ink)] md:text-base">
+          O quiz revela seus hábitos. Sua redação mostra, nas cinco competências, onde está o
+          próximo avanço.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        onClick={onContinue}
+        className="mt-6 inline-flex min-h-14 w-full touch-manipulation items-center justify-center rounded-2xl bg-[#16213A] px-6 py-4 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_14px_30px_-14px_rgba(22,33,58,0.5)] transition-[transform,background-color] duration-150 hover:bg-[#24365F] active:scale-[0.98] md:w-auto md:px-8"
+      >
+        COLAR MINHA REDAÇÃO AGORA
+        <ArrowRight className="ml-2 h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
+function StartingPointItem({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0 rounded-2xl border border-[var(--line)] bg-[var(--paper-2)] p-3 md:p-4">
+      <p className="text-[8px] font-black uppercase leading-tight tracking-[0.12em] text-[var(--ink-3)] md:text-[9px] md:tracking-[0.16em]">
+        {label}
+      </p>
+      <p className="mt-2 break-words text-xs font-black leading-snug text-[var(--ink)] md:text-sm">
+        {value}
+      </p>
     </div>
   );
 }

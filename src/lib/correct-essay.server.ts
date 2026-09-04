@@ -361,7 +361,7 @@ export function buildLocalPreviewCorrection(input: { tema: string; redacao: stri
     titulo,
     nota: pickNote(baseScores[index] + Math.min(words.length / 3000, 0.08)),
     analise:
-      "A pre-analise identificou um ponto que merece revisao antes da versao final. A correcao completa apresenta o diagnostico especifico desta competencia.",
+      "A pre-analise identificou um ponto que merece revisao antes da versao final. A correcao completa apresenta a leitura especifica desta competencia.",
     evidencia: evidence,
     como_melhorar:
       "Revise este trecho e confirme se ele cumpre claramente a funcao esperada dentro da argumentacao.",

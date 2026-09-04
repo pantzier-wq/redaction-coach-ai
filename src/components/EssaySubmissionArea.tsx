@@ -133,8 +133,10 @@ export function EssaySubmissionArea({
   const [isPro, setIsPro] = useState(propIsPro || false);
   const [hasFullAccess, setHasFullAccess] = useState(false);
   const [credits, setCredits] = useState(0);
+  const [profileLoaded, setProfileLoaded] = useState(!isLoggedIn);
   const [photoLoading, setPhotoLoading] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
+  const essayFormRef = useRef<HTMLFormElement>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
   const [timeUntilExam, setTimeUntilExam] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const corrigir = useServerFn(corrigirRedacao);
@@ -153,6 +155,9 @@ export function EssaySubmissionArea({
       .catch((error) => {
         const message = error instanceof Error ? error.message : String(error || "");
         setPhotoError(getPhotoErrorMessage(message));
+        if (window.localStorage.getItem("resume_submission_after_auth") === "photo") {
+          window.localStorage.removeItem("resume_submission_after_auth");
+        }
       })
       .finally(() => setPhotoLoading(false));
   }, [isLoggedIn, transcreverFoto]);
@@ -190,22 +195,31 @@ export function EssaySubmissionArea({
 
   // Carrega plano/créditos do usuário logado
   useEffect(() => {
-    if (!isLoggedIn) return;
+    if (!isLoggedIn) {
+      setProfileLoaded(true);
+      return;
+    }
+
+    setProfileLoaded(false);
     let active = true;
-    (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("is_pro, has_full_access, credits")
-        .eq("id", user.id)
-        .single();
-      if (!active || !profile) return;
-      setIsPro(!!profile.is_pro);
-      setHasFullAccess(!!profile.has_full_access);
-      setCredits(profile.credits ?? 0);
+    void (async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("is_pro, has_full_access, credits")
+          .eq("id", user.id)
+          .single();
+        if (!active || !profile) return;
+        setIsPro(!!profile.is_pro);
+        setHasFullAccess(!!profile.has_full_access);
+        setCredits(profile.credits ?? 0);
+      } finally {
+        if (active) setProfileLoaded(true);
+      }
     })();
     return () => {
       active = false;
@@ -262,6 +276,31 @@ export function EssaySubmissionArea({
   const canCorrect = (hasFullAccess || isPro) && credits > 0;
   const semCreditos = (hasFullAccess || isPro) && credits <= 0;
 
+  // Retoma exatamente o envio interrompido pelo cadastro, já com plano e créditos carregados.
+  useEffect(() => {
+    if (
+      !isLoggedIn ||
+      !profileLoaded ||
+      photoLoading ||
+      redacao.trim().length < 200 ||
+      typeof window === "undefined"
+    ) {
+      return;
+    }
+
+    const resumeMode = window.localStorage.getItem("resume_submission_after_auth");
+    if (!resumeMode) return;
+
+    const timer = window.setTimeout(() => {
+      const form = essayFormRef.current;
+      if (!form) return;
+      window.localStorage.removeItem("resume_submission_after_auth");
+      form.requestSubmit();
+    }, 100);
+
+    return () => window.clearTimeout(timer);
+  }, [isLoggedIn, photoLoading, profileLoaded, redacao]);
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     const analysisStartedAt = Date.now();
@@ -283,6 +322,7 @@ export function EssaySubmissionArea({
         "pending_essay_data",
         JSON.stringify({ tema: effectiveTheme, redacao: redacao.trim() }),
       );
+      localStorage.setItem("resume_submission_after_auth", "text");
       onRequireSignup();
       return;
     }
@@ -433,6 +473,7 @@ export function EssaySubmissionArea({
       const imageDataUrl = await prepareEssayPhoto(file);
       if (!isLoggedIn && onRequireSignup) {
         window.localStorage.setItem("pending_essay_photo", imageDataUrl);
+        window.localStorage.setItem("resume_submission_after_auth", "photo");
         onRequireSignup();
         return;
       }
@@ -447,6 +488,9 @@ export function EssaySubmissionArea({
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error || "");
       setPhotoError(getPhotoErrorMessage(message));
+      if (window.localStorage.getItem("resume_submission_after_auth") === "photo") {
+        window.localStorage.removeItem("resume_submission_after_auth");
+      }
     } finally {
       setPhotoLoading(false);
       if (photoInputRef.current) photoInputRef.current.value = "";
@@ -622,6 +666,7 @@ export function EssaySubmissionArea({
               </>
             )}
             <form
+              ref={essayFormRef}
               onSubmit={onSubmit}
               className={`rounded-3xl border border-[var(--line)] bg-[var(--paper)] p-6 md:p-8 transition-all duration-500 overflow-hidden ${!showEssayForm || result ? "hidden" : ""} ${showOfferModal ? "blur-2xl opacity-20 pointer-events-none scale-95" : ""}`}
               style={{ boxShadow: "var(--paper-shadow)" }}

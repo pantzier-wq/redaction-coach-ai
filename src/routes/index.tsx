@@ -114,6 +114,7 @@ function Landing() {
         "pending_submission",
         "pending_essay_data",
         "pending_essay_photo",
+        "resume_submission_after_auth",
         "viewing_essay",
       ].forEach((key) => localStorage.removeItem(key));
       setQuizResult(null);

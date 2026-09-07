@@ -5,16 +5,22 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    mode: search.mode === "signup" ? ("signup" as const) : undefined,
+  }),
   component: AuthPage,
 });
 
 function AuthPage() {
+  const { mode } = Route.useSearch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<"login" | "forgot" | "reset">("login");
+  const [view, setView] = useState<"login" | "signup" | "forgot" | "reset">(
+    mode === "signup" ? "signup" : "login",
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,10 +42,8 @@ function AuthPage() {
         // A liberação de plano/créditos acontece exclusivamente pelo webhook de
         // pagamento no servidor. O frontend não tem (e não deve ter) esse poder.
         localStorage.removeItem("should_upgrade_after_auth");
-        const shouldReturnToFunnel =
-          localStorage.getItem("funnel_auth_return") === "1" &&
-          !!localStorage.getItem("quiz_answers");
-        navigate({ to: shouldReturnToFunnel ? "/" : "/dashboard" });
+        localStorage.removeItem("funnel_auth_return");
+        navigate({ to: "/dashboard" });
       }
     });
     return () => subscription.unsubscribe();
@@ -75,10 +79,29 @@ function AuthPage() {
     e.preventDefault();
     setError(null);
 
+    if (view === "signup" && password !== confirmPassword) {
+      setError("As senhas não são iguais. Confira e digite novamente.");
+      return;
+    }
+
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      if (view === "signup") {
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: `${window.location.origin}/auth` },
+        });
+        if (signUpError) throw signUpError;
+        if (!data.session) {
+          setError(
+            "✅ Conta criada. Confirme seu e-mail pelo link que enviamos para acessar a plataforma.",
+          );
+        }
+      } else {
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInError) throw signInError;
+      }
     } catch (err) {
       setError(traduzirErro(err instanceof Error ? err.message : ""));
     } finally {
@@ -148,9 +171,11 @@ function AuthPage() {
         <p className="text-center text-sm text-[var(--ink-2)] font-medium italic">
           {view === "login"
             ? "Entre para acessar sua área exclusiva"
-            : view === "forgot"
-              ? "Receba por e-mail o link para criar uma nova senha"
-              : "Crie e confirme sua nova senha"}
+            : view === "signup"
+              ? "Crie sua conta para conhecer a plataforma e escolher seu plano"
+              : view === "forgot"
+                ? "Receba por e-mail o link para criar uma nova senha"
+                : "Crie e confirme sua nova senha"}
         </p>
 
         <form
@@ -196,7 +221,7 @@ function AuthPage() {
                 />
               </div>
             )}
-            {view === "reset" && (
+            {(view === "signup" || view === "reset") && (
               <div>
                 <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--ink-3)] mb-2">
                   Confirme sua senha
@@ -246,6 +271,23 @@ function AuthPage() {
             </div>
           )}
 
+          {(view === "login" || view === "signup") && (
+            <button
+              type="button"
+              onClick={() => {
+                setView(view === "login" ? "signup" : "login");
+                setPassword("");
+                setConfirmPassword("");
+                setError(null);
+              }}
+              className="w-full text-center text-xs font-black text-[#24365F] underline decoration-[#24365F]/30 underline-offset-4 transition-colors hover:text-[var(--red)]"
+            >
+              {view === "login"
+                ? "Ainda não tem conta? Criar minha conta"
+                : "Já tenho conta? Entrar na minha conta"}
+            </button>
+          )}
+
           {view === "forgot" && (
             <button
               type="button"
@@ -281,9 +323,11 @@ function AuthPage() {
               ? "PROCESSANDO..."
               : view === "login"
                 ? "ENTRAR NO SISTEMA"
-                : view === "forgot"
-                  ? "ENVIAR LINK POR E-MAIL"
-                  : "SALVAR NOVA SENHA"}
+                : view === "signup"
+                  ? "CRIAR MINHA CONTA"
+                  : view === "forgot"
+                    ? "ENVIAR LINK POR E-MAIL"
+                    : "SALVAR NOVA SENHA"}
           </button>
         </form>
 

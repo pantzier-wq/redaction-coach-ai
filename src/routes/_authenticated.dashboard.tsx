@@ -103,6 +103,9 @@ function Dashboard() {
       }, []);
 
       setProfile(profRes.data);
+      if (!profRes.data?.is_pro && !profRes.data?.has_full_access) {
+        setActiveSection("upgrade");
+      }
       setEssays(uniqueEssays);
       setLoading(false);
     }
@@ -132,6 +135,8 @@ function Dashboard() {
     );
   }
 
+  const hasPaidAccess = !!profile?.is_pro || !!profile?.has_full_access;
+
   return (
     <div className="authenticated-shell min-h-screen bg-[var(--paper)] text-[var(--ink)] flex">
       <Sidebar
@@ -157,15 +162,21 @@ function Dashboard() {
                   ! ✍️
                 </h1>
                 <p className="text-lg md:text-xl text-[var(--ink-2)] max-w-xl mx-auto mb-10 font-medium">
-                  Pronto para a nota 1000 hoje? Cole seu texto abaixo para começar a correção.
+                  {hasPaidAccess
+                    ? "Pronto para a nota 1000 hoje? Cole seu texto abaixo para começar a correção."
+                    : "Escolha um plano para liberar suas correções e começar a treinar."}
                 </p>
 
                 <div className="max-w-3xl mx-auto">
-                  <EssaySubmissionArea
-                    isLoggedIn={true}
-                    isPro={!!profile?.is_pro}
-                    onSuccess={() => void refreshDashboardData()}
-                  />
+                  {hasPaidAccess ? (
+                    <EssaySubmissionArea
+                      isLoggedIn={true}
+                      isPro={!!profile?.is_pro}
+                      onSuccess={() => void refreshDashboardData()}
+                    />
+                  ) : (
+                    <PlanRequiredNotice onSeePlans={() => setActiveSection("upgrade")} />
+                  )}
                 </div>
               </div>
             </div>
@@ -182,11 +193,15 @@ function Dashboard() {
                   Nossa IA está pronta para analisar seu texto com rigor oficial.
                 </p>
               </div>
-              <EssaySubmissionArea
-                isLoggedIn={true}
-                isPro={!!profile?.is_pro}
-                onSuccess={() => void refreshDashboardData()}
-              />
+              {hasPaidAccess ? (
+                <EssaySubmissionArea
+                  isLoggedIn={true}
+                  isPro={!!profile?.is_pro}
+                  onSuccess={() => void refreshDashboardData()}
+                />
+              ) : (
+                <PlanRequiredNotice onSeePlans={() => setActiveSection("upgrade")} />
+              )}
             </div>
           )}
 
@@ -291,7 +306,7 @@ function Dashboard() {
                   <Sparkles className="w-16 h-16 text-[var(--red)] animate-pulse" />
                 </div>
                 <h2 className="font-['Fraunces'] text-4xl font-black mb-4 tracking-tight text-[var(--ink)] italic">
-                  Garanta seu Futuro 🚀
+                  Escolha como você quer treinar
                 </h2>
                 <p className="text-xl text-[var(--ink-2)] mb-8 leading-relaxed font-medium">
                   Escolha entre o Plano Essencial com +12 correções ou o Combo Nota 1000 com +25
@@ -651,6 +666,31 @@ function Dashboard() {
           )}
         </div>
       </main>
+    </div>
+  );
+}
+
+function PlanRequiredNotice({ onSeePlans }: { onSeePlans: () => void }) {
+  return (
+    <div className="rounded-3xl border border-[var(--red)]/25 bg-[linear-gradient(145deg,var(--red-soft),rgba(255,255,255,0.92))] p-6 text-center shadow-[0_22px_55px_-36px_rgba(196,50,42,0.55)] md:p-9">
+      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-[var(--red)] shadow-sm">
+        <CreditCard className="h-7 w-7" />
+      </span>
+      <h3 className="mt-5 font-['Fraunces'] text-3xl font-black text-[var(--ink)]">
+        Libere sua primeira correção
+      </h3>
+      <p className="mx-auto mt-3 max-w-lg text-base font-medium leading-relaxed text-[var(--ink-2)]">
+        Para enviar uma redação, primeiro escolha o plano que combina com seu ritmo de estudos. Seus
+        créditos ficam disponíveis na conta após a confirmação do pagamento.
+      </p>
+      <button
+        type="button"
+        onClick={onSeePlans}
+        className="group mt-6 inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-[#16213A] px-7 py-4 text-sm font-black uppercase tracking-[0.1em] text-white shadow-[0_16px_32px_-16px_rgba(22,33,58,0.65)] transition hover:-translate-y-0.5 hover:bg-[#24365F] sm:w-auto"
+      >
+        Ver planos e liberar correções
+        <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+      </button>
     </div>
   );
 }

@@ -66,7 +66,7 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
     },
     { 
       id: "upgrade", 
-      label: "Plano PRO", 
+      label: "Planos",
       icon: Sparkles,
       color: "text-[var(--red)]"
     },

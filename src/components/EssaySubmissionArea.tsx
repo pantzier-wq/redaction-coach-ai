@@ -20,6 +20,7 @@ import {
 import { goToCheckout, goToCreditsCheckout } from "@/lib/checkout";
 import { CouponUnlockedBanner } from "@/components/CouponUnlockedBanner";
 import { buildLocalPreview } from "@/lib/local-preview";
+import { sanitizePortugueseFeedback } from "@/lib/portuguese-feedback";
 
 interface EssaySubmissionAreaProps {
   isLoggedIn: boolean;
@@ -825,7 +826,7 @@ Portanto, medidas são necessárias para reverter esse cenário de exclusão. Ca
                   }}
                 >
                   <div className="mx-auto flex min-h-full w-full max-w-4xl items-start justify-center">
-                    <div className="corrige-soft-enter relative w-full max-w-lg rounded-3xl border border-[var(--red)]/30 bg-[var(--paper)] p-6 shadow-[var(--paper-shadow)] backdrop-blur-2xl md:max-w-4xl md:p-10">
+                    <div className="corrige-soft-enter w-full max-w-lg md:max-w-4xl rounded-3xl border border-[var(--red)]/30 bg-[var(--paper)] p-6 md:p-10 shadow-[var(--paper-shadow)] backdrop-blur-2xl relative">
                       <p className="text-sm md:text-base text-[var(--ink-2)] font-semibold mb-6 md:mb-8 leading-relaxed text-center">
                         {!isLoggedIn
                           ? "Desbloqueie sua estimativa de nota e a correção detalhada baseada nas cinco competências avaliadas no ENEM."
@@ -1112,7 +1113,7 @@ function Resultado({
             ? getLockedCompetencyTeaser(c.numero)
             : isPartialPreview
               ? "A análise da Competência 1 identificou pontos que merecem atenção na escrita formal. O detalhamento mostra como esse critério impacta sua nota e o que priorizar nos próximos treinos."
-              : c.analise;
+              : sanitizePortugueseFeedback(c.analise);
 
           return (
             <div
@@ -1134,7 +1135,7 @@ function Resultado({
                 </div>
               </div>
               <p className="mb-3 text-[11px] font-black uppercase tracking-[0.12em] text-[var(--ink)]">
-                {c.titulo}
+                {sanitizePortugueseFeedback(c.titulo)}
               </p>
               <p
                 className={`text-sm font-medium leading-relaxed text-[var(--ink-2)] ${showPaywall ? "line-clamp-4" : ""} ${isLockedPreview ? "select-none blur-[4px]" : ""}`}
@@ -1156,7 +1157,7 @@ function Resultado({
                       Como melhorar
                     </p>
                     <p className="mt-1 text-xs font-medium leading-relaxed text-[var(--ink-2)]">
-                      {c.como_melhorar || c.analise}
+                      {sanitizePortugueseFeedback(c.como_melhorar || c.analise)}
                     </p>
                   </div>
                 </div>
@@ -1206,12 +1207,14 @@ function Resultado({
                     <p className="text-[9px] font-black uppercase tracking-[0.15em] text-[var(--ink-3)]">
                       Função no projeto de texto
                     </p>
-                    <p className="text-sm font-black text-[var(--ink)]">{paragrafo.funcao}</p>
+                    <p className="text-sm font-black text-[var(--ink)]">
+                      {sanitizePortugueseFeedback(paragrafo.funcao)}
+                    </p>
                   </div>
                 </div>
 
                 <p className="mt-4 text-sm font-medium leading-relaxed text-[var(--ink-2)]">
-                  {paragrafo.diagnostico}
+                  {sanitizePortugueseFeedback(paragrafo.diagnostico)}
                 </p>
                 <blockquote className="mt-4 border-l-2 border-[var(--red)] pl-3 text-xs font-bold italic leading-relaxed text-[var(--ink)]">
                   “{paragrafo.evidencia}”
@@ -1221,7 +1224,7 @@ function Resultado({
                     Próximo ajuste
                   </p>
                   <p className="mt-1 text-xs font-medium leading-relaxed text-[var(--ink-2)]">
-                    {paragrafo.como_melhorar}
+                    {sanitizePortugueseFeedback(paragrafo.como_melhorar)}
                   </p>
                 </div>
               </article>
@@ -1242,7 +1245,7 @@ function Resultado({
                   key={i}
                   className="text-xs font-medium text-[var(--ink-2)] leading-tight flex gap-2"
                 >
-                  <span className="text-[var(--red)]">•</span> {item}
+                  <span className="text-[var(--red)]">•</span> {sanitizePortugueseFeedback(item)}
                 </li>
               ))}
             </ul>
@@ -1257,7 +1260,7 @@ function Resultado({
                   key={i}
                   className="text-xs font-medium text-[var(--ink-2)] leading-tight flex gap-2"
                 >
-                  <span className="text-[var(--red)]">•</span> {item}
+                  <span className="text-[var(--red)]">•</span> {sanitizePortugueseFeedback(item)}
                 </li>
               ))}
             </ul>

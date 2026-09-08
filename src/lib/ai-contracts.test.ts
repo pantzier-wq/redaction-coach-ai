@@ -1,8 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { repertories, findRepertoryCandidates } from "@/data/repertories";
 import { buildLocalPreview } from "@/lib/local-preview";
-import { CorrectionSchema } from "@/lib/correct-essay.server";
+import { applyScoreAudit, CorrectionSchema, ScoreAuditSchema } from "@/lib/correct-essay.server";
 import { normalizePaymentAmountToCents } from "@/lib/payment-validation";
+import {
+  containsUnexpectedWritingSystem,
+  sanitizePortugueseFeedback,
+} from "@/lib/portuguese-feedback";
 
 const essay = `A desigualdade educacional ainda afeta muitos estudantes brasileiros. Esse problema limita oportunidades e amplia diferencas sociais.
 
@@ -38,6 +42,93 @@ describe("contrato da correcao", () => {
     const invalid = buildLocalPreview("Desigualdade educacional", essay);
     invalid.competencias[0].nota = 150 as never;
     expect(() => CorrectionSchema.parse(invalid)).toThrow();
+  });
+});
+
+describe("idioma do feedback", () => {
+  it("substitui o artefato em arabe observado na correcao", () => {
+    const feedback = "Defina os meios de التنفيذ e especifique as medidas.";
+    const sanitized = sanitizePortugueseFeedback(feedback);
+
+    expect(sanitized).toBe("Defina os meios de execução e especifique as medidas.");
+    expect(containsUnexpectedWritingSystem(sanitized)).toBe(false);
+  });
+
+  it("remove outros alfabetos inesperados do feedback", () => {
+    const sanitized = sanitizePortugueseFeedback("Explique a ação 漢字 com mais clareza.");
+
+    expect(sanitized).toBe("Explique a ação com mais clareza.");
+    expect(containsUnexpectedWritingSystem(sanitized)).toBe(false);
+  });
+});
+
+describe("travas da cartilha do ENEM 2025", () => {
+  function correctionAtMaximum() {
+    const correction = buildLocalPreview("Desigualdade educacional", essay);
+    correction.competencias.forEach((competencia) => {
+      competencia.nota = 200;
+    });
+    correction.nota_total = 1000;
+    return correction;
+  }
+
+  function audit(overrides: Partial<ReturnType<typeof ScoreAuditSchema.parse>> = {}) {
+    return ScoreAuditSchema.parse({
+      situacao_tema: "integral",
+      tipo_textual: "dissertativo_argumentativo",
+      repertorio_c2: "produtivo",
+      intervencao: {
+        acao: true,
+        agente: true,
+        meio_modo: true,
+        efeito_finalidade: true,
+        detalhamento: true,
+        respeita_direitos_humanos: true,
+      },
+      competencias: [1, 2, 3, 4, 5].map((numero) => ({
+        numero,
+        nota: 200,
+        justificativa: "O descritor foi conferido diretamente no texto apresentado pelo aluno.",
+      })),
+      parecer_geral: "A segunda avaliação aplicou as faixas oficiais de forma independente.",
+      ...overrides,
+    });
+  }
+
+  it("limita C2, C3 e C5 a 40 quando ha tangenciamento", () => {
+    const result = applyScoreAudit(
+      correctionAtMaximum(),
+      audit({ situacao_tema: "tangenciamento" }),
+    );
+
+    expect(result.competencias.map((item) => item.nota)).toEqual([200, 40, 40, 200, 40]);
+  });
+
+  it("impede 200 na C2 sem repertorio produtivo e limita C5 pelos elementos explicitos", () => {
+    const result = applyScoreAudit(
+      correctionAtMaximum(),
+      audit({
+        repertorio_c2: "pertinente_nao_produtivo",
+        intervencao: {
+          acao: true,
+          agente: true,
+          meio_modo: true,
+          efeito_finalidade: false,
+          detalhamento: false,
+          respeita_direitos_humanos: true,
+        },
+      }),
+    );
+
+    expect(result.competencias[1].nota).toBe(160);
+    expect(result.competencias[4].nota).toBe(120);
+  });
+
+  it("zera todas as competencias em caso de fuga total", () => {
+    const result = applyScoreAudit(correctionAtMaximum(), audit({ situacao_tema: "fuga_total" }));
+
+    expect(result.nota_total).toBe(0);
+    expect(result.competencias.every((item) => item.nota === 0)).toBe(true);
   });
 });
 

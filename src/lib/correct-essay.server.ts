@@ -588,21 +588,34 @@ export async function correctEssayWithAi(input: z.infer<typeof essayInputSchema>
     providerOptions: { openai: { reasoningEffort: "low", textVerbosity: "low", store: false } },
   });
   const initialCorrection = normalizeCorrection(response.output, input.redacao);
-  const auditResponse = await generateText({
-    model: getOpenAI()(CORRECTION_MODEL),
-    output: Output.object({ schema: ScoreAuditSchema, name: "enem_score_audit" }),
-    system: ENEM_SCORE_AUDITOR_PROMPT,
-    prompt: `TEMA:\n${input.tema}\n\nREDACAO DO ALUNO:\n${input.redacao}\n\nFaca uma segunda avaliacao independente e preencha todos os controles da rubrica.`,
-    maxOutputTokens: 1200,
-    maxRetries: 1,
-    timeout: 35_000,
-    providerOptions: { openai: { reasoningEffort: "medium", textVerbosity: "low", store: false } },
-  });
-  return {
-    data: applyScoreAudit(initialCorrection, auditResponse.output),
-    usage: mergeUsage(response.usage, auditResponse.usage),
-    latencyMs: Date.now() - startedAt,
-  };
+  try {
+    const auditResponse = await generateText({
+      model: getOpenAI()(CORRECTION_MODEL),
+      output: Output.object({ schema: ScoreAuditSchema, name: "enem_score_audit" }),
+      system: ENEM_SCORE_AUDITOR_PROMPT,
+      prompt: `TEMA:\n${input.tema}\n\nREDACAO DO ALUNO:\n${input.redacao}\n\nFaca uma segunda avaliacao independente e preencha todos os controles da rubrica.`,
+      maxOutputTokens: 2200,
+      maxRetries: 1,
+      timeout: 35_000,
+      providerOptions: { openai: { reasoningEffort: "low", textVerbosity: "low", store: false } },
+    });
+    return {
+      data: applyScoreAudit(initialCorrection, auditResponse.output),
+      usage: mergeUsage(response.usage, auditResponse.usage),
+      latencyMs: Date.now() - startedAt,
+    };
+  } catch (auditError) {
+    // A segunda leitura melhora a precisão, mas nunca deve apagar uma correção principal válida.
+    console.warn(
+      "Auditoria secundária indisponível; mantendo a correção principal validada:",
+      auditError instanceof Error ? auditError.message : String(auditError),
+    );
+    return {
+      data: initialCorrection,
+      usage: response.usage,
+      latencyMs: Date.now() - startedAt,
+    };
+  }
 }
 
 export async function transcribeEssayPhotoWithAi(

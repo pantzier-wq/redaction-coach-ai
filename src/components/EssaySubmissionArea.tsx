@@ -725,49 +725,47 @@ export function EssaySubmissionArea({
               >
                 Cole sua redação aqui
               </label>
-              {hideTheme && (
-                <div className="mb-4 rounded-2xl border border-[#24365F]/15 bg-[#EEF2F8] p-4">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                      <p className="text-sm font-black text-[var(--ink)]">
-                        Sua redação está no caderno?
-                      </p>
-                      <p className="mt-1 text-xs font-medium leading-relaxed text-[var(--ink-2)]">
-                        Fotografe a página e nós colocamos o texto aqui para você revisar.
-                      </p>
-                      <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--ink-3)]">
-                        A imagem não é salva no histórico
-                      </p>
-                    </div>
-                    <input
-                      ref={photoInputRef}
-                      type="file"
-                      accept="image/*"
-                      capture="environment"
-                      className="sr-only"
-                      onChange={(event) => void handleEssayPhoto(event.target.files?.[0])}
-                    />
-                    <button
-                      type="button"
-                      disabled={photoLoading}
-                      onClick={() => photoInputRef.current?.click()}
-                      className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#24365F] px-4 py-3 text-xs font-black uppercase tracking-[0.1em] text-white transition-all hover:bg-[#16213A] disabled:cursor-wait disabled:opacity-70"
-                    >
-                      {photoLoading ? (
-                        <LoaderCircle className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Camera className="h-4 w-4" />
-                      )}
-                      {photoLoading ? "Lendo a foto..." : "Fotografar redação"}
-                    </button>
-                  </div>
-                  {photoError && (
-                    <p className="mt-3 rounded-xl border border-[var(--red)]/20 bg-[var(--red-soft)] px-3 py-2 text-xs font-bold leading-relaxed text-[var(--red)]">
-                      {photoError}
+              <div className="mb-4 rounded-2xl border border-[#24365F]/15 bg-[#EEF2F8] p-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-black text-[var(--ink)]">
+                      Sua redação está no caderno?
                     </p>
-                  )}
+                    <p className="mt-1 text-xs font-medium leading-relaxed text-[var(--ink-2)]">
+                      Fotografe a página e nós colocamos o texto aqui para você revisar.
+                    </p>
+                    <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--ink-3)]">
+                      A imagem não é salva no histórico
+                    </p>
+                  </div>
+                  <input
+                    ref={photoInputRef}
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    className="sr-only"
+                    onChange={(event) => void handleEssayPhoto(event.target.files?.[0])}
+                  />
+                  <button
+                    type="button"
+                    disabled={photoLoading}
+                    onClick={() => photoInputRef.current?.click()}
+                    className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-[#24365F] px-4 py-3 text-xs font-black uppercase tracking-[0.1em] text-white transition-all hover:bg-[#16213A] disabled:cursor-wait disabled:opacity-70"
+                  >
+                    {photoLoading ? (
+                      <LoaderCircle className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Camera className="h-4 w-4" />
+                    )}
+                    {photoLoading ? "Lendo a foto..." : "Fotografar redação"}
+                  </button>
                 </div>
-              )}
+                {photoError && (
+                  <p className="mt-3 rounded-xl border border-[var(--red)]/20 bg-[var(--red-soft)] px-3 py-2 text-xs font-bold leading-relaxed text-[var(--red)]">
+                    {photoError}
+                  </p>
+                )}
+              </div>
               <textarea
                 id="essay-textarea"
                 value={redacao}

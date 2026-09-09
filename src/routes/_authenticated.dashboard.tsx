@@ -12,13 +12,13 @@ import { goToCheckout, goToCreditsCheckout } from "@/lib/checkout";
 import { CouponUnlockedBanner } from "@/components/CouponUnlockedBanner";
 import { repertories as repertoryLibrary } from "@/data/repertories";
 import { buildEssayProgress } from "@/lib/essay-progress";
+import { hasEssayCredit } from "@/lib/correction-access";
 
 import {
   History,
   Star,
   BookOpen,
   Zap,
-  CreditCard,
   Trophy,
   Sparkles,
   ArrowRight,
@@ -103,9 +103,6 @@ function Dashboard() {
       }, []);
 
       setProfile(profRes.data);
-      if (!profRes.data?.is_pro && !profRes.data?.has_full_access) {
-        setActiveSection("upgrade");
-      }
       setEssays(uniqueEssays);
       setLoading(false);
     }
@@ -135,7 +132,7 @@ function Dashboard() {
     );
   }
 
-  const hasPaidAccess = !!profile?.is_pro || !!profile?.has_full_access;
+  const hasCorrectionCredit = hasEssayCredit(profile?.credits);
 
   return (
     <div className="authenticated-shell min-h-screen bg-[var(--paper)] text-[var(--ink)] flex">
@@ -162,21 +159,20 @@ function Dashboard() {
                   ! ✍️
                 </h1>
                 <p className="text-lg md:text-xl text-[var(--ink-2)] max-w-xl mx-auto mb-10 font-medium">
-                  {hasPaidAccess
-                    ? "Pronto para a nota 1000 hoje? Cole seu texto abaixo para começar a correção."
-                    : "Escolha um plano para liberar suas correções e começar a treinar."}
+                  {!profile?.is_pro && !profile?.has_full_access && hasCorrectionCredit
+                    ? "Sua primeira correção é gratuita. Cole seu texto abaixo para começar."
+                    : hasCorrectionCredit
+                      ? "Pronto para a nota 1000 hoje? Cole seu texto abaixo para começar a correção."
+                      : "Escolha um plano para liberar novas correções e continuar treinando."}
                 </p>
 
                 <div className="max-w-3xl mx-auto">
-                  {hasPaidAccess ? (
-                    <EssaySubmissionArea
-                      isLoggedIn={true}
-                      isPro={!!profile?.is_pro}
-                      onSuccess={() => void refreshDashboardData()}
-                    />
-                  ) : (
-                    <PlanRequiredNotice onSeePlans={() => setActiveSection("upgrade")} />
-                  )}
+                  <EssaySubmissionArea
+                    isLoggedIn={true}
+                    isPro={!!profile?.is_pro}
+                    onSuccess={() => void refreshDashboardData()}
+                    onSeePlans={() => setActiveSection("upgrade")}
+                  />
                 </div>
               </div>
             </div>
@@ -193,15 +189,12 @@ function Dashboard() {
                   Nossa IA está pronta para analisar seu texto com rigor oficial.
                 </p>
               </div>
-              {hasPaidAccess ? (
-                <EssaySubmissionArea
-                  isLoggedIn={true}
-                  isPro={!!profile?.is_pro}
-                  onSuccess={() => void refreshDashboardData()}
-                />
-              ) : (
-                <PlanRequiredNotice onSeePlans={() => setActiveSection("upgrade")} />
-              )}
+              <EssaySubmissionArea
+                isLoggedIn={true}
+                isPro={!!profile?.is_pro}
+                onSuccess={() => void refreshDashboardData()}
+                onSeePlans={() => setActiveSection("upgrade")}
+              />
             </div>
           )}
 
@@ -666,31 +659,6 @@ function Dashboard() {
           )}
         </div>
       </main>
-    </div>
-  );
-}
-
-function PlanRequiredNotice({ onSeePlans }: { onSeePlans: () => void }) {
-  return (
-    <div className="rounded-3xl border border-[var(--red)]/25 bg-[linear-gradient(145deg,var(--red-soft),rgba(255,255,255,0.92))] p-6 text-center shadow-[0_22px_55px_-36px_rgba(196,50,42,0.55)] md:p-9">
-      <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-[var(--red)] shadow-sm">
-        <CreditCard className="h-7 w-7" />
-      </span>
-      <h3 className="mt-5 font-['Fraunces'] text-3xl font-black text-[var(--ink)]">
-        Libere sua primeira correção
-      </h3>
-      <p className="mx-auto mt-3 max-w-lg text-base font-medium leading-relaxed text-[var(--ink-2)]">
-        Para enviar uma redação, primeiro escolha o plano que combina com seu ritmo de estudos. Seus
-        créditos ficam disponíveis na conta após a confirmação do pagamento.
-      </p>
-      <button
-        type="button"
-        onClick={onSeePlans}
-        className="group mt-6 inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-[#16213A] px-7 py-4 text-sm font-black uppercase tracking-[0.1em] text-white shadow-[0_16px_32px_-16px_rgba(22,33,58,0.65)] transition hover:-translate-y-0.5 hover:bg-[#24365F] sm:w-auto"
-      >
-        Ver planos e liberar correções
-        <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-      </button>
     </div>
   );
 }

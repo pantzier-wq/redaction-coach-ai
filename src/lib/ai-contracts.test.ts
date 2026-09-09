@@ -7,12 +7,21 @@ import {
   containsUnexpectedWritingSystem,
   sanitizePortugueseFeedback,
 } from "@/lib/portuguese-feedback";
+import { hasEssayCredit } from "@/lib/correction-access";
 
 const essay = `A desigualdade educacional ainda afeta muitos estudantes brasileiros. Esse problema limita oportunidades e amplia diferencas sociais.
 
 Além disso, a falta de infraestrutura dificulta o aprendizado. Escolas sem recursos não conseguem garantir condições adequadas.
 
 Portanto, o Estado deve criar programas de investimento e fiscalização, a fim de ampliar o acesso a uma educação de qualidade.`;
+
+describe("acesso à correção", () => {
+  it("libera a correção gratuita somente enquanto há saldo", () => {
+    expect(hasEssayCredit(1)).toBe(true);
+    expect(hasEssayCredit(0)).toBe(false);
+    expect(hasEssayCredit(null)).toBe(false);
+  });
+});
 
 describe("biblioteca de repertorios", () => {
   it("entrega pelo menos 70 referencias com ids unicos", () => {

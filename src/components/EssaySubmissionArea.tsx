@@ -21,6 +21,7 @@ import { goToCheckout, goToCreditsCheckout } from "@/lib/checkout";
 import { CouponUnlockedBanner } from "@/components/CouponUnlockedBanner";
 import { buildLocalPreview } from "@/lib/local-preview";
 import { sanitizePortugueseFeedback } from "@/lib/portuguese-feedback";
+import { hasEssayCredit } from "@/lib/correction-access";
 
 interface EssaySubmissionAreaProps {
   isLoggedIn: boolean;
@@ -29,6 +30,7 @@ interface EssaySubmissionAreaProps {
   showEssayForm?: boolean;
   onContinue?: () => void;
   onRequireSignup?: () => void;
+  onSeePlans?: () => void;
   hideTheme?: boolean;
 }
 
@@ -121,6 +123,7 @@ export function EssaySubmissionArea({
   showEssayForm = true,
   onContinue,
   onRequireSignup,
+  onSeePlans,
   hideTheme = false,
 }: EssaySubmissionAreaProps) {
   const [tema, setTema] = useState("");
@@ -274,9 +277,9 @@ export function EssaySubmissionArea({
   }, [isLoggedIn]);
 
   const charCount = redacao.trim().length;
-  // Ambos os planos consomem créditos; o Combo mantém acesso às ferramentas extras.
-  const canCorrect = (hasFullAccess || isPro) && credits > 0;
-  const semCreditos = (hasFullAccess || isPro) && credits <= 0;
+  // O primeiro crédito é gratuito; os demais são liberados pelos planos e recargas.
+  const canCorrect = hasEssayCredit(credits);
+  const semCreditos = isLoggedIn && credits <= 0;
 
   // Retoma exatamente o envio interrompido pelo cadastro, já com plano e créditos carregados.
   useEffect(() => {
@@ -497,6 +500,34 @@ export function EssaySubmissionArea({
       setPhotoLoading(false);
       if (photoInputRef.current) photoInputRef.current.value = "";
     }
+  }
+
+  if (isLoggedIn && profileLoaded && credits <= 0 && !result && !loading) {
+    return (
+      <div className="rounded-3xl border border-[var(--red)]/25 bg-[linear-gradient(145deg,var(--red-soft),rgba(255,255,255,0.92))] p-6 text-center shadow-[0_22px_55px_-36px_rgba(196,50,42,0.55)] md:p-9">
+        <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-[var(--red)] shadow-sm">
+          <LockKeyhole className="h-7 w-7" />
+        </span>
+        <h3 className="mt-5 font-['Fraunces'] text-3xl font-black text-[var(--ink)]">
+          {isPro || hasFullAccess
+            ? "Seus créditos de correção acabaram"
+            : "Sua correção gratuita foi utilizada"}
+        </h3>
+        <p className="mx-auto mt-3 max-w-lg text-base font-medium leading-relaxed text-[var(--ink-2)]">
+          {isPro || hasFullAccess
+            ? "Adquira mais créditos para continuar seus treinos e acompanhar sua evolução até o ENEM."
+            : "Escolha um plano para liberar novas correções, continuar seus treinos e acompanhar sua evolução até o ENEM."}
+        </p>
+        <button
+          type="button"
+          onClick={onSeePlans}
+          className="group mt-6 inline-flex min-h-14 w-full items-center justify-center rounded-2xl bg-[#16213A] px-7 py-4 text-sm font-black uppercase tracking-[0.1em] text-white shadow-[0_16px_32px_-16px_rgba(22,33,58,0.65)] transition hover:-translate-y-0.5 hover:bg-[#24365F] sm:w-auto"
+        >
+          Ver planos e liberar correções
+          <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+        </button>
+      </div>
+    );
   }
 
   return (

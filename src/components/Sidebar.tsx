@@ -111,7 +111,13 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
             <div className="min-w-0">
               <p className="text-xs font-black truncate text-[var(--ink)]">{profile?.full_name?.split(' ')[0] || 'Estudante'}</p>
               <p className="text-[10px] text-[var(--red)] font-black uppercase tracking-widest">
-                {profile?.has_full_access ? "PRO COMPLETO" : profile?.is_pro ? "PRO BÁSICO" : "VIP FREE"}
+                {profile?.has_full_access
+                  ? "PRO COMPLETO"
+                  : profile?.is_pro
+                    ? "PRO BÁSICO"
+                    : (profile?.credits ?? 0) > 0
+                      ? "1 CORREÇÃO GRÁTIS"
+                      : "CONTA GRATUITA"}
               </p>
             </div>
           </div>

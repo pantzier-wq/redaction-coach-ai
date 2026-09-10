@@ -8,6 +8,11 @@ import {
   sanitizePortugueseFeedback,
 } from "@/lib/portuguese-feedback";
 import { hasEssayCredit } from "@/lib/correction-access";
+import {
+  completeOnboarding,
+  markOnboardingPending,
+  shouldStartOnboarding,
+} from "@/lib/onboarding-tour";
 
 const essay = `A desigualdade educacional ainda afeta muitos estudantes brasileiros. Esse problema limita oportunidades e amplia diferencas sociais.
 
@@ -20,6 +25,28 @@ describe("acesso à correção", () => {
     expect(hasEssayCredit(1)).toBe(true);
     expect(hasEssayCredit(0)).toBe(false);
     expect(hasEssayCredit(null)).toBe(false);
+  });
+});
+
+describe("tutorial de primeira entrada", () => {
+  function createStorage() {
+    const values = new Map<string, string>();
+    return {
+      getItem: (key: string) => values.get(key) ?? null,
+      setItem: (key: string, value: string) => values.set(key, value),
+      removeItem: (key: string) => values.delete(key),
+    };
+  }
+
+  it("abre somente para a conta recém-criada e não reaparece após concluir", () => {
+    const storage = createStorage();
+    markOnboardingPending(storage, "aluno-novo");
+
+    expect(shouldStartOnboarding(storage, "aluno-novo")).toBe(true);
+    expect(shouldStartOnboarding(storage, "outra-conta")).toBe(false);
+
+    completeOnboarding(storage, "aluno-novo");
+    expect(shouldStartOnboarding(storage, "aluno-novo")).toBe(false);
   });
 });
 

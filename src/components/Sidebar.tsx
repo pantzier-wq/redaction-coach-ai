@@ -1,18 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { 
-  LayoutDashboard, 
-  PenTool, 
-  History, 
-  Sparkles, 
-  BookOpen, 
-  Zap, 
-  Menu, 
+import {
+  LayoutDashboard,
+  PenTool,
+  History,
+  Sparkles,
+  BookOpen,
+  Zap,
+  Menu,
   X,
   LogOut,
   User,
   TrendingUp,
-  MessageCircle
+  MessageCircle,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -22,53 +22,64 @@ interface SidebarProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
   onLogout: () => void;
+  tourOpen?: boolean;
 }
 
-export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: SidebarProps) {
+export function Sidebar({
+  profile,
+  activeSection,
+  setActiveSection,
+  onLogout,
+  tourOpen,
+}: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
+  useEffect(() => {
+    if (tourOpen !== undefined) setIsOpen(tourOpen);
+  }, [tourOpen]);
+
   const menuItems = [
-    { 
-      id: "dashboard", 
-      label: "Início", 
+    {
+      id: "dashboard",
+      label: "Início",
       icon: LayoutDashboard,
-      color: "text-[var(--red)]"
+      color: "text-[var(--red)]",
     },
-    { 
-      id: "correcao", 
-      label: "Nova Correção", 
+    {
+      id: "correcao",
+      label: "Nova Correção",
       icon: PenTool,
-      color: "text-[#24365F]"
+      color: "text-[#24365F]",
     },
-    { 
-      id: "historico", 
-      label: "Minhas Redações", 
+    {
+      id: "historico",
+      label: "Minhas Redações",
       icon: History,
-      color: "text-[var(--red)]"
+      color: "text-[var(--red)]",
     },
-    { 
-      id: "progresso", 
-      label: "Meu Progresso", 
+    {
+      id: "progresso",
+      label: "Meu Progresso",
       icon: TrendingUp,
-      color: "text-[#24365F]"
+      color: "text-[#24365F]",
     },
-    { 
-      id: "repertorios", 
-      label: "Biblioteca de Repertórios", 
+    {
+      id: "repertorios",
+      label: "Biblioteca de Repertórios",
       icon: BookOpen,
-      color: "text-[var(--red)]"
+      color: "text-[var(--red)]",
     },
-    { 
-      id: "conectivos", 
-      label: "Biblioteca de Conectivos", 
+    {
+      id: "conectivos",
+      label: "Biblioteca de Conectivos",
       icon: Zap,
-      color: "text-[#24365F]"
+      color: "text-[#24365F]",
     },
-    { 
-      id: "upgrade", 
+    {
+      id: "upgrade",
       label: "Planos",
       icon: Sparkles,
-      color: "text-[var(--red)]"
+      color: "text-[var(--red)]",
     },
   ];
 
@@ -77,26 +88,32 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
   return (
     <>
       {/* Mobile Toggle */}
-      <button 
+      <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed top-6 left-6 z-[60] md:hidden p-3 bg-[var(--paper)]/90 backdrop-blur-md border border-[var(--line)] rounded-2xl shadow-xl hover:bg-[var(--paper-2)] transition-all active:scale-95 group"
       >
-        {isOpen ? <X className="h-6 w-6 text-[#24365F]" /> : <Menu className="h-6 w-6 text-[#24365F] transition-transform group-hover:scale-110" />}
+        {isOpen ? (
+          <X className="h-6 w-6 text-[#24365F]" />
+        ) : (
+          <Menu className="h-6 w-6 text-[#24365F] transition-transform group-hover:scale-110" />
+        )}
       </button>
 
       {/* Overlay for mobile */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-[var(--paper)]/80 backdrop-blur-sm z-[50] md:hidden"
           onClick={closeSidebar}
         />
       )}
 
       {/* Sidebar Container */}
-      <aside className={cn(
-        "fixed top-0 left-0 z-[55] h-screen w-64 bg-[var(--paper)] border-r border-[var(--line)] transition-transform duration-300 md:translate-x-0 flex flex-col shadow-sm",
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      )}>
+      <aside
+        className={cn(
+          "fixed top-0 left-0 z-[55] h-screen w-64 bg-[var(--paper)] border-r border-[var(--line)] transition-transform duration-300 md:translate-x-0 flex flex-col shadow-sm",
+          isOpen ? "translate-x-0" : "-translate-x-full",
+        )}
+      >
         {/* Logo Section */}
         <div className="p-6 border-b border-[var(--line)]">
           <Link to="/" className="flex items-center gap-2" onClick={closeSidebar}>
@@ -104,12 +121,17 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
               CORRIGE<span className="text-[var(--red)]">AI</span>
             </span>
           </Link>
-          <div className="mt-4 flex items-center gap-3 p-3 rounded-xl bg-[var(--paper-2)] border border-[var(--line)] shadow-inner">
+          <div
+            data-tour="profile"
+            className="mt-4 flex items-center gap-3 p-3 rounded-xl bg-[var(--paper-2)] border border-[var(--line)] shadow-inner"
+          >
             <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#24365F]/20 bg-[#EEF2F8] font-bold text-[#24365F]">
               <User className="w-4 h-4" />
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-black truncate text-[var(--ink)]">{profile?.full_name?.split(' ')[0] || 'Estudante'}</p>
+              <p className="text-xs font-black truncate text-[var(--ink)]">
+                {profile?.full_name?.split(" ")[0] || "Estudante"}
+              </p>
               <p className="text-[10px] text-[var(--red)] font-black uppercase tracking-widest">
                 {profile?.has_full_access
                   ? "PRO COMPLETO"
@@ -128,6 +150,7 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
           {menuItems.map((item) => (
             <button
               key={item.id}
+              data-tour={item.id}
               onClick={() => {
                 // Histórico detalhado continua restrito; bibliotecas têm prévia liberada
                 if ((item.id === "historico" || item.id === "progresso") && !profile?.is_pro) {
@@ -140,9 +163,9 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
 
               className={cn(
                 "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all group",
-                activeSection === item.id 
-                  ? "border border-[#24365F]/15 bg-[#EEF2F8] text-[var(--ink)] shadow-sm" 
-                  : "text-[var(--ink-3)] hover:bg-[var(--paper-2)] hover:text-[var(--ink)] border border-transparent"
+                activeSection === item.id
+                  ? "border border-[#24365F]/15 bg-[#EEF2F8] text-[var(--ink)] shadow-sm"
+                  : "text-[var(--ink-3)] hover:bg-[var(--paper-2)] hover:text-[var(--ink)] border border-transparent",
               )}
             >
               <item.icon className={cn("h-5 w-5 shrink-0", item.color)} />
@@ -153,7 +176,7 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
 
         {/* Footer Section */}
         <div className="p-4 border-t border-[var(--line)] space-y-2">
-          <a 
+          <a
             href="https://wa.me/5548996736743"
             target="_blank"
             rel="noopener noreferrer"
@@ -162,7 +185,7 @@ export function Sidebar({ profile, activeSection, setActiveSection, onLogout }: 
             <MessageCircle className="h-5 w-5 fill-[#24365F]/10" />
             Suporte WhatsApp
           </a>
-          <button 
+          <button
             onClick={onLogout}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-black text-[var(--red)] hover:bg-[var(--red)]/5 transition-colors"
           >

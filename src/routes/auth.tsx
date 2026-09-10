@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { clearOnboardingPending, markOnboardingPending } from "@/lib/onboarding-tour";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -87,12 +88,14 @@ function AuthPage() {
     setLoading(true);
     try {
       if (view === "signup") {
+        markOnboardingPending(window.localStorage);
         const { data, error: signUpError } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: `${window.location.origin}/auth` },
         });
         if (signUpError) throw signUpError;
+        markOnboardingPending(window.localStorage, data.user?.id);
         if (!data.session) {
           setError(
             "✅ Conta criada. Confirme seu e-mail pelo link que enviamos para acessar a plataforma.",
@@ -103,6 +106,7 @@ function AuthPage() {
         if (signInError) throw signInError;
       }
     } catch (err) {
+      if (view === "signup") clearOnboardingPending(window.localStorage);
       setError(traduzirErro(err instanceof Error ? err.message : ""));
     } finally {
       setLoading(false);

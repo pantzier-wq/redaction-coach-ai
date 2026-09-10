@@ -7,12 +7,14 @@ import { toast } from "sonner";
 import { type Correcao, type RespostaRepertorio } from "@/lib/correct-essay.functions";
 import { EssaySubmissionArea } from "@/components/EssaySubmissionArea";
 import { Sidebar } from "@/components/Sidebar";
+import { DashboardTour } from "@/components/DashboardTour";
 import { cn } from "@/lib/utils";
 import { goToCheckout, goToCreditsCheckout } from "@/lib/checkout";
 import { CouponUnlockedBanner } from "@/components/CouponUnlockedBanner";
 import { repertories as repertoryLibrary } from "@/data/repertories";
 import { buildEssayProgress } from "@/lib/essay-progress";
 import { hasEssayCredit } from "@/lib/correction-access";
+import { completeOnboarding, shouldStartOnboarding } from "@/lib/onboarding-tour";
 
 import {
   History,
@@ -48,15 +50,29 @@ import {
 } from "recharts";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    tutorial: search.tutorial === "1" ? "1" : undefined,
+  }),
   component: Dashboard,
 });
 
 function Dashboard() {
   const navigate = useNavigate();
+  const { tutorial } = Route.useSearch();
   const [profile, setProfile] = useState<any>(null);
   const [essays, setEssays] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [tourOpen, setTourOpen] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const previewRequested = tutorial === "1" || window.location.hash === "#tutorial";
+    if (!previewRequested) return;
+
+    setTourOpen(true);
+    window.history.replaceState({}, "", "/dashboard");
+  }, [tutorial]);
 
   async function refreshDashboardData() {
     const {
@@ -87,6 +103,7 @@ function Dashboard() {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) return;
+      setCurrentUserId(user.id);
 
       const [profRes, essayRes] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", user.id).single(),
@@ -104,10 +121,13 @@ function Dashboard() {
 
       setProfile(profRes.data);
       setEssays(uniqueEssays);
+      if (shouldStartOnboarding(window.localStorage, user.id)) {
+        setTourOpen(true);
+      }
       setLoading(false);
     }
     loadData();
-  }, []);
+  }, [tutorial]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -122,6 +142,11 @@ function Dashboard() {
   const handleBuyCredits = async (qtd: number) => {
     // Redireciona para o checkout real da recarga (Cakto).
     await goToCreditsCheckout(qtd);
+  };
+
+  const handleFinishTour = () => {
+    if (currentUserId) completeOnboarding(window.localStorage, currentUserId);
+    setTourOpen(false);
   };
 
   if (loading) {
@@ -141,6 +166,7 @@ function Dashboard() {
         activeSection={activeSection}
         setActiveSection={setActiveSection}
         onLogout={handleLogout}
+        tourOpen={tourOpen}
       />
 
       <main className="flex-1 md:ml-64 min-h-screen pt-20 md:pt-0 w-full overflow-hidden">
@@ -659,6 +685,7 @@ function Dashboard() {
           )}
         </div>
       </main>
+      <DashboardTour open={tourOpen} onFinish={handleFinishTour} />
     </div>
   );
 }

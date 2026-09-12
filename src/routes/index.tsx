@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import type { Session } from "@supabase/supabase-js";
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import {
   ArrowRight,
   Camera,
@@ -9,10 +9,17 @@ import {
   Clock3,
   FilePenLine,
   MessageSquare,
+  RouteIcon,
   ShieldCheck,
+  Target,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { captureCheckoutAttribution } from "@/lib/checkout";
+
+const loadAcquisitionFunnel = () => import("@/components/AcquisitionFunnel");
+const AcquisitionFunnel = lazy(() =>
+  loadAcquisitionFunnel().then((module) => ({ default: module.AcquisitionFunnel })),
+);
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -25,7 +32,7 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:title",
-        content: "CorrigeAI — Descubra o que está separando sua redação dos 900+",
+        content: "CorrigeAI — Descubra o que pode estar afastando você da sua vaga",
       },
       {
         property: "og:description",
@@ -40,15 +47,16 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const [funnelOpen, setFunnelOpen] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
-
-  const daysUntilEnem = useMemo(() => {
-    const examDate = new Date("2026-11-08T00:00:00");
-    return Math.max(0, Math.ceil((examDate.getTime() - Date.now()) / 86400000));
-  }, []);
 
   useEffect(() => {
     captureCheckoutAttribution();
+    try {
+      if (sessionStorage.getItem("corrigeai:offer-return")) setFunnelOpen(true);
+    } catch {
+      /* O quiz também funciona sem armazenamento. */
+    }
 
     void supabase.auth.getSession().then(({ data }) => setSession(data.session));
     const {
@@ -68,6 +76,27 @@ function Landing() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    const preloadTimer = window.setTimeout(() => void loadAcquisitionFunnel(), 600);
+    return () => window.clearTimeout(preloadTimer);
+  }, []);
+
+  if (funnelOpen)
+    return (
+      <Suspense fallback={<FunnelLoading />}>
+        <AcquisitionFunnel
+          onClose={() => {
+            setFunnelOpen(false);
+            try {
+              sessionStorage.removeItem("corrigeai:offer-return");
+            } catch {
+              /* Sem persistência. */
+            }
+          }}
+        />
+      </Suspense>
+    );
 
   return (
     <div className="min-h-screen overflow-hidden bg-[var(--paper)] font-['Public_Sans'] text-[var(--ink)] selection:bg-[var(--red-soft)] selection:text-[var(--red)]">
@@ -101,20 +130,28 @@ function Landing() {
             <div>
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--red)]/20 bg-[var(--red-soft)] px-4 py-2 text-[10px] font-black uppercase tracking-[0.16em] text-[var(--red)]">
                 <Clock3 className="h-4 w-4" />
-                Faltam {daysUntilEnem} dias para o ENEM 2026
+                Quanto antes descobrir seus erros, mais cedo você pode se aproximar da nota 1000
               </div>
 
               <h1 className="max-w-4xl font-['Fraunces'] text-5xl font-black leading-[0.94] tracking-tight md:text-7xl">
-                Você pode estar perdendo muitos pontos{" "}
-                <span className="italic text-[var(--red)]">sem perceber.</span>
+                Sua redação pode estar afastando você da{" "}
+                <span className="italic text-[var(--red)]">vaga que tanto quer.</span>
               </h1>
 
               <p className="mt-6 max-w-2xl text-lg font-medium leading-relaxed text-[var(--ink-2)] md:text-2xl">
-                Os 900+ começam quando você entende exatamente o que corrigir. Entre na plataforma,
-                envie sua redação e veja sua análise pelas cinco competências do ENEM.
+                Responda 6 perguntas rápidas, descubra o que pode estar segurando sua nota e
+                experimente uma correção gratuita baseada nos critérios do INEP.
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                {session && (
+                  <button
+                    onClick={() => setFunnelOpen(true)}
+                    className="min-h-14 rounded-2xl bg-[#16213A] px-7 py-4 text-sm font-bold text-white"
+                  >
+                    Responder às perguntas
+                  </button>
+                )}
                 {session ? (
                   <Link
                     to="/dashboard"
@@ -125,14 +162,13 @@ function Landing() {
                   </Link>
                 ) : (
                   <>
-                    <Link
-                      to="/auth"
-                      search={{ mode: "signup" }}
+                    <button
+                      onClick={() => setFunnelOpen(true)}
                       className="group inline-flex min-h-14 items-center justify-center rounded-2xl bg-[#16213A] px-7 py-4 text-sm font-black uppercase tracking-[0.1em] text-white shadow-[0_18px_40px_-16px_rgba(22,33,58,0.6)] transition hover:-translate-y-0.5 hover:bg-[#24365F]"
                     >
-                      Criar minha conta
+                      Descobrir o que está tirando meus pontos
                       <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                    </Link>
+                    </button>
                     <Link
                       to="/auth"
                       search={{ mode: undefined }}
@@ -149,10 +185,10 @@ function Landing() {
                   <ShieldCheck className="h-4 w-4 text-[#24365F]" /> Ambiente seguro
                 </span>
                 <span className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#24365F]" /> Cadastro rápido
+                  <CheckCircle2 className="h-4 w-4 text-[#24365F]" /> 6 perguntas simples
                 </span>
                 <span className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#24365F]" /> Planos dentro da plataforma
+                  <CheckCircle2 className="h-4 w-4 text-[#24365F]" /> Correção grátis para começar
                 </span>
               </div>
             </div>
@@ -169,15 +205,56 @@ function Landing() {
                 <Feature icon={Camera} text="Cole o texto ou fotografe sua redação" />
                 <Feature icon={FilePenLine} text="Receba a leitura das cinco competências" />
                 <Feature icon={ChartNoAxesCombined} text="Acompanhe seu histórico e sua evolução" />
-                <Feature icon={ShieldCheck} text="Escolha o plano ideal já dentro da sua conta" />
+                <Feature icon={ShieldCheck} text="Experimente sua primeira correção sem cartão" />
               </div>
 
               <div className="mt-7 rounded-2xl border border-[#24365F]/15 bg-white/70 p-4">
                 <p className="text-sm font-bold leading-relaxed text-[var(--ink-2)]">
-                  Crie sua conta gratuitamente para conhecer a área do aluno. Você escolhe seu plano
-                  somente depois de entrar.
+                  Primeiro, descubra seu foco de treino. Depois, crie sua conta e escolha como
+                  começar. A correção gratuita não exige compra.
                 </p>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="relative overflow-hidden bg-[#16213A] px-4 py-16 text-white md:px-6 md:py-24">
+          <div className="pointer-events-none absolute -right-24 -top-32 h-96 w-96 rounded-full border-[70px] border-white/[0.035]" />
+          <div className="pointer-events-none absolute -bottom-56 -left-32 h-[30rem] w-[30rem] rounded-full bg-[var(--red)]/15 blur-3xl" />
+
+          <div className="relative mx-auto grid max-w-6xl gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:items-center">
+            <div className="max-w-xl">
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#FF8D84]">
+                Não é só uma nota
+              </p>
+              <h2 className="mt-3 font-['Fraunces'] text-4xl font-black leading-[1.02] tracking-tight md:text-5xl">
+                É a vaga, o curso e a sensação de que todo o seu esforço valeu a pena.
+              </h2>
+              <p className="mt-5 text-base font-medium leading-relaxed text-white/72 md:text-lg">
+                O pior não é cometer um erro. É chegar à prova sem saber se você continua repetindo
+                o mesmo erro em cada nova redação.
+              </p>
+              <p className="mt-5 border-l-2 border-[#FF6F65] pl-4 text-lg font-black leading-snug text-white">
+                Você não precisa treinar mais no escuro. Precisa saber onde concentrar seu próximo
+                esforço.
+              </p>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <ValueCard
+                tone="danger"
+                icon={RouteIcon}
+                label="Sem direção"
+                title="A mesma dúvida volta em cada texto"
+                text="Você escreve, recebe uma nota e ainda não entende com clareza por que perdeu pontos."
+              />
+              <ValueCard
+                tone="positive"
+                icon={Target}
+                label="Com direção"
+                title="Cada correção vira um próximo passo"
+                text="Você enxerga o que ajustar agora e leva um foco claro para a próxima redação."
+              />
             </div>
           </div>
         </section>
@@ -196,13 +273,13 @@ function Landing() {
             <div className="grid gap-4 md:grid-cols-3">
               <Step
                 number="01"
-                title="Crie sua conta"
-                text="Use seu e-mail e uma senha para acessar a plataforma."
+                title="Descubra seu foco"
+                text="Responda 6 perguntas sobre sua rotina e suas dificuldades."
               />
               <Step
                 number="02"
-                title="Escolha seu plano"
-                text="Compare as opções por dentro e escolha conforme sua rotina de treino."
+                title="Prepare seu próximo passo"
+                text="Veja uma orientação simples e crie sua conta gratuitamente."
               />
               <Step
                 number="03"
@@ -217,20 +294,18 @@ function Landing() {
           <section className="px-4 py-16 md:px-6 md:py-20">
             <div className="mx-auto flex max-w-5xl flex-col items-center rounded-[2rem] border border-[var(--red)]/20 bg-[linear-gradient(135deg,var(--red-soft),rgba(255,255,255,0.92))] px-6 py-10 text-center shadow-[0_24px_60px_-36px_rgba(196,50,42,0.5)] md:px-10">
               <h2 className="max-w-3xl font-['Fraunces'] text-4xl font-black leading-tight">
-                Pare de treinar sem saber o que está segurando sua nota.
+                Sua próxima redação não precisa terminar com a mesma dúvida.
               </h2>
               <p className="mt-3 max-w-2xl text-base font-medium leading-relaxed text-[var(--ink-2)]">
-                Sua conta é o primeiro passo para acessar as correções, ferramentas e planos do
-                CorrigeAI.
+                Em 6 respostas, descubra seu ponto de atenção e comece a treinar com mais direção.
               </p>
-              <Link
-                to="/auth"
-                search={{ mode: "signup" }}
+              <button
+                onClick={() => setFunnelOpen(true)}
                 className="group mt-7 inline-flex min-h-14 items-center justify-center rounded-2xl bg-[var(--red)] px-8 py-4 text-sm font-black uppercase tracking-[0.12em] text-white shadow-[0_16px_30px_-14px_rgba(196,50,42,0.65)] transition hover:-translate-y-0.5"
               >
-                Criar minha conta
+                Descobrir meu ponto de atenção
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Link>
+              </button>
             </div>
           </section>
         )}
@@ -260,6 +335,23 @@ function Landing() {
   );
 }
 
+function FunnelLoading() {
+  return (
+    <main
+      className="flex min-h-screen items-center justify-center bg-[var(--paper)] px-6 font-['Public_Sans'] text-[var(--ink)]"
+      role="status"
+      aria-live="polite"
+    >
+      <div className="corrige-soft-enter flex flex-col items-center text-center">
+        <span className="corrige-loading-mark mb-5 font-['Fraunces'] text-3xl font-black italic">
+          CORRIGE<span className="text-[var(--red)]">AI</span>
+        </span>
+        <p className="text-sm font-bold text-[var(--ink-2)]">Preparando suas perguntas…</p>
+      </div>
+    </main>
+  );
+}
+
 function Feature({ icon: Icon, text }: { icon: typeof Camera; text: string }) {
   return (
     <div className="flex items-center gap-4 rounded-2xl border border-[var(--line)] bg-white/75 p-4">
@@ -279,6 +371,55 @@ function Step({ number, title, text }: { number: string; title: string; text: st
       </span>
       <h3 className="mt-5 text-xl font-black">{title}</h3>
       <p className="mt-2 text-sm font-medium leading-relaxed text-[var(--ink-2)]">{text}</p>
+    </div>
+  );
+}
+
+function ValueCard({
+  tone,
+  icon: Icon,
+  label,
+  title,
+  text,
+}: {
+  tone: "danger" | "positive";
+  icon: typeof Target;
+  label: string;
+  title: string;
+  text: string;
+}) {
+  const positive = tone === "positive";
+
+  return (
+    <div
+      className={`rounded-[1.75rem] border p-6 md:p-7 ${
+        positive
+          ? "border-white/20 bg-white text-[#16213A] shadow-[0_24px_60px_-30px_rgba(255,255,255,0.5)]"
+          : "border-[#FF776D]/35 bg-[#C4322A]/20 text-white"
+      }`}
+    >
+      <span
+        className={`flex h-11 w-11 items-center justify-center rounded-2xl ${
+          positive ? "bg-[#EAF0F9] text-[#24365F]" : "bg-[#C4322A] text-white"
+        }`}
+      >
+        <Icon className="h-5 w-5" />
+      </span>
+      <p
+        className={`mt-6 text-[10px] font-black uppercase tracking-[0.18em] ${
+          positive ? "text-[#31518A]" : "text-[#FF9C95]"
+        }`}
+      >
+        {label}
+      </p>
+      <h3 className="mt-2 font-['Fraunces'] text-2xl font-black leading-tight">{title}</h3>
+      <p
+        className={`mt-3 text-sm font-medium leading-relaxed ${
+          positive ? "text-[#536078]" : "text-white/70"
+        }`}
+      >
+        {text}
+      </p>
     </div>
   );
 }

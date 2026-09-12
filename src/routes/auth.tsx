@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
-import { clearOnboardingPending, markOnboardingPending } from "@/lib/onboarding-tour";
 
 export const Route = createFileRoute("/auth")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -13,15 +12,12 @@ export const Route = createFileRoute("/auth")({
 });
 
 function AuthPage() {
-  const { mode } = Route.useSearch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [view, setView] = useState<"login" | "signup" | "forgot" | "reset">(
-    mode === "signup" ? "signup" : "login",
-  );
+  const [view, setView] = useState<"login" | "forgot" | "reset">("login");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -80,33 +76,11 @@ function AuthPage() {
     e.preventDefault();
     setError(null);
 
-    if (view === "signup" && password !== confirmPassword) {
-      setError("As senhas não são iguais. Confira e digite novamente.");
-      return;
-    }
-
     setLoading(true);
     try {
-      if (view === "signup") {
-        markOnboardingPending(window.localStorage);
-        const { data, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: `${window.location.origin}/auth` },
-        });
-        if (signUpError) throw signUpError;
-        markOnboardingPending(window.localStorage, data.user?.id);
-        if (!data.session) {
-          setError(
-            "✅ Conta criada. Confirme seu e-mail pelo link que enviamos para acessar a plataforma.",
-          );
-        }
-      } else {
-        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-        if (signInError) throw signInError;
-      }
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) throw signInError;
     } catch (err) {
-      if (view === "signup") clearOnboardingPending(window.localStorage);
       setError(traduzirErro(err instanceof Error ? err.message : ""));
     } finally {
       setLoading(false);
@@ -175,11 +149,9 @@ function AuthPage() {
         <p className="text-center text-sm text-[var(--ink-2)] font-medium italic">
           {view === "login"
             ? "Entre para acessar sua área exclusiva"
-            : view === "signup"
-              ? "Crie sua conta para conhecer a plataforma e escolher seu plano"
-              : view === "forgot"
-                ? "Receba por e-mail o link para criar uma nova senha"
-                : "Crie e confirme sua nova senha"}
+            : view === "forgot"
+              ? "Receba por e-mail o link para criar uma nova senha"
+              : "Crie e confirme sua nova senha"}
         </p>
 
         <form
@@ -225,7 +197,7 @@ function AuthPage() {
                 />
               </div>
             )}
-            {(view === "signup" || view === "reset") && (
+            {view === "reset" && (
               <div>
                 <label className="block text-[10px] font-black uppercase tracking-widest text-[var(--ink-3)] mb-2">
                   Confirme sua senha
@@ -275,23 +247,6 @@ function AuthPage() {
             </div>
           )}
 
-          {(view === "login" || view === "signup") && (
-            <button
-              type="button"
-              onClick={() => {
-                setView(view === "login" ? "signup" : "login");
-                setPassword("");
-                setConfirmPassword("");
-                setError(null);
-              }}
-              className="w-full text-center text-xs font-black text-[#24365F] underline decoration-[#24365F]/30 underline-offset-4 transition-colors hover:text-[var(--red)]"
-            >
-              {view === "login"
-                ? "Ainda não tem conta? Criar minha conta"
-                : "Já tenho conta? Entrar na minha conta"}
-            </button>
-          )}
-
           {view === "forgot" && (
             <button
               type="button"
@@ -327,11 +282,9 @@ function AuthPage() {
               ? "PROCESSANDO..."
               : view === "login"
                 ? "ENTRAR NO SISTEMA"
-                : view === "signup"
-                  ? "CRIAR MINHA CONTA"
-                  : view === "forgot"
-                    ? "ENVIAR LINK POR E-MAIL"
-                    : "SALVAR NOVA SENHA"}
+                : view === "forgot"
+                  ? "ENVIAR LINK POR E-MAIL"
+                  : "SALVAR NOVA SENHA"}
           </button>
         </form>
 
